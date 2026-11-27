@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
-import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
+import { TableSkeletonRows } from '@/ui/layout/table/components/TableSkeletonRows';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -59,38 +59,41 @@ export const SettingsAgentSkillsTable = ({
           <TableHeader />
         </TableRow>
       </StyledTableHeaderRowContainer>
-      {showSkeleton
-        ? Array.from({ length: 3 }).map((_, index) => (
-            <SkeletonLine height={32} key={index} />
-          ))
-        : skills.map((skill) => (
-            <SettingsSkillTableRow
-              key={skill.id}
-              skill={skill}
-              action={
-                skill.isActive ? (
-                  <IconChevronRight
-                    size={theme.icon.size.md}
-                    stroke={theme.icon.stroke.sm}
-                  />
-                ) : (
-                  <SettingsSkillInactiveMenuDropDown
-                    isCustomSkill={getIsMetadataItemCustom(skill)}
-                    skillId={skill.id}
-                    onActivate={() => onActivate(skill.id)}
-                    onDelete={() => onDelete(skill.id)}
-                  />
-                )
-              }
-              link={
-                skill.isActive
-                  ? getSettingsPath(SettingsPath.AiSkillDetail, {
-                      skillId: skill.id,
-                    })
-                  : undefined
-              }
-            />
-          ))}
+      {showSkeleton ? (
+        <TableSkeletonRows
+          gridTemplateColumns="1fr 120px 36px"
+          columnCount={2}
+        />
+      ) : (
+        skills.map((skill) => (
+          <SettingsSkillTableRow
+            key={skill.id}
+            skill={skill}
+            action={
+              skill.isActive ? (
+                <IconChevronRight
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.sm}
+                />
+              ) : (
+                <SettingsSkillInactiveMenuDropDown
+                  isCustomSkill={getIsMetadataItemCustom(skill)}
+                  skillId={skill.id}
+                  onActivate={() => onActivate(skill.id)}
+                  onDelete={() => onDelete(skill.id)}
+                />
+              )
+            }
+            link={
+              skill.isActive
+                ? getSettingsPath(SettingsPath.AiSkillDetail, {
+                    skillId: skill.id,
+                  })
+                : undefined
+            }
+          />
+        ))
+      )}
     </Table>
   );
 };
