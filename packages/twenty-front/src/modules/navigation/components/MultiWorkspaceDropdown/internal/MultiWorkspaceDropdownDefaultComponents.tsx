@@ -5,6 +5,7 @@ import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils'
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useOpenRecordInPreference } from '@/settings/experience/hooks/useOpenRecordInPreference';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -60,6 +61,9 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const canDisplaySidePanel = !isMobile;
   const isCustomizableSidebarEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
 
   const handleSettings = () => {
@@ -154,6 +158,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           <Dropdown.ActionItem
             startIcon={<IconSettings />}
             onClick={handleSettings}
+            disabled={isLayoutCustomizationModeEnabled}
           >
             {t`Settings`}
           </Dropdown.ActionItem>
@@ -210,6 +215,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
             <Dropdown.ActionItem
               startIcon={<IconSettings />}
               onClick={handleSettings}
+              disabled={isLayoutCustomizationModeEnabled}
             >
               {t`Settings`}
             </Dropdown.ActionItem>

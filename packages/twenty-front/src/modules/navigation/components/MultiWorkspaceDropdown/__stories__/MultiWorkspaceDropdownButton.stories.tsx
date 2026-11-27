@@ -3,6 +3,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { MultiWorkspaceDropdownButton } from '@/navigation/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -10,7 +11,10 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
 import { expect, fn, spyOn, userEvent, waitFor, within } from 'storybook/test';
 import { OpenRecordIn } from 'twenty-shared/types';
-import { type AvailableWorkspace } from '~/generated-metadata/graphql';
+import {
+  type AvailableWorkspace,
+  FeatureFlagKey,
+} from '~/generated-metadata/graphql';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import {
@@ -65,6 +69,7 @@ const meta: Meta<typeof MultiWorkspaceDropdownButton> = {
       openRecordIn: OpenRecordIn.SIDE_PANEL,
     });
     jotaiStore.set(isNavigationDrawerExpandedState.atom, true);
+    jotaiStore.set(isLayoutCustomizationModeEnabledState.atom, false);
     jotaiStore.set(isMultiWorkspaceEnabledState.atom, true);
     jotaiStore.set(domainConfigurationState.atom, {
       frontDomain: 'example.com',
@@ -212,6 +217,31 @@ export const RootInvitationLink: Story = {
     await waitFor(() =>
       expect(canvas.queryByRole('menu')).not.toBeInTheDocument(),
     );
+  },
+};
+
+export const SettingsDisabledWhileEditingLayout: Story = {
+  beforeEach: () => {
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      featureFlags: [
+        {
+          key: FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+          value: true,
+        },
+      ],
+    });
+    jotaiStore.set(isLayoutCustomizationModeEnabledState.atom, true);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(canvas.getByTestId('workspace-dropdown'));
+
+    expect(
+      await canvas.findByRole('menuitem', { name: 'Settings' }),
+    ).toBeDisabled();
+    await userEvent.keyboard('{Escape}');
   },
 };
 
