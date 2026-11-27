@@ -46,17 +46,15 @@ export const ConditionalAvailabilityFilterColumn = ({
           />
         )}
       </StyledContainer>
-      <AdvancedFilterSidePanelColumn>
-        <ConditionalAvailabilityFilterFieldSelect
-          filterFields={filterFields}
-          filter={filter}
-        />
-        <ConditionalAvailabilityFilterOperatorSelect filter={filter} />
-        <ConditionalAvailabilityFilterValueInput
-          filterFields={filterFields}
-          filter={filter}
-        />
-      </AdvancedFilterSidePanelColumn>
+      <ConditionalAvailabilityFilterFieldSelect
+        filterFields={filterFields}
+        filter={filter}
+      />
+      <ConditionalAvailabilityFilterOperatorSelect filter={filter} />
+      <ConditionalAvailabilityFilterValueInput
+        filterFields={filterFields}
+        filter={filter}
+      />
     </AdvancedFilterSidePanelColumn>
   );
 };
