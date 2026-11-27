@@ -11,18 +11,21 @@ export class BackfillRecentChatsSectionVisibleItemLimitSlowInstanceCommand
   constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
 
   async runDataMigration(dataSource: DataSource): Promise<void> {
-    const [updatedRows]: [{ workspaceId: string }[], number] =
+    await dataSource.query(
+      `UPDATE "core"."navigationMenuItem"
+        SET "visibleItemLimit" = 5
+        WHERE "builtInSectionKey" = 'aiChatRecents'
+          AND "visibleItemLimit" IS NULL`,
+    );
+
+    const recentChatsSectionRows: { workspaceId: string }[] =
       await dataSource.query(
-        `UPDATE "core"."navigationMenuItem"
-          SET "visibleItemLimit" = 5
-          WHERE "builtInSectionKey" = 'aiChatRecents'
-            AND "visibleItemLimit" IS NULL
-          RETURNING "workspaceId"`,
+        `SELECT DISTINCT "workspaceId"
+          FROM "core"."navigationMenuItem"
+          WHERE "builtInSectionKey" = 'aiChatRecents'`,
       );
 
-    for (const workspaceId of new Set(
-      updatedRows.map((updatedRow) => updatedRow.workspaceId),
-    )) {
+    for (const { workspaceId } of recentChatsSectionRows) {
       await this.workspaceCacheService.flush(workspaceId, [
         'flatNavigationMenuItemMaps',
       ]);
