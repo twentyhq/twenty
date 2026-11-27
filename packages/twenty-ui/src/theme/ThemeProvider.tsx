@@ -69,7 +69,10 @@ export const ThemeProvider = ({
     }
 
     const rootStyle = document.documentElement.style;
-    const accentCssVariables = getAccentCssVariables(accentColor, colorScheme);
+    const accentCssVariables = getAccentCssVariables({
+      accentColor,
+      colorScheme,
+    });
 
     for (const [cssVariable, value] of Object.entries(accentCssVariables)) {
       rootStyle.setProperty(cssVariable, value);
@@ -143,7 +146,7 @@ export const ThemeProvider = ({
 
   const scopeStyle = {
     ...(isDefined(accentColor)
-      ? getAccentCssVariables(accentColor, colorScheme)
+      ? getAccentCssVariables({ accentColor, colorScheme })
       : {}),
     ...overrides,
   } as React.CSSProperties;
