@@ -2,7 +2,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { type ProposedToolCall } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCheck, IconX } from 'twenty-ui/icon';
+import { IconCheck, IconTool, IconX } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Button } from 'twenty-ui/primitives/input';
 import { type JsonValue } from 'type-fest';
 
@@ -11,6 +12,7 @@ import { AiChatToolCallApprovalGenericArguments } from '@/ai-chat/tool-calls/com
 import { AiChatToolCallApprovalRecord } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalRecord';
 import { AiChatToolCallApprovalRecordFields } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalRecordFields';
 import { useAnswerToolCallApproval } from '@/ai-chat/tool-calls/hooks/useAnswerToolCallApproval';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 
 type AiChatToolCallApprovalArgumentsCardProps = {
   toolCallId: string;
@@ -32,6 +34,16 @@ export const AiChatToolCallApprovalArgumentsCard = ({
 
   const { template, objectNameSingular, recordId } = proposal;
 
+  const { getIcon } = useIcons();
+  const { objectMetadataItems } = useObjectMetadataItems();
+  const objectIconName = objectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.nameSingular === objectNameSingular,
+  )?.icon;
+  const TitleIcon = isDefined(objectIconName)
+    ? getIcon(objectIconName)
+    : IconTool;
+
   const handleRecordFieldChange = (fieldName: string, value: JsonValue) => {
     setToolArguments((previousArguments) => ({
       ...previousArguments,
@@ -46,8 +58,8 @@ export const AiChatToolCallApprovalArgumentsCard = ({
   return (
     <AiChatToolCallApprovalCardLayout
       title={proposal.toolLabel}
+      Icon={TitleIcon}
       summary={proposal.summary}
-      approval={approval}
       actions={
         <>
           <Button

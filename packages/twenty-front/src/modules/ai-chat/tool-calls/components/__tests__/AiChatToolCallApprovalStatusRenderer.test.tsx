@@ -74,4 +74,33 @@ describe('AiChatToolCallApprovalStatusRenderer', () => {
     expect(screen.getByText('Follow up')).toBeInTheDocument();
     expect(screen.queryByText('Approved')).not.toBeInTheDocument();
   });
+
+  it.each([undefined, 'Wait for the signed quote'])(
+    'names a rejected call by its summary (feedback: %s)',
+    (feedback) => {
+      renderStatus({
+        state: 'output-available',
+        input: { toolName: 'update_record', arguments: {}, summary: 'Move' },
+        output: {
+          success: true,
+          result: {
+            status: 'rejected',
+            feedback,
+            proposal: {
+              toolName: 'update_record',
+              toolLabel: 'Update Record',
+              summary: 'Move the Acme renewal to won',
+              arguments: {},
+              template: 'generic',
+            },
+          },
+        },
+      });
+
+      expect(screen.getByText('Rejected')).toBeInTheDocument();
+      expect(
+        screen.getByText('Move the Acme renewal to won'),
+      ).toBeInTheDocument();
+    },
+  );
 });

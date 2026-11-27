@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { RevokeRoleWideAccessToChannelObjectsCommand } from 'src/engine/permissions/channel-visibility/commands/revoke-role-wide-access-to-channel-objects.command';
@@ -18,7 +19,11 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([MessageChannelEntity, CalendarChannelEntity]),
+    TypeOrmModule.forFeature([
+      MessageChannelEntity,
+      CalendarChannelEntity,
+      WorkspaceEntity,
+    ]),
     WorkspaceCacheModule,
     CacheLockModule,
     WorkspaceMemberIndividualRoleModule,

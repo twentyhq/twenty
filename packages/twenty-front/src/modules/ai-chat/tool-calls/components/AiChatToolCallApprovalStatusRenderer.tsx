@@ -133,7 +133,7 @@ export const AiChatToolCallApprovalStatusRenderer = ({
   > = {
     pending: t`Waiting for your approval`,
     running: t`Running...`,
-    skipped: t`Skipped`,
+    skipped: t`Cancelled`,
   };
 
   return (

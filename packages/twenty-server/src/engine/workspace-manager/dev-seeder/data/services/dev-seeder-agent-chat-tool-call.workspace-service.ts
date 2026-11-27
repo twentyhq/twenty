@@ -12,7 +12,6 @@ import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules
 import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ai-steps-to-ui-message-parts.util';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { AGENT_CHAT_TOOL_CALL_CONVERSATION_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/agent-chat-tool-call-conversation-seeds.constant';
 import { type SeededToolStep } from 'src/engine/workspace-manager/dev-seeder/data/utils/seeded-tool-step.type';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -80,7 +79,7 @@ export class DevSeederAgentChatToolCallWorkspaceService {
         turnId,
         role: AgentMessageRole.USER,
         agentId: null,
-        senderUserWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
+        senderWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
         parts: [{ type: 'text', text: conversation.prompt }],
       });
 
@@ -91,7 +90,7 @@ export class DevSeederAgentChatToolCallWorkspaceService {
         turnId,
         role: AgentMessageRole.ASSISTANT,
         agentId: null,
-        senderUserWorkspaceId: null,
+        senderWorkspaceMemberId: null,
         parts: mapAiStepsToUIMessageParts([
           ...conversation.steps.map((step, stepIndex) => {
             const toolCall = {

@@ -1990,6 +1990,7 @@ export type CreateNavigationMenuItemInput = {
   type: NavigationMenuItemType;
   userWorkspaceId?: InputMaybe<Scalars['UUID']['input']>;
   viewId?: InputMaybe<Scalars['UUID']['input']>;
+  visibleItemLimit?: InputMaybe<Scalars['Int']['input']>;
   workflowId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
@@ -2695,6 +2696,7 @@ export type FeatureFlag = {
 };
 
 export enum FeatureFlagKey {
+  IS_ADMIN_CHANNEL_WRITE_ACCESS_RESTORED = 'IS_ADMIN_CHANNEL_WRITE_ACCESS_RESTORED',
   IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED = 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED',
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED = 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED',
   IS_AI_CHAT_INBOX_ENABLED = 'IS_AI_CHAT_INBOX_ENABLED',
@@ -5721,6 +5723,7 @@ export type NavigationMenuItem = {
   updatedAt: Scalars['DateTime']['output'];
   userWorkspaceId?: Maybe<Scalars['UUID']['output']>;
   viewId?: Maybe<Scalars['UUID']['output']>;
+  visibleItemLimit?: Maybe<Scalars['Int']['output']>;
   workflowId?: Maybe<Scalars['UUID']['output']>;
 };
 
@@ -7170,6 +7173,7 @@ export type Role = {
   agents: Array<Agent>;
   apiKeys: Array<ApiKeyForRole>;
   applicationId: Scalars['UUID']['output'];
+  areRecordPermissionsEditable: Scalars['Boolean']['output'];
   canAccessAllAgentChatChannels: Scalars['Boolean']['output'];
   canAccessAllTools: Scalars['Boolean']['output'];
   canBeAssignedToAgents: Scalars['Boolean']['output'];
@@ -7486,7 +7490,7 @@ export type SendInboxMessageInput = {
   text: Scalars['String']['input'];
   threadKey: Scalars['String']['input'];
   title: Scalars['String']['input'];
-  toolCall?: InputMaybe<Scalars['JSON']['input']>;
+  toolCalls?: InputMaybe<Array<Scalars['JSON']['input']>>;
   workspaceMemberIds: Array<Scalars['UUID']['input']>;
 };
 
@@ -8136,6 +8140,7 @@ export type UpdateNavigationMenuItemInput = {
   pageLayoutId?: InputMaybe<Scalars['UUID']['input']>;
   parentId?: InputMaybe<Scalars['UUID']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
+  visibleItemLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UpdateObjectPayload = {

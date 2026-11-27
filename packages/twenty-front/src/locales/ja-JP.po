@@ -2515,11 +2515,6 @@ msgstr "メールチャネルを追加"
 msgid "Add embedded website"
 msgstr "埋め込みウェブサイトを追加"
 
-#. js-lingui-id: 6kC3KJ
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCardLayout.tsx
-msgid "Add feedback"
-msgstr "フィードバックを追加"
-
 #. js-lingui-id: Va3xJe
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderLabelIdentifierCellPlusButton.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -2608,7 +2603,7 @@ msgstr "前に項目を追加"
 #. js-lingui-id: /kLKYB
 #: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Add item to {targetSectionName}"
-msgstr ""
+msgstr "{targetSectionName}に項目を追加"
 
 #. js-lingui-id: VzGJRl
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
@@ -3037,6 +3032,11 @@ msgstr "管理者"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Admin & Member"
 msgstr "管理者とメンバー"
+
+#. js-lingui-id: ZHWySn
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Admin channel write access"
+msgstr "管理者のチャンネル書き込みアクセス"
 
 #. js-lingui-id: SsHJsm
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -4921,6 +4921,8 @@ msgstr "ファイルを添付"
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAttachFileButton.tsx
+#: src/modules/ai-chat/composer/components/AiChatAttachFileButton.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Attach files"
@@ -6175,6 +6177,7 @@ msgstr "キャンセル日"
 
 #. js-lingui-id: vv7kpg
 #: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 msgid "Cancelled"
 msgstr "キャンセル済み"
@@ -7120,7 +7123,7 @@ msgstr "プレビューを閉じる"
 #. js-lingui-id: QBOwbf
 #: src/modules/navigation/components/NavigationDrawerCloseSettingsButton.tsx
 msgid "Close settings"
-msgstr ""
+msgstr "設定を閉じる"
 
 #. js-lingui-id: saip/v
 #: src/modules/side-panel/components/SidePanelCloseButton.tsx
@@ -7254,7 +7257,7 @@ msgstr "{heading}を折りたたむ"
 #. js-lingui-id: LeVkuA
 #: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Collapse all sections"
-msgstr ""
+msgstr "すべてのセクションを折りたたむ"
 
 #. js-lingui-id: kBUgVh
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -10878,11 +10881,6 @@ msgstr "ダイレクトメッセージ"
 msgid "Direct messages and mentions"
 msgstr "ダイレクトメッセージとメンション"
 
-#. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
-msgid "Direct messages don't support attachments."
-msgstr "ダイレクトメッセージでは添付ファイルはサポートされていません。"
-
 #. js-lingui-id: +ILAOG
 #: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
 msgid "Direct messages, mentions and chats assigned to you"
@@ -13217,7 +13215,7 @@ msgstr "{heading}を展開する"
 #. js-lingui-id: m2n9ZO
 #: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Expand all sections"
-msgstr ""
+msgstr "すべてのセクションを展開"
 
 #. js-lingui-id: JjrOSL
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -14142,12 +14140,6 @@ msgstr "機能"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Features active until"
 msgstr "機能の有効期限"
-
-#. js-lingui-id: YirHq7
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
-#: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
-msgid "Feedback"
-msgstr "フィードバック"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -20650,7 +20642,7 @@ msgid "Next record"
 msgstr "次のレコード"
 
 #. js-lingui-id: +VXdSO
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Next request"
 msgstr "次のリクエスト"
 
@@ -23529,7 +23521,7 @@ msgid "Pending"
 msgstr "保留中"
 
 #. js-lingui-id: 2B0V9T
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Pending requests"
 msgstr "保留中のリクエスト"
 
@@ -23840,7 +23832,7 @@ msgstr "ピン留め"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownListPinnedFieldContent.tsx
 msgid "Pinned field"
-msgstr ""
+msgstr "固定フィールド"
 
 #. js-lingui-id: OFY07S
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
@@ -24183,7 +24175,7 @@ msgid "Previous record"
 msgstr "前のレコード"
 
 #. js-lingui-id: ToM1t/
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Previous request"
 msgstr "前のリクエスト"
 
@@ -25629,10 +25621,10 @@ msgstr "並び替えを削除"
 msgid "Remove sorting?"
 msgstr "並び替えを削除しますか？"
 
-#. js-lingui-id: J8gtSc
+#. js-lingui-id: koiY9C
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would."
-msgstr "ユーザーに割り当て可能なロールにおけるAPIキーのメッセージおよびカレンダーへのアクセスを削除します。オフの場合、それらのAPIキーはチャンネルを所有していないメンバーとして読み取ります。"
+msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would, and keep their role's write access to them."
+msgstr "ユーザーに割り当て可能なロールにある API キーのメッセージとカレンダーへのアクセスを削除します。オフの場合、これらの API キーはチャンネルを所有していないメンバーと同様にそれらを読み取り、ロールの書き込みアクセスは維持されます。"
 
 #. js-lingui-id: yBC05U
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -25786,7 +25778,7 @@ msgid "Request"
 msgstr "リクエスト"
 
 #. js-lingui-id: tZ7Xci
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Request {requestNumber} of {requestCount}"
 msgstr "{requestCount}件中{requestNumber}件目のリクエスト"
 
@@ -27176,7 +27168,7 @@ msgstr "チャットを検索中…"
 #. js-lingui-id: xrtPMt
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "Searching records..."
-msgstr ""
+msgstr "レコードを検索中…"
 
 #. js-lingui-id: KhCAL1
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -27349,7 +27341,7 @@ msgstr "関数を表示"
 #. js-lingui-id: kuQBTx
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "See in search results"
-msgstr ""
+msgstr "検索結果で表示"
 
 #. js-lingui-id: 1HzZ+y
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -28196,6 +28188,7 @@ msgstr "<0>データベース</0>をセットアップしています..."
 #. js-lingui-id: Tz0i8g
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/command-menu-item/utils/getCommandMenuItemSubtitle.ts
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
@@ -28757,7 +28750,6 @@ msgstr "ジャンクションオブジェクト（多対多リレーションに
 
 #. js-lingui-id: 9NyAH9
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
 msgid "Skipped"
 msgstr "スキップ済み"
@@ -30143,11 +30135,6 @@ msgstr "チームメイト"
 #: src/modules/getting-started/components/GettingStartedMailboxAction.tsx
 msgid "Teammates see who you talk to, not what you write."
 msgstr "チームメイトには、誰と話しているかは表示されますが、書いた内容は表示されません。"
-
-#. js-lingui-id: XpPpz7
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
-msgid "Tell the agent what to change"
-msgstr "変更内容をエージェントに伝える"
 
 #. js-lingui-id: lKXcJz
 #: src/modules/settings/emailing-domains/utils/getEmailingDomainStatusDisplay.ts
@@ -32158,6 +32145,11 @@ msgstr "トルコ語"
 msgid "Turn into"
 msgstr "変換"
 
+#. js-lingui-id: rjkNOe
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Turn on for a workspace that reported broken links, merges or deletes. Gives the Admin role back its write access to messages and calendar events, without letting it see more of them."
+msgstr "壊れたリンク、マージ、または削除を報告したワークスペースでオンにします。管理者ロールがメッセージとカレンダーイベントへの書き込みアクセスを取り戻しますが、それらをさらに閲覧できるようにはなりません。"
+
 #. js-lingui-id: Njwcqh
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Turn on notifications"
@@ -34083,6 +34075,7 @@ msgid "Wait for Event"
 msgstr "イベントを待機"
 
 #. js-lingui-id: 3wIkaN
+#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 #: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "添付ファイルのアップロードが完了するまでお待ちください。"

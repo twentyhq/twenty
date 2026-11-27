@@ -2515,11 +2515,6 @@ msgstr "이메일 채널 추가"
 msgid "Add embedded website"
 msgstr "임베디드 웹사이트 추가"
 
-#. js-lingui-id: 6kC3KJ
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCardLayout.tsx
-msgid "Add feedback"
-msgstr "피드백 추가"
-
 #. js-lingui-id: Va3xJe
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderLabelIdentifierCellPlusButton.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -2608,7 +2603,7 @@ msgstr "앞에 항목 추가"
 #. js-lingui-id: /kLKYB
 #: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Add item to {targetSectionName}"
-msgstr ""
+msgstr "{targetSectionName}에 항목 추가"
 
 #. js-lingui-id: VzGJRl
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
@@ -3037,6 +3032,11 @@ msgstr ""
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Admin & Member"
 msgstr "관리자 및 멤버"
+
+#. js-lingui-id: ZHWySn
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Admin channel write access"
+msgstr "관리자 채널 쓰기 액세스"
 
 #. js-lingui-id: SsHJsm
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -4921,6 +4921,8 @@ msgstr "파일 첨부"
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAttachFileButton.tsx
+#: src/modules/ai-chat/composer/components/AiChatAttachFileButton.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Attach files"
@@ -6175,6 +6177,7 @@ msgstr ""
 
 #. js-lingui-id: vv7kpg
 #: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 msgid "Cancelled"
 msgstr "취소됨"
@@ -7120,7 +7123,7 @@ msgstr "미리보기 닫기"
 #. js-lingui-id: QBOwbf
 #: src/modules/navigation/components/NavigationDrawerCloseSettingsButton.tsx
 msgid "Close settings"
-msgstr ""
+msgstr "설정 닫기"
 
 #. js-lingui-id: saip/v
 #: src/modules/side-panel/components/SidePanelCloseButton.tsx
@@ -7254,7 +7257,7 @@ msgstr "{heading} 접기"
 #. js-lingui-id: LeVkuA
 #: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Collapse all sections"
-msgstr ""
+msgstr "모든 섹션 접기"
 
 #. js-lingui-id: kBUgVh
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -10878,11 +10881,6 @@ msgstr "다이렉트 메시지"
 msgid "Direct messages and mentions"
 msgstr "다이렉트 메시지 및 멘션"
 
-#. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
-msgid "Direct messages don't support attachments."
-msgstr "다이렉트 메시지는 첨부 파일을 지원하지 않습니다."
-
 #. js-lingui-id: +ILAOG
 #: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
 msgid "Direct messages, mentions and chats assigned to you"
@@ -13217,7 +13215,7 @@ msgstr "{heading} 펼치기"
 #. js-lingui-id: m2n9ZO
 #: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Expand all sections"
-msgstr ""
+msgstr "모든 섹션 펼치기"
 
 #. js-lingui-id: JjrOSL
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -14142,12 +14140,6 @@ msgstr "기능"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Features active until"
 msgstr "기능 활성 유지 기한"
-
-#. js-lingui-id: YirHq7
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
-#: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
-msgid "Feedback"
-msgstr "피드백"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -20650,7 +20642,7 @@ msgid "Next record"
 msgstr "다음 레코드"
 
 #. js-lingui-id: +VXdSO
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Next request"
 msgstr "다음 요청"
 
@@ -23529,7 +23521,7 @@ msgid "Pending"
 msgstr "보류 중"
 
 #. js-lingui-id: 2B0V9T
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Pending requests"
 msgstr "대기 중인 요청"
 
@@ -23840,7 +23832,7 @@ msgstr "고정됨"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownListPinnedFieldContent.tsx
 msgid "Pinned field"
-msgstr ""
+msgstr "고정된 필드"
 
 #. js-lingui-id: OFY07S
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
@@ -24183,7 +24175,7 @@ msgid "Previous record"
 msgstr "이전 레코드"
 
 #. js-lingui-id: ToM1t/
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Previous request"
 msgstr "이전 요청"
 
@@ -25629,10 +25621,10 @@ msgstr "정렬 제거"
 msgid "Remove sorting?"
 msgstr "정렬을 제거 하시겠습니까?"
 
-#. js-lingui-id: J8gtSc
+#. js-lingui-id: koiY9C
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would."
-msgstr "사용자에게 할당 가능한 역할에서 API 키의 메시지 및 캘린더 액세스를 제거합니다. 비활성화된 동안 해당 API 키는 채널을 소유하지 않은 구성원처럼 이를 읽습니다."
+msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would, and keep their role's write access to them."
+msgstr "사용자에게 할당 가능한 역할에 있는 API 키의 메시지 및 캘린더 액세스를 제거합니다. 해제된 동안 해당 API 키는 채널을 소유하지 않은 멤버처럼 이를 읽으며, 역할의 쓰기 액세스는 유지합니다."
 
 #. js-lingui-id: yBC05U
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -25786,7 +25778,7 @@ msgid "Request"
 msgstr "요청"
 
 #. js-lingui-id: tZ7Xci
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Request {requestNumber} of {requestCount}"
 msgstr "요청 {requestNumber} / {requestCount}"
 
@@ -27176,7 +27168,7 @@ msgstr "채팅 검색 중..."
 #. js-lingui-id: xrtPMt
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "Searching records..."
-msgstr ""
+msgstr "레코드 검색 중..."
 
 #. js-lingui-id: KhCAL1
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -27349,7 +27341,7 @@ msgstr "함수 보기"
 #. js-lingui-id: kuQBTx
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "See in search results"
-msgstr ""
+msgstr "검색 결과에서 보기"
 
 #. js-lingui-id: 1HzZ+y
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -28196,6 +28188,7 @@ msgstr "<0>데이터베이스</0>를 설정하는 중..."
 #. js-lingui-id: Tz0i8g
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/command-menu-item/utils/getCommandMenuItemSubtitle.ts
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
@@ -28757,7 +28750,6 @@ msgstr "정션 오브젝트를 건너뛰기(다대다 관계와 유사)"
 
 #. js-lingui-id: 9NyAH9
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
 msgid "Skipped"
 msgstr "건너뜀"
@@ -30143,11 +30135,6 @@ msgstr "팀원"
 #: src/modules/getting-started/components/GettingStartedMailboxAction.tsx
 msgid "Teammates see who you talk to, not what you write."
 msgstr "팀원은 누구와 대화하는지는 볼 수 있지만, 무엇을 작성하는지는 볼 수 없습니다."
-
-#. js-lingui-id: XpPpz7
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
-msgid "Tell the agent what to change"
-msgstr "에이전트에게 변경할 내용을 알려주세요"
 
 #. js-lingui-id: lKXcJz
 #: src/modules/settings/emailing-domains/utils/getEmailingDomainStatusDisplay.ts
@@ -32158,6 +32145,11 @@ msgstr "터키어"
 msgid "Turn into"
 msgstr "변환"
 
+#. js-lingui-id: rjkNOe
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Turn on for a workspace that reported broken links, merges or deletes. Gives the Admin role back its write access to messages and calendar events, without letting it see more of them."
+msgstr "링크 손상, 병합 또는 삭제를 보고한 워크스페이스에 대해 켭니다. 관리자 역할이 더 많은 메시지와 캘린더 이벤트를 볼 수 있게 하지 않으면서, 해당 항목에 대한 쓰기 액세스를 다시 부여합니다."
+
 #. js-lingui-id: Njwcqh
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Turn on notifications"
@@ -34083,6 +34075,7 @@ msgid "Wait for Event"
 msgstr "이벤트 대기"
 
 #. js-lingui-id: 3wIkaN
+#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 #: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "첨부 파일 업로드가 완료될 때까지 기다리세요."

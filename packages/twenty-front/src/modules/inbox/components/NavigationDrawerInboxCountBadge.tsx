@@ -4,7 +4,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledCount = styled.span`
   display: flex;
-  padding-right: ${themeCssVariables.spacing['1.5']};
+  padding-right: calc(${themeCssVariables.spacing[1]} - 1px);
 `;
 
 type NavigationDrawerInboxCountBadgeProps = {

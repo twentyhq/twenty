@@ -81,6 +81,7 @@ export const buildDefaultLayoutNavigationMenuItemsToCreate = ({
     link: null,
     nativePageKey: null,
     builtInSectionKey,
+    visibleItemLimit: null,
     isActive: true,
     overrides: null,
     userWorkspaceId: null,

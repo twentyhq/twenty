@@ -12,6 +12,8 @@ import { TELEGRAM_ASSISTANT_EMPTY_RESPONSE_FAILURE_TEXT } from 'src/logic-functi
 import { TELEGRAM_ASSISTANT_FAILURE_TEXT } from 'src/logic-functions/constants/telegram-assistant-failure-text';
 import { TELEGRAM_ASSISTANT_HELP_TEXT } from 'src/logic-functions/constants/telegram-assistant-help-text';
 import { TELEGRAM_ASSISTANT_STILL_RUNNING_TEXT } from 'src/logic-functions/constants/telegram-assistant-still-running-text';
+import { TELEGRAM_FEEDBACK_NOT_SAVED_TEXT } from 'src/logic-functions/constants/telegram-feedback-not-saved-text';
+import { TELEGRAM_FEEDBACK_SAVED_TEXT } from 'src/logic-functions/constants/telegram-feedback-saved-text';
 import { TELEGRAM_LATE_ANSWER_CHECK_DELAY_MS } from 'src/logic-functions/constants/telegram-late-answer-check-delay-ms';
 import { TELEGRAM_LATE_ANSWER_GIVE_UP_AFTER_MS } from 'src/logic-functions/constants/telegram-late-answer-give-up-after-ms';
 import { telegramLateAnswerHandler } from 'src/logic-functions/telegram-late-answer';
@@ -51,6 +53,15 @@ vi.mock('src/logic-functions/utils/fetch-workspace-base-url', () => ({
 
 const CHAT_ID = 42;
 const ANSWER = 'You have **3 open deals**.';
+
+const FEEDBACK_KEYBOARD = {
+  inline_keyboard: [
+    [
+      { text: '\u{1F44D}', callback_data: 'feedback:POSITIVE:request-1' },
+      { text: '\u{1F44E}', callback_data: 'feedback:NEGATIVE:request-1' },
+    ],
+  ],
+};
 
 const completedRun = (response: string) => ({
   success: true,
@@ -131,7 +142,11 @@ describe('answering a question from Telegram', () => {
       action: 'typing',
     });
     expect(callsTo('sendRichMessage').map((call) => call.params)).toEqual([
-      { chat_id: CHAT_ID, rich_message: { markdown: ANSWER } },
+      {
+        chat_id: CHAT_ID,
+        rich_message: { markdown: ANSWER },
+        reply_markup: FEEDBACK_KEYBOARD,
+      },
     ]);
     expect(coreFake.state.requests).toEqual([
       expect.objectContaining({
@@ -351,7 +366,11 @@ describe('answering a question from Telegram', () => {
         'SKIPPED',
       ]);
       expect(callsTo('sendRichMessage').map((call) => call.params)).toEqual([
-        { chat_id: CHAT_ID, rich_message: { markdown: ANSWER } },
+        {
+          chat_id: CHAT_ID,
+          rich_message: { markdown: ANSWER },
+          reply_markup: FEEDBACK_KEYBOARD,
+        },
       ]);
       expect(coreFake.state.requests[0]).toMatchObject({
         status: 'DONE',
@@ -406,7 +425,7 @@ describe('answering a question from Telegram', () => {
       outcome: 'ANSWERED',
     });
     expect(callsTo('sendMessage').map((call) => call.params)).toEqual([
-      { chat_id: CHAT_ID, text: ANSWER },
+      { chat_id: CHAT_ID, text: ANSWER, reply_markup: FEEDBACK_KEYBOARD },
     ]);
   });
 
@@ -462,6 +481,65 @@ describe('answering a question from Telegram', () => {
     await expect(pending).resolves.toEqual({ outcome: 'FAILED' });
     expect(callsTo('sendRichMessage')).toHaveLength(1);
     expect(coreFake.state.requests[0]).toMatchObject({ status: 'FAILED' });
+  });
+
+  describe('rating an answer', () => {
+    const tap = ({
+      data,
+      userId = CHAT_ID,
+    }: {
+      data: string;
+      userId?: number;
+    }) =>
+      telegramUpdateHandler(
+        {
+          update: {
+            callback_query: {
+              id: 'callback-1',
+              from: { id: userId, first_name: 'Ada' },
+              data,
+            },
+          },
+        },
+        { workspaceId: 'workspace-1' },
+      );
+
+    beforeEach(async () => {
+      await send({ text: 'How many open deals?' });
+    });
+
+    it('saves the thumb the member tapped and lets them change it', async () => {
+      await expect(
+        tap({ data: 'feedback:POSITIVE:request-1' }),
+      ).resolves.toEqual({ outcome: 'FEEDBACK_SAVED' });
+      expect(coreFake.state.requests[0]).toMatchObject({
+        feedback: 'POSITIVE',
+      });
+      expect(callsTo('answerCallbackQuery').map((call) => call.params)).toEqual(
+        [
+          {
+            callback_query_id: 'callback-1',
+            text: TELEGRAM_FEEDBACK_SAVED_TEXT,
+          },
+        ],
+      );
+
+      await tap({ data: 'feedback:NEGATIVE:request-1' });
+
+      expect(coreFake.state.requests[0]).toMatchObject({
+        feedback: 'NEGATIVE',
+      });
+    });
+
+    it('does not let another account rate the answer', async () => {
+      await expect(
+        tap({ data: 'feedback:NEGATIVE:request-1', userId: 43 }),
+      ).resolves.toEqual({ outcome: 'FEEDBACK_NOT_SAVED' });
+      expect(coreFake.state.requests[0].feedback).toBeUndefined();
+      expect(callsTo('answerCallbackQuery')[0].params.text).toBe(
+        TELEGRAM_FEEDBACK_NOT_SAVED_TEXT,
+      );
+    });
   });
 
   it('answers a command with the help text, without running the agent', async () => {

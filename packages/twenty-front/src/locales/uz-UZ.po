@@ -2515,11 +2515,6 @@ msgstr "Elektron pochta kanalini qo‘shish"
 msgid "Add embedded website"
 msgstr "Ichki o‘rnatilgan veb-saytni qo‘shish"
 
-#. js-lingui-id: 6kC3KJ
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCardLayout.tsx
-msgid "Add feedback"
-msgstr "Fikr-mulohaza qo‘shish"
-
 #. js-lingui-id: Va3xJe
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderLabelIdentifierCellPlusButton.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -2608,7 +2603,7 @@ msgstr "Oldin band qo‘shish"
 #. js-lingui-id: /kLKYB
 #: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Add item to {targetSectionName}"
-msgstr ""
+msgstr "Elementni {targetSectionName} bo‘limiga qo‘shish"
 
 #. js-lingui-id: VzGJRl
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
@@ -3037,6 +3032,11 @@ msgstr "Admin"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Admin & Member"
 msgstr "Administrator va a’zo"
+
+#. js-lingui-id: ZHWySn
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Admin channel write access"
+msgstr "Admin kanaliga yozish ruxsati"
 
 #. js-lingui-id: SsHJsm
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -4921,6 +4921,8 @@ msgstr "Faylni biriktirish"
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAttachFileButton.tsx
+#: src/modules/ai-chat/composer/components/AiChatAttachFileButton.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Attach files"
@@ -6175,6 +6177,7 @@ msgstr "Bekor qilingan vaqt"
 
 #. js-lingui-id: vv7kpg
 #: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 msgid "Cancelled"
 msgstr "Bekor qilingan"
@@ -7120,7 +7123,7 @@ msgstr "Ko‘rib chiqishni yopish"
 #. js-lingui-id: QBOwbf
 #: src/modules/navigation/components/NavigationDrawerCloseSettingsButton.tsx
 msgid "Close settings"
-msgstr ""
+msgstr "Sozlamalarni yopish"
 
 #. js-lingui-id: saip/v
 #: src/modules/side-panel/components/SidePanelCloseButton.tsx
@@ -7254,7 +7257,7 @@ msgstr "{heading} ni yig‘ish"
 #. js-lingui-id: LeVkuA
 #: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Collapse all sections"
-msgstr ""
+msgstr "Barcha bo‘limlarni yig‘ish"
 
 #. js-lingui-id: kBUgVh
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -10878,11 +10881,6 @@ msgstr "To‘g‘ridan-to‘g‘ri xabarlar"
 msgid "Direct messages and mentions"
 msgstr "Shaxsiy xabarlar va eslatmalar"
 
-#. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
-msgid "Direct messages don't support attachments."
-msgstr "To‘g‘ridan-to‘g‘ri xabarlar qo‘shimchalarni qo‘llab-quvvatlamaydi."
-
 #. js-lingui-id: +ILAOG
 #: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
 msgid "Direct messages, mentions and chats assigned to you"
@@ -13217,7 +13215,7 @@ msgstr "{heading} ni kengaytirish"
 #. js-lingui-id: m2n9ZO
 #: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Expand all sections"
-msgstr ""
+msgstr "Barcha bo‘limlarni kengaytirish"
 
 #. js-lingui-id: JjrOSL
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -14142,12 +14140,6 @@ msgstr "Xususiyatlar"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Features active until"
 msgstr "Funksiyalar quyidagi vaqtgacha faol"
-
-#. js-lingui-id: YirHq7
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
-#: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
-msgid "Feedback"
-msgstr "Fikr-mulohaza"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -20650,7 +20642,7 @@ msgid "Next record"
 msgstr "Keyingi yozuv"
 
 #. js-lingui-id: +VXdSO
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Next request"
 msgstr "Keyingi so‘rov"
 
@@ -23529,7 +23521,7 @@ msgid "Pending"
 msgstr "Kutilmoqda"
 
 #. js-lingui-id: 2B0V9T
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Pending requests"
 msgstr "Kutilayotgan so‘rovlar"
 
@@ -23840,7 +23832,7 @@ msgstr "Mahkamlangan"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownListPinnedFieldContent.tsx
 msgid "Pinned field"
-msgstr ""
+msgstr "Mahkamlangan maydon"
 
 #. js-lingui-id: OFY07S
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
@@ -24183,7 +24175,7 @@ msgid "Previous record"
 msgstr "Oldingi yozuv"
 
 #. js-lingui-id: ToM1t/
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Previous request"
 msgstr "Oldingi so‘rov"
 
@@ -25629,10 +25621,10 @@ msgstr "Saralashni olib tashlash"
 msgid "Remove sorting?"
 msgstr "Saralashni olib tashlaysizmi?"
 
-#. js-lingui-id: J8gtSc
+#. js-lingui-id: koiY9C
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would."
-msgstr "Foydalanuvchilarga tayinlanishi mumkin bo‘lgan rollardagi API kalitlarining xabarlar va taqvimga kirishini olib tashlang. O‘chirilganida, ushbu API kalitlari ularni kanal egasi bo‘lmagan a’zo kabi o‘qiydi."
+msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would, and keep their role's write access to them."
+msgstr "Foydalanuvchilarga tayinlanishi mumkin bo‘lgan rollardagi API kalitlarining xabarlar va taqvimga kirish ruxsatini olib tashlang. O‘chirilganida, bu API kalitlari ularni kanalga egalik qilmaydigan a’zo kabi o‘qiydi va ularga nisbatan o‘z rolidagi yozish ruxsatini saqlab qoladi."
 
 #. js-lingui-id: yBC05U
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -25786,7 +25778,7 @@ msgid "Request"
 msgstr "So‘rov"
 
 #. js-lingui-id: tZ7Xci
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Request {requestNumber} of {requestCount}"
 msgstr "{requestCount} tadan {requestNumber}-so‘rov"
 
@@ -27176,7 +27168,7 @@ msgstr "Chatlar qidirilmoqda..."
 #. js-lingui-id: xrtPMt
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "Searching records..."
-msgstr ""
+msgstr "Yozuvlar qidirilmoqda..."
 
 #. js-lingui-id: KhCAL1
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -27349,7 +27341,7 @@ msgstr "Funksiyani ko‘rish"
 #. js-lingui-id: kuQBTx
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "See in search results"
-msgstr ""
+msgstr "Qidiruv natijalarida ko‘rish"
 
 #. js-lingui-id: 1HzZ+y
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -28196,6 +28188,7 @@ msgstr "<0>Maʼlumotlar bazangiz</0> sozlanmoqda..."
 #. js-lingui-id: Tz0i8g
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/command-menu-item/utils/getCommandMenuItemSubtitle.ts
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
@@ -28757,7 +28750,6 @@ msgstr "Junction obyektini o‘tkazib yuborish (ko‘pdan-ko‘pga munosabatlarg
 
 #. js-lingui-id: 9NyAH9
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
 msgid "Skipped"
 msgstr "O‘tkazib yuborilgan"
@@ -30143,11 +30135,6 @@ msgstr "Jamoa a’zolari"
 #: src/modules/getting-started/components/GettingStartedMailboxAction.tsx
 msgid "Teammates see who you talk to, not what you write."
 msgstr "Jamoa a’zolari nima yozishingizni emas, kim bilan gaplashishingizni ko‘radi."
-
-#. js-lingui-id: XpPpz7
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
-msgid "Tell the agent what to change"
-msgstr "Agentga nimani o‘zgartirish kerakligini ayting"
 
 #. js-lingui-id: lKXcJz
 #: src/modules/settings/emailing-domains/utils/getEmailingDomainStatusDisplay.ts
@@ -32158,6 +32145,11 @@ msgstr "Turkcha"
 msgid "Turn into"
 msgstr "O'zgartirish"
 
+#. js-lingui-id: rjkNOe
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Turn on for a workspace that reported broken links, merges or deletes. Gives the Admin role back its write access to messages and calendar events, without letting it see more of them."
+msgstr "Buzilgan havolalar, birlashtirishlar yoki o‘chirishlar haqida xabar bergan ish maydoni uchun yoqing. Admin roliga xabarlar va taqvim voqealariga yozish ruxsatini qaytaradi, biroq unga ularning ko‘prog‘ini ko‘rishga ruxsat bermaydi."
+
 #. js-lingui-id: Njwcqh
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Turn on notifications"
@@ -34083,6 +34075,7 @@ msgid "Wait for Event"
 msgstr "Hodisani kutish"
 
 #. js-lingui-id: 3wIkaN
+#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 #: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Biriktirmalar yuklanishi tugashini kuting."

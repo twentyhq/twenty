@@ -12,13 +12,17 @@ import { TELEGRAM_ASSISTANT_REQUEST_TIMEOUT_SECONDS } from 'src/logic-functions/
 import { TELEGRAM_ASSISTANT_TEXT_ONLY_TEXT } from 'src/logic-functions/constants/telegram-assistant-text-only-text';
 import { TELEGRAM_CONNECTED_TEXT } from 'src/logic-functions/constants/telegram-connected-text';
 import { TELEGRAM_DISCONNECTED_TEXT } from 'src/logic-functions/constants/telegram-disconnected-text';
+import { TELEGRAM_FEEDBACK_NOT_SAVED_TEXT } from 'src/logic-functions/constants/telegram-feedback-not-saved-text';
+import { TELEGRAM_FEEDBACK_SAVED_TEXT } from 'src/logic-functions/constants/telegram-feedback-saved-text';
 import { TELEGRAM_LINK_CONFLICT_TEXT } from 'src/logic-functions/constants/telegram-link-conflict-text';
 import { TELEGRAM_LINK_EXPIRED_TEXT } from 'src/logic-functions/constants/telegram-link-expired-text';
 import { TELEGRAM_NOT_CONNECTED_TEXT } from 'src/logic-functions/constants/telegram-not-connected-text';
 import { findTelegramUserLinks } from 'src/logic-functions/data/find-telegram-user-links';
+import { saveTelegramAssistantFeedback } from 'src/logic-functions/data/save-telegram-assistant-feedback';
 import { type TelegramUpdateHandlerResult } from 'src/logic-functions/types/telegram-update-handler-result.type';
 import { type TelegramUpdatesDispatchPayload } from 'src/logic-functions/types/telegram-updates-dispatch-payload.type';
 import { answerTelegramAssistantRequest } from 'src/logic-functions/utils/answer-telegram-assistant-request';
+import { callTelegramApiOrThrow } from 'src/logic-functions/utils/call-telegram-api-or-throw';
 import { completeTelegramUserLink } from 'src/logic-functions/utils/complete-telegram-user-link';
 import { disconnectTelegramUser } from 'src/logic-functions/utils/disconnect-telegram-user';
 import { getTelegramBotCredentialsOrThrow } from 'src/logic-functions/utils/get-telegram-bot-credentials-or-throw';
@@ -50,6 +54,28 @@ export const telegramUpdateHandler = async (
     await disconnectTelegramUser({ client, telegramUserId });
 
     return { outcome: 'DISCONNECTED' };
+  }
+
+  if (event.kind === 'FEEDBACK') {
+    const isSaved = await saveTelegramAssistantFeedback({
+      client,
+      id: event.requestId,
+      telegramUserId,
+      feedback: event.feedback,
+    });
+
+    await callTelegramApiOrThrow({
+      botToken,
+      method: 'answerCallbackQuery',
+      params: {
+        callback_query_id: event.callbackQueryId,
+        text: isSaved
+          ? TELEGRAM_FEEDBACK_SAVED_TEXT
+          : TELEGRAM_FEEDBACK_NOT_SAVED_TEXT,
+      },
+    });
+
+    return { outcome: isSaved ? 'FEEDBACK_SAVED' : 'FEEDBACK_NOT_SAVED' };
   }
 
   const reply = (text: string) =>
@@ -124,7 +150,7 @@ export default defineLogicFunction({
   universalIdentifier: TELEGRAM_UPDATE_HANDLER_UNIVERSAL_IDENTIFIER,
   name: 'telegram-update-handler',
   description:
-    'Receives a verified Telegram update from the updates route, in the workspace that claimed its sender or its connection link. Completes a connection started from Twenty, removes it on /disconnect or when the user blocks the bot, and otherwise records the message as a Telegram Assistant Request, once per chat and message id, runs the Telegram Assistant agent as the linked member and sends the answer back to the chat.',
+    'Receives a verified Telegram update from the updates route, in the workspace that claimed its sender or its connection link. Completes a connection started from Twenty, removes it on /disconnect or when the user blocks the bot, saves a thumbs up or down tapped under an answer on its request, and otherwise records the message as a Telegram Assistant Request, once per chat and message id, runs the Telegram Assistant agent as the linked member and sends the answer back to the chat.',
   timeoutSeconds: TELEGRAM_ASSISTANT_REQUEST_TIMEOUT_SECONDS,
   handler: telegramUpdateHandler,
 });

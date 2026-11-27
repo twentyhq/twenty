@@ -8,29 +8,33 @@ type SendInboxMessageToEachMemberResult = {
   failedSends: { workspaceMemberId: string; error: unknown }[];
 };
 
+// Stopping at a member's first failure keeps a retry from posting their messages out of order.
 export const sendInboxMessageToEachMember = async ({
   workspaceMemberIds,
-  buildMessage,
+  buildMessages,
 }: {
   workspaceMemberIds: string[];
-  buildMessage: (workspaceMemberId: string) => InboxMessage;
+  buildMessages: (workspaceMemberId: string) => InboxMessage[];
 }): Promise<SendInboxMessageToEachMemberResult> => {
   const skippedWorkspaceMemberIds: string[] = [];
   const failedSends: SendInboxMessageToEachMemberResult['failedSends'] = [];
 
   for (const workspaceMemberId of workspaceMemberIds) {
-    try {
-      await sendInboxMessage({
-        ...buildMessage(workspaceMemberId),
-        workspaceMemberIds: [workspaceMemberId],
-      });
-    } catch (error) {
-      if (isNotFoundError(error)) {
-        skippedWorkspaceMemberIds.push(workspaceMemberId);
-        continue;
-      }
+    for (const message of buildMessages(workspaceMemberId)) {
+      try {
+        await sendInboxMessage({
+          ...message,
+          workspaceMemberIds: [workspaceMemberId],
+        });
+      } catch (error) {
+        if (isNotFoundError(error)) {
+          skippedWorkspaceMemberIds.push(workspaceMemberId);
+        } else {
+          failedSends.push({ workspaceMemberId, error });
+        }
 
-      failedSends.push({ workspaceMemberId, error });
+        break;
+      }
     }
   }
 

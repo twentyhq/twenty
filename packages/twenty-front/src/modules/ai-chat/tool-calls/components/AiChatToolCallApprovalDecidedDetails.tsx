@@ -28,7 +28,7 @@ const StyledNote = styled.div<{ isError: boolean }>`
       : themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.sm};
   overflow-wrap: anywhere;
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[1]} 0;
 `;
 
 const FRONT_COMPONENT_STATUS_BY_APPROVAL_STATUS: Record<
@@ -69,7 +69,7 @@ export const AiChatToolCallApprovalDecidedDetails = ({
   const isDeletedRecord = template === 'recordDelete' && status === 'approved';
 
   return (
-    <StyledAiChatAskCard>
+    <StyledAiChatAskCard isPadded>
       <AiChatToolCallApprovalCardHeader
         title={getProposedToolCallLabel(proposal)}
         Icon={isEmail ? IconMail : undefined}

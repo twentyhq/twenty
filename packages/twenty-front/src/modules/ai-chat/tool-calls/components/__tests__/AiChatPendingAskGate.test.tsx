@@ -2,6 +2,7 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { getDefaultStore } from 'jotai';
 import {
   type AskQuestionItem,
   type ProposedToolCall,
@@ -9,6 +10,7 @@ import {
 } from 'twenty-shared/ai';
 
 import { AiChatPendingAskGate } from '@/ai-chat/tool-calls/components/AiChatPendingAskGate';
+import { aiChatRecordApprovalAnsweringToolCallIdsFamilyState } from '@/ai-chat/tool-calls/states/aiChatRecordApprovalAnsweringToolCallIdsFamilyState';
 import { type AiChatPendingQuestion } from '@/ai-chat/tool-calls/types/AiChatPendingQuestion';
 
 const useAiChatPendingToolCalls = jest.fn();
@@ -43,6 +45,11 @@ jest.mock('@/ai-chat/tool-calls/components/AiChatFormCard', () => ({
     </div>
   ),
 }));
+jest.mock('@/ai-chat/tool-calls/components/AiChatRecordApprovalDeck', () => ({
+  AiChatRecordApprovalDeck: () => (
+    <div role="group" aria-label="Record approvals" />
+  ),
+}));
 jest.mock('@/ai-chat/tool-calls/components/AiChatToolCallApprovalCard', () => ({
   AiChatToolCallApprovalCard: ({
     proposal,
@@ -51,6 +58,7 @@ jest.mock('@/ai-chat/tool-calls/components/AiChatToolCallApprovalCard', () => ({
   }) => (
     <div role="group" aria-label="Tool call approval">
       {proposal.summary}
+      <textarea aria-label="Email body" />
     </div>
   ),
 }));
@@ -71,6 +79,21 @@ const EMAIL_APPROVAL = {
     arguments: {},
     template: 'email',
   },
+  isPostedByWorkflow: false,
+};
+
+const RECORD_APPROVAL = {
+  toolCallId: 'call-5',
+  kind: 'toolCallApproval',
+  proposal: {
+    toolName: 'create_person',
+    toolLabel: 'Create person',
+    summary: 'Ada Lovelace',
+    arguments: {},
+    template: 'recordCreate',
+    objectNameSingular: 'person',
+  },
+  isPostedByWorkflow: false,
 };
 
 const renderGate = () =>
@@ -100,7 +123,7 @@ describe('AiChatPendingAskGate', () => {
     expect(screen.queryByRole('textbox', { name: 'Message' })).toBeNull();
   });
 
-  it('shows an email waiting for approval in place of the composer', () => {
+  it('keeps the composer usable under an email waiting for approval', () => {
     useAiChatPendingToolCalls.mockReturnValue([EMAIL_APPROVAL]);
 
     renderGate();
@@ -108,7 +131,45 @@ describe('AiChatPendingAskGate', () => {
     expect(
       screen.getByRole('group', { name: 'Tool call approval' }),
     ).toHaveTextContent('Your renewal');
+    expect(screen.getByRole('textbox', { name: 'Message' })).toBeVisible();
+  });
+
+  it('shows an approval a workflow waits on in place of the composer', () => {
+    useAiChatPendingToolCalls.mockReturnValue([
+      { ...EMAIL_APPROVAL, isPostedByWorkflow: true },
+    ]);
+
+    renderGate();
+
+    expect(
+      screen.getByRole('group', { name: 'Tool call approval' }),
+    ).toHaveTextContent('Your renewal');
     expect(screen.queryByRole('textbox', { name: 'Message' })).toBeNull();
+  });
+
+  it.each([
+    {
+      name: 'shows a last record approval on its own card',
+      answeringToolCallIds: [],
+      groupName: 'Tool call approval',
+    },
+    {
+      name: 'keeps the deck while its last record approval is being answered',
+      answeringToolCallIds: ['call-5'],
+      groupName: 'Record approvals',
+    },
+  ])('$name', ({ answeringToolCallIds, groupName }) => {
+    useAiChatPendingToolCalls.mockReturnValue([RECORD_APPROVAL]);
+    getDefaultStore().set(
+      aiChatRecordApprovalAnsweringToolCallIdsFamilyState.atomFamily({
+        threadId: 'thread-1',
+      }),
+      answeringToolCallIds,
+    );
+
+    renderGate();
+
+    expect(screen.getByRole('group', { name: groupName })).toBeVisible();
   });
 
   it('shows a form to fill in place of the composer', () => {
@@ -182,6 +243,33 @@ describe('AiChatPendingAskGate', () => {
 
     expect(screen.getByText('Request 2 of 2')).toBeInTheDocument();
     expect(screen.getByRole('group', { name: 'Form' })).toBeVisible();
+  });
+
+  it('keeps an edited email draft once the question beside it is answered', async () => {
+    useAiChatPendingToolCalls.mockReturnValue([
+      EMAIL_APPROVAL,
+      { toolCallId: 'call-3', kind: 'question', question: QUESTION },
+    ]);
+
+    const { rerender } = renderGate();
+
+    await userEvent.type(
+      screen.getByRole('textbox', { name: 'Email body' }),
+      'See you Monday',
+    );
+    useAiChatPendingToolCalls.mockReturnValue([EMAIL_APPROVAL]);
+    rerender(
+      <I18nProvider i18n={i18n}>
+        <AiChatPendingAskGate>
+          <textarea aria-label="Message" />
+        </AiChatPendingAskGate>
+      </I18nProvider>,
+    );
+
+    expect(screen.getByRole('textbox', { name: 'Email body' })).toHaveValue(
+      'See you Monday',
+    );
+    expect(screen.getByRole('textbox', { name: 'Message' })).toBeVisible();
   });
 
   it('opens another conversation on its oldest request', async () => {

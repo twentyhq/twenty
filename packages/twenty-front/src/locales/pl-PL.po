@@ -2515,11 +2515,6 @@ msgstr "Dodaj kanał e-mail"
 msgid "Add embedded website"
 msgstr "Dodaj osadzoną stronę internetową"
 
-#. js-lingui-id: 6kC3KJ
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCardLayout.tsx
-msgid "Add feedback"
-msgstr "Dodaj opinię"
-
 #. js-lingui-id: Va3xJe
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderLabelIdentifierCellPlusButton.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -2608,7 +2603,7 @@ msgstr "Dodaj element powyżej"
 #. js-lingui-id: /kLKYB
 #: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Add item to {targetSectionName}"
-msgstr ""
+msgstr "Dodaj element do {targetSectionName}"
 
 #. js-lingui-id: VzGJRl
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
@@ -3037,6 +3032,11 @@ msgstr ""
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Admin & Member"
 msgstr "Administrator i członek"
+
+#. js-lingui-id: ZHWySn
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Admin channel write access"
+msgstr "Dostęp administratora do zapisu na kanale"
 
 #. js-lingui-id: SsHJsm
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -4921,6 +4921,8 @@ msgstr "Dołącz plik"
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAttachFileButton.tsx
+#: src/modules/ai-chat/composer/components/AiChatAttachFileButton.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Attach files"
@@ -6175,6 +6177,7 @@ msgstr "Anulowano w dniu"
 
 #. js-lingui-id: vv7kpg
 #: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 msgid "Cancelled"
 msgstr "Anulowano"
@@ -7120,7 +7123,7 @@ msgstr "Zamknij podgląd"
 #. js-lingui-id: QBOwbf
 #: src/modules/navigation/components/NavigationDrawerCloseSettingsButton.tsx
 msgid "Close settings"
-msgstr ""
+msgstr "Zamknij ustawienia"
 
 #. js-lingui-id: saip/v
 #: src/modules/side-panel/components/SidePanelCloseButton.tsx
@@ -7254,7 +7257,7 @@ msgstr "Zwiń {heading}"
 #. js-lingui-id: LeVkuA
 #: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Collapse all sections"
-msgstr ""
+msgstr "Zwiń wszystkie sekcje"
 
 #. js-lingui-id: kBUgVh
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -10878,11 +10881,6 @@ msgstr "Wiadomości bezpośrednie"
 msgid "Direct messages and mentions"
 msgstr "Wiadomości bezpośrednie i wzmianki"
 
-#. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
-msgid "Direct messages don't support attachments."
-msgstr "Wiadomości bezpośrednie nie obsługują załączników."
-
 #. js-lingui-id: +ILAOG
 #: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
 msgid "Direct messages, mentions and chats assigned to you"
@@ -13217,7 +13215,7 @@ msgstr "Rozwiń {heading}"
 #. js-lingui-id: m2n9ZO
 #: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Expand all sections"
-msgstr ""
+msgstr "Rozwiń wszystkie sekcje"
 
 #. js-lingui-id: JjrOSL
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -14142,12 +14140,6 @@ msgstr "Funkcje"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Features active until"
 msgstr "Funkcje aktywne do"
-
-#. js-lingui-id: YirHq7
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
-#: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
-msgid "Feedback"
-msgstr "Informacje zwrotne"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -20650,7 +20642,7 @@ msgid "Next record"
 msgstr "Następny rekord"
 
 #. js-lingui-id: +VXdSO
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Next request"
 msgstr "Następne żądanie"
 
@@ -23529,7 +23521,7 @@ msgid "Pending"
 msgstr "Oczekujące"
 
 #. js-lingui-id: 2B0V9T
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Pending requests"
 msgstr "Oczekujące żądania"
 
@@ -23840,7 +23832,7 @@ msgstr "Przypięte"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownListPinnedFieldContent.tsx
 msgid "Pinned field"
-msgstr ""
+msgstr "Przypięte pole"
 
 #. js-lingui-id: OFY07S
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
@@ -24183,7 +24175,7 @@ msgid "Previous record"
 msgstr "Poprzedni rekord"
 
 #. js-lingui-id: ToM1t/
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Previous request"
 msgstr "Poprzednie żądanie"
 
@@ -25629,10 +25621,10 @@ msgstr "Usuń sortowanie"
 msgid "Remove sorting?"
 msgstr "Usunąć sortowanie?"
 
-#. js-lingui-id: J8gtSc
+#. js-lingui-id: koiY9C
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would."
-msgstr "Usuń dostęp kluczy API do wiadomości i kalendarza w rolach, które można przypisywać użytkownikom. Gdy ta opcja jest wyłączona, te klucze API odczytują je tak, jak zrobiłby to członek niebędący właścicielem kanału."
+msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would, and keep their role's write access to them."
+msgstr "Usuń dostęp kluczy API do wiadomości i kalendarza w rolach, które można przypisywać użytkownikom. Gdy opcja jest wyłączona, te klucze API odczytują je tak, jak robiłby to członek niebędący właścicielem kanału, i zachowują dostęp swojej roli do zapisu w nich."
 
 #. js-lingui-id: yBC05U
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -25786,7 +25778,7 @@ msgid "Request"
 msgstr "Żądanie"
 
 #. js-lingui-id: tZ7Xci
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Request {requestNumber} of {requestCount}"
 msgstr "Żądanie {requestNumber} z {requestCount}"
 
@@ -27176,7 +27168,7 @@ msgstr "Wyszukiwanie rozmów..."
 #. js-lingui-id: xrtPMt
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "Searching records..."
-msgstr ""
+msgstr "Wyszukiwanie rekordów..."
 
 #. js-lingui-id: KhCAL1
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -27349,7 +27341,7 @@ msgstr "Zobacz funkcję"
 #. js-lingui-id: kuQBTx
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "See in search results"
-msgstr ""
+msgstr "Zobacz w wynikach wyszukiwania"
 
 #. js-lingui-id: 1HzZ+y
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -28196,6 +28188,7 @@ msgstr "Konfigurowanie twojej <0>bazy danych</0>..."
 #. js-lingui-id: Tz0i8g
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/command-menu-item/utils/getCommandMenuItemSubtitle.ts
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
@@ -28757,7 +28750,6 @@ msgstr "Pomiń obiekt łącznikowy (podobny do relacji wiele-do-wielu)"
 
 #. js-lingui-id: 9NyAH9
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
 msgid "Skipped"
 msgstr "Pominięto"
@@ -30143,11 +30135,6 @@ msgstr "Współpracownicy"
 #: src/modules/getting-started/components/GettingStartedMailboxAction.tsx
 msgid "Teammates see who you talk to, not what you write."
 msgstr "Członkowie zespołu widzą, z kim rozmawiasz, ale nie widzą, co piszesz."
-
-#. js-lingui-id: XpPpz7
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
-msgid "Tell the agent what to change"
-msgstr "Powiedz agentowi, co zmienić"
 
 #. js-lingui-id: lKXcJz
 #: src/modules/settings/emailing-domains/utils/getEmailingDomainStatusDisplay.ts
@@ -32158,6 +32145,11 @@ msgstr "turecki"
 msgid "Turn into"
 msgstr "Zmień w"
 
+#. js-lingui-id: rjkNOe
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Turn on for a workspace that reported broken links, merges or deletes. Gives the Admin role back its write access to messages and calendar events, without letting it see more of them."
+msgstr "Włącz w obszarze roboczym, w którym zgłoszono uszkodzone linki, scalenia lub usunięcia. Przywraca roli Administratora dostęp do zapisu wiadomości i wydarzeń kalendarza, nie pozwalając jej na wyświetlanie większej ich liczby."
+
 #. js-lingui-id: Njwcqh
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Turn on notifications"
@@ -34083,6 +34075,7 @@ msgid "Wait for Event"
 msgstr "Czekaj na zdarzenie"
 
 #. js-lingui-id: 3wIkaN
+#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 #: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Poczekaj, aż przesyłanie załączników się zakończy."

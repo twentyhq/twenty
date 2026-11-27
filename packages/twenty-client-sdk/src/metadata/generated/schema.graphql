@@ -1870,6 +1870,7 @@ input CreateNavigationMenuItemInput {
   type: NavigationMenuItemType!
   userWorkspaceId: UUID
   viewId: UUID
+  visibleItemLimit: Int
   workflowId: UUID
 }
 
@@ -2564,6 +2565,7 @@ type FeatureFlag {
 }
 
 enum FeatureFlagKey {
+  IS_ADMIN_CHANNEL_WRITE_ACCESS_RESTORED
   IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED
   IS_AI_CHAT_INBOX_ENABLED
@@ -3942,6 +3944,7 @@ type NavigationMenuItem {
   updatedAt: DateTime!
   userWorkspaceId: UUID
   viewId: UUID
+  visibleItemLimit: Int
   workflowId: UUID
 }
 
@@ -4798,6 +4801,7 @@ type Role {
   agents: [Agent!]!
   apiKeys: [ApiKeyForRole!]!
   applicationId: UUID!
+  areRecordPermissionsEditable: Boolean!
   canAccessAllAgentChatChannels: Boolean!
   canAccessAllTools: Boolean!
   canBeAssignedToAgents: Boolean!
@@ -5101,7 +5105,8 @@ input SendInboxMessageInput {
   text: String!
   threadKey: String!
   title: String!
-  toolCall: JSON
+  toolCall: JSON @deprecated(reason: "Use toolCalls instead.")
+  toolCalls: [JSON!]
   workspaceMemberIds: [UUID!]!
 }
 
@@ -5692,6 +5697,7 @@ input UpdateNavigationMenuItemInput {
   pageLayoutId: UUID
   parentId: UUID
   position: Float
+  visibleItemLimit: Int
 }
 
 input UpdateObjectPayload {

@@ -410,7 +410,6 @@ export { normalizeMcpServerManifest } from './utils/normalizeMcpServerManifest';
 export { normalizeMessagingProviderManifest } from './utils/normalizeMessagingProviderManifest';
 export { normalizeNavigationMenuItemManifest } from './utils/normalizeNavigationMenuItemManifest';
 export { resolveManifestReferenceUniversalIdentifier } from './utils/resolveManifestReferenceUniversalIdentifier';
-export { resolveObjectPermissionValue } from './utils/resolveObjectPermissionValue';
 export { withDeprecatedConnectionProviderReferences } from './utils/withDeprecatedConnectionProviderReferences';
 export { withDeprecatedMcpServerReferences } from './utils/withDeprecatedMcpServerReferences';
 export { withDeprecatedMessagingProviderReferences } from './utils/withDeprecatedMessagingProviderReferences';

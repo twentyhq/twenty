@@ -71,7 +71,6 @@ export const AiChatToolCallApprovalEmailCard = ({
     <AiChatToolCallApprovalCardLayout
       title={getProposedToolCallLabel(proposal)}
       Icon={IconMail}
-      approval={approval}
       actions={
         <>
           <Button

@@ -25,6 +25,7 @@ import { buildAgentChatWebPushNotification } from 'src/engine/metadata-modules/a
 import { getAgentChatWebPushNotificationReason } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-web-push-notification-reason.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { InboxObjectNamesResolverService } from 'src/engine/metadata-modules/ai/ai-history/services/inbox-object-names-resolver.service';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -53,6 +54,7 @@ export class AgentChatWebPushNotificationService {
     private readonly webPushService: WebPushService,
     private readonly tabPresenceService: TabPresenceService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly inboxObjectNamesResolverService: InboxObjectNamesResolverService,
   ) {}
 
   async sendWebPushNotifications({
@@ -309,12 +311,15 @@ export class AgentChatWebPushNotificationService {
     workspaceId: string;
     threadId: string;
   }): Promise<Map<string, AgentChatInboxState>> {
+    const { agentChatThreadParticipant: participantObjectName } =
+      await this.inboxObjectNamesResolverService.resolve(workspaceId);
+
     const participants =
       await this.workspaceOrmManager.executeInWorkspaceContext(
         () =>
           this.workspaceOrmManager
             .getRepositoryWithoutPermissionChecks<AgentChatThreadParticipantRow>(
-              'agentChatThreadParticipant',
+              participantObjectName,
             )
             .find({
               select: [

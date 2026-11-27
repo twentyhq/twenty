@@ -9,17 +9,24 @@ const StyledHeader = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing['0.5']};
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]} 0;
+  padding-left: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledTitleRow = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.primary};
   display: flex;
+  font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[2]};
   min-height: ${themeCssVariables.spacing[6]};
   min-width: 0;
+`;
+
+const StyledIcon = styled.span`
+  color: ${themeCssVariables.font.color.secondary};
+  display: inline-flex;
+  flex-shrink: 0;
 `;
 
 const StyledTitle = styled.span`
@@ -50,7 +57,11 @@ export const AiChatToolCallApprovalCardHeader = ({
   return (
     <StyledHeader>
       <StyledTitleRow>
-        {isDefined(Icon) && <Icon size={theme.icon.size.md} />}
+        {isDefined(Icon) && (
+          <StyledIcon aria-hidden="true">
+            <Icon size={theme.icon.size.md} />
+          </StyledIcon>
+        )}
         <StyledTitle>{title}</StyledTitle>
       </StyledTitleRow>
       {isDefined(summary) && (

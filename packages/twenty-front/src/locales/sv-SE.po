@@ -2515,11 +2515,6 @@ msgstr "Lägg till e-postkanal"
 msgid "Add embedded website"
 msgstr "Lägg till inbäddad webbplats"
 
-#. js-lingui-id: 6kC3KJ
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCardLayout.tsx
-msgid "Add feedback"
-msgstr "Lägg till feedback"
-
 #. js-lingui-id: Va3xJe
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderLabelIdentifierCellPlusButton.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -2608,7 +2603,7 @@ msgstr "Lägg till objekt före"
 #. js-lingui-id: /kLKYB
 #: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Add item to {targetSectionName}"
-msgstr ""
+msgstr "Lägg till objekt i {targetSectionName}"
 
 #. js-lingui-id: VzGJRl
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
@@ -3037,6 +3032,11 @@ msgstr ""
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Admin & Member"
 msgstr "Admin och medlem"
+
+#. js-lingui-id: ZHWySn
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Admin channel write access"
+msgstr "Administratörskanalens skrivåtkomst"
 
 #. js-lingui-id: SsHJsm
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -4921,6 +4921,8 @@ msgstr "Bifoga fil"
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAttachFileButton.tsx
+#: src/modules/ai-chat/composer/components/AiChatAttachFileButton.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Attach files"
@@ -6175,6 +6177,7 @@ msgstr "Uppsagd den"
 
 #. js-lingui-id: vv7kpg
 #: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 msgid "Cancelled"
 msgstr "Avbruten"
@@ -7120,7 +7123,7 @@ msgstr "Stäng förhandsgranskning"
 #. js-lingui-id: QBOwbf
 #: src/modules/navigation/components/NavigationDrawerCloseSettingsButton.tsx
 msgid "Close settings"
-msgstr ""
+msgstr "Stäng inställningar"
 
 #. js-lingui-id: saip/v
 #: src/modules/side-panel/components/SidePanelCloseButton.tsx
@@ -7254,7 +7257,7 @@ msgstr "Fäll ihop {heading}"
 #. js-lingui-id: LeVkuA
 #: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Collapse all sections"
-msgstr ""
+msgstr "Fäll ihop alla avsnitt"
 
 #. js-lingui-id: kBUgVh
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -10878,11 +10881,6 @@ msgstr "Direktmeddelanden"
 msgid "Direct messages and mentions"
 msgstr "Direktmeddelanden och omnämnanden"
 
-#. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
-msgid "Direct messages don't support attachments."
-msgstr "Direktmeddelanden har inte stöd för bilagor."
-
 #. js-lingui-id: +ILAOG
 #: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
 msgid "Direct messages, mentions and chats assigned to you"
@@ -13217,7 +13215,7 @@ msgstr "Expandera {heading}"
 #. js-lingui-id: m2n9ZO
 #: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Expand all sections"
-msgstr ""
+msgstr "Expandera alla avsnitt"
 
 #. js-lingui-id: JjrOSL
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -14142,12 +14140,6 @@ msgstr "Funktioner"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Features active until"
 msgstr "Funktioner aktiva till"
-
-#. js-lingui-id: YirHq7
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
-#: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
-msgid "Feedback"
-msgstr "Återkoppling"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -20652,7 +20644,7 @@ msgid "Next record"
 msgstr "Nästa post"
 
 #. js-lingui-id: +VXdSO
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Next request"
 msgstr "Nästa begäran"
 
@@ -23531,7 +23523,7 @@ msgid "Pending"
 msgstr "Väntar"
 
 #. js-lingui-id: 2B0V9T
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Pending requests"
 msgstr "Väntande förfrågningar"
 
@@ -23842,7 +23834,7 @@ msgstr "Fäst"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownListPinnedFieldContent.tsx
 msgid "Pinned field"
-msgstr ""
+msgstr "Fäst fält"
 
 #. js-lingui-id: OFY07S
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
@@ -24185,7 +24177,7 @@ msgid "Previous record"
 msgstr "Föregående post"
 
 #. js-lingui-id: ToM1t/
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Previous request"
 msgstr "Föregående begäran"
 
@@ -25631,10 +25623,10 @@ msgstr "Ta bort Sortering"
 msgid "Remove sorting?"
 msgstr "Ta bort sortering?"
 
-#. js-lingui-id: J8gtSc
+#. js-lingui-id: koiY9C
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would."
-msgstr "Ta bort API-nycklars åtkomst till meddelanden och kalender för roller som kan tilldelas användare. När funktionen är avstängd läser dessa API-nycklar dem som en medlem som inte äger kanalen skulle göra."
+msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would, and keep their role's write access to them."
+msgstr "Ta bort API-nycklars åtkomst till meddelanden och kalendern för roller som kan tilldelas användare. När den är avstängd läser dessa API-nycklar dem som en medlem som inte äger kanalen skulle göra och behåller sin rolls skrivåtkomst till dem."
 
 #. js-lingui-id: yBC05U
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -25788,7 +25780,7 @@ msgid "Request"
 msgstr "Begäran"
 
 #. js-lingui-id: tZ7Xci
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Request {requestNumber} of {requestCount}"
 msgstr "Begäran {requestNumber} av {requestCount}"
 
@@ -27180,7 +27172,7 @@ msgstr "Söker chattar..."
 #. js-lingui-id: xrtPMt
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "Searching records..."
-msgstr ""
+msgstr "Söker efter poster..."
 
 #. js-lingui-id: KhCAL1
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -27353,7 +27345,7 @@ msgstr "Visa funktion"
 #. js-lingui-id: kuQBTx
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "See in search results"
-msgstr ""
+msgstr "Visa i sökresultaten"
 
 #. js-lingui-id: 1HzZ+y
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -28200,6 +28192,7 @@ msgstr "Konfigurerar din <0>databas</0>..."
 #. js-lingui-id: Tz0i8g
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/command-menu-item/utils/getCommandMenuItemSubtitle.ts
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
@@ -28761,7 +28754,6 @@ msgstr "Hoppa över kopplingsobjektet (liknar många-till-många-relationer)"
 
 #. js-lingui-id: 9NyAH9
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
 msgid "Skipped"
 msgstr "Överhoppad"
@@ -30149,11 +30141,6 @@ msgstr "Teammedlemmar"
 #: src/modules/getting-started/components/GettingStartedMailboxAction.tsx
 msgid "Teammates see who you talk to, not what you write."
 msgstr "Teammedlemmar ser vem du pratar med, inte vad du skriver."
-
-#. js-lingui-id: XpPpz7
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
-msgid "Tell the agent what to change"
-msgstr "Berätta för agenten vad som ska ändras"
 
 #. js-lingui-id: lKXcJz
 #: src/modules/settings/emailing-domains/utils/getEmailingDomainStatusDisplay.ts
@@ -32166,6 +32153,11 @@ msgstr "Turkish"
 msgid "Turn into"
 msgstr "Omvandla till"
 
+#. js-lingui-id: rjkNOe
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Turn on for a workspace that reported broken links, merges or deletes. Gives the Admin role back its write access to messages and calendar events, without letting it see more of them."
+msgstr "Aktivera för en arbetsyta som har rapporterat trasiga länkar, sammanslagningar eller borttagningar. Ger administratörsrollen tillbaka sin skrivåtkomst till meddelanden och kalenderhändelser, utan att låta den se fler av dem."
+
 #. js-lingui-id: Njwcqh
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Turn on notifications"
@@ -34091,6 +34083,7 @@ msgid "Wait for Event"
 msgstr "Vänta på händelse"
 
 #. js-lingui-id: 3wIkaN
+#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 #: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Vänta tills bilagorna har laddats upp."
