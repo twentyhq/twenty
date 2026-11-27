@@ -2,7 +2,6 @@ import { type ReactNode, useMemo } from 'react';
 
 import { AiChatInstanceContext } from '@/ai-chat/contexts/AiChatInstanceContext';
 import { AiChatInstanceEffect } from '@/ai-chat/instance/components/AiChatInstanceEffect';
-import { AiChatThreadViewEffect } from '@/ai-chat/instance/components/AiChatThreadViewEffect';
 import { useIsWorkspaceSetupChat } from '@/ai-chat/hooks/useIsWorkspaceSetupChat';
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
 
@@ -27,7 +26,6 @@ export const AiChatInstance = ({
 
   return (
     <AiChatInstanceContext.Provider value={aiChatInstance}>
-      <AiChatThreadViewEffect threadId={threadId} />
       <AiChatInstanceEffect />
       {isWorkspaceSetupChat && <WorkspaceSetupChatKickoffEffect />}
       {children}
