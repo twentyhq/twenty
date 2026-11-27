@@ -250,6 +250,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "link",
       "nativePageKey",
       "builtInSectionKey",
+      "visibleItemLimit",
       "icon",
       "color",
       "isActive",
@@ -511,13 +512,12 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "name",
       "description",
       "icon",
-      "expression",
-      "bindings",
+      "tree",
       "message",
       "isActive",
     ],
     "propertiesToStringify": [
-      "bindings",
+      "tree",
     ],
   },
   "view": {

@@ -314,10 +314,17 @@ export class AgentCallerConversationService {
       );
     }
 
+    const { result, ...pendingOutput } = buildProposeToolCallPendingOutput(
+      resolution.proposal,
+    );
+
     return {
       toolName: PROPOSE_TOOL_CALL_TOOL_NAME,
       input,
-      output: buildProposeToolCallPendingOutput(resolution.proposal),
+      output: {
+        ...pendingOutput,
+        result: { ...result, isPostedByWorkflow: true },
+      },
     };
   }
 }

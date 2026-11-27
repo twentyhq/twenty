@@ -6621,10 +6621,10 @@ msgctxt "commandMenuItem.label"
 msgid "Go to {objectLabelPlural}"
 msgstr ""
 
-#. js-lingui-id: tKVJbL
+#. js-lingui-id: RQG1+p
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Admin Panel Settings"
+msgid "Go to Admin Panel"
 msgstr ""
 
 #. js-lingui-id: zPVvLp
@@ -6633,10 +6633,16 @@ msgctxt "commandMenuItem.label"
 msgid "Go to Agents"
 msgstr ""
 
-#. js-lingui-id: iLqs3S
+#. js-lingui-id: EiL/A6
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to AI Settings"
+msgid "Go to AI"
+msgstr ""
+
+#. js-lingui-id: OVO+nS
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Go to Apps"
 msgstr ""
 
 #. js-lingui-id: TndVqR
@@ -6645,70 +6651,64 @@ msgctxt "commandMenuItem.label"
 msgid "Go to Apps preferences"
 msgstr ""
 
-#. js-lingui-id: 60o/+J
+#. js-lingui-id: zsFm1q
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Apps Settings"
+msgid "Go to Billing"
 msgstr ""
 
-#. js-lingui-id: tlIbgN
+#. js-lingui-id: xk8nZG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Billing Settings"
+msgid "Go to Community"
 msgstr ""
 
-#. js-lingui-id: u5u/QJ
+#. js-lingui-id: TMv4vU
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Community Settings"
+msgid "Go to Data Model"
 msgstr ""
 
-#. js-lingui-id: dZPXqH
+#. js-lingui-id: nvVoDQ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Data Model Settings"
+msgid "Go to Developers"
 msgstr ""
 
-#. js-lingui-id: SNbGsK
+#. js-lingui-id: YTMzOA
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Developers Settings"
+msgid "Go to Domains"
 msgstr ""
 
-#. js-lingui-id: OLopIl
+#. js-lingui-id: 8V43iD
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Domains Settings"
+msgid "Go to Experience"
 msgstr ""
 
-#. js-lingui-id: 46ZD9h
+#. js-lingui-id: YA1mxo
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Experience Settings"
+msgid "Go to General"
 msgstr ""
 
-#. js-lingui-id: gfZlPy
+#. js-lingui-id: bSctn/
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to General Settings"
+msgid "Go to Members"
 msgstr ""
 
-#. js-lingui-id: vPl+B/
+#. js-lingui-id: F15zBM
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Members Settings"
+msgid "Go to Roles"
 msgstr ""
 
-#. js-lingui-id: qN3wNQ
+#. js-lingui-id: R1fbZB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Roles Settings"
-msgstr ""
-
-#. js-lingui-id: xAAHTC
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Security Settings"
+msgid "Go to Security"
 msgstr ""
 
 #. js-lingui-id: Rrvufq
@@ -7491,6 +7491,11 @@ msgstr ""
 #. js-lingui-id: QgIcr0
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
 msgid "Invalid formula: {errorMessage}"
+msgstr ""
+
+#. js-lingui-id: uJjrgd
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
+msgid "Invalid formula: write it as text"
 msgstr ""
 
 #. js-lingui-id: rFH0az
@@ -8647,6 +8652,22 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "List of opportunities for which that person is the point of contact"
+msgstr ""
+
+#. js-lingui-id: rbXxvc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
+msgid "List pinned field metadata not found"
+msgstr ""
+
+#. js-lingui-id: j3iJjW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
+msgid "List pinned field must belong to the view object"
+msgstr ""
+
+#. js-lingui-id: ucNAgC
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
+msgid "List pinned field not found"
 msgstr ""
 
 #. js-lingui-id: Lgr7Gd
@@ -14425,8 +14446,13 @@ msgid "The condition of a database event trigger must be text"
 msgstr ""
 
 #. js-lingui-id: kxzWhP
-#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
+#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-trees-or-throw.util.ts
 msgid "The condition of an agent trigger is invalid"
+msgstr ""
+
+#. js-lingui-id: 2l+SMV
+#: src/engine/metadata-modules/logic-function/services/logic-function-from-source.service.ts
+msgid "The condition of the database event trigger is invalid"
 msgstr ""
 
 #. js-lingui-id: odbiqA

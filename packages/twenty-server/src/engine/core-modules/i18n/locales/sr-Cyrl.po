@@ -369,24 +369,24 @@ msgstr "Маркетиншка е-порука може се послати са
 #. js-lingui-id: TS5uum
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util.ts
 msgid "A marketplace application cannot declare row-level rules or field permissions"
-msgstr ""
+msgstr "Апликација са тржишта не може да декларише правила на нивоу редова нити дозволе за поља"
 
 #. js-lingui-id: bH9jpk
 #: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util.ts
 msgid "A marketplace application cannot declare row-level rules or field permissions."
-msgstr ""
+msgstr "Апликација са тржишта не може да декларише правила на нивоу редова нити дозволе за поља."
 
 #. js-lingui-id: +//ajp
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util.ts
 msgid "A marketplace application role can only be assigned to agents"
-msgstr ""
+msgstr "Улога апликације са тржишта може се доделити само агентима"
 
 #. js-lingui-id: BRZH6M
 #: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util.ts
 msgid "A marketplace application role can only be assigned to agents."
-msgstr ""
+msgstr "Улога апликације са тржишта може се доделити само агентима."
 
 #. js-lingui-id: Spm4/x
 #: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
@@ -6626,11 +6626,11 @@ msgctxt "commandMenuItem.label"
 msgid "Go to {objectLabelPlural}"
 msgstr "Иди на {objectLabelPlural}"
 
-#. js-lingui-id: tKVJbL
+#. js-lingui-id: RQG1+p
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Admin Panel Settings"
-msgstr "Иди на подешавања администраторског панела"
+msgid "Go to Admin Panel"
+msgstr ""
 
 #. js-lingui-id: zPVvLp
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6638,11 +6638,17 @@ msgctxt "commandMenuItem.label"
 msgid "Go to Agents"
 msgstr "Иди на агенте"
 
-#. js-lingui-id: iLqs3S
+#. js-lingui-id: EiL/A6
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to AI Settings"
-msgstr "Иди на подешавања АИ"
+msgid "Go to AI"
+msgstr ""
+
+#. js-lingui-id: OVO+nS
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Go to Apps"
+msgstr ""
 
 #. js-lingui-id: TndVqR
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6650,71 +6656,65 @@ msgctxt "commandMenuItem.label"
 msgid "Go to Apps preferences"
 msgstr "Идите на подешавања апликација"
 
-#. js-lingui-id: 60o/+J
+#. js-lingui-id: zsFm1q
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Apps Settings"
-msgstr "Иди на подешавања апликација"
+msgid "Go to Billing"
+msgstr ""
 
-#. js-lingui-id: tlIbgN
+#. js-lingui-id: xk8nZG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Billing Settings"
-msgstr "Иди на подешавања наплате"
+msgid "Go to Community"
+msgstr ""
 
-#. js-lingui-id: u5u/QJ
+#. js-lingui-id: TMv4vU
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Community Settings"
-msgstr "Иди на подешавања заједнице"
+msgid "Go to Data Model"
+msgstr ""
 
-#. js-lingui-id: dZPXqH
+#. js-lingui-id: nvVoDQ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Data Model Settings"
-msgstr "Иди на подешавања модела података"
+msgid "Go to Developers"
+msgstr ""
 
-#. js-lingui-id: SNbGsK
+#. js-lingui-id: YTMzOA
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Developers Settings"
-msgstr "Идите у подешавања за програмере"
+msgid "Go to Domains"
+msgstr ""
 
-#. js-lingui-id: OLopIl
+#. js-lingui-id: 8V43iD
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Domains Settings"
-msgstr "Иди на подешавања домена"
+msgid "Go to Experience"
+msgstr ""
 
-#. js-lingui-id: 46ZD9h
+#. js-lingui-id: YA1mxo
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Experience Settings"
-msgstr "Иди на подешавања искуства"
+msgid "Go to General"
+msgstr ""
 
-#. js-lingui-id: gfZlPy
+#. js-lingui-id: bSctn/
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to General Settings"
-msgstr "Иди на општа подешавања"
+msgid "Go to Members"
+msgstr ""
 
-#. js-lingui-id: vPl+B/
+#. js-lingui-id: F15zBM
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Members Settings"
-msgstr "Иди на подешавања чланова"
+msgid "Go to Roles"
+msgstr ""
 
-#. js-lingui-id: qN3wNQ
+#. js-lingui-id: R1fbZB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Roles Settings"
-msgstr "Иди на подешавања улога"
-
-#. js-lingui-id: xAAHTC
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Security Settings"
-msgstr "Иди на подешавања безбедности"
+msgid "Go to Security"
+msgstr ""
 
 #. js-lingui-id: Rrvufq
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -7497,6 +7497,11 @@ msgstr "Неисправан филтер: користите \"{joinColumnName}
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
 msgid "Invalid formula: {errorMessage}"
 msgstr "Неважећа формула: {errorMessage}"
+
+#. js-lingui-id: uJjrgd
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
+msgid "Invalid formula: write it as text"
+msgstr "Неважећа формула: напишите је као текст"
 
 #. js-lingui-id: rFH0az
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -8654,6 +8659,22 @@ msgctxt "fieldMetadata.description"
 msgid "List of opportunities for which that person is the point of contact"
 msgstr "Списак могућности за које је та особа контакт особа"
 
+#. js-lingui-id: rbXxvc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
+msgid "List pinned field metadata not found"
+msgstr "Метаподаци закаченог поља листе нису пронађени"
+
+#. js-lingui-id: j3iJjW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
+msgid "List pinned field must belong to the view object"
+msgstr "Закачено поље листе мора да припада објекту приказа"
+
+#. js-lingui-id: ucNAgC
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
+msgid "List pinned field not found"
+msgstr "Закачено поље листе није пронађено"
+
 #. js-lingui-id: Lgr7Gd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -9587,7 +9608,7 @@ msgstr "Име \"{name}\" није доступно"
 #. js-lingui-id: 2tJW5E
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-composite-flat-field-metadata-column-names-availability.util.ts
 msgid "Name \"{name}\" is not available as \"{columnName}\" is already used by another field"
-msgstr ""
+msgstr "Име \"{name}\" није доступно јер друго поље већ користи \"{columnName}\""
 
 #. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
@@ -14430,9 +14451,14 @@ msgid "The condition of a database event trigger must be text"
 msgstr "Услов окидача догађаја базе података мора бити текст"
 
 #. js-lingui-id: kxzWhP
-#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
+#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-trees-or-throw.util.ts
 msgid "The condition of an agent trigger is invalid"
 msgstr "Услов агенстког окидача је неважећи"
+
+#. js-lingui-id: 2l+SMV
+#: src/engine/metadata-modules/logic-function/services/logic-function-from-source.service.ts
+msgid "The condition of the database event trigger is invalid"
+msgstr "Услов окидача догађаја базе података је неважећи"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider

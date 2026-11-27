@@ -191,6 +191,7 @@ describe('MainNavigationDrawerTabSwitcher', () => {
       .mockReturnValue(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     jest.mocked(useSwitchNavigationDrawerTab).mockReturnValue({
       switchNavigationDrawerTab: mockSwitchNavigationDrawerTab,
+      switchToNavigationMenu: jest.fn(),
       switchToNavigationMenuTab: mockSwitchToNavigationMenuTab,
     });
     jest.mocked(useWorkspaceNavigationMenuContainers).mockReturnValue([]);

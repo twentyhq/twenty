@@ -369,24 +369,24 @@ msgstr "Маркетинговое письмо можно отправить т
 #. js-lingui-id: TS5uum
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util.ts
 msgid "A marketplace application cannot declare row-level rules or field permissions"
-msgstr ""
+msgstr "Приложение Marketplace не может объявлять правила на уровне строк или разрешения на уровне полей"
 
 #. js-lingui-id: bH9jpk
 #: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util.ts
 msgid "A marketplace application cannot declare row-level rules or field permissions."
-msgstr ""
+msgstr "Приложение Marketplace не может объявлять правила на уровне строк или разрешения на уровне полей."
 
 #. js-lingui-id: +//ajp
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util.ts
 msgid "A marketplace application role can only be assigned to agents"
-msgstr ""
+msgstr "Роль приложения Marketplace может быть назначена только агентам"
 
 #. js-lingui-id: BRZH6M
 #: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util.ts
 msgid "A marketplace application role can only be assigned to agents."
-msgstr ""
+msgstr "Роль приложения Marketplace может быть назначена только агентам."
 
 #. js-lingui-id: Spm4/x
 #: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
@@ -6626,11 +6626,11 @@ msgctxt "commandMenuItem.label"
 msgid "Go to {objectLabelPlural}"
 msgstr "Перейти к {objectLabelPlural}"
 
-#. js-lingui-id: tKVJbL
+#. js-lingui-id: RQG1+p
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Admin Panel Settings"
-msgstr "Перейти к настройкам панели администратора"
+msgid "Go to Admin Panel"
+msgstr ""
 
 #. js-lingui-id: zPVvLp
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6638,11 +6638,17 @@ msgctxt "commandMenuItem.label"
 msgid "Go to Agents"
 msgstr "Перейти к агентам"
 
-#. js-lingui-id: iLqs3S
+#. js-lingui-id: EiL/A6
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to AI Settings"
-msgstr "Перейти к настройкам ИИ"
+msgid "Go to AI"
+msgstr ""
+
+#. js-lingui-id: OVO+nS
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Go to Apps"
+msgstr ""
 
 #. js-lingui-id: TndVqR
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6650,71 +6656,65 @@ msgctxt "commandMenuItem.label"
 msgid "Go to Apps preferences"
 msgstr "Перейти к настройкам приложений"
 
-#. js-lingui-id: 60o/+J
+#. js-lingui-id: zsFm1q
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Apps Settings"
-msgstr "Перейти к настройкам приложений"
+msgid "Go to Billing"
+msgstr ""
 
-#. js-lingui-id: tlIbgN
+#. js-lingui-id: xk8nZG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Billing Settings"
-msgstr "Перейти к настройкам оплаты"
+msgid "Go to Community"
+msgstr ""
 
-#. js-lingui-id: u5u/QJ
+#. js-lingui-id: TMv4vU
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Community Settings"
-msgstr "Перейти к настройкам сообщества"
+msgid "Go to Data Model"
+msgstr ""
 
-#. js-lingui-id: dZPXqH
+#. js-lingui-id: nvVoDQ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Data Model Settings"
-msgstr "Перейти к настройкам модели данных"
+msgid "Go to Developers"
+msgstr ""
 
-#. js-lingui-id: SNbGsK
+#. js-lingui-id: YTMzOA
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Developers Settings"
-msgstr "Перейти к настройкам разработчиков"
+msgid "Go to Domains"
+msgstr ""
 
-#. js-lingui-id: OLopIl
+#. js-lingui-id: 8V43iD
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Domains Settings"
-msgstr "Перейти к настройкам доменов"
+msgid "Go to Experience"
+msgstr ""
 
-#. js-lingui-id: 46ZD9h
+#. js-lingui-id: YA1mxo
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Experience Settings"
-msgstr "Перейти к настройкам интерфейса"
+msgid "Go to General"
+msgstr ""
 
-#. js-lingui-id: gfZlPy
+#. js-lingui-id: bSctn/
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to General Settings"
-msgstr "Перейти к общим настройкам"
+msgid "Go to Members"
+msgstr ""
 
-#. js-lingui-id: vPl+B/
+#. js-lingui-id: F15zBM
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Members Settings"
-msgstr "Перейти к настройкам участников"
+msgid "Go to Roles"
+msgstr ""
 
-#. js-lingui-id: qN3wNQ
+#. js-lingui-id: R1fbZB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Roles Settings"
-msgstr "Перейти к настройкам ролей"
-
-#. js-lingui-id: xAAHTC
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Security Settings"
-msgstr "Перейти к настройкам безопасности"
+msgid "Go to Security"
+msgstr ""
 
 #. js-lingui-id: Rrvufq
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -7497,6 +7497,11 @@ msgstr "Недопустимый фильтр: используйте \"{joinCol
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
 msgid "Invalid formula: {errorMessage}"
 msgstr "Недопустимая формула: {errorMessage}"
+
+#. js-lingui-id: uJjrgd
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
+msgid "Invalid formula: write it as text"
+msgstr "Недопустимая формула: запишите её как текст"
 
 #. js-lingui-id: rFH0az
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -8654,6 +8659,22 @@ msgctxt "fieldMetadata.description"
 msgid "List of opportunities for which that person is the point of contact"
 msgstr "Список возможностей, для которых этот контакт является контактным лицом"
 
+#. js-lingui-id: rbXxvc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
+msgid "List pinned field metadata not found"
+msgstr "Метаданные закреплённого поля списка не найдены"
+
+#. js-lingui-id: j3iJjW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
+msgid "List pinned field must belong to the view object"
+msgstr "Закреплённое поле списка должно принадлежать объекту представления"
+
+#. js-lingui-id: ucNAgC
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
+msgid "List pinned field not found"
+msgstr "Закреплённое поле списка не найдено"
+
 #. js-lingui-id: Lgr7Gd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -9587,7 +9608,7 @@ msgstr "Имя \"{name}\" недоступно"
 #. js-lingui-id: 2tJW5E
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-composite-flat-field-metadata-column-names-availability.util.ts
 msgid "Name \"{name}\" is not available as \"{columnName}\" is already used by another field"
-msgstr ""
+msgstr "Имя \"{name}\" недоступно, так как \"{columnName}\" уже используется другим полем"
 
 #. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
@@ -14430,9 +14451,14 @@ msgid "The condition of a database event trigger must be text"
 msgstr "Условие триггера события базы данных должно быть текстом"
 
 #. js-lingui-id: kxzWhP
-#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
+#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-trees-or-throw.util.ts
 msgid "The condition of an agent trigger is invalid"
 msgstr "Условие триггера агента недопустимо"
+
+#. js-lingui-id: 2l+SMV
+#: src/engine/metadata-modules/logic-function/services/logic-function-from-source.service.ts
+msgid "The condition of the database event trigger is invalid"
+msgstr "Условие триггера события базы данных недопустимо"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider

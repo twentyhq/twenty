@@ -19,8 +19,8 @@ export const createProposeToolCallTool = ({
     'Most calls need no approval: use this only when the action is hard to undo or reaches people outside ' +
     'the workspace, when you are unsure it matches what the person wants, or when your instructions ask ' +
     'for approval. Never use it for reads. The conversation pauses until the person approves it, possibly ' +
-    'after editing the arguments, or rejects it with optional feedback. You then get the tool result or ' +
-    'their feedback. Propose one call at a time. To have an email reviewed before it goes out, propose ' +
+    'after editing the arguments, or rejects it. If they send a new message instead, the call is cancelled ' +
+    'and not run. You then get the tool result or their decision. Propose one call at a time. To have an email reviewed before it goes out, propose ' +
     'send_email or draft_email with the arguments you would send it with: the person can edit it, ' +
     'send it, save it as a draft or discard it.',
   inputSchema: proposeToolCallInputSchema,

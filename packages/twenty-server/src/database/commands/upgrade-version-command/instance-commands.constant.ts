@@ -349,6 +349,10 @@ import { MoveFieldMetadataFormulaOutOfSettingsSlowInstanceCommand } from 'src/da
 import { DropViewVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795709923763-drop-view-visibility';
 import { AddListPinnedFieldMetadataIdToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795713501522-add-list-pinned-field-metadata-id-to-view';
 import { RelaxViewDeletedAtSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795715543417-relax-view-deleted-at';
+import { AddValidationRuleTreeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795719490855-add-validation-rule-tree';
+import { PurgeExpiredRefreshTokensSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795731384123-purge-expired-refresh-tokens';
+import { AddNavigationMenuItemVisibleItemLimitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795772817031-add-navigation-menu-item-visible-item-limit';
+import { BackfillRecentChatsSectionVisibleItemLimitSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795772818031-backfill-recent-chats-section-visible-item-limit';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -700,4 +704,8 @@ export const INSTANCE_COMMANDS = [
   DropViewVisibilityFastInstanceCommand,
   AddListPinnedFieldMetadataIdToViewFastInstanceCommand,
   RelaxViewDeletedAtSlowInstanceCommand,
+  AddValidationRuleTreeFastInstanceCommand,
+  PurgeExpiredRefreshTokensSlowInstanceCommand,
+  AddNavigationMenuItemVisibleItemLimitFastInstanceCommand,
+  BackfillRecentChatsSectionVisibleItemLimitSlowInstanceCommand,
 ];

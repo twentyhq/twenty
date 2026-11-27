@@ -534,9 +534,6 @@ export default {
             "senderApplicationId": [
                 573
             ],
-            "senderUserWorkspaceId": [
-                573
-            ],
             "senderWorkspaceMemberId": [
                 573
             ],
@@ -4098,6 +4095,9 @@ export default {
             ],
             "viewId": [
                 573
+            ],
+            "visibleItemLimit": [
+                2
             ],
             "workflowId": [
                 573
@@ -10564,6 +10564,9 @@ export default {
             "viewId": [
                 573
             ],
+            "visibleItemLimit": [
+                2
+            ],
             "workflowId": [
                 573
             ],
@@ -15132,6 +15135,9 @@ export default {
             ],
             "position": [
                 9
+            ],
+            "visibleItemLimit": [
+                2
             ],
             "__typename": [
                 4

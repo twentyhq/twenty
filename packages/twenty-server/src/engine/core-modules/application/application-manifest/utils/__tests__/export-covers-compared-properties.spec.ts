@@ -252,6 +252,7 @@ const NAVIGATION_MENU_ITEM_MANIFEST: Required<
   link: 'https://example.com/pets',
   nativePageKey: 'workflows',
   builtInSectionKey: 'favorites',
+  visibleItemLimit: 10,
   parentUniversalIdentifier: '88888888-8888-4888-8888-888888888888',
   viewUniversalIdentifier: VIEW_UID,
   targetObjectUniversalIdentifier: OBJECT_UID,
@@ -509,6 +510,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
     metadataName: 'fieldMetadata',
     emittedProperties: Object.keys(
       fromFlatFieldMetadataToFieldManifest({
+        formulaFields: [],
         flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
         flatFieldMetadata: getFlatFieldMetadataMock({
           universalIdentifier: FIELD_UID,

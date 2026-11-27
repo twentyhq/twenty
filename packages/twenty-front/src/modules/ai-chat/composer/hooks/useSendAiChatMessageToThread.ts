@@ -25,6 +25,8 @@ import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiCha
 import { aiChatThreadIsFetchingMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadIsFetchingMessagesFamilyState';
 import { useAttachAiChatThreadToRecord } from '@/ai-chat/threads/hooks/useAttachAiChatThreadToRecord';
 import { useRefreshAiChatThreadPermissions } from '@/ai-chat/threads/hooks/useRefreshAiChatThreadPermissions';
+import { cancelPendingAiChatToolCallApprovals } from '@/ai-chat/tool-calls/utils/cancelPendingAiChatToolCallApprovals';
+import { getPendingAiChatToolCallApprovals } from '@/ai-chat/tool-calls/utils/getPendingAiChatToolCallApprovals';
 import { isAiChatCreditsExhaustedError } from '@/ai-chat/usage/utils/isAiChatCreditsExhaustedError';
 import { endAiChatReplyStatus } from '@/ai-chat/utils/endAiChatReplyStatus';
 import { getAiChatModelIdForRequest } from '@/ai-chat/utils/getAiChatModelIdForRequest';
@@ -146,6 +148,11 @@ export const useSendAiChatMessageToThread = () => {
         store.set(uploadedFilesAtom, []);
       }
 
+      const pendingApprovalToolCallIdsAtSend =
+        getPendingAiChatToolCallApprovals(store.get(messagesAtom)).map(
+          ({ toolCallId }) => toolCallId,
+        );
+
       store.set(isSendingMessageAtom, true);
 
       try {
@@ -184,6 +191,15 @@ export const useSendAiChatMessageToThread = () => {
         const isAssistantReplying =
           data?.sendChatMessage.queued ||
           isDefined(data?.sendChatMessage.streamId);
+
+        if (isDefined(data?.sendChatMessage.streamId)) {
+          store.set(messagesAtom, (messages) =>
+            cancelPendingAiChatToolCallApprovals({
+              messages,
+              toolCallIds: pendingApprovalToolCallIdsAtSend,
+            }),
+          );
+        }
 
         if (isAssistantReplying) {
           if (!isAiChatCreditsExhaustedError(store.get(errorAtom))) {
@@ -253,6 +269,7 @@ export const useSendAiChatMessageToThread = () => {
         }
 
         removeOptimisticUserMessage();
+        refetchAiChatThreadMessages(threadId);
         store.set(errorAtom, toAiChatError(error));
 
         if (isAiChatCreditsExhaustedError(error)) {

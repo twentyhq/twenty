@@ -21,8 +21,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 import { NavigationMenuTabFirstItemOpenEffect } from '@/navigation-menu-item/display/effect-components/NavigationMenuTabFirstItemOpenEffect';
-
-const AI_AGENTS_NAVIGATION_SECTION_ID = 'AiAgents';
+import { AI_AGENTS_NAVIGATION_SECTION_ID } from '@/navigation-menu-item/common/constants/AiAgentsNavigationSectionId';
 
 type NavigationMenuAiAgentsSectionProps = {
   headerAction?: ReactNode;

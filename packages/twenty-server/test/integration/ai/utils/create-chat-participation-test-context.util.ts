@@ -261,7 +261,7 @@ export const createChatParticipationTestContext = async () => {
       id,
       threadId,
       workspaceId,
-      userWorkspaceId,
+      workspaceMemberId,
       turnStatus: AgentTurnStatus.COMPLETED,
       uiMessage: {
         role: AgentMessageRole.USER,

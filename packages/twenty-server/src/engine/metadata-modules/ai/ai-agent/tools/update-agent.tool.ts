@@ -92,7 +92,12 @@ export class UpdateAgentTool extends BaseTool<typeof updateAgentInputSchema> {
     return {
       success: true,
       message: `Agent "${agent.label}" updated`,
-      result: toAgentSummary(agent),
+      result: toAgentSummary(
+        await this.agentService.toAgentDto({
+          flatAgentWithRoleId: agent,
+          workspaceId: context.workspaceId,
+        }),
+      ),
     };
   }
 }

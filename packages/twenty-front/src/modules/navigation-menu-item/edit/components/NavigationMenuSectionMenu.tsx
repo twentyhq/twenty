@@ -1,9 +1,11 @@
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconDotsVertical } from 'twenty-ui/icon';
 
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
+import { navigationMenuSectionIdAddingItemState } from '@/navigation-menu-item/common/states/navigationMenuSectionIdAddingItemState';
+import { getNavigationMenuSectionNavigationSectionId } from '@/navigation-menu-item/display/utils/getNavigationMenuSectionNavigationSectionId';
 import { isNavigationMenuItemBuiltInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSection';
 import { NavigationMenuItemMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemMenu';
 import { NavigationMenuSectionMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent';
@@ -30,11 +32,29 @@ export const NavigationMenuSectionMenu = ({
   const [mode, setMode] = useState<NavigationMenuItemMenuMode>({
     type: 'actions',
   });
+  const [
+    navigationMenuSectionIdAddingItem,
+    setNavigationMenuSectionIdAddingItem,
+  ] = useAtomState(navigationMenuSectionIdAddingItemState);
   const { openNavigationSection } = useNavigationSection(
-    `navigation-menu-section-${section.id}`,
+    getNavigationMenuSectionNavigationSectionId(section),
   );
   const dropdownId = getNavigationMenuSectionMenuDropdownId(section.id);
   const isBuiltInSection = isNavigationMenuItemBuiltInSection(section);
+  const isAddingItemFromContextMenu =
+    navigationMenuSectionIdAddingItem === section.id;
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  const handleAddingItemOpen = useCallback(() => {
+    openNavigationSection();
+    triggerRef.current?.scrollIntoView({ block: 'center' });
+  }, [openNavigationSection]);
+
+  const clearAddingItemFromContextMenu = () => {
+    if (isAddingItemFromContextMenu) {
+      setNavigationMenuSectionIdAddingItem(null);
+    }
+  };
 
   return (
     <NavigationMenuItemMenu
@@ -42,6 +62,7 @@ export const NavigationMenuSectionMenu = ({
       dropdownId={dropdownId}
       trigger={
         <LightIconButton
+          ref={triggerRef}
           emphasis="subtle"
           size="sm"
           aria-label={t`Section actions`}
@@ -49,9 +70,19 @@ export const NavigationMenuSectionMenu = ({
           <IconDotsVertical />
         </LightIconButton>
       }
-      mode={mode}
-      onModeChange={setMode}
-      onClose={() => setMode({ type: 'actions' })}
+      mode={
+        isAddingItemFromContextMenu
+          ? { type: 'add', parentId: section.id }
+          : mode
+      }
+      onModeChange={(nextMode) => {
+        clearAddingItemFromContextMenu();
+        setMode(nextMode);
+      }}
+      onClose={() => {
+        clearAddingItemFromContextMenu();
+        setMode({ type: 'actions' });
+      }}
       renderMenu={({ onClose, onAdd }) => {
         const handleAddItem = () => {
           openNavigationSection();
@@ -71,6 +102,12 @@ export const NavigationMenuSectionMenu = ({
         <NavigationMenuItemDropdownOpenEffect
           dropdownId={dropdownId}
           onOpen={() => setNavigationMenuItemIdToRename(null)}
+        />
+      )}
+      {isAddingItemFromContextMenu && (
+        <NavigationMenuItemDropdownOpenEffect
+          dropdownId={dropdownId}
+          onOpen={handleAddingItemOpen}
         />
       )}
     </NavigationMenuItemMenu>

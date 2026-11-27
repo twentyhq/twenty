@@ -407,7 +407,7 @@ describe('Assistant reply selection with stored conversation participants', () =
     const { turnId } = await context.chatService.addMessage({
       threadId,
       workspaceId: context.workspaceId,
-      userWorkspaceId: context.userWorkspaceId,
+      workspaceMemberId: context.workspaceMemberId,
       uiMessage: {
         role: AgentMessageRole.USER,
         parts: [{ type: 'text', text: 'Draft a quote.' }],
@@ -429,7 +429,7 @@ describe('Assistant reply selection with stored conversation participants', () =
       turnId,
       role: AgentMessageRole.ASSISTANT,
       agentId: null,
-      senderUserWorkspaceId: null,
+      senderWorkspaceMemberId: null,
       isAwaitingAnswer: true,
       parts: [
         {
@@ -683,7 +683,7 @@ describe('Assistant reply selection with stored conversation participants', () =
       const message = await context.chatService.addMessage({
         threadId,
         workspaceId: context.workspaceId,
-        userWorkspaceId: context.userWorkspaceId,
+        workspaceMemberId: context.workspaceMemberId,
         turnStatus: AgentTurnStatus.COMPLETED,
         uiMessage: {
           role: AgentMessageRole.USER,
@@ -709,7 +709,7 @@ describe('Assistant reply selection with stored conversation participants', () =
     await context.chatService.addMessage({
       threadId,
       workspaceId: context.workspaceId,
-      userWorkspaceId: context.userWorkspaceId,
+      workspaceMemberId: context.workspaceMemberId,
       turnStatus: AgentTurnStatus.FAILED,
       uiMessage: {
         role: AgentMessageRole.USER,
@@ -719,7 +719,7 @@ describe('Assistant reply selection with stored conversation participants', () =
     const queuedMessage = await context.chatService.addMessage({
       threadId,
       workspaceId: context.workspaceId,
-      userWorkspaceId: context.userWorkspaceId,
+      workspaceMemberId: context.workspaceMemberId,
       turnStatus: AgentTurnStatus.COMPLETED,
       uiMessage: {
         role: AgentMessageRole.USER,
@@ -764,7 +764,7 @@ describe('Assistant reply selection with stored conversation participants', () =
     await context.chatService.addMessage({
       threadId,
       workspaceId: context.workspaceId,
-      userWorkspaceId: context.userWorkspaceId,
+      workspaceMemberId: context.workspaceMemberId,
       turnStatus: AgentTurnStatus.COMPLETED,
       uiMessage: {
         role: AgentMessageRole.ASSISTANT,
@@ -779,7 +779,7 @@ describe('Assistant reply selection with stored conversation participants', () =
     await context.chatService.addMessage({
       threadId,
       workspaceId: context.workspaceId,
-      userWorkspaceId: context.userWorkspaceId,
+      workspaceMemberId: context.workspaceMemberId,
       turnStatus: AgentTurnStatus.COMPLETED,
       uiMessage: {
         role: AgentMessageRole.ASSISTANT,

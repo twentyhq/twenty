@@ -369,24 +369,24 @@ msgstr "마케팅 이메일은 한 번에 한 명의 수신자에게만 보낼 �
 #. js-lingui-id: TS5uum
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util.ts
 msgid "A marketplace application cannot declare row-level rules or field permissions"
-msgstr ""
+msgstr "마켓플레이스 애플리케이션은 행 수준 규칙 또는 필드 권한을 선언할 수 없습니다"
 
 #. js-lingui-id: bH9jpk
 #: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util.ts
 msgid "A marketplace application cannot declare row-level rules or field permissions."
-msgstr ""
+msgstr "마켓플레이스 애플리케이션은 행 수준 규칙 또는 필드 권한을 선언할 수 없습니다."
 
 #. js-lingui-id: +//ajp
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util.ts
 msgid "A marketplace application role can only be assigned to agents"
-msgstr ""
+msgstr "마켓플레이스 애플리케이션 역할은 에이전트에게만 할당할 수 있습니다"
 
 #. js-lingui-id: BRZH6M
 #: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util.ts
 msgid "A marketplace application role can only be assigned to agents."
-msgstr ""
+msgstr "마켓플레이스 애플리케이션 역할은 에이전트에게만 할당할 수 있습니다."
 
 #. js-lingui-id: Spm4/x
 #: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
@@ -6626,11 +6626,11 @@ msgctxt "commandMenuItem.label"
 msgid "Go to {objectLabelPlural}"
 msgstr "{objectLabelPlural}로 이동"
 
-#. js-lingui-id: tKVJbL
+#. js-lingui-id: RQG1+p
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Admin Panel Settings"
-msgstr "관리자 패널 설정으로 이동"
+msgid "Go to Admin Panel"
+msgstr ""
 
 #. js-lingui-id: zPVvLp
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6638,11 +6638,17 @@ msgctxt "commandMenuItem.label"
 msgid "Go to Agents"
 msgstr "에이전트로 이동"
 
-#. js-lingui-id: iLqs3S
+#. js-lingui-id: EiL/A6
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to AI Settings"
-msgstr "AI 설정으로 이동"
+msgid "Go to AI"
+msgstr ""
+
+#. js-lingui-id: OVO+nS
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Go to Apps"
+msgstr ""
 
 #. js-lingui-id: TndVqR
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6650,71 +6656,65 @@ msgctxt "commandMenuItem.label"
 msgid "Go to Apps preferences"
 msgstr "앱 환경설정으로 이동"
 
-#. js-lingui-id: 60o/+J
+#. js-lingui-id: zsFm1q
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Apps Settings"
-msgstr "앱 설정으로 이동"
+msgid "Go to Billing"
+msgstr ""
 
-#. js-lingui-id: tlIbgN
+#. js-lingui-id: xk8nZG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Billing Settings"
-msgstr "청구 설정으로 이동"
+msgid "Go to Community"
+msgstr ""
 
-#. js-lingui-id: u5u/QJ
+#. js-lingui-id: TMv4vU
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Community Settings"
-msgstr "커뮤니티 설정으로 이동"
+msgid "Go to Data Model"
+msgstr ""
 
-#. js-lingui-id: dZPXqH
+#. js-lingui-id: nvVoDQ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Data Model Settings"
-msgstr "데이터 모델 설정으로 이동"
+msgid "Go to Developers"
+msgstr ""
 
-#. js-lingui-id: SNbGsK
+#. js-lingui-id: YTMzOA
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Developers Settings"
-msgstr "개발자 설정으로 이동"
+msgid "Go to Domains"
+msgstr ""
 
-#. js-lingui-id: OLopIl
+#. js-lingui-id: 8V43iD
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Domains Settings"
-msgstr "도메인 설정으로 이동"
+msgid "Go to Experience"
+msgstr ""
 
-#. js-lingui-id: 46ZD9h
+#. js-lingui-id: YA1mxo
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Experience Settings"
-msgstr "경험 설정으로 이동"
+msgid "Go to General"
+msgstr ""
 
-#. js-lingui-id: gfZlPy
+#. js-lingui-id: bSctn/
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to General Settings"
-msgstr "일반 설정으로 이동"
+msgid "Go to Members"
+msgstr ""
 
-#. js-lingui-id: vPl+B/
+#. js-lingui-id: F15zBM
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Members Settings"
-msgstr "멤버 설정으로 이동"
+msgid "Go to Roles"
+msgstr ""
 
-#. js-lingui-id: qN3wNQ
+#. js-lingui-id: R1fbZB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Roles Settings"
-msgstr "역할 설정으로 이동"
-
-#. js-lingui-id: xAAHTC
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Security Settings"
-msgstr "보안 설정으로 이동"
+msgid "Go to Security"
+msgstr ""
 
 #. js-lingui-id: Rrvufq
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -7497,6 +7497,11 @@ msgstr "잘못된 필터: 이 관계 필드로 필터링하려면 \"{joinColumnN
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
 msgid "Invalid formula: {errorMessage}"
 msgstr "잘못된 수식: {errorMessage}"
+
+#. js-lingui-id: uJjrgd
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
+msgid "Invalid formula: write it as text"
+msgstr "수식이 잘못되었습니다: 텍스트로 작성하세요"
 
 #. js-lingui-id: rFH0az
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -8654,6 +8659,22 @@ msgctxt "fieldMetadata.description"
 msgid "List of opportunities for which that person is the point of contact"
 msgstr "해당 담당자가 연락 담당자인 기회 목록"
 
+#. js-lingui-id: rbXxvc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
+msgid "List pinned field metadata not found"
+msgstr "목록 고정 필드 메타데이터를 찾을 수 없습니다"
+
+#. js-lingui-id: j3iJjW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
+msgid "List pinned field must belong to the view object"
+msgstr "목록 고정 필드는 뷰 객체에 속해야 합니다"
+
+#. js-lingui-id: ucNAgC
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
+msgid "List pinned field not found"
+msgstr "목록 고정 필드를 찾을 수 없음"
+
 #. js-lingui-id: Lgr7Gd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -9587,7 +9608,7 @@ msgstr "이름 \"{name}\"을 사용할 수 없습니다."
 #. js-lingui-id: 2tJW5E
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-composite-flat-field-metadata-column-names-availability.util.ts
 msgid "Name \"{name}\" is not available as \"{columnName}\" is already used by another field"
-msgstr ""
+msgstr "\"{columnName}\"이(가) 이미 다른 필드에서 사용되고 있으므로 이름 \"{name}\"은 사용할 수 없습니다"
 
 #. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
@@ -14430,9 +14451,14 @@ msgid "The condition of a database event trigger must be text"
 msgstr "데이터베이스 이벤트 트리거의 조건은 텍스트여야 합니다"
 
 #. js-lingui-id: kxzWhP
-#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
+#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-trees-or-throw.util.ts
 msgid "The condition of an agent trigger is invalid"
 msgstr "에이전트 트리거의 조건이 잘못되었습니다"
+
+#. js-lingui-id: 2l+SMV
+#: src/engine/metadata-modules/logic-function/services/logic-function-from-source.service.ts
+msgid "The condition of the database event trigger is invalid"
+msgstr "데이터베이스 이벤트 트리거의 조건이 잘못되었습니다"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider

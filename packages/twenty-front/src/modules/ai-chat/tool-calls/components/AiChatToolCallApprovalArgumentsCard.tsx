@@ -3,7 +3,8 @@ import { useCallback, useState } from 'react';
 import { type ToolCallApprovalCard } from 'twenty-sdk/front-component';
 import { type ProposedToolCall } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCheck, IconX } from 'twenty-ui/icon';
+import { IconCheck, IconTool, IconX } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Button } from 'twenty-ui/primitives/input';
 import { type JsonValue } from 'type-fest';
 
@@ -16,6 +17,7 @@ import { AiChatToolCallApprovalRecordFields } from '@/ai-chat/tool-calls/compone
 import { useAnswerToolCallApproval } from '@/ai-chat/tool-calls/hooks/useAnswerToolCallApproval';
 import { useFrontComponentIdByToolName } from '@/ai-chat/tool-calls/hooks/useFrontComponentIdByToolName';
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 
 type AiChatToolCallApprovalArgumentsCardProps = {
   toolCallId: string;
@@ -36,6 +38,16 @@ export const AiChatToolCallApprovalArgumentsCard = ({
   > | null>(proposal.arguments);
 
   const { template, objectNameSingular, recordId } = proposal;
+
+  const { getIcon } = useIcons();
+  const { objectMetadataItems } = useObjectMetadataItems();
+  const objectIconName = objectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.nameSingular === objectNameSingular,
+  )?.icon;
+  const TitleIcon = isDefined(objectIconName)
+    ? getIcon(objectIconName)
+    : IconTool;
 
   const toolFrontComponentId = useFrontComponentIdByToolName().get(
     proposal.toolName,
@@ -88,15 +100,20 @@ export const AiChatToolCallApprovalArgumentsCard = ({
 
   const getHeader = () => {
     if (isWaitingForFrontComponent) {
-      return { title: '', summary: undefined };
+      return { title: '', Icon: undefined, summary: undefined };
     }
 
     if (!isDefined(approvalCard)) {
-      return { title: proposal.toolLabel, summary: proposal.summary };
+      return {
+        title: proposal.toolLabel,
+        Icon: TitleIcon,
+        summary: proposal.summary,
+      };
     }
 
     return {
       title: approvalCard.title ?? proposal.toolLabel,
+      Icon: TitleIcon,
       summary: approvalCard.subtitle,
     };
   };
@@ -106,8 +123,8 @@ export const AiChatToolCallApprovalArgumentsCard = ({
   return (
     <AiChatToolCallApprovalCardLayout
       title={header.title}
+      Icon={header.Icon}
       summary={header.summary}
-      approval={approval}
       actions={
         !isWaitingForFrontComponent && (
           <>
