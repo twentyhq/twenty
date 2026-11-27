@@ -7,6 +7,6 @@ export type SettingsSearchRouteMetadata = {
   title: MessageDescriptor | typeof SETTINGS_SEARCH_OBJECT_LABEL_TITLE;
   keywords?: MessageDescriptor[];
   tabs?: SettingsTabDefinition[];
-  requiresBillingEnabled?: boolean;
+  isHiddenWhenBillingDisabled?: boolean;
   expandsPerObject?: boolean;
 } & ({ section: MessageDescriptor } | { parentPath: SettingsPath });
