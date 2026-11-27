@@ -107,7 +107,7 @@ export const MainNavigationDrawerTabSwitcher = ({
     return null;
   }
 
-  const shouldShowTooltips = !isExpanded && !isMobile;
+  const shouldShowTooltips = (!isExpanded && !isMobile) || isPinnedToBottom;
   const isTabContentShown = (isActive: boolean) => isActive && isExpanded;
 
   return (
@@ -133,9 +133,6 @@ export const MainNavigationDrawerTabSwitcher = ({
         const isDisabled =
           drawerTab !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU &&
           isLayoutCustomizationModeEnabled;
-        const isLabelHidden =
-          isPinnedToBottom &&
-          drawerTab === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU;
         const homeChatAttention =
           drawerTab === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU &&
           !isTabContentShown(isActive)
@@ -153,8 +150,8 @@ export const MainNavigationDrawerTabSwitcher = ({
             tooltip={
               isDisabled ? getDisabledDrawerTabTooltip(drawerTab) : label
             }
-            shouldShowTooltip={shouldShowTooltips || isLabelHidden}
-            isLabelHidden={isLabelHidden}
+            shouldShowTooltip={shouldShowTooltips}
+            isLabelHidden={isPinnedToBottom}
             ariaLabel={
               isUnread
                 ? t`${label}, ${unreadOpenThreadCount} unread`
@@ -208,6 +205,7 @@ export const MainNavigationDrawerTabSwitcher = ({
                   isActive={isTabActive}
                   isExpanded={isExpanded}
                   shouldShowTooltip={shouldShowTooltips}
+                  isLabelHidden={isPinnedToBottom}
                   attention={
                     isTabContentShown(isTabActive)
                       ? null
@@ -224,6 +222,7 @@ export const MainNavigationDrawerTabSwitcher = ({
                   key="add-tab"
                   isExpanded={isExpanded}
                   shouldShowTooltip={shouldShowTooltips}
+                  isLabelHidden={isPinnedToBottom}
                 />,
               ]
             : []),
