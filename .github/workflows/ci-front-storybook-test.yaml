@@ -46,12 +46,27 @@ jobs:
         with:
           key: storybook-test-dependencies
       - name: Build dependencies
+        id: build-dependencies
+        env:
+          NX_SELF_HOSTED_REMOTE_CACHE_SERVER: ${{ steps.restore-nx-cache.outputs.server-url }}
         run: |
-          npx nx build twenty-shared
-          npx nx build twenty-ui
-          npx nx build twenty-front-component-renderer
+          build() {
+            npx nx build twenty-shared &&
+              npx nx build twenty-ui &&
+              npx nx build twenty-front-component-renderer
+          }
+          if build; then
+            exit 0
+          fi
+          if [ -z "$NX_SELF_HOSTED_REMOTE_CACHE_SERVER" ]; then
+            exit 1
+          fi
+          echo "::warning::Building dependencies through the Nx cache server failed, rebuilding without it"
+          echo "cache-server-failed=true" >> "$GITHUB_OUTPUT"
+          unset NX_SELF_HOSTED_REMOTE_CACHE_SERVER
+          build
       - name: Save Nx cache
-        if: inputs.scope == 'modules' && inputs.shard == 1
+        if: inputs.scope == 'modules' && inputs.shard == 1 && steps.build-dependencies.outputs.cache-server-failed != 'true'
         uses: ./.github/actions/save-nx-cache
         with:
           key: ${{ steps.restore-nx-cache.outputs.cache-primary-key }}

@@ -13,7 +13,12 @@ runs:
       shell: bash
       env:
         CACHE_DIRECTORY: ${{ runner.temp }}/nx-remote-cache
+        SERVER_LOG: ${{ runner.temp }}/nx-cache-server.log
       run: |
+        if grep -qv '^http://' "$SERVER_LOG" 2>/dev/null; then
+          echo "::warning::Nx cache server reported errors, some outputs may not be cached"
+          cat "$SERVER_LOG"
+        fi
         usage="$CACHE_DIRECTORY/.usage"
         if ! grep -q '^write ' "$usage" 2>/dev/null; then
           echo "No new Nx task outputs, nothing to save"

@@ -8,6 +8,9 @@ outputs:
   cache-primary-key:
     description: Key to pass to save-nx-cache
     value: ${{ steps.restore.outputs.cache-primary-key }}
+  server-url:
+    description: Value for NX_SELF_HOSTED_REMOTE_CACHE_SERVER, empty when the server did not start
+    value: ${{ steps.start.outputs.server-url }}
 
 runs:
   using: composite
@@ -22,6 +25,7 @@ runs:
           v4-nx-${{ inputs.key }}-main-
         path: ${{ runner.temp }}/nx-remote-cache
     - name: Start Nx cache server
+      id: start
       shell: bash
       env:
         NX_CACHE_SERVER_DIRECTORY: ${{ runner.temp }}/nx-remote-cache
@@ -31,7 +35,7 @@ runs:
         for attempt in $(seq 1 40); do
           url=$(grep -m 1 '^http://' "$SERVER_LOG" 2>/dev/null || true)
           if [[ "$url" == http://* ]] && [ "$(curl -s -o /dev/null -w '%{http_code}' "$url/v1/cache/healthcheck")" = "404" ]; then
-            echo "NX_SELF_HOSTED_REMOTE_CACHE_SERVER=$url" >> "$GITHUB_ENV"
+            echo "server-url=$url" >> "$GITHUB_OUTPUT"
             echo "Nx cache server listening on $url"
             exit 0
           fi

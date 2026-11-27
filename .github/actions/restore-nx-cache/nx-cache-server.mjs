@@ -7,6 +7,7 @@ import {
   renameSync,
   rmSync,
 } from 'node:fs';
+import { randomUUID } from 'node:crypto';
 import { createServer } from 'node:http';
 import { join } from 'node:path';
 
@@ -57,11 +58,13 @@ const handlePut = ({ hash, request, response }) => {
     return;
   }
 
-  const temporaryFile = `${file}.${process.pid}.${Date.now()}.tmp`;
+  const temporaryFile = `${file}.${randomUUID()}.tmp`;
   const output = createWriteStream(temporaryFile);
 
   const reject = (error) => {
     console.error('Could not store Nx cache output', hash, error);
+    request.unpipe(output);
+    output.destroy();
     request.resume();
     try {
       rmSync(temporaryFile, { force: true });
