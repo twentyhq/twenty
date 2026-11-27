@@ -11,7 +11,7 @@ import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-man
 import { validateFlatViewCalendarFields } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util';
 import { validateFlatViewListPinnedField } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util';
 import { validateFlatViewPresetFilter } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-preset-filter.util';
-import { validateFlatViewTypeObject } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-type-object.util';
+import { validateFlatViewTypeIsNotInbox } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-type-is-not-inbox.util';
 import { isAllowedFlatViewKanbanMainGroupByField } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-allowed-flat-view-kanban-main-group-by-field.util';
 
 export const validateFlatViewCreation = ({
@@ -166,7 +166,7 @@ export const validateFlatViewCreation = ({
 
   validationResult.errors.push(
     ...validateFlatViewPresetFilter({ flatView: flatViewToValidate }),
-    ...validateFlatViewTypeObject({ flatView: flatViewToValidate }),
+    ...validateFlatViewTypeIsNotInbox(flatViewToValidate),
   );
 
   return validationResult;

@@ -8,6 +8,7 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { findViews } from 'test/integration/metadata/suites/view/utils/find-views.util';
+import { updateOneView } from 'test/integration/metadata/suites/view/utils/update-one-view.util';
 import { findFieldMetadataIdByName } from 'test/integration/utils/find-field-metadata-id-by-name.util';
 import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
 import {
@@ -245,6 +246,39 @@ describe('Inbox thread views', () => {
         ...expectedInboxThreadViewListSettings,
       })),
     );
+  });
+
+  it('should refuse the inbox view type on a new view and on an existing one', async () => {
+    const { errors: createErrors } = await createOneView({
+      input: {
+        name: 'Inbox typed view',
+        objectMetadataId: inboxThreadObjectMetadataId,
+        icon: 'IconInbox',
+        type: ViewType.INBOX,
+      },
+      gqlFields: 'id',
+      expectToFail: true,
+    });
+
+    expect(createErrors).toBeDefined();
+
+    const [inboxThreadView] = await findInboxThreadViews(
+      inboxThreadObjectMetadataId,
+    );
+
+    const { errors: updateErrors } = await updateOneView({
+      viewId: inboxThreadView.id,
+      input: { id: inboxThreadView.id, type: ViewType.INBOX },
+      gqlFields: 'id',
+      expectToFail: true,
+    });
+
+    expect(updateErrors).toBeDefined();
+    expect(
+      (await findInboxThreadViews(inboxThreadObjectMetadataId)).some(
+        ({ type }) => type === ViewType.INBOX,
+      ),
+    ).toBe(false);
   });
 
   it('should create, read and destroy an inbox thread view with a preset filter', async () => {
