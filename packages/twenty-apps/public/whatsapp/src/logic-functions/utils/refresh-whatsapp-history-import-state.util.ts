@@ -1,21 +1,22 @@
 import { getJobs, type JobStatusResult } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { type WhatsappHistoryImportChatProgress } from 'src/logic-functions/types/whatsapp-history-import-chat-progress.type';
 import { type WhatsappHistoryImportPlanning } from 'src/logic-functions/types/whatsapp-history-import-planning.type';
-import { type WhatsappHistoryImportProgress } from 'src/logic-functions/types/whatsapp-history-import-progress.type';
-import { enqueueWhatsappImportHistoryJob } from 'src/logic-functions/utils/enqueue-whatsapp-import-history-job.util';
 import {
-  getWhatsappImportHistoryJobId,
+  getWhatsappHistoryImportChatJobId,
   getWhatsappPlanHistoryImportJobId,
 } from 'src/logic-functions/utils/get-whatsapp-history-import-job-id.util';
 import { getWhatsappHistoryImportState } from 'src/logic-functions/utils/get-whatsapp-history-import-state.util';
 import {
   deleteWhatsappHistoryImportData,
+  getWhatsappHistoryImportChatProgress,
   getWhatsappHistoryImportPlanning,
-  getWhatsappHistoryImportProgress,
-  saveWhatsappHistoryImportProgress,
+  saveWhatsappHistoryImportChatProgress,
 } from 'src/logic-functions/utils/whatsapp-history-import-kv.util';
 import { saveWhatsappHistoryImportState } from 'src/logic-functions/utils/save-whatsapp-history-import-state.util';
+import { scheduleWhatsappHistoryImportChatJob } from 'src/logic-functions/utils/schedule-whatsapp-history-import-chat-job.util';
+import { scheduleNextWhatsappHistoryImportContacts } from 'src/logic-functions/utils/schedule-next-whatsapp-history-import-contacts.util';
 import { type WhatsappHistoryImportState } from 'src/types/whatsapp-history-import-state.type';
 
 const WHATSAPP_HISTORY_IMPORT_MAX_RECOVERIES = 3;
@@ -24,6 +25,8 @@ const STALLED_ERROR = {
   code: 'STALLED' as const,
   message: 'The import stopped making progress.',
 };
+
+type WhatsappHistoryImportRun = { connectedAccountId: string; runId: string };
 
 export const finishWhatsappHistoryImport = async ({
   connectedAccountId,
@@ -41,10 +44,8 @@ export const finishWhatsappHistoryImport = async ({
   return state;
 };
 
-const getJobStatus = async (
-  jobId: string,
-): Promise<JobStatusResult | undefined> =>
-  (await getJobs([jobId])).find((status) => status.jobId === jobId);
+const getFutureDate = (date: string | undefined): string | undefined =>
+  isDefined(date) && Date.parse(date) > Date.now() ? date : undefined;
 
 const getPlanningError = async (
   planning: WhatsappHistoryImportPlanning,
@@ -54,15 +55,12 @@ const getPlanningError = async (
     return planning.error;
   }
 
-  if (isDefined(planning.chunkCount)) {
-    return undefined;
-  }
+  const planJobId =
+    planning.planJobId ?? getWhatsappPlanHistoryImportJobId({ runId });
+  const [planJob] = await getJobs([planJobId]);
 
-  const planJob = await getJobStatus(
-    planning.planJobId ?? getWhatsappPlanHistoryImportJobId({ runId }),
-  );
-
-  if (!isDefined(planJob)) {
+  // A finished planner always lists its conversations, unless it is one from before this format
+  if (!isDefined(planJob) || planJob.state === 'COMPLETED') {
     return STALLED_ERROR;
   }
 
@@ -71,80 +69,146 @@ const getPlanningError = async (
     : undefined;
 };
 
-const getCurrentChunkError = async ({
-  connectedAccountId,
-  runId,
-  planning,
-  progress,
+const failChat = async ({
+  run,
+  chatId,
+  error,
 }: {
-  connectedAccountId: string;
-  runId: string;
-  planning: WhatsappHistoryImportPlanning;
-  progress: WhatsappHistoryImportProgress;
-}): Promise<WhatsappHistoryImportState['error']> => {
-  if (isDefined(progress.error)) {
-    return progress.error;
+  run: WhatsappHistoryImportRun;
+  chatId: string;
+  error: NonNullable<WhatsappHistoryImportChatProgress['error']>;
+}): Promise<WhatsappHistoryImportChatProgress> => {
+  const progress: WhatsappHistoryImportChatProgress = {
+    status: 'FAILED',
+    error,
+  };
+
+  await saveWhatsappHistoryImportChatProgress({ ...run, chatId, progress });
+
+  return progress;
+};
+
+const checkImportingChat = async ({
+  run,
+  chatId,
+  progress,
+  jobStatusById,
+}: {
+  run: WhatsappHistoryImportRun;
+  chatId: string;
+  progress: WhatsappHistoryImportChatProgress;
+  jobStatusById: Map<string, JobStatusResult>;
+}): Promise<WhatsappHistoryImportChatProgress> => {
+  if (!isDefined(progress.job)) {
+    return failChat({ run, chatId, error: STALLED_ERROR });
   }
 
-  const chunkIndex = progress.completedChunkCount;
+  const job = jobStatusById.get(
+    getWhatsappHistoryImportChatJobId(progress.job),
+  );
 
-  if (planning.plannedChunkCount <= chunkIndex) {
-    return undefined;
-  }
-
-  const currentJobId =
-    progress.currentJobId ??
-    getWhatsappImportHistoryJobId({ runId, chunkIndex });
-  const currentJob = await getJobStatus(currentJobId);
-
-  if (currentJob?.state === 'FAILED') {
-    return { code: 'UNKNOWN', message: currentJob.failedReason ?? '' };
-  }
-
-  const hasEndedWithoutFinishing =
-    currentJob?.state === 'COMPLETED' ||
-    (!isDefined(currentJob) && isDefined(progress.currentJobId));
-
-  if (!isDefined(currentJob) && !isDefined(progress.currentJobId)) {
-    await enqueueWhatsappImportHistoryJob({
-      connectedAccountId,
-      runId,
-      chunkIndex,
+  if (job?.state === 'FAILED') {
+    return failChat({
+      run,
+      chatId,
+      error: { code: 'UNKNOWN', message: job.failedReason ?? '' },
     });
-
-    return undefined;
   }
 
-  if (!hasEndedWithoutFinishing) {
-    return undefined;
+  if (isDefined(job) && job.state !== 'COMPLETED') {
+    return progress;
   }
 
   const recoveryCount = (progress.recoveryCount ?? 0) + 1;
 
   if (recoveryCount > WHATSAPP_HISTORY_IMPORT_MAX_RECOVERIES) {
-    return STALLED_ERROR;
+    return failChat({ run, chatId, error: STALLED_ERROR });
   }
 
-  const resumePayload = {
-    connectedAccountId,
-    runId,
-    chunkIndex,
-    resumeIndex: (progress.currentResumeIndex ?? 0) + 1,
-  };
+  const attempt = (progress.job.payload.attempt ?? 0) + 1;
 
-  await saveWhatsappHistoryImportProgress({
-    connectedAccountId,
-    runId,
-    progress: {
-      ...progress,
-      currentJobId: getWhatsappImportHistoryJobId(resumePayload),
-      currentResumeIndex: resumePayload.resumeIndex,
-      recoveryCount,
-    },
+  await scheduleWhatsappHistoryImportChatJob({
+    job:
+      progress.job.kind === 'CONTACTS'
+        ? { kind: 'CONTACTS', payload: { ...progress.job.payload, attempt } }
+        : { kind: 'MESSAGES', payload: { ...progress.job.payload, attempt } },
+    recoveryCount,
   });
-  await enqueueWhatsappImportHistoryJob(resumePayload);
 
-  return undefined;
+  return progress;
+};
+
+const getChatProgresses = async ({
+  run,
+  chatIds,
+}: {
+  run: WhatsappHistoryImportRun;
+  chatIds: string[];
+}): Promise<WhatsappHistoryImportChatProgress[]> => {
+  const progresses = await Promise.all(
+    chatIds.map((chatId) =>
+      getWhatsappHistoryImportChatProgress({ ...run, chatId }),
+    ),
+  );
+  const importingJobIds = progresses.flatMap((progress) =>
+    progress?.status === 'IMPORTING' && isDefined(progress.job)
+      ? [getWhatsappHistoryImportChatJobId(progress.job)]
+      : [],
+  );
+  const jobStatusById = new Map(
+    (importingJobIds.length > 0 ? await getJobs(importingJobIds) : []).map(
+      (job) => [job.jobId, job],
+    ),
+  );
+
+  return Promise.all(
+    progresses.map((progress, index) => {
+      const chatId = chatIds[index];
+
+      if (!isDefined(progress)) {
+        return failChat({ run, chatId, error: STALLED_ERROR });
+      }
+
+      if (progress.status !== 'IMPORTING') {
+        return progress;
+      }
+
+      return checkImportingChat({ run, chatId, progress, jobStatusById });
+    }),
+  );
+};
+
+const getEarliestResumeAt = (
+  importingProgresses: WhatsappHistoryImportChatProgress[],
+): string | undefined => {
+  const resumeDates = importingProgresses.map((progress) =>
+    getFutureDate(progress.resumeAt),
+  );
+
+  if (resumeDates.length === 0 || !resumeDates.every(isDefined)) {
+    return undefined;
+  }
+
+  return resumeDates.sort()[0];
+};
+
+const finishIfStillImporting = async ({
+  connectedAccountId,
+  state,
+}: {
+  connectedAccountId: string;
+  state: WhatsappHistoryImportState;
+}): Promise<WhatsappHistoryImportState | null> => {
+  const latestState = await getWhatsappHistoryImportState(connectedAccountId);
+
+  if (
+    latestState?.runId !== state.runId ||
+    latestState.status !== 'IMPORTING'
+  ) {
+    return latestState;
+  }
+
+  return finishWhatsappHistoryImport({ connectedAccountId, state });
 };
 
 export const refreshWhatsappHistoryImportState = async (
@@ -157,70 +221,80 @@ export const refreshWhatsappHistoryImportState = async (
   }
 
   const run = { connectedAccountId, runId: state.runId };
-  const [planning, progress] = await Promise.all([
-    getWhatsappHistoryImportPlanning(run),
-    getWhatsappHistoryImportProgress(run),
-  ]);
-  const resumeAt = progress.resumeAt ?? planning.resumeAt;
-  const currentState: WhatsappHistoryImportState = {
-    ...state,
-    importedConversationCount:
-      progress.importedConversationCount +
-      (progress.currentChunkImportedCount ?? 0),
-    processedConversationCount:
-      progress.completedConversationCount + progress.currentChunkProcessedCount,
-    plannedChunkCount: planning.plannedChunkCount,
-    plannedConversationCount: planning.plannedConversationCount,
-    totalConversationCount: planning.reportedConversationCount,
-    chunkCount: planning.chunkCount,
-    resumeAt:
-      isDefined(resumeAt) && Date.parse(resumeAt) > Date.now()
-        ? resumeAt
-        : undefined,
-  };
+  const planning = await getWhatsappHistoryImportPlanning(run);
 
-  if (
-    isDefined(planning.chunkCount) &&
-    progress.completedChunkCount >= planning.chunkCount
-  ) {
-    return finishWhatsappHistoryImport({
-      connectedAccountId,
-      state: {
-        ...currentState,
-        status: 'COMPLETED',
-        finishedAt: new Date().toISOString(),
-      },
-    });
+  if (!isDefined(planning.chatIds)) {
+    const error = await getPlanningError(planning, state.runId);
+    const listingState = {
+      ...state,
+      resumeAt: getFutureDate(planning.resumeAt),
+    };
+
+    return isDefined(error)
+      ? finishIfStillImporting({
+          connectedAccountId,
+          state: {
+            ...listingState,
+            status: 'FAILED',
+            finishedAt: new Date().toISOString(),
+            error,
+          },
+        })
+      : listingState;
   }
 
-  const error =
-    (await getPlanningError(planning, state.runId)) ??
-    (await getCurrentChunkError({
-      ...run,
-      planning,
-      progress,
-    }));
+  const progresses = await getChatProgresses({
+    run,
+    chatIds: planning.chatIds,
+  });
+  const importingProgresses = progresses.filter(
+    (progress) => progress.status === 'IMPORTING',
+  );
+  const pendingCount = progresses.filter(
+    (progress) => progress.status === 'PENDING',
+  ).length;
 
-  if (!isDefined(error)) {
+  if (
+    pendingCount > 0 &&
+    !importingProgresses.some((progress) => progress.job?.kind === 'CONTACTS')
+  ) {
+    await scheduleNextWhatsappHistoryImportContacts(run);
+  }
+
+  const importedConversationCount = progresses.filter(
+    (progress) => progress.status === 'IMPORTED',
+  ).length;
+  const currentState: WhatsappHistoryImportState = {
+    ...state,
+    importedConversationCount,
+    processedConversationCount:
+      progresses.length - importingProgresses.length - pendingCount,
+    totalConversationCount: progresses.length,
+    resumeAt: getEarliestResumeAt(importingProgresses),
+  };
+
+  if (importingProgresses.length > 0 || pendingCount > 0) {
     return currentState;
   }
 
-  const latestState = await getWhatsappHistoryImportState(connectedAccountId);
+  const chatError = progresses.find((progress) =>
+    isDefined(progress.error),
+  )?.error;
 
-  if (
-    latestState?.runId !== state.runId ||
-    latestState.status !== 'IMPORTING'
-  ) {
-    return latestState;
-  }
-
-  return finishWhatsappHistoryImport({
+  return finishIfStillImporting({
     connectedAccountId,
-    state: {
-      ...currentState,
-      status: 'FAILED',
-      finishedAt: new Date().toISOString(),
-      error,
-    },
+    state:
+      importedConversationCount === 0 && isDefined(chatError)
+        ? {
+            ...currentState,
+            status: 'FAILED',
+            finishedAt: new Date().toISOString(),
+            error: chatError,
+          }
+        : {
+            ...currentState,
+            status: 'COMPLETED',
+            finishedAt: new Date().toISOString(),
+          },
   });
 };
