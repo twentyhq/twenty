@@ -1,4 +1,4 @@
-import { useConditionalAvailabilityFilterBuilderContextOrThrow } from '@/conditional-availability/filter-builder/contexts/ConditionalAvailabilityFilterBuilderContext';
+import { useUpdateConditionalAvailabilityFilterSettings } from '@/conditional-availability/filter-builder/hooks/useUpdateConditionalAvailabilityFilterSettings';
 import { type ConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilter';
 import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterGroup';
 import { removeConditionalAvailabilityFilterOrGroup } from '@/conditional-availability/filter-builder/utils/removeConditionalAvailabilityFilterOrGroup';
@@ -20,17 +20,18 @@ export const ConditionalAvailabilityFilterOptionsDropdown = ({
   filterOrGroup,
 }: ConditionalAvailabilityFilterOptionsDropdownProps) => {
   const { t } = useLingui();
-  const { rootFilterGroup, onRootFilterGroupChange } =
-    useConditionalAvailabilityFilterBuilderContextOrThrow();
+  const { updateConditionalAvailabilityFilterSettings } =
+    useUpdateConditionalAvailabilityFilterSettings();
 
   const isFilterGroup = filterOrGroup.type === 'filterGroup';
 
   const handleRemove = () => {
-    onRootFilterGroupChange(
-      removeConditionalAvailabilityFilterOrGroup({
-        filterGroup: rootFilterGroup,
-        filterOrGroupId: filterOrGroup.id,
-      }),
+    updateConditionalAvailabilityFilterSettings(
+      (currentConditionalAvailabilityFilterGroup) =>
+        removeConditionalAvailabilityFilterOrGroup({
+          filterGroup: currentConditionalAvailabilityFilterGroup,
+          filterOrGroupId: filterOrGroup.id,
+        }),
     );
   };
 

@@ -1,5 +1,6 @@
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
-import { useConditionalAvailabilityFilterBuilderContextOrThrow } from '@/conditional-availability/filter-builder/contexts/ConditionalAvailabilityFilterBuilderContext';
+import { useUpdateConditionalAvailabilityFilterSettings } from '@/conditional-availability/filter-builder/hooks/useUpdateConditionalAvailabilityFilterSettings';
+import { currentConditionalAvailabilityFilterGroupComponentState } from '@/conditional-availability/filter-builder/states/currentConditionalAvailabilityFilterGroupComponentState';
 import { type ConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilter';
 import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterGroup';
 import { createEmptyConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/utils/createEmptyConditionalAvailabilityFilter';
@@ -7,6 +8,7 @@ import { updateConditionalAvailabilityFilterGroup } from '@/conditional-availabi
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -21,17 +23,20 @@ export const ConditionalAvailabilityFilterAddFilterRuleSelect = ({
   filterGroup,
 }: ConditionalAvailabilityFilterAddFilterRuleSelectProps) => {
   const { t } = useLingui();
-  const { rootFilterGroup, onRootFilterGroupChange } =
-    useConditionalAvailabilityFilterBuilderContextOrThrow();
+  const currentConditionalAvailabilityFilterGroup = useAtomComponentStateValue(
+    currentConditionalAvailabilityFilterGroupComponentState,
+  );
+  const { updateConditionalAvailabilityFilterSettings } =
+    useUpdateConditionalAvailabilityFilterSettings();
 
   const addFilterGroupChild = (
     filterGroupChild:
       | ConditionalAvailabilityFilter
       | ConditionalAvailabilityFilterGroup,
   ) => {
-    onRootFilterGroupChange(
+    updateConditionalAvailabilityFilterSettings((filterGroupToUpdateFrom) =>
       updateConditionalAvailabilityFilterGroup({
-        filterGroup: rootFilterGroup,
+        filterGroup: filterGroupToUpdateFrom,
         filterGroupId: filterGroup.id,
         update: (filterGroupToUpdate) => ({
           ...filterGroupToUpdate,
@@ -58,7 +63,8 @@ export const ConditionalAvailabilityFilterAddFilterRuleSelect = ({
     });
   };
 
-  const isFilterRuleGroupOptionVisible = filterGroup.id === rootFilterGroup.id;
+  const isFilterRuleGroupOptionVisible =
+    filterGroup.id === currentConditionalAvailabilityFilterGroup?.id;
 
   if (!isFilterRuleGroupOptionVisible) {
     return (

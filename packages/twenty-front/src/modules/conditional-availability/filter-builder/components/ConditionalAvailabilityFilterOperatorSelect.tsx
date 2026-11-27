@@ -1,4 +1,5 @@
 import { useConditionalAvailabilityFilterBuilderContextOrThrow } from '@/conditional-availability/filter-builder/contexts/ConditionalAvailabilityFilterBuilderContext';
+import { useUpdateConditionalAvailabilityFilterSettings } from '@/conditional-availability/filter-builder/hooks/useUpdateConditionalAvailabilityFilterSettings';
 import { type ConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilter';
 import { type ConditionalAvailabilityFilterOperator } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterOperator';
 import { getConditionalAvailabilityFilterOperatorLabel } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperatorLabel';
@@ -16,8 +17,9 @@ type ConditionalAvailabilityFilterOperatorSelectProps = {
 export const ConditionalAvailabilityFilterOperatorSelect = ({
   filter,
 }: ConditionalAvailabilityFilterOperatorSelectProps) => {
-  const { rootFilterGroup, onRootFilterGroupChange, isReadOnly } =
-    useConditionalAvailabilityFilterBuilderContextOrThrow();
+  const { readonly } = useConditionalAvailabilityFilterBuilderContextOrThrow();
+  const { updateConditionalAvailabilityFilterSettings } =
+    useUpdateConditionalAvailabilityFilterSettings();
 
   const operatorOptions = getConditionalAvailabilityFilterVariableOperators({
     variable: filter.variable,
@@ -29,16 +31,17 @@ export const ConditionalAvailabilityFilterOperatorSelect = ({
   const handleOperatorChange = (
     operator: ConditionalAvailabilityFilterOperator,
   ) => {
-    onRootFilterGroupChange(
-      updateConditionalAvailabilityFilter({
-        filterGroup: rootFilterGroup,
-        filterId: filter.id,
-        update: (filterToUpdate) =>
-          updateConditionalAvailabilityFilterOperator({
-            filter: filterToUpdate,
-            operator,
-          }),
-      }),
+    updateConditionalAvailabilityFilterSettings(
+      (currentConditionalAvailabilityFilterGroup) =>
+        updateConditionalAvailabilityFilter({
+          filterGroup: currentConditionalAvailabilityFilterGroup,
+          filterId: filter.id,
+          update: (filterToUpdate) =>
+            updateConditionalAvailabilityFilterOperator({
+              filter: filterToUpdate,
+              operator,
+            }),
+        }),
     );
   };
 
@@ -48,7 +51,7 @@ export const ConditionalAvailabilityFilterOperatorSelect = ({
       options={operatorOptions}
       value={filter.operator}
       onChange={handleOperatorChange}
-      disabled={isReadOnly}
+      disabled={readonly}
       dropdownSideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET}
       dropdownWidth={GenericDropdownContentWidth.Large}
       fullWidth

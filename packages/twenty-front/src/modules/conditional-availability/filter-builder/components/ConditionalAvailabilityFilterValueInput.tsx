@@ -1,7 +1,8 @@
 import { useConditionalAvailabilityFilterBuilderContextOrThrow } from '@/conditional-availability/filter-builder/contexts/ConditionalAvailabilityFilterBuilderContext';
+import { useUpdateConditionalAvailabilityFilterSettings } from '@/conditional-availability/filter-builder/hooks/useUpdateConditionalAvailabilityFilterSettings';
 import { type ConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilter';
+import { type ConditionalAvailabilityFilterField } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterField';
 import { canConditionalAvailabilityFilterOperatorHoldSeveralValues } from '@/conditional-availability/filter-builder/utils/canConditionalAvailabilityFilterOperatorHoldSeveralValues';
-import { getConditionalAvailabilityDeviceLabel } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityDeviceLabel';
 import { updateConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/utils/updateConditionalAvailabilityFilter';
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownSideOffset';
 import { StyledControlContainer } from '@/ui/input/components/SelectControl';
@@ -11,7 +12,6 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { CONDITIONAL_EVALUATION_DEVICES } from 'twenty-shared/conditional-evaluation';
 import {
   assertUnreachable,
   isDefined,
@@ -41,21 +41,19 @@ const StyledIconChevronDownWrapper = styled.div<{ isDisabled: boolean }>`
 `;
 
 type ConditionalAvailabilityFilterValueInputProps = {
+  filterFields: ConditionalAvailabilityFilterField[];
   filter: ConditionalAvailabilityFilter;
 };
 
 export const ConditionalAvailabilityFilterValueInput = ({
+  filterFields,
   filter,
 }: ConditionalAvailabilityFilterValueInputProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const {
-    rootFilterGroup,
-    onRootFilterGroupChange,
-    roleOptions,
-    workspaceMemberOptions,
-    isReadOnly,
-  } = useConditionalAvailabilityFilterBuilderContextOrThrow();
+  const { readonly } = useConditionalAvailabilityFilterBuilderContextOrThrow();
+  const { updateConditionalAvailabilityFilterSettings } =
+    useUpdateConditionalAvailabilityFilterSettings();
   const [searchValue, setSearchValue] = useState('');
 
   const canHoldSeveralValues =
@@ -64,7 +62,6 @@ export const ConditionalAvailabilityFilterValueInput = ({
     });
 
   const getVariableValueSettings = (): {
-    options: SelectOption<string>[];
     placeholder: string;
     searchPlaceholder: string | null;
     unknownValueLabel: string | null;
@@ -72,14 +69,12 @@ export const ConditionalAvailabilityFilterValueInput = ({
     switch (filter.variable) {
       case 'currentRole':
         return {
-          options: roleOptions,
           placeholder: t`Select roles`,
           searchPlaceholder: t`Search roles`,
           unknownValueLabel: t`Deleted role`,
         };
       case 'currentWorkspaceMember':
         return {
-          options: workspaceMemberOptions,
           placeholder: canHoldSeveralValues
             ? t`Select members`
             : t`Select a member`,
@@ -88,10 +83,6 @@ export const ConditionalAvailabilityFilterValueInput = ({
         };
       case 'device':
         return {
-          options: CONDITIONAL_EVALUATION_DEVICES.map((device) => ({
-            value: device,
-            label: getConditionalAvailabilityDeviceLabel({ device }),
-          })),
           placeholder: t`Select a device`,
           searchPlaceholder: null,
           unknownValueLabel: null,
@@ -101,8 +92,11 @@ export const ConditionalAvailabilityFilterValueInput = ({
     }
   };
 
-  const { options, placeholder, searchPlaceholder, unknownValueLabel } =
+  const { placeholder, searchPlaceholder, unknownValueLabel } =
     getVariableValueSettings();
+
+  const options =
+    filterFields.find(({ key }) => key === filter.variable)?.options ?? [];
 
   const getValueLabel = (value: string) =>
     options.find((option) => option.value === value)?.label ??
@@ -113,7 +107,7 @@ export const ConditionalAvailabilityFilterValueInput = ({
 
   const control = (
     <StyledControlContainer
-      disabled={isReadOnly}
+      disabled={readonly}
       hasIcon={false}
       textAccent={hasValues ? 'default' : 'placeholder'}
     >
@@ -128,13 +122,13 @@ export const ConditionalAvailabilityFilterValueInput = ({
       ) : (
         <OverflowingTextWithTooltip text={placeholder} />
       )}
-      <StyledIconChevronDownWrapper isDisabled={isReadOnly}>
+      <StyledIconChevronDownWrapper isDisabled={readonly}>
         <IconChevronDown size={theme.icon.size.md} />
       </StyledIconChevronDownWrapper>
     </StyledControlContainer>
   );
 
-  if (isReadOnly) {
+  if (readonly) {
     return control;
   }
 
@@ -150,12 +144,13 @@ export const ConditionalAvailabilityFilterValueInput = ({
   );
 
   const handleValuesChange = (values: string[]) => {
-    onRootFilterGroupChange(
-      updateConditionalAvailabilityFilter({
-        filterGroup: rootFilterGroup,
-        filterId: filter.id,
-        update: (filterToUpdate) => ({ ...filterToUpdate, values }),
-      }),
+    updateConditionalAvailabilityFilterSettings(
+      (currentConditionalAvailabilityFilterGroup) =>
+        updateConditionalAvailabilityFilter({
+          filterGroup: currentConditionalAvailabilityFilterGroup,
+          filterId: filter.id,
+          update: (filterToUpdate) => ({ ...filterToUpdate, values }),
+        }),
     );
   };
 

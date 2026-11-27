@@ -1,9 +1,11 @@
 import { ConditionalAvailabilityFilterBuilder } from '@/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterBuilder';
 import { type ConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilter';
+import { type ConditionalAvailabilityFilterField } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterField';
 import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterGroup';
+import { msg } from '@lingui/core/macro';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { type ComponentProps, useState } from 'react';
 import { expect, fn, within } from 'storybook/test';
+import { IconPhone, IconUser, IconUserCircle } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -27,6 +29,32 @@ const WORKSPACE_MEMBER_OPTIONS: SelectOption<string>[] = [
     <Avatar shape="circle" size="md" name={label} colorSeed={value} />
   ),
 }));
+
+const DEVICE_OPTIONS: SelectOption<string>[] = [
+  { value: 'DESKTOP', label: 'Desktop' },
+  { value: 'MOBILE', label: 'Mobile' },
+];
+
+const FILTER_FIELDS: ConditionalAvailabilityFilterField[] = [
+  {
+    key: 'currentRole',
+    label: msg`Role`,
+    Icon: IconUserCircle,
+    options: ROLE_OPTIONS,
+  },
+  {
+    key: 'currentWorkspaceMember',
+    label: msg`Workspace member`,
+    Icon: IconUser,
+    options: WORKSPACE_MEMBER_OPTIONS,
+  },
+  {
+    key: 'device',
+    label: msg`Device`,
+    Icon: IconPhone,
+    options: DEVICE_OPTIONS,
+  },
+];
 
 const ROLE_IS_ANY_OF_FILTER: ConditionalAvailabilityFilter = {
   type: 'filter',
@@ -73,48 +101,17 @@ const FILTER_GROUP_WITH_NESTED_FILTER_GROUP: ConditionalAvailabilityFilterGroup 
     ],
   };
 
-const ConditionalAvailabilityFilterBuilderWithLocalState = ({
-  rootFilterGroup: initialRootFilterGroup,
-  onRootFilterGroupChange,
-  roleOptions,
-  workspaceMemberOptions,
-  isReadOnly,
-}: ComponentProps<typeof ConditionalAvailabilityFilterBuilder>) => {
-  const [rootFilterGroup, setRootFilterGroup] = useState(
-    initialRootFilterGroup,
-  );
-
-  const handleRootFilterGroupChange = (
-    nextRootFilterGroup: ConditionalAvailabilityFilterGroup,
-  ) => {
-    onRootFilterGroupChange(nextRootFilterGroup);
-    setRootFilterGroup(nextRootFilterGroup);
-  };
-
-  return (
-    <ConditionalAvailabilityFilterBuilder
-      rootFilterGroup={rootFilterGroup}
-      onRootFilterGroupChange={handleRootFilterGroupChange}
-      roleOptions={roleOptions}
-      workspaceMemberOptions={workspaceMemberOptions}
-      isReadOnly={isReadOnly}
-    />
-  );
-};
-
 const meta: Meta<typeof ConditionalAvailabilityFilterBuilder> = {
   title: 'Modules/ConditionalAvailability/ConditionalAvailabilityFilterBuilder',
   component: ConditionalAvailabilityFilterBuilder,
   parameters: { container: { width: 400 } },
   args: {
-    rootFilterGroup: EMPTY_FILTER_GROUP,
-    onRootFilterGroupChange: fn(),
-    roleOptions: ROLE_OPTIONS,
-    workspaceMemberOptions: WORKSPACE_MEMBER_OPTIONS,
-    isReadOnly: false,
+    filterFields: FILTER_FIELDS,
+    defaultValue: EMPTY_FILTER_GROUP,
+    onFilterSettingsUpdate: fn(),
+    readonly: false,
   },
   decorators: [ComponentDecorator],
-  render: ConditionalAvailabilityFilterBuilderWithLocalState,
 };
 
 export default meta;
@@ -122,7 +119,8 @@ type Story = StoryObj<typeof ConditionalAvailabilityFilterBuilder>;
 
 export const RoleIsAnyOf: Story = {
   args: {
-    rootFilterGroup: {
+    instanceId: 'role-is-any-of',
+    defaultValue: {
       ...EMPTY_FILTER_GROUP,
       children: [ROLE_IS_ANY_OF_FILTER],
     },
@@ -138,7 +136,8 @@ export const RoleIsAnyOf: Story = {
 
 export const DeviceIsMobile: Story = {
   args: {
-    rootFilterGroup: {
+    instanceId: 'device-is-mobile',
+    defaultValue: {
       ...EMPTY_FILTER_GROUP,
       children: [DEVICE_IS_MOBILE_FILTER],
     },
@@ -153,7 +152,8 @@ export const DeviceIsMobile: Story = {
 
 export const TwoFiltersJoinedByAnd: Story = {
   args: {
-    rootFilterGroup: {
+    instanceId: 'two-filters-joined-by-and',
+    defaultValue: {
       ...EMPTY_FILTER_GROUP,
       children: [ROLE_IS_ANY_OF_FILTER, WORKSPACE_MEMBER_IS_FILTER],
     },
@@ -168,7 +168,8 @@ export const TwoFiltersJoinedByAnd: Story = {
 
 export const WithFilterGroup: Story = {
   args: {
-    rootFilterGroup: FILTER_GROUP_WITH_NESTED_FILTER_GROUP,
+    instanceId: 'with-filter-group',
+    defaultValue: FILTER_GROUP_WITH_NESTED_FILTER_GROUP,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -180,6 +181,7 @@ export const WithFilterGroup: Story = {
 };
 
 export const Empty: Story = {
+  args: { instanceId: 'empty' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -190,8 +192,9 @@ export const Empty: Story = {
 
 export const ReadOnly: Story = {
   args: {
-    rootFilterGroup: FILTER_GROUP_WITH_NESTED_FILTER_GROUP,
-    isReadOnly: true,
+    instanceId: 'read-only',
+    defaultValue: FILTER_GROUP_WITH_NESTED_FILTER_GROUP,
+    readonly: true,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

@@ -1,6 +1,7 @@
 import { ConditionalAvailabilityFilterAddFilterRuleSelect } from '@/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterAddFilterRuleSelect';
 import { ConditionalAvailabilityFilterColumn } from '@/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterColumn';
 import { useConditionalAvailabilityFilterBuilderContextOrThrow } from '@/conditional-availability/filter-builder/contexts/ConditionalAvailabilityFilterBuilderContext';
+import { type ConditionalAvailabilityFilterField } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterField';
 import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterGroup';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -18,14 +19,15 @@ const StyledContainer = styled.div`
 `;
 
 type ConditionalAvailabilityFilterGroupChildrenProps = {
+  filterFields: ConditionalAvailabilityFilterField[];
   filterGroup: ConditionalAvailabilityFilterGroup;
 };
 
 export const ConditionalAvailabilityFilterGroupChildren = ({
+  filterFields,
   filterGroup,
 }: ConditionalAvailabilityFilterGroupChildrenProps) => {
-  const { isReadOnly } =
-    useConditionalAvailabilityFilterBuilderContextOrThrow();
+  const { readonly } = useConditionalAvailabilityFilterBuilderContextOrThrow();
 
   const childFilters = filterGroup.children.filter(
     (filterGroupChild) => filterGroupChild.type === 'filter',
@@ -36,12 +38,13 @@ export const ConditionalAvailabilityFilterGroupChildren = ({
       {childFilters.map((childFilter, childFilterIndex) => (
         <ConditionalAvailabilityFilterColumn
           key={childFilter.id}
+          filterFields={filterFields}
           filterGroup={filterGroup}
           filter={childFilter}
           filterIndex={childFilterIndex}
         />
       ))}
-      {!isReadOnly && (
+      {!readonly && (
         <ConditionalAvailabilityFilterAddFilterRuleSelect
           filterGroup={filterGroup}
         />

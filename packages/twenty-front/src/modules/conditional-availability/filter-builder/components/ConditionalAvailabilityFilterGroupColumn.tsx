@@ -2,6 +2,7 @@ import { ConditionalAvailabilityFilterGroupChildren } from '@/conditional-availa
 import { ConditionalAvailabilityFilterLogicalOperatorCell } from '@/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterLogicalOperatorCell';
 import { ConditionalAvailabilityFilterOptionsDropdown } from '@/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterOptionsDropdown';
 import { useConditionalAvailabilityFilterBuilderContextOrThrow } from '@/conditional-availability/filter-builder/contexts/ConditionalAvailabilityFilterBuilderContext';
+import { type ConditionalAvailabilityFilterField } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterField';
 import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterGroup';
 import { AdvancedFilterSidePanelColumn } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelColumn';
 import { styled } from '@linaria/react';
@@ -15,18 +16,19 @@ const StyledContainer = styled.div`
 `;
 
 type ConditionalAvailabilityFilterGroupColumnProps = {
+  filterFields: ConditionalAvailabilityFilterField[];
   parentFilterGroup: ConditionalAvailabilityFilterGroup;
   filterGroup: ConditionalAvailabilityFilterGroup;
   filterGroupIndex: number;
 };
 
 export const ConditionalAvailabilityFilterGroupColumn = ({
+  filterFields,
   parentFilterGroup,
   filterGroup,
   filterGroupIndex,
 }: ConditionalAvailabilityFilterGroupColumnProps) => {
-  const { isReadOnly } =
-    useConditionalAvailabilityFilterBuilderContextOrThrow();
+  const { readonly } = useConditionalAvailabilityFilterBuilderContextOrThrow();
 
   return (
     <AdvancedFilterSidePanelColumn>
@@ -35,13 +37,16 @@ export const ConditionalAvailabilityFilterGroupColumn = ({
           index={filterGroupIndex}
           filterGroup={parentFilterGroup}
         />
-        {!isReadOnly && (
+        {!readonly && (
           <ConditionalAvailabilityFilterOptionsDropdown
             filterOrGroup={filterGroup}
           />
         )}
       </StyledContainer>
-      <ConditionalAvailabilityFilterGroupChildren filterGroup={filterGroup} />
+      <ConditionalAvailabilityFilterGroupChildren
+        filterFields={filterFields}
+        filterGroup={filterGroup}
+      />
     </AdvancedFilterSidePanelColumn>
   );
 };

@@ -1,10 +1,11 @@
+import { ConditionalAvailabilityFilterFieldSelect } from '@/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterFieldSelect';
 import { ConditionalAvailabilityFilterLogicalOperatorCell } from '@/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterLogicalOperatorCell';
 import { ConditionalAvailabilityFilterOperatorSelect } from '@/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterOperatorSelect';
 import { ConditionalAvailabilityFilterOptionsDropdown } from '@/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterOptionsDropdown';
 import { ConditionalAvailabilityFilterValueInput } from '@/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput';
-import { ConditionalAvailabilityFilterVariableSelect } from '@/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterVariableSelect';
 import { useConditionalAvailabilityFilterBuilderContextOrThrow } from '@/conditional-availability/filter-builder/contexts/ConditionalAvailabilityFilterBuilderContext';
 import { type ConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilter';
+import { type ConditionalAvailabilityFilterField } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterField';
 import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterGroup';
 import { AdvancedFilterSidePanelColumn } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelColumn';
 import { styled } from '@linaria/react';
@@ -18,18 +19,19 @@ const StyledContainer = styled.div`
 `;
 
 type ConditionalAvailabilityFilterColumnProps = {
+  filterFields: ConditionalAvailabilityFilterField[];
   filterGroup: ConditionalAvailabilityFilterGroup;
   filter: ConditionalAvailabilityFilter;
   filterIndex: number;
 };
 
 export const ConditionalAvailabilityFilterColumn = ({
+  filterFields,
   filterGroup,
   filter,
   filterIndex,
 }: ConditionalAvailabilityFilterColumnProps) => {
-  const { isReadOnly } =
-    useConditionalAvailabilityFilterBuilderContextOrThrow();
+  const { readonly } = useConditionalAvailabilityFilterBuilderContextOrThrow();
 
   return (
     <AdvancedFilterSidePanelColumn>
@@ -38,16 +40,22 @@ export const ConditionalAvailabilityFilterColumn = ({
           index={filterIndex}
           filterGroup={filterGroup}
         />
-        {!isReadOnly && (
+        {!readonly && (
           <ConditionalAvailabilityFilterOptionsDropdown
             filterOrGroup={filter}
           />
         )}
       </StyledContainer>
       <AdvancedFilterSidePanelColumn>
-        <ConditionalAvailabilityFilterVariableSelect filter={filter} />
+        <ConditionalAvailabilityFilterFieldSelect
+          filterFields={filterFields}
+          filter={filter}
+        />
         <ConditionalAvailabilityFilterOperatorSelect filter={filter} />
-        <ConditionalAvailabilityFilterValueInput filter={filter} />
+        <ConditionalAvailabilityFilterValueInput
+          filterFields={filterFields}
+          filter={filter}
+        />
       </AdvancedFilterSidePanelColumn>
     </AdvancedFilterSidePanelColumn>
   );

@@ -1,4 +1,5 @@
 import { useConditionalAvailabilityFilterBuilderContextOrThrow } from '@/conditional-availability/filter-builder/contexts/ConditionalAvailabilityFilterBuilderContext';
+import { useUpdateConditionalAvailabilityFilterSettings } from '@/conditional-availability/filter-builder/hooks/useUpdateConditionalAvailabilityFilterSettings';
 import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterGroup';
 import { getConditionalAvailabilityLogicalOperatorLabel } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityLogicalOperatorLabel';
 import { updateConditionalAvailabilityFilterGroup } from '@/conditional-availability/filter-builder/utils/updateConditionalAvailabilityFilterGroup';
@@ -37,8 +38,9 @@ export const ConditionalAvailabilityFilterLogicalOperatorCell = ({
   filterGroup,
 }: ConditionalAvailabilityFilterLogicalOperatorCellProps) => {
   const { t } = useLingui();
-  const { rootFilterGroup, onRootFilterGroupChange, isReadOnly } =
-    useConditionalAvailabilityFilterBuilderContextOrThrow();
+  const { readonly } = useConditionalAvailabilityFilterBuilderContextOrThrow();
+  const { updateConditionalAvailabilityFilterSettings } =
+    useUpdateConditionalAvailabilityFilterSettings();
 
   if (index === 0) {
     return (
@@ -73,15 +75,16 @@ export const ConditionalAvailabilityFilterLogicalOperatorCell = ({
   const handleLogicalOperatorChange = (
     logicalOperator: ConditionalEvaluationLogicalOperator,
   ) => {
-    onRootFilterGroupChange(
-      updateConditionalAvailabilityFilterGroup({
-        filterGroup: rootFilterGroup,
-        filterGroupId: filterGroup.id,
-        update: (filterGroupToUpdate) => ({
-          ...filterGroupToUpdate,
-          logicalOperator,
+    updateConditionalAvailabilityFilterSettings(
+      (currentConditionalAvailabilityFilterGroup) =>
+        updateConditionalAvailabilityFilterGroup({
+          filterGroup: currentConditionalAvailabilityFilterGroup,
+          filterGroupId: filterGroup.id,
+          update: (filterGroupToUpdate) => ({
+            ...filterGroupToUpdate,
+            logicalOperator,
+          }),
         }),
-      }),
     );
   };
 
@@ -94,7 +97,7 @@ export const ConditionalAvailabilityFilterLogicalOperatorCell = ({
         onChange={handleLogicalOperatorChange}
         options={logicalOperatorOptions}
         dropdownSideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET}
-        disabled={isReadOnly}
+        disabled={readonly}
       />
     </StyledContainer>
   );
