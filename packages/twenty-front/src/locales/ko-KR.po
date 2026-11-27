@@ -7111,6 +7111,11 @@ msgstr "페이지 닫기"
 msgid "Close preview"
 msgstr "미리보기 닫기"
 
+#. js-lingui-id: QBOwbf
+#: src/modules/navigation/components/NavigationDrawerCloseSettingsButton.tsx
+msgid "Close settings"
+msgstr ""
+
 #. js-lingui-id: saip/v
 #: src/modules/side-panel/components/SidePanelCloseButton.tsx
 msgid "Close side panel"

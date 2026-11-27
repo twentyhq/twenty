@@ -7111,6 +7111,11 @@ msgstr "Tanca la pàgina"
 msgid "Close preview"
 msgstr "Tanca la vista prèvia"
 
+#. js-lingui-id: QBOwbf
+#: src/modules/navigation/components/NavigationDrawerCloseSettingsButton.tsx
+msgid "Close settings"
+msgstr ""
+
 #. js-lingui-id: saip/v
 #: src/modules/side-panel/components/SidePanelCloseButton.tsx
 msgid "Close side panel"

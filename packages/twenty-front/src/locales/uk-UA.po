@@ -7111,6 +7111,11 @@ msgstr "Закрити сторінку"
 msgid "Close preview"
 msgstr "Закрити попередній перегляд"
 
+#. js-lingui-id: QBOwbf
+#: src/modules/navigation/components/NavigationDrawerCloseSettingsButton.tsx
+msgid "Close settings"
+msgstr ""
+
 #. js-lingui-id: saip/v
 #: src/modules/side-panel/components/SidePanelCloseButton.tsx
 msgid "Close side panel"
