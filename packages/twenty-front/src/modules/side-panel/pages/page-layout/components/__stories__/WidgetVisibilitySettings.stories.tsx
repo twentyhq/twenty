@@ -4,7 +4,6 @@ import {
   makeTab,
   makeWidget,
 } from '@/page-layout/testing/pageLayoutDraftFixtures';
-import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { WidgetVisibilitySettings } from '@/side-panel/pages/page-layout/components/WidgetVisibilitySettings';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -23,7 +22,6 @@ import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
-import { getOperationName } from '~/utils/getOperationName';
 
 const PAGE_LAYOUT_ID = 'widget-visibility-settings-story';
 const TAB_ID = 'tab';
@@ -85,7 +83,7 @@ const meta: Meta<typeof WidgetVisibilitySettingsStory> = {
     container: { width: 400 },
     msw: {
       handlers: [
-        graphql.query(getOperationName(GET_ROLES) ?? '', () =>
+        graphql.query('GetRoles', () =>
           HttpResponse.json({ data: { getRoles: ROLES } }),
         ),
         ...graphqlMocks.handlers,
