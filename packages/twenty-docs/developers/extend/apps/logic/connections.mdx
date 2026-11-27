@@ -9,7 +9,7 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 Connections are credentials a user holds for an external service (Linear, GitHub, Slack, ...). Your app declares **how** those credentials are obtained — a **connection provider** — and consumes them at runtime to make authenticated calls to the third-party API.
 
-OAuth 2.0 is built in, either with a client you register yourself (`oauth`) or discovered from the service (`oauth-discovery`). Services that authenticate with a token the user copies from their settings use an `api-key` provider. Services with their own connection flow — a hosted login page, an account id delivered by webhook — use a `custom` provider, where your app drives the flow and Twenty keeps the user, the workspace and the saved connection. Future credential types (basic auth) will plug into the same surface — apps already using `defineConnectionProvider({ type: 'oauth', ... })` won't need to migrate.
+OAuth 2.0 is built in, either with a client you register yourself (`oauth`) or discovered from the service (`oauth-discovery`). Services that authenticate with a token the user copies from their settings use an `api-key` provider. Services with their own connection flow — a hosted login page, an account id delivered by webhook — use a `custom` provider, where your app drives the flow and Twenty keeps the user, the workspace and the saved connection. Services your app signs in to through its own API — credentials, a verification code, a QR code — use an `interactive` provider, whose screens Twenty renders itself. Future credential types (basic auth) will plug into the same surface — apps already using `defineConnectionProvider({ type: 'oauth', ... })` won't need to migrate.
 
 <AccordionGroup>
 
@@ -96,7 +96,7 @@ Key points:
 - `clientIdVariable` / `clientSecretVariable` are **names**, not values — they must match keys declared in `defineApplication.serverVariables`. The actual `client_id` and `client_secret` are entered by the server admin through the app registration UI, never committed to your repo.
 - Use `serverVariables` (not `applicationVariables`) — OAuth credentials are server-wide and one OAuth app per Twenty server.
 - Until both `serverVariables` are filled in, the app's General tab shows a "needs server admin" hint and the "Add connection" button is disabled.
-- `type` is `'oauth'` (with an `oauth` block), `'oauth-discovery'` (with an `oauthDiscovery` block, see below), `'custom'` (with a `custom` block, see "Custom connection flows") or `'api-key'` (no block, see "API key connections"). The discriminator is forward-compatible: future types will add new sub-config blocks alongside these.
+- `type` is `'oauth'` (with an `oauth` block), `'oauth-discovery'` (with an `oauthDiscovery` block, see below), `'custom'` (with a `custom` block, see "Custom connection flows"), `'interactive'` (with an `interactive` block, see "Interactive connection flows") or `'api-key'` (no block, see "API key connections"). The discriminator is forward-compatible: future types will add new sub-config blocks alongside these.
 
 For a service that publishes its OAuth settings, such as a remote MCP server, declare `type: 'oauth-discovery'` with `oauthDiscovery: { resourceUrl }`, an HTTP or HTTPS URL. At connect time Twenty discovers the authorization server from the resource (RFC 9728), identifies itself with its client metadata document when the server supports it, otherwise registers a client dynamically, and refreshes tokens like any OAuth connection. No `serverVariables` are needed. Discovery ships with Twenty 2.59.0: if your app declares an `oauth-discovery` provider, declare `"engines": { "twenty": ">=2.59.0" }` in its `package.json`.
 
@@ -260,9 +260,120 @@ Both functions run while the member waits on a redirect, so their timeout is cap
 
 Twenty does not refresh or revoke custom connections. Release what the service holds for the account in the logic function set as `onDisconnectLogicFunctionUniversalIdentifier`.
 
-A provider's `type`, like its `scope`, cannot change once it is synced: to move a service between `oauth`, `oauth-discovery`, `custom` and `api-key`, declare a new provider with a new `universalIdentifier`.
+A provider's `type`, like its `scope`, cannot change once it is synced: to move a service between `oauth`, `oauth-discovery`, `custom`, `interactive` and `api-key`, declare a new provider with a new `universalIdentifier`.
 
 Custom providers ship with Twenty 2.52.0.
+
+</Accordion>
+
+<Accordion title="Interactive connection flows" description="Sign in to a service through screens Twenty renders">
+
+Some services let your app connect an account through their API rather than a hosted page: the member enters their credentials, then a verification code, or approves the sign-in on their phone. Declare these with `type: 'interactive'` and one step logic function. Twenty renders each screen it returns, so the member never leaves Twenty:
+
+```ts src/connection-providers/linkedin-connection.ts
+import { defineConnectionProvider } from 'twenty-sdk/define';
+
+export default defineConnectionProvider({
+  universalIdentifier: '5b0e6f3a-2c4d-4e8f-9a1b-7c6d5e4f3a2b',
+  name: 'linkedin',
+  displayName: 'LinkedIn',
+  type: 'interactive',
+  scope: 'USER',
+  interactive: {
+    stepLogicFunctionUniversalIdentifier: 'f7d4b5e6-9a8c-4d0e-1f2a-3b4c5d6e7f80',
+  },
+  onConnectLogicFunctionUniversalIdentifier: 'e6c3a4d5-8f7b-4c9d-0e1f-2a3b4c5d6e7f',
+});
+```
+
+Twenty runs the step function with a `trigger`:
+
+| `trigger`  | When                                                                                     |
+| ---------- | ---------------------------------------------------------------------------------------- |
+| `'start'`  | The member opens the connect screen. `state` is `null`.                                   |
+| `'submit'` | The member submits a form. `values` holds the fields the form declared, as strings.      |
+| `'poll'`   | Every `pollIntervalSeconds` while a `waiting` or `qr-code` screen is shown.             |
+| `'cancel'` | The member closes the screen. Release what you started; the return value is ignored.    |
+
+The payload also carries the `state` your previous step returned and the member's `locale`, so you can translate your screens. Return the next screen with the `state` you need on the next call, the connected account, or `cancelled`:
+
+```ts src/logic-functions/handlers/linkedin-connection-step-handler.ts
+import {
+  type InteractiveConnectionStepPayload,
+  type InteractiveConnectionStepResult,
+} from 'twenty-sdk/logic-function';
+
+type LinkedinState = { accountId?: string };
+
+export const linkedinConnectionStepHandler = async ({
+  trigger,
+  state,
+  values,
+}: InteractiveConnectionStepPayload<LinkedinState>): Promise<
+  InteractiveConnectionStepResult<LinkedinState>
+> => {
+  if (trigger === 'start') {
+    return {
+      type: 'screen',
+      state: {},
+      screen: {
+        type: 'form',
+        title: 'Sign in to LinkedIn',
+        fields: [
+          { key: 'email', label: 'Email', kind: 'email' },
+          { key: 'password', label: 'Password', kind: 'password' },
+        ],
+      },
+    };
+  }
+
+  if (trigger === 'cancel') {
+    return { type: 'cancelled' };
+  }
+
+  if (trigger === 'submit') {
+    const accountId = await startUnipileSignIn(values.email, values.password);
+
+    return {
+      type: 'screen',
+      state: { accountId },
+      screen: {
+        type: 'waiting',
+        title: 'Approve the sign-in in your LinkedIn app',
+        pollIntervalSeconds: 3,
+      },
+    };
+  }
+
+  const account = await fetchUnipileAccount(state?.accountId ?? '');
+
+  return account.isConnected
+    ? { type: 'done', externalAccountId: account.id, handle: account.name }
+    : {
+        type: 'screen',
+        state: state ?? {},
+        screen: {
+          type: 'waiting',
+          title: 'Approve the sign-in in your LinkedIn app',
+          pollIntervalSeconds: 3,
+        },
+      };
+};
+```
+
+A screen is one of:
+
+| `type`      | Fields                                                                                                                                                      |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `'form'`    | `title`, optional `description`, `fields` (1 to 10, each with a unique `key`, a `label` and a `kind`: `text`, `email`, `password` or `code`), optional `submitLabel` and `error` |
+| `'waiting'` | `title`, optional `description`, `pollIntervalSeconds` (clamped to 2–60)                                                                                   |
+| `'qr-code'` | `title`, optional `description`, the QR code `data`, `pollIntervalSeconds` (clamped to 2–60)                                                               |
+
+Return an expected failure, such as a wrong password, as a form with `error` set; throw only when the service is unreachable. `done` takes the same `externalAccountId`, `handle` and `accessToken` as a custom callback result, and the connection is saved, reconnected and announced to the on-connect logic function the same way.
+
+Twenty keeps `state` on the server, never in the browser, so it can hold ids but must stay under 16 KB, and must never hold the member's password: credentials only ever reach your step function in `values`. A connect attempt expires after 15 minutes or 30 submits. Password fields cannot be prefilled. Like the custom flow functions, the step function's timeout is capped at 10 seconds.
+
+Interactive providers ship with Twenty 2.66.0: declare `"engines": { "twenty": ">=2.66.0" }` in your app's `package.json`. The connect screen in Settings arrives in a later release; until then, interactive connections are started through the `startInteractiveConnection` and `continueInteractiveConnection` metadata mutations.
 
 </Accordion>
 
@@ -483,8 +594,8 @@ Each connection has:
 | `scopes`            | OAuth permissions granted by the upstream provider (distinct from `scope` — those are unrelated)                                                                                                                           |
 | `userWorkspaceId`   | The owner's userWorkspace id — useful for picking "the request user's connection" in HTTP-route triggers                                                                                                                   |
 | `workspaceMemberId` | The owner's workspace member id, or `null` if they've since left the workspace                                                                                                                                             |
-| `providerType`      | `'oauth'`, `'custom'` or `'api-key'`, the type of the connection provider (`oauth-discovery` connections report `'oauth'`). Check it to narrow `accessToken`                                                      |
-| `accessToken`       | Fresh OAuth access token (refreshed automatically if expired), always set when `providerType` is `'oauth'`. For `'custom'`, `null` unless the callback returned one. For `'api-key'`, the key the member entered     |
+| `providerType`      | `'oauth'`, `'custom'`, `'interactive'` or `'api-key'`, the type of the connection provider (`oauth-discovery` connections report `'oauth'`). Check it to narrow `accessToken`                                                      |
+| `accessToken`       | Fresh OAuth access token (refreshed automatically if expired), always set when `providerType` is `'oauth'`. For `'custom'` and `'interactive'`, `null` unless the callback or the step function returned one. For `'api-key'`, the key the member entered     |
 | `name`              | The connection's display name (auto-derived at OAuth callback, user-renameable)                                                                                                                                            |
 | `handle`            | The connected upstream account's label, refreshed on each reconnect: the `handle` returned by the identify function when there is one, otherwise the email from the OIDC `id_token` returned at token exchange, falling back to the connecting Twenty user's email |
 | `externalAccountId` | Stable id of the upstream account returned by the identify function, or `null` when the provider declares none or the connection predates it. Not unique: use it to deduplicate connections yourself                         |
