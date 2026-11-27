@@ -1,8 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import {
-  getFieldMetadataFormulaBindings,
   isDefined,
   isValidationRuleReservedName,
+  listFieldMetadataFormulaFieldNodes,
 } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
@@ -19,7 +19,7 @@ export const validateFlatFieldMetadataNameReadByFormulas = ({
   name: string;
   universalFlatFieldMetadataMaps: {
     byUniversalIdentifier: Partial<
-      Record<string, Pick<UniversalFlatFieldMetadata, 'universalSettings'>>
+      Record<string, Pick<UniversalFlatFieldMetadata, 'formula'>>
     >;
   };
 }): FlatFieldMetadataValidationError[] => {
@@ -27,13 +27,16 @@ export const validateFlatFieldMetadataNameReadByFormulas = ({
     universalFlatFieldMetadataMaps.byUniversalIdentifier,
   )
     .filter(isDefined)
-    .some(({ universalSettings }) =>
-      Object.entries(
-        getFieldMetadataFormulaBindings({ settings: universalSettings }) ?? {},
-      ).some(
-        ([path, boundUniversalIdentifier]) =>
-          boundUniversalIdentifier === universalIdentifier &&
-          isValidationRuleReservedName({ name, isMember: path.includes('.') }),
+    .some(({ formula }) =>
+      listFieldMetadataFormulaFieldNodes({ formula }).some(
+        ({ fieldUniversalIdentifier, relationFieldUniversalIdentifier }) =>
+          (relationFieldUniversalIdentifier === universalIdentifier &&
+            isValidationRuleReservedName({ name, isMember: false })) ||
+          (fieldUniversalIdentifier === universalIdentifier &&
+            isValidationRuleReservedName({
+              name,
+              isMember: isDefined(relationFieldUniversalIdentifier),
+            })),
       ),
     );
 

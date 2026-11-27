@@ -23,6 +23,7 @@ import { ChatThreadPendingMessage } from '@/activities/emails/components/ChatThr
 import { useComposerDraft } from '@/activities/emails/hooks/useComposerDraft';
 import { chatThreadComposerDraftFamilyState } from '@/activities/emails/states/chatThreadComposerDraftFamilyState';
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
+import { ChatComposerAttachments } from '@/chat/components/ChatComposerAttachments';
 import { ChatFilePreview } from '@/chat/components/ChatFilePreview';
 import { StyledChatComposerBox } from '@/chat/components/StyledChatComposerBox';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
@@ -61,12 +62,6 @@ const StyledTextarea = styled(TextareaAutosize)`
   &::placeholder {
     color: ${themeCssVariables.font.color.light};
   }
-`;
-
-const StyledFiles = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledActions = styled.div`
@@ -296,6 +291,19 @@ export const ChatThreadComposer = ({
         </StyledPendingMessages>
       )}
       <StyledChatComposerBox>
+        <ChatComposerAttachments hasAttachments={isNonEmptyArray(files)}>
+          {files.map((file, index) => (
+            <ChatFilePreview
+              key={`${index}-${file.name}`}
+              file={file}
+              onRemove={() =>
+                setFiles((currentFiles) =>
+                  currentFiles.filter((currentFile) => currentFile !== file),
+                )
+              }
+            />
+          ))}
+        </ChatComposerAttachments>
         <StyledTextarea
           aria-label={t`Message`}
           placeholder={getPlaceholder()}
@@ -309,21 +317,6 @@ export const ChatThreadComposer = ({
           onFocus={handleTextareaFocus}
           onBlur={handleTextareaBlur}
         />
-        {isNonEmptyArray(files) && (
-          <StyledFiles>
-            {files.map((file, index) => (
-              <ChatFilePreview
-                key={`${index}-${file.name}`}
-                file={file}
-                onRemove={() =>
-                  setFiles((currentFiles) =>
-                    currentFiles.filter((currentFile) => currentFile !== file),
-                  )
-                }
-              />
-            ))}
-          </StyledFiles>
-        )}
         <StyledActions>
           <StyledLeftActions>
             <StyledFileInput

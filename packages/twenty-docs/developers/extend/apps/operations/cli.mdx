@@ -146,6 +146,8 @@ Other app commands:
 
 Definitions missing from your source are deleted from the workspace by default. Pass `--no-prune` to keep them. The workspace Custom application keeps them unless you pass `--prune`. Deleting objects or fields also deletes their data, so it requires confirmation. See [Syncing & recovery](/developers/extend/apps/operations/sync-and-recovery) for details.
 
+Outside the workspace Custom application, `plan`, `apply`, `dev` and `publish` refuse roles that workspace members or API keys can hold, and field or row-level permissions. See [Roles outside the workspace Custom application](/developers/extend/apps/config/roles#roles-outside-the-workspace-custom-application).
+
 ## Executing functions
 
 Run a deployed logic function without triggering it through a route, a cron or a database event. Sync your local changes with `app apply` or `app dev` first.

@@ -1,13 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { Any, Repository } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CalendarEventCleanerService } from 'src/modules/calendar/calendar-event-cleaner/services/calendar-event-cleaner.service';
@@ -36,7 +34,6 @@ export class CalendarFetchEventsService {
     private readonly getCalendarEventsService: CalendarGetCalendarEventsService,
     private readonly calendarEventImportErrorHandlerService: CalendarEventImportErrorHandlerService,
     private readonly calendarEventCleanerService: CalendarEventCleanerService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly calendarRecurringEventWakeUpService: CalendarRecurringEventWakeUpService,
   ) {}
 
@@ -59,15 +56,9 @@ export class CalendarFetchEventsService {
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         try {
-          const isRecurringEventHorizonEnabled =
-            await this.featureFlagService.isFeatureEnabled(
-              FeatureFlagKey.IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED,
-              workspaceId,
-            );
-
-          const recurringEventHorizon = isRecurringEventHorizonEnabled
-            ? new Date(Date.now() + CALENDAR_RECURRING_EVENT_HORIZON_MS)
-            : undefined;
+          const recurringEventHorizon = new Date(
+            Date.now() + CALENDAR_RECURRING_EVENT_HORIZON_MS,
+          );
 
           const {
             calendarEventIds,

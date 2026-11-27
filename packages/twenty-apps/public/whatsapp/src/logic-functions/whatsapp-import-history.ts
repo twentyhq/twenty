@@ -112,6 +112,7 @@ export const whatsappImportHistoryHandler = async (
     WHATSAPP_IMPORT_HISTORY_TIMEOUT_SECONDS * 1000 -
     WHATSAPP_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS;
   const jobId = getWhatsappImportHistoryJobId(payload);
+  const logPrefix = `[whatsapp] history run ${runId} chunk ${chunkIndex}`;
   let importedConversationCount = startProgress.currentChunkImportedCount ?? 0;
   let processedChatCount = startProgress.currentChunkProcessedCount;
   let chatCursor = startProgress.currentChatCursor;
@@ -123,7 +124,6 @@ export const whatsappImportHistoryHandler = async (
     attachmentCount: 0,
     skippedChatCounts: {
       NOT_SELECTED: 0,
-      GROUP_CHATS_OFF: 0,
       NO_MESSAGES: 0,
       NO_PHONE: 0,
       NO_CONTACT: 0,
@@ -222,6 +222,9 @@ export const whatsappImportHistoryHandler = async (
           });
 
     if (!isDefined(fetchedChat)) {
+      console.log(
+        `${logPrefix}: conversation ${listedChat.id} skipped, it no longer exists`,
+      );
       await finishChat();
 
       return;
@@ -234,6 +237,7 @@ export const whatsappImportHistoryHandler = async (
 
     const counterparts = getWhatsappChatCounterparts(chat);
     const seenCursors = new Set<string>();
+    let skippedReason: WhatsappIngestResult['skippedReason'];
 
     do {
       if (
@@ -248,6 +252,11 @@ export const whatsappImportHistoryHandler = async (
         chatId: chat.id,
         cursor: chatCursor,
       });
+
+      console.log(
+        `${logPrefix}: start importing ${page.items.length} messages from conversation ${chat.id}`,
+      );
+
       const ingestResult = await ingestWhatsappMessages({
         unipileAccountId,
         attachmentDeadlineAtMs,
@@ -258,6 +267,11 @@ export const whatsappImportHistoryHandler = async (
         messages: page.items,
       });
 
+      console.log(
+        `${logPrefix}: ${ingestResult.ingestedMessageCount} messages imported from conversation ${chat.id}`,
+      );
+
+      skippedReason = ingestResult.skippedReason;
       totals.messageCount += ingestResult.ingestedMessageCount;
       totals.matchedPersonCount += ingestResult.matchedPersonCount;
       totals.createdPersonCount += ingestResult.createdPersonCount;
@@ -285,6 +299,9 @@ export const whatsappImportHistoryHandler = async (
       }
     } while (isDefined(chatCursor));
 
+    console.log(
+      `${logPrefix}: conversation ${chat.id} ${isChatImported ? 'imported' : `skipped (${skippedReason ?? 'NO_MESSAGES'})`}`,
+    );
     await finishChat();
   };
 
@@ -352,7 +369,7 @@ export const whatsappImportHistoryHandler = async (
       `${chats.length} chats (last messages ${chats[0]?.last_message_timestamp ?? '-'} to ${chats[chats.length - 1]?.last_message_timestamp ?? '-'}), ` +
       `${importedConversationCount} conversations imported, ${totals.messageCount} messages, ` +
       `${totals.matchedPersonCount} people matched, ${totals.createdPersonCount} people created, ${totals.attachmentCount} attachments, ` +
-      `skipped ${totals.skippedChatCounts.NO_CONTACT} without contact, ${totals.skippedChatCounts.NO_PHONE} without phone number, ${totals.skippedChatCounts.GROUP_CHATS_OFF} group chats, ${totals.skippedChatCounts.NO_MESSAGES} without messages, ` +
+      `skipped ${totals.skippedChatCounts.NO_CONTACT} without contact, ${totals.skippedChatCounts.NO_PHONE} without phone number, ${totals.skippedChatCounts.NO_MESSAGES} without messages, ` +
       `in ${Math.round((Date.now() - startedAt) / 1000)}s`,
   );
 

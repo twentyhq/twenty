@@ -4,12 +4,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
-const COMPANY_FORMULA_SETTINGS_BY_FIELD_NAME: Partial<
-  Record<string, { formula: FieldMetadataFormula }>
+const COMPANY_FORMULA_BY_FIELD_NAME: Partial<
+  Record<string, FieldMetadataFormula>
 > = {
-  employees: { formula: { expression: 'arrayLength(tagline)' } },
+  employees: { expression: 'arrayLength(tagline)' },
   idealCustomerProfile: {
-    formula: { expression: 'count(people) > 10', evaluation: 'STORED' },
+    expression: 'count(people) > 10',
+    evaluation: 'STORED',
   },
 };
 
@@ -17,17 +18,16 @@ const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock().map(
   (objectMetadataItem) => ({
     ...objectMetadataItem,
     fields: objectMetadataItem.fields.map((fieldMetadataItem) => {
-      const formulaSettings =
-        COMPANY_FORMULA_SETTINGS_BY_FIELD_NAME[fieldMetadataItem.name];
+      const formula = COMPANY_FORMULA_BY_FIELD_NAME[fieldMetadataItem.name];
 
       if (
         objectMetadataItem.nameSingular !== 'company' ||
-        !isDefined(formulaSettings)
+        !isDefined(formula)
       ) {
         return fieldMetadataItem;
       }
 
-      return { ...fieldMetadataItem, settings: formulaSettings };
+      return { ...fieldMetadataItem, formula };
     }),
   }),
 );

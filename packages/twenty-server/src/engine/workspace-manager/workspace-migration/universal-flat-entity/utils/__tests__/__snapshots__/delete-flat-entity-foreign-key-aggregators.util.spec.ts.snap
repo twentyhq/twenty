@@ -11,6 +11,7 @@ exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped
   "disabledFieldPermissionActions": null,
   "fieldMetadataOptionUniversalIdentifiers": [],
   "fieldPermissionUniversalIdentifiers": [],
+  "formula": null,
   "icon": "icon",
   "isActive": true,
   "isAuditLogged": true,

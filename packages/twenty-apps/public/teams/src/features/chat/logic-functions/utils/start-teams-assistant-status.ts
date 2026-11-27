@@ -6,14 +6,13 @@ import {
 } from 'src/features/chat/logic-functions/constants/teams-assistant-status-steps';
 import { TEAMS_PERSONAL_CONVERSATION_TYPE } from 'src/features/chat/logic-functions/constants/teams-personal-conversation-type';
 import { type TeamsAssistantStatusWriter } from 'src/features/chat/logic-functions/types/teams-assistant-status-writer.type';
-import { buildTeamsMessageActivity } from 'src/features/chat/logic-functions/utils/build-teams-message-activity';
-import { getTeamsConnectorAccessTokenOrThrow } from 'src/features/chat/logic-functions/utils/get-teams-connector-access-token-or-throw';
-import { sendTeamsActivity } from 'src/features/chat/logic-functions/utils/send-teams-activity';
+import { sendTeamsMessage } from 'src/features/chat/logic-functions/utils/send-teams-message';
+import { startTeamsAssistantPlaceholder } from 'src/features/chat/logic-functions/utils/start-teams-assistant-placeholder';
 import { startTeamsAssistantStream } from 'src/features/chat/logic-functions/utils/start-teams-assistant-stream';
 
 const PENDING_UPDATE_WAIT_MS = 5000;
 
-// Teams only streams in one-on-one chats, so other conversations get a plain reply at the end.
+// REST streaming is only documented for one-on-one chats, so other conversations get a placeholder message.
 export const startTeamsAssistantStatus = async ({
   serviceUrl,
   conversationId,
@@ -24,16 +23,11 @@ export const startTeamsAssistantStatus = async ({
   conversationType: string;
 }): Promise<Pick<TeamsAssistantStatusWriter, 'finish'>> => {
   const sendMessage = async (text: string) => {
-    await sendTeamsActivity({
-      serviceUrl,
-      conversationId,
-      accessToken: await getTeamsConnectorAccessTokenOrThrow(),
-      activity: buildTeamsMessageActivity({ text }),
-    });
+    await sendTeamsMessage({ serviceUrl, conversationId, text });
   };
 
   if (conversationType !== TEAMS_PERSONAL_CONVERSATION_TYPE) {
-    return { finish: sendMessage };
+    return startTeamsAssistantPlaceholder({ serviceUrl, conversationId });
   }
 
   const writer = await startTeamsAssistantStream({

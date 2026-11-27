@@ -1,6 +1,6 @@
 {
   "name": "@twentyhq/call-recorder",
-  "version": "1.22.0",
+  "version": "1.23.0",
   "license": "MIT",
   "engines": {
     "node": "^26.5.1",

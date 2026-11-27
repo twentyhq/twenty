@@ -161,7 +161,7 @@ describe('Chat message attachments with real storage', () => {
     const threadId = await context.createThread();
     const userMessage = await context.chatService.addMessage({
       workspaceId: context.workspaceId,
-      userWorkspaceId: context.userWorkspaceId,
+      workspaceMemberId: context.workspaceMemberId,
       threadId,
       turnStatus: AgentTurnStatus.WAITING_FOR_INPUT,
       uiMessage: {

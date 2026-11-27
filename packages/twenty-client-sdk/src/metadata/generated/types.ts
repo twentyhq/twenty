@@ -534,9 +534,6 @@ export default {
             "senderApplicationId": [
                 574
             ],
-            "senderUserWorkspaceId": [
-                574
-            ],
             "senderWorkspaceMemberId": [
                 574
             ],
@@ -3851,6 +3848,9 @@ export default {
             "description": [
                 4
             ],
+            "formula": [
+                350
+            ],
             "icon": [
                 4
             ],
@@ -4585,6 +4585,9 @@ export default {
             ],
             "key": [
                 708
+            ],
+            "listPinnedFieldMetadataId": [
+                574
             ],
             "mainGroupByFieldMetadataId": [
                 574
@@ -5392,6 +5395,9 @@ export default {
             ],
             "disabledFieldPermissionActions": [
                 4
+            ],
+            "formula": [
+                350
             ],
             "icon": [
                 4
@@ -14838,6 +14844,9 @@ export default {
             "description": [
                 4
             ],
+            "formula": [
+                350
+            ],
             "icon": [
                 4
             ],
@@ -15746,6 +15755,9 @@ export default {
             ],
             "kanbanColumnWidth": [
                 2
+            ],
+            "listPinnedFieldMetadataId": [
+                574
             ],
             "mainGroupByFieldMetadataId": [
                 574
@@ -16897,6 +16909,9 @@ export default {
             ],
             "key": [
                 708
+            ],
+            "listPinnedFieldMetadataId": [
+                574
             ],
             "mainGroupByFieldMetadataId": [
                 574

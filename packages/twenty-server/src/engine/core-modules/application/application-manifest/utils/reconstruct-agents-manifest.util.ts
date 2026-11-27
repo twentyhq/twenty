@@ -4,12 +4,16 @@ import { isDefined } from 'twenty-shared/utils';
 import { fromAgentManifestToUniversalFlatRoleTarget } from 'src/engine/core-modules/application/application-manifest/converters/from-agent-manifest-to-universal-flat-role-target.util';
 import { fromFlatAgentToAgentManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-agent-to-agent-manifest.util';
 import { type ApplicationExportCoverageEntry } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
+import { buildDatabaseEventTriggerManifestLookup } from 'src/engine/core-modules/application/application-manifest/utils/build-database-event-trigger-manifest-lookup.util';
 import { buildExportedCoverageEntry } from 'src/engine/core-modules/application/application-manifest/utils/build-exported-coverage-entry.util';
 import { getUnreproducedPropertiesReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unreproduced-properties-reason.util';
 import { getUnresolvableReferenceReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unresolvable-reference-reason.util';
+import { resolveAgentTriggerManifestsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/resolve-agent-trigger-manifests-or-throw.util';
 import { sortFlatEntitiesByUniversalIdentifier } from 'src/engine/core-modules/application/application-manifest/utils/sort-flat-entities-by-universal-identifier.util';
+import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
 import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/application/utils/from-agent-manifest-to-universal-flat-agent.util';
+import { printAgentTriggers } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/print-agent-triggers.util';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
@@ -48,6 +52,35 @@ export const reconstructAgentsManifest = ({
     }
   }
 
+  const databaseEventTriggerManifestLookup =
+    buildDatabaseEventTriggerManifestLookup({
+      manifestFlatEntityMaps: applicationAllFlatEntityMaps,
+      existingFlatEntityMaps: allFlatEntityMaps,
+    });
+
+  // The sync compiles each printed condition back into a tree, so the reproduction does too
+  const resolveAgentManifestTriggers = (
+    agentManifest: AgentManifest,
+  ): { manifest: AgentManifest } | { reason: string } => {
+    try {
+      return {
+        manifest: {
+          ...agentManifest,
+          triggers: resolveAgentTriggerManifestsOrThrow({
+            agentManifest,
+            lookup: databaseEventTriggerManifestLookup,
+          }),
+        },
+      };
+    } catch (error) {
+      if (error instanceof ApplicationException) {
+        return { reason: error.message };
+      }
+
+      throw error;
+    }
+  };
+
   const convertFlatAgent = ({
     flatAgent,
     flatRoleTargets,
@@ -79,9 +112,22 @@ export const reconstructAgentsManifest = ({
     }
 
     const manifest = fromFlatAgentToAgentManifest({
-      flatAgent,
+      flatAgent: {
+        ...flatAgent,
+        triggers: printAgentTriggers({
+          triggers: flatAgent.triggers,
+          flatObjectMetadataMaps: allFlatEntityMaps.flatObjectMetadataMaps,
+          flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+        }),
+      },
       roleUniversalIdentifier: flatRoleTarget?.roleUniversalIdentifier,
     });
+    const resolution = resolveAgentManifestTriggers(manifest);
+
+    if ('reason' in resolution) {
+      return resolution;
+    }
+
     const reproduction = {
       applicationUniversalIdentifier: flatAgent.applicationUniversalIdentifier,
       now: flatAgent.updatedAt,
@@ -90,7 +136,7 @@ export const reconstructAgentsManifest = ({
       metadataName: 'agent',
       flatEntity: flatAgent,
       reproducedUniversalFlatEntity: fromAgentManifestToUniversalFlatAgent({
-        agentManifest: manifest,
+        agentManifest: resolution.manifest,
         ...reproduction,
       }),
     });
