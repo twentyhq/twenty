@@ -274,10 +274,16 @@ describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
     );
   });
 
-  it('keeps the proposal in a skipped result', () => {
-    expect(parseCall().toSkippedToolResult()).toMatchObject({
+  it('tells the agent a call left by a new message was cancelled, not approved', () => {
+    const skippedToolResult = parseCall().toSkippedToolResult();
+
+    expect(skippedToolResult).toMatchObject({
       result: { status: 'skipped', proposal: PROPOSAL },
     });
+    expect(skippedToolResult.message).toContain(
+      'The user cancelled the proposed call',
+    );
+    expect(skippedToolResult.message).toContain('not an approval');
   });
 
   describe('an email', () => {
