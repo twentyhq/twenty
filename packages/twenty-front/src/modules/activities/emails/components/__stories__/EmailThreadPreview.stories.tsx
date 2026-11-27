@@ -152,9 +152,7 @@ export const LinkedInConversation: Story = {
       'Great meeting you at Dreamforce. Happy to connect.',
     );
     await expect(canvas.queryByText('4')).not.toBeInTheDocument();
-    await expect(
-      canvas.queryByText('Intro from Dreamforce'),
-    ).not.toBeInTheDocument();
+    await expect(canvas.getByText('Intro from Dreamforce')).toBeVisible();
     await expect(canvas.getByRole('img', { name: 'LinkedIn' })).toBeVisible();
   },
 };
