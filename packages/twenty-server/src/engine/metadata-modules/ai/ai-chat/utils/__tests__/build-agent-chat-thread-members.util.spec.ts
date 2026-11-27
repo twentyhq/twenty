@@ -10,30 +10,21 @@ const workspaceMemberById = {
 };
 
 describe('buildAgentChatThreadMembers', () => {
-  it('lists the current sender first, then the owner and writers once each, skipping deleted members', () => {
+  it('lists the owner then the writers once each, skipping deleted members', () => {
     expect(
       buildAgentChatThreadMembers({
         thread: {
           workspaceMemberId: 'etienne',
           directMessageFirstWorkspaceMemberId: null,
           directMessageSecondWorkspaceMemberId: null,
-          writerWorkspaceMemberIds: ['ada', 'deleted', 'felix'],
+          writerWorkspaceMemberIds: ['ada', 'deleted', 'etienne', 'felix'],
         },
         workspaceMemberById,
-        currentWorkspaceMemberId: 'felix',
       }),
     ).toEqual([
-      { workspaceMemberId: 'felix', name: 'Félix', isCurrentSender: true },
-      {
-        workspaceMemberId: 'etienne',
-        name: 'Etienne Jouan',
-        isCurrentSender: false,
-      },
-      {
-        workspaceMemberId: 'ada',
-        name: 'ada@example.com',
-        isCurrentSender: false,
-      },
+      { workspaceMemberId: 'etienne', name: 'Etienne Jouan' },
+      { workspaceMemberId: 'ada', name: 'ada@example.com' },
+      { workspaceMemberId: 'felix', name: 'Félix' },
     ]);
   });
 
@@ -47,8 +38,7 @@ describe('buildAgentChatThreadMembers', () => {
           writerWorkspaceMemberIds: null,
         },
         workspaceMemberById,
-        currentWorkspaceMemberId: 'felix',
       }).map(({ workspaceMemberId }) => workspaceMemberId),
-    ).toEqual(['felix', 'etienne']);
+    ).toEqual(['etienne', 'felix']);
   });
 });

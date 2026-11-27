@@ -5,36 +5,20 @@ import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/fla
 import { type AgentChatThreadMember } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-member.type';
 import { getAgentChatThreadMemberIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-member-ids.util';
 
-// The current sender comes first so a capped list always shows who is asking
 export const buildAgentChatThreadMembers = ({
   thread,
   workspaceMemberById,
-  currentWorkspaceMemberId,
 }: {
   thread: Parameters<typeof getAgentChatThreadMemberIds>[0];
   workspaceMemberById: Partial<
     Record<string, Pick<FlatWorkspaceMember, 'name' | 'userEmail'>>
   >;
-  currentWorkspaceMemberId: string;
 }): AgentChatThreadMember[] =>
-  [
-    ...new Set([
-      currentWorkspaceMemberId,
-      ...getAgentChatThreadMemberIds(thread),
-    ]),
-  ].flatMap((workspaceMemberId) => {
+  getAgentChatThreadMemberIds(thread).flatMap((workspaceMemberId) => {
     const workspaceMember = workspaceMemberById[workspaceMemberId];
     const name = workspaceMember
       ? getWorkspaceMemberNameOrEmail(workspaceMember)
       : null;
 
-    return isNonEmptyString(name)
-      ? [
-          {
-            workspaceMemberId,
-            name,
-            isCurrentSender: workspaceMemberId === currentWorkspaceMemberId,
-          },
-        ]
-      : [];
+    return isNonEmptyString(name) ? [{ workspaceMemberId, name }] : [];
   });

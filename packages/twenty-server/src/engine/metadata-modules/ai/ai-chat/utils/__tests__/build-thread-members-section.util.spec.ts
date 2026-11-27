@@ -4,7 +4,6 @@ const buildMembers = (count: number) =>
   Array.from({ length: count }, (_, index) => ({
     workspaceMemberId: `member-${index}`,
     name: index === 1 ? 'Etienne [Ops]\nJouan' : `Member ${index}`,
-    isCurrentSender: index === 0,
   }));
 
 describe('buildThreadMembersSection', () => {

@@ -196,7 +196,6 @@ export class ChatExecutionService {
     const threadMembers = buildAgentChatThreadMembers({
       thread,
       workspaceMemberById: flatWorkspaceMemberMaps.byId,
-      currentWorkspaceMemberId: authContext.workspaceMemberId,
     });
     const executionProfile = await this.buildExecutionProfile({
       thread,
