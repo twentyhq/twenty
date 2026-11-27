@@ -1,8 +1,6 @@
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatSkeletonLoader } from '@/ai-chat/components/AiChatSkeletonLoader';
 import { useAiChatPageThreadId } from '@/ai-chat/hooks/useAiChatPageThreadId';
@@ -15,25 +13,21 @@ import { INBOX_RECENTS_NAVIGATION_SECTION_ID } from '@/inbox/constants/InboxRece
 import { useInboxThreadList } from '@/inbox/hooks/useInboxThreadList';
 import { inboxFavoriteThreadsSelector } from '@/inbox/states/selectors/inboxFavoriteThreadsSelector';
 import { filterInboxRecentThreads } from '@/inbox/utils/filterInboxRecentThreads';
-import { NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT } from '@/navigation-menu-item/common/constants/NavigationMenuSectionVisibleItemLimit';
 import { NavigationMenuSectionSeeMore } from '@/navigation-menu-item/display/sections/components/NavigationMenuSectionSeeMore';
+import { StyledNavigationMenuSectionHiddenItems } from '@/navigation-menu-item/display/sections/components/StyledNavigationMenuSectionHiddenItems';
+import { getNavigationSectionVisibleItems } from '@/navigation-menu-item/display/utils/getNavigationSectionVisibleItems';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-const StyledHiddenThreads = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.betweenSiblingsGap};
-  padding-bottom: ${themeCssVariables.betweenSiblingsGap};
-`;
-
 type NavigationMenuAiChatRecentsSectionProps = {
+  visibleItemLimit?: number | null;
   headerAction?: ReactNode;
 };
 
 export const NavigationMenuAiChatRecentsSection = ({
+  visibleItemLimit,
   headerAction,
 }: NavigationMenuAiChatRecentsSectionProps) => {
   const { t } = useLingui();
@@ -70,17 +64,15 @@ export const NavigationMenuAiChatRecentsSection = ({
     );
   }
 
-  const hasHiddenThreads =
-    recentThreads.length > NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT ||
-    (inboxThreadList?.hasNextPage ?? false);
-
-  const visibleThreads = recentThreads.slice(
-    0,
-    NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT,
-  );
-  const hiddenThreads = recentThreads.slice(
-    NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT,
-  );
+  const {
+    visibleItems: visibleThreads,
+    hiddenItems: hiddenThreads,
+    hasHiddenItems: hasHiddenThreads,
+  } = getNavigationSectionVisibleItems({
+    items: recentThreads,
+    visibleItemLimit,
+    hasMoreItemsToLoad: inboxThreadList?.hasNextPage ?? false,
+  });
 
   return (
     <NavigationDrawerInboxThreadSection
@@ -91,26 +83,33 @@ export const NavigationMenuAiChatRecentsSection = ({
       onThreadClick={handleThreadClick}
       headerAction={headerAction}
       footer={
-        hasHiddenThreads && (
-          <NavigationMenuSectionSeeMore
-            sectionId="AiChatRecents"
-            hiddenItems={
-              <StyledHiddenThreads>
-                {hiddenThreads.map((thread) => (
-                  <NavigationDrawerInboxThreadItem
-                    key={thread.id}
-                    thread={thread}
-                    isActive={currentThreadId === thread.id}
-                    onClick={handleThreadClick}
+        <>
+          {hasHiddenThreads && (
+            <NavigationMenuSectionSeeMore
+              sectionId="AiChatRecents"
+              hiddenItems={
+                <StyledNavigationMenuSectionHiddenItems>
+                  {hiddenThreads.map((thread) => (
+                    <NavigationDrawerInboxThreadItem
+                      key={thread.id}
+                      thread={thread}
+                      isActive={currentThreadId === thread.id}
+                      onClick={handleThreadClick}
+                    />
+                  ))}
+                  <InboxThreadListFetchMoreTrigger
+                    source={INBOX_RECENT_THREAD_LIST_SOURCE}
                   />
-                ))}
-                <InboxThreadListFetchMoreTrigger
-                  source={INBOX_RECENT_THREAD_LIST_SOURCE}
-                />
-              </StyledHiddenThreads>
-            }
-          />
-        )
+                </StyledNavigationMenuSectionHiddenItems>
+              }
+            />
+          )}
+          {!hasHiddenThreads && (
+            <InboxThreadListFetchMoreTrigger
+              source={INBOX_RECENT_THREAD_LIST_SOURCE}
+            />
+          )}
+        </>
       }
     />
   );

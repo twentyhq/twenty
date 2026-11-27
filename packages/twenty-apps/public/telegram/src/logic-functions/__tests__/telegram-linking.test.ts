@@ -159,7 +159,7 @@ describe('connecting a Telegram account', () => {
       params: {
         url: `${SERVER_ROUTES_URL}/${TELEGRAM_UPDATES_RESOLVER_UNIVERSAL_IDENTIFIER}`,
         secret_token: WEBHOOK_SECRET,
-        allowed_updates: ['message', 'my_chat_member'],
+        allowed_updates: ['message', 'my_chat_member', 'callback_query'],
       },
     });
   });
@@ -339,6 +339,46 @@ describe('connecting a Telegram account', () => {
         { headers: { 'content-type': 'application/json' } },
       ),
     );
+  });
+
+  it('answers a rating tapped by an account no workspace claims', async () => {
+    const { resolved } = await deliver({
+      callback_query: {
+        id: 'callback-1',
+        from: TELEGRAM_USER,
+        data: 'feedback:POSITIVE:request-1',
+      },
+    });
+
+    expect(resolved).toEqual(
+      new Response(
+        {
+          method: 'answerCallbackQuery',
+          callback_query_id: 'callback-1',
+          text: TELEGRAM_NOT_CONNECTED_TEXT,
+        },
+        { headers: { 'content-type': 'application/json' } },
+      ),
+    );
+    expect(telegramCalls).toEqual([]);
+  });
+
+  it('answers a tap on a button it does not know, without a notice', async () => {
+    const { resolved } = await deliver({
+      callback_query: {
+        id: 'callback-1',
+        from: TELEGRAM_USER,
+        data: 'other:POSITIVE:request-1',
+      },
+    });
+
+    expect(resolved).toEqual(
+      new Response(
+        { method: 'answerCallbackQuery', callback_query_id: 'callback-1' },
+        { headers: { 'content-type': 'application/json' } },
+      ),
+    );
+    expect(telegramCalls).toEqual([]);
   });
 
   it('removes the link without replying when the user blocks the bot', async () => {

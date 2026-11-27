@@ -26,7 +26,12 @@
   }
 
   &[data-ending-style] {
+    transition-duration: duration(instant);
     transition-timing-function: ease-in;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
   }
 }
 

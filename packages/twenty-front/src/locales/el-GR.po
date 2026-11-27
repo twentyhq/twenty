@@ -2515,11 +2515,6 @@ msgstr "Προσθήκη καναλιού email"
 msgid "Add embedded website"
 msgstr "Προσθήκη ενσωματωμένου ιστοτόπου"
 
-#. js-lingui-id: 6kC3KJ
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCardLayout.tsx
-msgid "Add feedback"
-msgstr "Προσθήκη σχολίου"
-
 #. js-lingui-id: Va3xJe
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderLabelIdentifierCellPlusButton.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -2608,7 +2603,7 @@ msgstr "Προσθήκη στοιχείου πριν"
 #. js-lingui-id: /kLKYB
 #: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Add item to {targetSectionName}"
-msgstr ""
+msgstr "Προσθήκη στοιχείου στην ενότητα {targetSectionName}"
 
 #. js-lingui-id: VzGJRl
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
@@ -3041,7 +3036,7 @@ msgstr "Διαχειριστής και μέλος"
 #. js-lingui-id: ZHWySn
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Admin channel write access"
-msgstr ""
+msgstr "Πρόσβαση εγγραφής καναλιού διαχειριστή"
 
 #. js-lingui-id: SsHJsm
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -4926,6 +4921,8 @@ msgstr "Επισύναψη αρχείου"
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAttachFileButton.tsx
+#: src/modules/ai-chat/composer/components/AiChatAttachFileButton.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Attach files"
@@ -6180,6 +6177,7 @@ msgstr "Ακυρώθηκε στις"
 
 #. js-lingui-id: vv7kpg
 #: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 msgid "Cancelled"
 msgstr "Ακυρώθηκε"
@@ -7125,7 +7123,7 @@ msgstr "Κλείσιμο προεπισκόπησης"
 #. js-lingui-id: QBOwbf
 #: src/modules/navigation/components/NavigationDrawerCloseSettingsButton.tsx
 msgid "Close settings"
-msgstr ""
+msgstr "Κλείσιμο ρυθμίσεων"
 
 #. js-lingui-id: saip/v
 #: src/modules/side-panel/components/SidePanelCloseButton.tsx
@@ -7259,7 +7257,7 @@ msgstr "Σύμπτυξη {heading}"
 #. js-lingui-id: LeVkuA
 #: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Collapse all sections"
-msgstr ""
+msgstr "Σύμπτυξη όλων των ενοτήτων"
 
 #. js-lingui-id: kBUgVh
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -10883,11 +10881,6 @@ msgstr "Άμεσα μηνύματα"
 msgid "Direct messages and mentions"
 msgstr "Άμεσα μηνύματα και αναφορές"
 
-#. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
-msgid "Direct messages don't support attachments."
-msgstr "Τα άμεσα μηνύματα δεν υποστηρίζουν συνημμένα αρχεία."
-
 #. js-lingui-id: +ILAOG
 #: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
 msgid "Direct messages, mentions and chats assigned to you"
@@ -13222,7 +13215,7 @@ msgstr "Ανάπτυξη {heading}"
 #. js-lingui-id: m2n9ZO
 #: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Expand all sections"
-msgstr ""
+msgstr "Ανάπτυξη όλων των ενοτήτων"
 
 #. js-lingui-id: JjrOSL
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -14147,12 +14140,6 @@ msgstr "Λειτουργίες"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Features active until"
 msgstr "Οι δυνατότητες είναι ενεργές έως"
-
-#. js-lingui-id: YirHq7
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
-#: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
-msgid "Feedback"
-msgstr "Σχόλια"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -15265,7 +15252,6 @@ msgstr "Λαμβάνει μόνο αυτήν την εγγραφή: ο ρόλο�
 #: src/modules/getting-started/components/GettingStartedOpenedSection.tsx
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 #: src/pages/getting-started/GettingStartedPage.tsx
 #: src/pages/getting-started/GettingStartedPage.tsx
 msgid "Getting started"
@@ -20655,7 +20641,7 @@ msgid "Next record"
 msgstr "Επόμενη εγγραφή"
 
 #. js-lingui-id: +VXdSO
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Next request"
 msgstr "Επόμενο αίτημα"
 
@@ -23534,7 +23520,7 @@ msgid "Pending"
 msgstr "Εκκρεμεί"
 
 #. js-lingui-id: 2B0V9T
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Pending requests"
 msgstr "Αιτήματα σε εκκρεμότητα"
 
@@ -23845,7 +23831,7 @@ msgstr "Καρφιτσωμένο"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownListPinnedFieldContent.tsx
 msgid "Pinned field"
-msgstr ""
+msgstr "Καρφιτσωμένο πεδίο"
 
 #. js-lingui-id: OFY07S
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
@@ -24188,7 +24174,7 @@ msgid "Previous record"
 msgstr "Προηγούμενη εγγραφή"
 
 #. js-lingui-id: ToM1t/
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Previous request"
 msgstr "Προηγούμενο αίτημα"
 
@@ -25637,7 +25623,7 @@ msgstr "Αφαίρεση ταξινόμησης;"
 #. js-lingui-id: koiY9C
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would, and keep their role's write access to them."
-msgstr ""
+msgstr "Καταργήστε την πρόσβαση σε μηνύματα και ημερολόγιο των κλειδιών API σε ρόλους που μπορούν να ανατεθούν σε χρήστες. Όταν είναι απενεργοποιημένη, αυτά τα κλειδιά API τα διαβάζουν όπως θα τα διάβαζε ένα μέλος που δεν κατέχει το κανάλι και διατηρούν την πρόσβαση εγγραφής του ρόλου τους σε αυτά."
 
 #. js-lingui-id: yBC05U
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -25791,7 +25777,7 @@ msgid "Request"
 msgstr "Αίτημα"
 
 #. js-lingui-id: tZ7Xci
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Request {requestNumber} of {requestCount}"
 msgstr "Αίτημα {requestNumber} από {requestCount}"
 
@@ -27181,7 +27167,7 @@ msgstr "Αναζήτηση συνομιλιών..."
 #. js-lingui-id: xrtPMt
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "Searching records..."
-msgstr ""
+msgstr "Αναζήτηση εγγραφών..."
 
 #. js-lingui-id: KhCAL1
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -27354,7 +27340,7 @@ msgstr "Προβολή λειτουργίας"
 #. js-lingui-id: kuQBTx
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "See in search results"
-msgstr ""
+msgstr "Δείτε στα αποτελέσματα αναζήτησης"
 
 #. js-lingui-id: 1HzZ+y
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -28508,11 +28494,6 @@ msgstr "Εμφάνιση σε"
 msgid "Show only rows with errors"
 msgstr "Εμφάνιση μόνο γραμμών με λάθη"
 
-#. js-lingui-id: 9u2I/P
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
-msgstr "Εμφάνιση της σελίδας Ξεκινήστε και της κάρτας της πλευρικής γραμμής και άνοιγμά της κατά την είσοδο στη διάρκεια της δοκιμαστικής περιόδου."
-
 #. js-lingui-id: fTPKt5
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes."
@@ -28763,7 +28744,6 @@ msgstr "Παράλειψη του αντικειμένου σύνδεσης (π�
 
 #. js-lingui-id: 9NyAH9
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
 msgid "Skipped"
 msgstr "Παραλειφθείσες"
@@ -30149,11 +30129,6 @@ msgstr "Συμπαίκτες"
 #: src/modules/getting-started/components/GettingStartedMailboxAction.tsx
 msgid "Teammates see who you talk to, not what you write."
 msgstr "Οι συνεργάτες βλέπουν με ποιον επικοινωνείτε, όχι τι γράφετε."
-
-#. js-lingui-id: XpPpz7
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
-msgid "Tell the agent what to change"
-msgstr "Πείτε στον πράκτορα τι να αλλάξει"
 
 #. js-lingui-id: lKXcJz
 #: src/modules/settings/emailing-domains/utils/getEmailingDomainStatusDisplay.ts
@@ -32169,7 +32144,7 @@ msgstr "Μετατροπή σε"
 #. js-lingui-id: rjkNOe
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Turn on for a workspace that reported broken links, merges or deletes. Gives the Admin role back its write access to messages and calendar events, without letting it see more of them."
-msgstr ""
+msgstr "Ενεργοποιήστε το για έναν χώρο εργασίας που ανέφερε κατεστραμμένους συνδέσμους, συγχωνεύσεις ή διαγραφές. Επαναφέρει στον ρόλο Διαχειριστή την πρόσβαση εγγραφής του σε μηνύματα και συμβάντα ημερολογίου, χωρίς να του επιτρέπει να βλέπει περισσότερα από αυτά."
 
 #. js-lingui-id: Njwcqh
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
@@ -34096,6 +34071,7 @@ msgid "Wait for Event"
 msgstr "Αναμονή για συμβάν"
 
 #. js-lingui-id: 3wIkaN
+#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 #: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Περιμένετε να ολοκληρωθεί η μεταφόρτωση των συνημμένων."

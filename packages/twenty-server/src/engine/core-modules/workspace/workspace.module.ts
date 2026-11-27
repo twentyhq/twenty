@@ -5,6 +5,7 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
 import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
+import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { EventLogRetentionModule } from 'src/engine/core-modules/event-logs/retention/event-log-retention.module';
 import { CompanyEnrichmentModule } from 'src/engine/core-modules/company-enrichment/company-enrichment.module';
@@ -56,6 +57,7 @@ import { ChannelVisibilityModule } from 'src/engine/permissions/channel-visibili
     MetricsModule,
     StandardObjectsPrefillModule,
     BillingModule,
+    CacheLockModule,
     EventLogRetentionModule,
     FileModule,
     UserWorkspaceModule,

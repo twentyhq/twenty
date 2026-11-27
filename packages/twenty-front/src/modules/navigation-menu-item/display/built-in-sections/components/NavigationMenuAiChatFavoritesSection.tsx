@@ -10,10 +10,12 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type NavigationMenuAiChatFavoritesSectionProps = {
+  visibleItemLimit?: number | null;
   headerAction?: ReactNode;
 };
 
 export const NavigationMenuAiChatFavoritesSection = ({
+  visibleItemLimit,
   headerAction,
 }: NavigationMenuAiChatFavoritesSectionProps) => {
   const { t } = useLingui();
@@ -34,6 +36,7 @@ export const NavigationMenuAiChatFavoritesSection = ({
       threads={inboxFavoriteThreads}
       currentThreadId={currentThreadId}
       onThreadClick={handleThreadClick}
+      visibleItemLimit={visibleItemLimit}
       headerAction={headerAction}
     />
   );

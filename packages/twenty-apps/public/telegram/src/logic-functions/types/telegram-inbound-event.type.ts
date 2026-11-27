@@ -1,3 +1,4 @@
+import { type TelegramAssistantFeedback } from 'src/logic-functions/types/telegram-assistant-feedback.type';
 import { type TelegramUser } from 'src/logic-functions/types/telegram-user.type';
 
 export type TelegramInboundEvent =
@@ -9,5 +10,12 @@ export type TelegramInboundEvent =
       user: TelegramUser;
       messageId: number;
       text: string;
+    }
+  | {
+      kind: 'FEEDBACK';
+      user: TelegramUser;
+      callbackQueryId: string;
+      requestId: string;
+      feedback: TelegramAssistantFeedback;
     }
   | { kind: 'BLOCKED'; user: TelegramUser };

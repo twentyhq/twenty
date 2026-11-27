@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { Fragment, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/lastClickedNavigationMenuItemIdState';
@@ -202,20 +202,16 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         isSelectedInEditMode={isSelectedInEditMode}
         isDragging={isDragging}
         triggerEvent={isLayoutCustomizationModeEnabled ? 'CLICK' : undefined}
-        alwaysShowRightOptions={showInaccessibleLock}
-        rightOptions={
+        trailingIcon={
           showInaccessibleLock ? (
-            <Fragment>
-              <IconLock
-                size={theme.icon.size.sm}
-                stroke={theme.icon.stroke.sm}
-                color={themeCssVariables.font.color.tertiary}
-              />
-            </Fragment>
-          ) : (
-            rightOptions
-          )
+            <IconLock
+              size={theme.icon.size.sm}
+              stroke={theme.icon.stroke.sm}
+              color={themeCssVariables.font.color.tertiary}
+            />
+          ) : undefined
         }
+        rightOptions={rightOptions}
       />
     </>
   );

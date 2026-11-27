@@ -3214,9 +3214,6 @@ export default {
             "isAttachmentPreviewEnabled": [
                 1
             ],
-            "isBookCallOnboardingStepEnabled": [
-                1
-            ],
             "isClickHouseConfigured": [
                 1
             ],
@@ -5754,6 +5751,9 @@ export default {
             ]
         },
         "FrontComponent": {
+            "applicationFunctionsBaseUrl": [
+                4
+            ],
             "applicationGrantedCapabilities": [
                 4
             ],
@@ -7587,19 +7587,6 @@ export default {
                     "fileIds": [
                         574,
                         "[UUID!]!"
-                    ]
-                }
-            ],
-            "completeBookCallOnboardingStep": [
-                432,
-                {
-                    "hasBookedCall": [
-                        1,
-                        "Boolean!"
-                    ],
-                    "isAutoSkipped": [
-                        1,
-                        "Boolean!"
                     ]
                 }
             ],
@@ -13124,6 +13111,9 @@ export default {
             "applicationId": [
                 574
             ],
+            "areRecordPermissionsEditable": [
+                1
+            ],
             "canAccessAllAgentChatChannels": [
                 1
             ],
@@ -13817,6 +13807,9 @@ export default {
                 4
             ],
             "toolCall": [
+                350
+            ],
+            "toolCalls": [
                 350
             ],
             "workspaceMemberIds": [
@@ -17766,9 +17759,6 @@ export default {
         "WorkspaceCompanyEnrichmentResult": {
             "enrichment": [
                 350
-            ],
-            "isBookCallOnboardingStepPending": [
-                1
             ],
             "outcome": [
                 725

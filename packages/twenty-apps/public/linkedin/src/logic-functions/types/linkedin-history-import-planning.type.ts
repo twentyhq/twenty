@@ -1,10 +1,7 @@
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
 
 export type LinkedinHistoryImportPlanning = {
-  plannedChunkCount: number;
-  plannedConversationCount: number;
-  reportedConversationCount?: number;
-  chunkCount?: number;
+  chatIds?: string[];
   planJobId?: string;
   resumeAt?: string;
   error?: LinkedinHistoryImportState['error'];

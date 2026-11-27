@@ -5,6 +5,7 @@ import { TELEGRAM_PLAIN_MESSAGE_MAX_LENGTH } from 'src/logic-functions/constants
 import { TELEGRAM_RICH_MESSAGE_MAX_LENGTH } from 'src/logic-functions/constants/telegram-rich-message-max-length';
 import { updateTelegramAssistantRequest } from 'src/logic-functions/data/update-telegram-assistant-request';
 import { buildTelegramAssistantAnswerText } from 'src/logic-functions/utils/build-telegram-assistant-answer-text';
+import { buildTelegramFeedbackKeyboard } from 'src/logic-functions/utils/build-telegram-feedback-keyboard';
 import { sendTelegramAnswer } from 'src/logic-functions/utils/send-telegram-answer';
 
 export const deliverTelegramAssistantAnswer = async ({
@@ -30,6 +31,7 @@ export const deliverTelegramAssistantAnswer = async ({
     botToken,
     chatId,
     deadlineAtMs,
+    replyMarkup: buildTelegramFeedbackKeyboard(requestId),
     richText: buildTelegramAssistantAnswerText({
       ...answer,
       maxLength: TELEGRAM_RICH_MESSAGE_MAX_LENGTH,
