@@ -3247,11 +3247,13 @@ export interface PublicImapSmtpCaldavConnectionParameters {
 }
 
 export interface PublicWorkspaceData {
+    accentColor?: Scalars['String']
     authBypassProviders?: AuthBypassProviders
     authProviders: AuthProviders
     displayName?: Scalars['String']
     id: Scalars['UUID']
     logo?: Scalars['String']
+    uiScale?: Scalars['String']
     workspaceUrls: WorkspaceUrls
     __typename: 'PublicWorkspaceData'
 }
@@ -4477,6 +4479,7 @@ export interface WorkflowVersionConfiguration {
 }
 
 export interface Workspace {
+    accentColor: Scalars['String']
     activationStatus: WorkspaceActivationStatus
     aiAdditionalInstructions?: Scalars['String']
     aiAgentModelTier: AiModelTier
@@ -4530,6 +4533,7 @@ export interface Workspace {
     metadataVersion: Scalars['Float']
     subdomain: Scalars['String']
     trashRetentionDays: Scalars['Float']
+    uiScale: Scalars['String']
     updatedAt: Scalars['DateTime']
     viewFields?: ViewField[]
     viewFilterGroups?: ViewFilterGroup[]
@@ -8250,11 +8254,13 @@ export interface PublicImapSmtpCaldavConnectionParametersGenqlSelection{
 }
 
 export interface PublicWorkspaceDataGenqlSelection{
+    accentColor?: boolean | number
     authBypassProviders?: AuthBypassProvidersGenqlSelection
     authProviders?: AuthProvidersGenqlSelection
     displayName?: boolean | number
     id?: boolean | number
     logo?: boolean | number
+    uiScale?: boolean | number
     workspaceUrls?: WorkspaceUrlsGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -9295,7 +9301,7 @@ export interface UpdateWorkspaceAllowedEmbeddingOriginsInput {operation: Scalars
 
 export interface UpdateWorkspaceIframeMediaPermissionsInput {camera: Scalars['Boolean'],microphone: Scalars['Boolean'],origin: Scalars['String']}
 
-export interface UpdateWorkspaceInput {aiAdditionalInstructions?: (Scalars['String'] | null),aiAgentModelTier?: (AiModelTier | null),aiChatAssistantProfile?: (AiChatAssistantProfileInput | null),aiChatDirectMessageAssistantMode?: (AiChatAssistantMode | null),aiChatInboxAssistantMode?: (AiChatAssistantMode | null),aiChatModelTier?: (AiModelTier | null),aiDataPolicy?: (AiDataPolicyInput | null),aiEvaluationModelId?: (Scalars['String'] | null),aiModelIdByTier?: (Scalars['JSON'] | null),allowImpersonation?: (Scalars['Boolean'] | null),customDomain?: (Scalars['String'] | null),defaultRoleId?: (Scalars['UUID'] | null),displayName?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),eventLogRetentionDays?: (Scalars['Float'] | null),inviteHash?: (Scalars['String'] | null),isAutoModelSelectionEnabled?: (Scalars['Boolean'] | null),isCampaignClickTrackingEnabled?: (Scalars['Boolean'] | null),isCampaignOpenTrackingEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isInternalImportEnabled?: (Scalars['Boolean'] | null),isInternalMessagesImportEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),logo?: (Scalars['String'] | null),subdomain?: (Scalars['String'] | null),trashRetentionDays?: (Scalars['Float'] | null),workspaceDiscoverability?: (WorkspaceDiscoverability | null)}
+export interface UpdateWorkspaceInput {accentColor?: (Scalars['String'] | null),aiAdditionalInstructions?: (Scalars['String'] | null),aiAgentModelTier?: (AiModelTier | null),aiChatAssistantProfile?: (AiChatAssistantProfileInput | null),aiChatDirectMessageAssistantMode?: (AiChatAssistantMode | null),aiChatInboxAssistantMode?: (AiChatAssistantMode | null),aiChatModelTier?: (AiModelTier | null),aiDataPolicy?: (AiDataPolicyInput | null),aiEvaluationModelId?: (Scalars['String'] | null),aiModelIdByTier?: (Scalars['JSON'] | null),allowImpersonation?: (Scalars['Boolean'] | null),customDomain?: (Scalars['String'] | null),defaultRoleId?: (Scalars['UUID'] | null),displayName?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),eventLogRetentionDays?: (Scalars['Float'] | null),inviteHash?: (Scalars['String'] | null),isAutoModelSelectionEnabled?: (Scalars['Boolean'] | null),isCampaignClickTrackingEnabled?: (Scalars['Boolean'] | null),isCampaignOpenTrackingEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isInternalImportEnabled?: (Scalars['Boolean'] | null),isInternalMessagesImportEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),logo?: (Scalars['String'] | null),subdomain?: (Scalars['String'] | null),trashRetentionDays?: (Scalars['Float'] | null),uiScale?: (Scalars['String'] | null),workspaceDiscoverability?: (WorkspaceDiscoverability | null)}
 
 export interface UpdateWorkspaceMemberSettingsInput {update: Scalars['JSON'],workspaceMemberId: Scalars['UUID']}
 
@@ -9887,6 +9893,7 @@ export interface WorkflowVersionConfigurationGenqlSelection{
 }
 
 export interface WorkspaceGenqlSelection{
+    accentColor?: boolean | number
     activationStatus?: boolean | number
     aiAdditionalInstructions?: boolean | number
     aiAgentModelTier?: boolean | number
@@ -9940,6 +9947,7 @@ export interface WorkspaceGenqlSelection{
     metadataVersion?: boolean | number
     subdomain?: boolean | number
     trashRetentionDays?: boolean | number
+    uiScale?: boolean | number
     updatedAt?: boolean | number
     viewFields?: ViewFieldGenqlSelection
     viewFilterGroups?: ViewFilterGroupGenqlSelection

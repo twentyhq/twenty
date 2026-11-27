@@ -82,6 +82,8 @@ export const USER_QUERY_FRAGMENT = gql`
       id
       displayName
       logo
+      accentColor
+      uiScale
       inviteHash
       allowImpersonation
       activationStatus

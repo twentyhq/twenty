@@ -7,11 +7,18 @@ import {
   EVENT_LOG_RETENTION,
   WORKSPACE_DISPLAY_NAME_MAX_LENGTH,
 } from 'twenty-shared/constants';
+import {
+  WORKSPACE_ACCENT_COLORS,
+  WORKSPACE_UI_SCALES,
+  type WorkspaceAccentColor,
+  type WorkspaceUiScale,
+} from 'twenty-shared/workspace';
 
 import {
   IsArray,
   IsBoolean,
   IsEnum,
+  IsIn,
   IsInt,
   IsOptional,
   IsObject,
@@ -59,6 +66,16 @@ export class UpdateWorkspaceInput {
   @IsString()
   @IsOptional()
   logo?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsIn(WORKSPACE_ACCENT_COLORS)
+  @IsOptional()
+  accentColor?: WorkspaceAccentColor;
+
+  @Field(() => String, { nullable: true })
+  @IsIn(WORKSPACE_UI_SCALES)
+  @IsOptional()
+  uiScale?: WorkspaceUiScale;
 
   @Field({ nullable: true })
   @IsString()

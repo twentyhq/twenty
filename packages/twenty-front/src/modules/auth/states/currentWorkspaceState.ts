@@ -10,6 +10,8 @@ export type CurrentWorkspace = Pick<
   | 'id'
   | 'inviteHash'
   | 'logo'
+  | 'accentColor'
+  | 'uiScale'
   | 'displayName'
   | 'allowImpersonation'
   | 'featureFlags'

@@ -68,6 +68,8 @@ export const mockCurrentWorkspace = {
   displayName: 'Twenty',
   inviteHash: 'twenty.com-invite-hash',
   logo: workspaceLogoUrl,
+  accentColor: 'blue',
+  uiScale: 'Normal',
   isPublicInviteLinkEnabled: true,
   isCampaignClickTrackingEnabled: false,
   isCampaignOpenTrackingEnabled: false,

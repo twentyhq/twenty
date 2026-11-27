@@ -4447,11 +4447,13 @@ type PublicImapSmtpCaldavConnectionParameters {
 }
 
 type PublicWorkspaceData {
+  accentColor: String
   authBypassProviders: AuthBypassProviders
   authProviders: AuthProviders!
   displayName: String
   id: UUID!
   logo: String
+  uiScale: String
   workspaceUrls: WorkspaceUrls!
 }
 
@@ -6015,6 +6017,7 @@ input UpdateWorkspaceIframeMediaPermissionsInput {
 }
 
 input UpdateWorkspaceInput {
+  accentColor: String
   aiAdditionalInstructions: String
   aiAgentModelTier: AiModelTier
   aiChatAssistantProfile: AiChatAssistantProfileInput
@@ -6047,6 +6050,7 @@ input UpdateWorkspaceInput {
   logo: String
   subdomain: String
   trashRetentionDays: Float
+  uiScale: String
   workspaceDiscoverability: WorkspaceDiscoverability
 }
 
@@ -6867,6 +6871,7 @@ type WorkflowVersionConfiguration {
 }
 
 type Workspace {
+  accentColor: String!
   activationStatus: WorkspaceActivationStatus!
   aiAdditionalInstructions: String
   aiAgentModelTier: AiModelTier!
@@ -6918,6 +6923,7 @@ type Workspace {
   metadataVersion: Float! @deprecated(reason: "No longer used for metadata cache invalidation, will be removed")
   subdomain: String!
   trashRetentionDays: Float!
+  uiScale: String!
   updatedAt: DateTime!
   viewFields: [ViewField!]
   viewFilterGroups: [ViewFilterGroup!]

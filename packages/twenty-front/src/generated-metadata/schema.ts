@@ -6257,11 +6257,13 @@ export type PublicImapSmtpCaldavConnectionParameters = {
 
 export type PublicWorkspaceData = {
   __typename?: 'PublicWorkspaceData';
+  accentColor?: Maybe<Scalars['String']['output']>;
   authBypassProviders?: Maybe<AuthBypassProviders>;
   authProviders: AuthProviders;
   displayName?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   logo?: Maybe<Scalars['String']['output']>;
+  uiScale?: Maybe<Scalars['String']['output']>;
   workspaceUrls: WorkspaceUrls;
 };
 
@@ -8441,6 +8443,7 @@ export type UpdateWorkspaceIframeMediaPermissionsInput = {
 };
 
 export type UpdateWorkspaceInput = {
+  accentColor?: InputMaybe<Scalars['String']['input']>;
   aiAdditionalInstructions?: InputMaybe<Scalars['String']['input']>;
   aiAgentModelTier?: InputMaybe<AiModelTier>;
   aiChatAssistantProfile?: InputMaybe<AiChatAssistantProfileInput>;
@@ -8473,6 +8476,7 @@ export type UpdateWorkspaceInput = {
   logo?: InputMaybe<Scalars['String']['input']>;
   subdomain?: InputMaybe<Scalars['String']['input']>;
   trashRetentionDays?: InputMaybe<Scalars['Float']['input']>;
+  uiScale?: InputMaybe<Scalars['String']['input']>;
   workspaceDiscoverability?: InputMaybe<WorkspaceDiscoverability>;
 };
 
@@ -9307,6 +9311,7 @@ export type WorkflowVersionConfiguration = {
 
 export type Workspace = {
   __typename?: 'Workspace';
+  accentColor: Scalars['String']['output'];
   activationStatus: WorkspaceActivationStatus;
   aiAdditionalInstructions?: Maybe<Scalars['String']['output']>;
   aiAgentModelTier: AiModelTier;
@@ -9360,6 +9365,7 @@ export type Workspace = {
   metadataVersion: Scalars['Float']['output'];
   subdomain: Scalars['String']['output'];
   trashRetentionDays: Scalars['Float']['output'];
+  uiScale: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   viewFields?: Maybe<Array<ViewField>>;
   viewFilterGroups?: Maybe<Array<ViewFilterGroup>>;

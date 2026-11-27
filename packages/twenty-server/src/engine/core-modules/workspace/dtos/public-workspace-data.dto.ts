@@ -73,6 +73,12 @@ export class PublicWorkspaceDataDTO {
   @Field(() => String, { nullable: true })
   displayName: WorkspaceEntity['displayName'];
 
+  @Field(() => String, { nullable: true })
+  accentColor?: WorkspaceEntity['accentColor'];
+
+  @Field(() => String, { nullable: true })
+  uiScale?: WorkspaceEntity['uiScale'];
+
   @Field(() => WorkspaceUrlsDTO)
   workspaceUrls: WorkspaceUrlsDTO;
 }

@@ -613,6 +613,8 @@ export class WorkspaceResolver {
         id: workspace.id,
         logo: workspaceLogoWithToken,
         displayName: workspace.displayName,
+        accentColor: workspace.accentColor,
+        uiScale: workspace.uiScale,
         workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
         authProviders: getAuthProvidersByWorkspace({
           workspace,

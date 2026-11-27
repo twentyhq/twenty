@@ -81,6 +81,8 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       isAutoModelSelectionEnabled: true,
       aiModelIdByTier: {},
       isInternalImportEnabled: false,
+      accentColor: 'blue',
+      uiScale: 'Normal',
     });
 
     const companyObjectMetadata = getTestEnrichedObjectMetadataItemsMock().find(

@@ -101,6 +101,8 @@ const mockWorkspace = {
   isAutoModelSelectionEnabled: true,
   aiModelIdByTier: {},
   isInternalImportEnabled: false,
+  accentColor: 'blue',
+  uiScale: 'Normal',
   workspaceCustomApplication: CUSTOM_WORKSPACE_APPLICATION_MOCK,
   workspaceCustomApplicationId: CUSTOM_WORKSPACE_APPLICATION_MOCK.id,
   installedApplications: [],

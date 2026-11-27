@@ -19,6 +19,8 @@ export const UPDATE_WORKSPACE = gql`
       subdomain
       displayName
       logo
+      accentColor
+      uiScale
       allowImpersonation
       isPublicInviteLinkEnabled
       isCampaignClickTrackingEnabled
