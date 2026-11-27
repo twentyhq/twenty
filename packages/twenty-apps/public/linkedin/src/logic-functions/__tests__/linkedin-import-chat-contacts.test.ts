@@ -295,6 +295,36 @@ describe('linkedinImportChatContactsHandler', () => {
     );
   });
 
+  it('does not hand over a second time when a retry runs after the next conversation was started', async () => {
+    mocks.kvStore.set(PLANNING_KEY, {
+      chatIds: ['chat-1', 'chat-2', 'chat-3'],
+    });
+    mocks.kvStore.set(NEXT_CHAT_KEY, {
+      status: 'IMPORTING',
+      job: {
+        kind: 'CONTACTS',
+        payload: { ...PAYLOAD, chat: { ...CHAT, id: 'chat-2' } },
+      },
+    });
+    mocks.kvStore.set(
+      'linkedin-history-import-chat:connection-id:run-1:chat-3',
+      { status: 'PENDING', chat: { ...CHAT, id: 'chat-3' } },
+    );
+
+    await linkedinImportChatContactsHandler(PAYLOAD);
+
+    expect(
+      getEnqueueInputs().flatMap((input) =>
+        input.jobs.map((job: { jobId: string }) => job.jobId),
+      ),
+    ).toEqual(['linkedin-history-messages-run-1-chat-1-0-0']);
+    expect(
+      mocks.kvStore.get(
+        'linkedin-history-import-chat:connection-id:run-1:chat-3',
+      ),
+    ).toEqual(expect.objectContaining({ status: 'PENDING' }));
+  });
+
   it('does nothing once the run is cancelled', async () => {
     mocks.kvStore.set(STATE_KEY, { ...RUNNING_STATE, status: 'CANCELLED' });
 

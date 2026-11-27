@@ -28,6 +28,11 @@ export const scheduleNextLinkedinHistoryImportContacts = async ({
       chatId,
     });
 
+    // Already handed over, by an earlier attempt of the same job
+    if (progress?.status === 'IMPORTING' && progress.job?.kind === 'CONTACTS') {
+      return;
+    }
+
     if (progress?.status !== 'PENDING' || !isDefined(progress.chat)) {
       continue;
     }
