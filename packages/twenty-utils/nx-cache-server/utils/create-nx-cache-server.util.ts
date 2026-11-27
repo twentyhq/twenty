@@ -1,11 +1,11 @@
 import {
   appendFileSync,
   createWriteStream,
+  existsSync,
   mkdirSync,
   readFile,
   renameSync,
   rmSync,
-  statSync,
 } from 'node:fs';
 import {
   createServer,
@@ -21,9 +21,7 @@ const CACHE_PATH_PATTERN = /^\/v1\/cache\/([A-Za-z0-9_-]+)$/;
 
 type NxCacheUsage = 'hit' | 'miss' | 'write';
 
-// Serves Nx's self-hosted remote cache API from a directory. Nx fails the whole
-// command on any 5xx or connection error, so every failure maps to a status it
-// accepts: 404 (miss) on reads and 403 (read-only) on writes.
+// Nx fails the command on a 5xx or connection error, so failures answer 404 (miss) or 403 (read-only).
 export function createNxCacheServer({
   directory,
 }: {
@@ -31,16 +29,30 @@ export function createNxCacheServer({
 }): Server {
   mkdirSync(directory, { recursive: true });
 
-  const recordUsage = (usage: NxCacheUsage, hash: string) => {
+  const recordUsage = ({
+    usage,
+    hash,
+  }: {
+    usage: NxCacheUsage;
+    hash: string;
+  }) => {
     try {
       appendFileSync(
         join(directory, NX_CACHE_USAGE_LOG_FILE_NAME),
         `${usage} ${hash}\n`,
       );
-    } catch {}
+    } catch (error) {
+      console.error(`Could not record Nx cache ${usage} for ${hash}`, error);
+    }
   };
 
-  const end = (response: ServerResponse, status: number) => {
+  const end = ({
+    response,
+    status,
+  }: {
+    response: ServerResponse;
+    status: number;
+  }) => {
     if (!response.headersSent) {
       response.writeHead(status);
     }
@@ -48,16 +60,22 @@ export function createNxCacheServer({
   };
 
   // Read fully before answering so a read failure is a clean 404, never a truncated 200.
-  const handleGet = (hash: string, response: ServerResponse) => {
+  const handleGet = ({
+    hash,
+    response,
+  }: {
+    hash: string;
+    response: ServerResponse;
+  }) => {
     readFile(join(directory, hash), (error, content) => {
       if (error !== null) {
-        recordUsage('miss', hash);
-        end(response, 404);
+        recordUsage({ usage: 'miss', hash });
+        end({ response, status: 404 });
 
         return;
       }
 
-      recordUsage('hit', hash);
+      recordUsage({ usage: 'hit', hash });
       response.writeHead(200, {
         'Content-Type': 'application/octet-stream',
         'Content-Length': content.length,
@@ -66,20 +84,23 @@ export function createNxCacheServer({
     });
   };
 
-  const handlePut = (
-    hash: string,
-    request: IncomingMessage,
-    response: ServerResponse,
-  ) => {
+  const handlePut = ({
+    hash,
+    request,
+    response,
+  }: {
+    hash: string;
+    request: IncomingMessage;
+    response: ServerResponse;
+  }) => {
     const file = join(directory, hash);
 
-    try {
-      statSync(file);
+    if (existsSync(file)) {
       request.resume();
-      end(response, 409);
+      end({ response, status: 409 });
 
       return;
-    } catch {}
+    }
 
     const temporaryFile = `${file}.${process.pid}.${Date.now()}.tmp`;
     const output = createWriteStream(temporaryFile);
@@ -87,7 +108,7 @@ export function createNxCacheServer({
     const reject = () => {
       request.resume();
       rmSync(temporaryFile, { force: true });
-      end(response, 403);
+      end({ response, status: 403 });
     };
 
     output.on('error', reject);
@@ -95,8 +116,8 @@ export function createNxCacheServer({
     output.on('finish', () => {
       try {
         renameSync(temporaryFile, file);
-        recordUsage('write', hash);
-        end(response, 200);
+        recordUsage({ usage: 'write', hash });
+        end({ response, status: 200 });
       } catch {
         reject();
       }
@@ -109,21 +130,21 @@ export function createNxCacheServer({
       const match = CACHE_PATH_PATTERN.exec(request.url ?? '');
 
       if (match !== null && request.method === 'GET') {
-        handleGet(match[1], response);
+        handleGet({ hash: match[1], response });
 
         return;
       }
 
       if (match !== null && request.method === 'PUT') {
-        handlePut(match[1], request, response);
+        handlePut({ hash: match[1], request, response });
 
         return;
       }
 
       request.resume();
-      end(response, 404);
+      end({ response, status: 404 });
     } catch {
-      end(response, request.method === 'PUT' ? 403 : 404);
+      end({ response, status: request.method === 'PUT' ? 403 : 404 });
     }
   });
 }

@@ -18,7 +18,7 @@ describe('createNxCacheServer', () => {
       .trim()
       .split('\n');
 
-  const put = (hash: string, body: string) =>
+  const put = ({ hash, body }: { hash: string; body: string }) =>
     fetch(`${baseUrl}/v1/cache/${hash}`, { method: 'PUT', body });
 
   beforeEach(async () => {
@@ -48,7 +48,7 @@ describe('createNxCacheServer', () => {
   });
 
   it('serves an uploaded output back', async () => {
-    const upload = await put('123', 'task output');
+    const upload = await put({ hash: '123', body: 'task output' });
     const response = await fetch(`${baseUrl}/v1/cache/123`);
 
     expect(upload.status).toBe(200);
@@ -58,8 +58,8 @@ describe('createNxCacheServer', () => {
   });
 
   it('refuses to overwrite an existing output', async () => {
-    await put('123', 'original');
-    const response = await put('123', 'replacement');
+    await put({ hash: '123', body: 'original' });
+    const response = await put({ hash: '123', body: 'replacement' });
 
     expect(response.status).toBe(409);
     expect(readFileSync(join(directory, '123'), 'utf8')).toBe('original');
@@ -68,7 +68,7 @@ describe('createNxCacheServer', () => {
   it('answers 403 instead of an error when an upload cannot be written', async () => {
     rmSync(directory, { recursive: true, force: true });
 
-    const response = await put('123', 'task output');
+    const response = await put({ hash: '123', body: 'task output' });
 
     expect(response.status).toBe(403);
   });
