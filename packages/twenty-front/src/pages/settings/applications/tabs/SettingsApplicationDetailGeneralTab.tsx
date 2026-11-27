@@ -96,7 +96,9 @@ export const SettingsApplicationDetailGeneralTab = ({
     PermissionFlagType.CONNECTED_ACCOUNTS,
   );
 
-  const { applicationsWithPreferences } = useApplicationsWithPreferences();
+  const { applicationsWithPreferences } = useApplicationsWithPreferences({
+    skip: !canAccessApplicationPreferences,
+  });
 
   const hasApplicationPreferences =
     canAccessApplicationPreferences &&
