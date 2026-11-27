@@ -57,16 +57,12 @@ export class DomainServerConfigService {
     });
   }
 
-  getServerHostname(): string {
-    return new URL(this.twentyConfigService.get('SERVER_URL')).hostname;
-  }
-
   isInstanceHostname(hostname: string): boolean {
     return isHostnameOrSubdomainOf({
       hostname,
       domains: [
         this.getFrontUrl().hostname,
-        this.getServerHostname(),
+        new URL(this.twentyConfigService.get('SERVER_URL')).hostname,
         this.getPublicBaseHostnameOrUndefined(),
       ],
     });
