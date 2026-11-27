@@ -32,6 +32,7 @@
     "@ai-sdk/xai": "^5.0.14",
     "@aws-sdk/client-lambda": "3.1001.0",
     "@aws-sdk/client-s3": "3.1001.0",
+    "@aws-sdk/client-ses": "3.1001.0",
     "@aws-sdk/client-sesv2": "3.1001.0",
     "@aws-sdk/client-sts": "3.1001.0",
     "@aws-sdk/credential-providers": "3.1001.0",
