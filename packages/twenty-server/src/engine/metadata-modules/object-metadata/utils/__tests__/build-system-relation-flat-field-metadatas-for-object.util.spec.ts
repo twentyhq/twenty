@@ -103,7 +103,7 @@ describe('buildSystemRelationFlatFieldMetadatasForObject', () => {
     const [chatBundle] = bundles;
 
     expect(chatBundle.forwardFlatFieldMetadata).toMatchObject({
-      name: 'agentChatThreadTargets',
+      name: 'inboxThreadTargets',
       type: FieldMetadataType.RELATION,
       icon: 'IconMessage',
       objectMetadataUniversalIdentifier:

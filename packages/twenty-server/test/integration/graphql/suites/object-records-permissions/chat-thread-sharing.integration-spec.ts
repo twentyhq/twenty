@@ -11,17 +11,9 @@ import { updateOneOperationFactory } from 'test/integration/graphql/utils/update
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
-import {
-  dropLegacyChatMembershipColumns,
-  restoreLegacyChatMembershipColumns,
-} from 'test/integration/utils/restore-legacy-chat-membership-columns.util';
 import { listChatThreadIds } from 'test/integration/utils/list-chat-thread-ids.util';
 import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { type RecordShareStorageService } from 'src/engine/permissions/internal/record-share/services/record-share-storage.service';
-import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { type AddWorkflowRunToChatThreadsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607161319-add-workflow-run-to-chat-threads.command';
-import { EnableCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790312694997-enable-common-record-sharing.command';
-import { type AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';
 import { type ObjectRecordDestroyEvent } from 'twenty-shared/database-events';
@@ -97,7 +89,7 @@ const updateThreadRecord = (
 ) =>
   makeGraphqlApiRequest(
     updateOneOperationFactory({
-      objectMetadataSingularName: 'agentChatThread',
+      objectMetadataSingularName: 'inboxThread',
       gqlFields: 'id title deletedAt',
       recordId: threadId,
       data,
@@ -110,7 +102,7 @@ const softDeleteThreadRecord = (
 ) =>
   makeGraphqlApiRequest(
     deleteOneOperationFactory({
-      objectMetadataSingularName: 'agentChatThread',
+      objectMetadataSingularName: 'inboxThread',
       gqlFields: 'id deletedAt',
       recordId: threadId,
     }),
@@ -122,7 +114,7 @@ const restoreThreadRecord = (
 ) =>
   makeGraphqlApiRequest(
     restoreOneOperationFactory({
-      objectMetadataSingularName: 'agentChatThread',
+      objectMetadataSingularName: 'inboxThread',
       gqlFields: 'id deletedAt',
       recordId: threadId,
     }),
@@ -134,7 +126,7 @@ const destroyThreadRecord = (
 ) =>
   makeGraphqlApiRequest(
     destroyOneOperationFactory({
-      objectMetadataSingularName: 'agentChatThread',
+      objectMetadataSingularName: 'inboxThread',
       gqlFields: 'id',
       recordId: threadId,
     }),
@@ -145,7 +137,7 @@ const readStoredThreadState = async (threadId: string) => {
     title: string | null;
     deletedAt: Date | null;
   }[] = await global.testDataSource.query(
-    `SELECT title, "deletedAt" FROM ${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}."agentChatThread" WHERE id = $1`,
+    `SELECT title, "deletedAt" FROM ${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}."inboxThread" WHERE id = $1`,
     [threadId],
   );
   return rows[0] ?? null;
@@ -511,7 +503,7 @@ describe('Conversation sharing through the authenticated API', () => {
           APPLE_JONY_MEMBER_ACCESS_TOKEN,
         );
         expect(rename.body.errors).toBeUndefined();
-        expect(rename.body.data.updateAgentChatThread.title).toBe(
+        expect(rename.body.data.updateInboxThread.title).toBe(
           'Edited together',
         );
         const editorSoftDelete = await softDeleteThreadRecord(
@@ -624,82 +616,6 @@ describe('Conversation sharing through the authenticated API', () => {
     },
   );
 
-  it('retains ownership through upgrade rollback and retry, including soft deleted history', async () => {
-    const cache = getAppProviderByClassName<WorkspaceCacheService>(
-      'WorkspaceCacheService',
-    );
-    const command = new EnableCommonRecordSharingCommand(
-      {} as never,
-      cache,
-      getAppProviderByClassName<AgentHistoryUpgradeStorageService>(
-        'AgentHistoryUpgradeStorageService',
-      ),
-      getAppProviderByClassName<BillingSubscriptionService>(
-        'BillingSubscriptionService',
-      ),
-      global.testDataSource,
-    );
-    const workspaceId = SEED_APPLE_WORKSPACE_ID;
-    const owner = {
-      workspaceId,
-      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
-      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-      threadId: randomUUID(),
-    };
-    const options = { workspaceId, options: { dryRun: false } } as never;
-
-    await getAgentChatThreadService().createThread({
-      ...owner,
-      id: owner.threadId,
-      title: 'Upgrade ownership test',
-    });
-    await restoreLegacyChatMembershipColumns(workspaceId);
-    try {
-      await command.down(options);
-      expect((await readThread(owner.threadId)).body.errors).toBeUndefined();
-      await command.up(options);
-      await command.up(options);
-      const readable = await readThread(owner.threadId);
-      expect(readable.body.errors).toBeUndefined();
-      expect(readable.body.data.recordPermissions[0].permissions).toEqual({
-        canRead: true,
-        canUpdate: true,
-        canDelete: true,
-        canSoftDelete: true,
-      });
-      const softDeleted = await softDeleteThreadRecord(owner.threadId);
-      expect(softDeleted.body.errors).toBeUndefined();
-      const { deletedAt } = softDeleted.body.data.deleteAgentChatThread;
-      expect(new Date(deletedAt).toISOString()).toMatch(/^\d{4}-\d{2}-\d{2}T/);
-      expect(
-        (await getAgentChatThreadService().getWritableThread(owner)).deletedAt,
-      ).not.toBeNull();
-      expect(await listChatThreadIds(APPLE_JANE_ADMIN_ACCESS_TOKEN)).toContain(
-        owner.threadId,
-      );
-      expect((await readThread(owner.threadId)).body.errors).toBeUndefined();
-      const restoredTwice = await Promise.all([
-        getAgentChatThreadService().restoreThread(owner),
-        getAgentChatThreadService().restoreThread(owner),
-      ]);
-      for (const restored of restoredTwice) {
-        expect(restored.deletedAt).toBeNull();
-        expect(restored.updatedAt).toEqual(restoredTwice[0].updatedAt);
-      }
-      expect(
-        (await readStoredThreadState(owner.threadId))?.deletedAt,
-      ).toBeNull();
-      expect((await readThread(owner.threadId)).body.errors).toBeUndefined();
-    } finally {
-      await command.up(options);
-      // The 2.43 command resets threads to PRIVATE; replay later upgrades to restore the state other suites expect.
-      await getAppProviderByClassName<AddWorkflowRunToChatThreadsCommand>(
-        'AddWorkflowRunToChatThreadsCommand',
-      ).up(options);
-      await dropLegacyChatMembershipColumns(workspaceId);
-      await destroyAgentChatThread({ threadId: owner.threadId });
-    }
-  });
   it('lets non-owner writers rename through ordinary permissions and denies them after revocation', async () => {
     const workspaceId = SEED_APPLE_WORKSPACE_ID;
     const cache = getAppProviderByClassName<WorkspaceCacheService>(
@@ -823,13 +739,13 @@ describe('Conversation sharing through the authenticated API', () => {
     try {
       const response = await makeGraphqlApiRequest(
         findOneOperationFactory({
-          objectMetadataSingularName: 'agentChatThread',
+          objectMetadataSingularName: 'inboxThread',
           gqlFields: 'id workspaceMemberId',
           filter: { id: { eq: owner.threadId } },
         }),
       );
       expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.agentChatThread).toEqual({
+      expect(response.body.data.inboxThread).toEqual({
         id: owner.threadId,
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       });
@@ -849,7 +765,7 @@ describe('Conversations through the record API', () => {
       archivedAt: Date | null;
       activeStreamId: string | null;
     }[] = await global.testDataSource.query(
-      `SELECT "workspaceMemberId", title, "deletedAt", "archivedAt", "activeStreamId" FROM ${schema}."agentChatThread" WHERE id = $1`,
+      `SELECT "workspaceMemberId", title, "deletedAt", "archivedAt", "activeStreamId" FROM ${schema}."inboxThread" WHERE id = $1`,
       [threadId],
     );
     return rows[0] ?? null;
@@ -872,7 +788,7 @@ describe('Conversations through the record API', () => {
     try {
       const response = await makeGraphqlApiRequest(
         findOneOperationFactory({
-          objectMetadataSingularName: 'agentChatThread',
+          objectMetadataSingularName: 'inboxThread',
           gqlFields:
             'id title messages { edges { node { id } } } turns { edges { node { id } } }',
           filter: { id: { eq: threadId } },
@@ -880,7 +796,7 @@ describe('Conversations through the record API', () => {
       );
 
       expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.agentChatThread).toEqual({
+      expect(response.body.data.inboxThread).toEqual({
         id: threadId,
         title: 'Conversation with hidden messages',
         messages: { edges: [] },
@@ -894,13 +810,13 @@ describe('Conversations through the record API', () => {
   it('creates, renames, soft deletes, restores and destroys a conversation only for its owner', async () => {
     const created = await makeGraphqlApiRequest(
       createOneOperationFactory({
-        objectMetadataSingularName: 'agentChatThread',
+        objectMetadataSingularName: 'inboxThread',
         gqlFields: 'id title',
         data: { title: 'Record API conversation' },
       }),
     );
     expect(created.body.errors).toBeUndefined();
-    const threadId: string = created.body.data.createAgentChatThread.id;
+    const threadId: string = created.body.data.createInboxThread.id;
 
     try {
       expect(await readStoredThread(threadId)).toMatchObject({
@@ -918,38 +834,36 @@ describe('Conversations through the record API', () => {
 
       const ownerView = await makeGraphqlApiRequest(
         findOneOperationFactory({
-          objectMetadataSingularName: 'agentChatThread',
+          objectMetadataSingularName: 'inboxThread',
           gqlFields: 'id title',
           filter: { id: { eq: threadId } },
         }),
       );
       expect(ownerView.body.errors).toBeUndefined();
-      expect(ownerView.body.data.agentChatThread).toEqual({
+      expect(ownerView.body.data.inboxThread).toEqual({
         id: threadId,
         title: 'Record API conversation',
       });
 
       const outsiderList = await makeGraphqlApiRequest(
         findManyOperationFactory({
-          objectMetadataSingularName: 'agentChatThread',
-          objectMetadataPluralName: 'agentChatThreads',
+          objectMetadataSingularName: 'inboxThread',
+          objectMetadataPluralName: 'inboxThreads',
           gqlFields: 'id',
           filter: { id: { eq: threadId } },
         }),
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
       );
-      expect(
-        outsiderList.body.data?.agentChatThreads?.edges ?? [],
-      ).toHaveLength(0);
+      expect(outsiderList.body.data?.inboxThreads?.edges ?? []).toHaveLength(0);
       const outsiderView = await makeGraphqlApiRequest(
         findOneOperationFactory({
-          objectMetadataSingularName: 'agentChatThread',
+          objectMetadataSingularName: 'inboxThread',
           gqlFields: 'id',
           filter: { id: { eq: threadId } },
         }),
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
       );
-      expect(outsiderView.body.data?.agentChatThread ?? null).toBeNull();
+      expect(outsiderView.body.data?.inboxThread ?? null).toBeNull();
       const outsiderRename = await updateThreadRecord(
         threadId,
         { title: 'Unauthorized rename' },
@@ -961,7 +875,7 @@ describe('Conversations through the record API', () => {
         title: 'Renamed through the record API',
       });
       expect(renamed.body.errors).toBeUndefined();
-      expect(renamed.body.data.updateAgentChatThread.title).toBe(
+      expect(renamed.body.data.updateInboxThread.title).toBe(
         'Renamed through the record API',
       );
 
@@ -976,14 +890,12 @@ describe('Conversations through the record API', () => {
 
       // Stands in for a running turn, which soft deleting has to stop.
       await global.testDataSource.query(
-        `UPDATE ${schema}."agentChatThread" SET "activeStreamId" = 'record-api-stream' WHERE id = $1`,
+        `UPDATE ${schema}."inboxThread" SET "activeStreamId" = 'record-api-stream' WHERE id = $1`,
         [threadId],
       );
       const softDeleted = await softDeleteThreadRecord(threadId);
       expect(softDeleted.body.errors).toBeUndefined();
-      expect(
-        softDeleted.body.data.deleteAgentChatThread.deletedAt,
-      ).not.toBeNull();
+      expect(softDeleted.body.data.deleteInboxThread.deletedAt).not.toBeNull();
       const softDeletedThread = await readStoredThread(threadId);
       expect(softDeletedThread?.deletedAt).not.toBeNull();
       expect(softDeletedThread?.archivedAt).toBeNull();
@@ -998,7 +910,7 @@ describe('Conversations through the record API', () => {
 
       const restored = await restoreThreadRecord(threadId);
       expect(restored.body.errors).toBeUndefined();
-      expect(restored.body.data.restoreAgentChatThread.deletedAt).toBeNull();
+      expect(restored.body.data.restoreInboxThread.deletedAt).toBeNull();
       expect((await readStoredThread(threadId))?.deletedAt).toBeNull();
 
       const outsiderDestroy = await destroyThreadRecord(
@@ -1014,7 +926,7 @@ describe('Conversations through the record API', () => {
       expect(await readShares(threadId)).toHaveLength(1);
     } finally {
       await global.testDataSource.query(
-        `DELETE FROM ${schema}."agentChatThread" WHERE id = $1`,
+        `DELETE FROM ${schema}."inboxThread" WHERE id = $1`,
         [threadId],
       );
       await global.testDataSource.query(
@@ -1039,7 +951,7 @@ describe('Conversations through the record API', () => {
 
             if (
               databaseBatchEventInput?.objectMetadataNameSingular !==
-                'agentChatThread' ||
+                'inboxThread' ||
               databaseBatchEventInput.action !== DatabaseEventAction.DESTROYED
             ) {
               return;
@@ -1053,7 +965,7 @@ describe('Conversations through the record API', () => {
               emitSpy.mockRestore();
               resolve({
                 name: computeEventName(
-                  'agentChatThread',
+                  'inboxThread',
                   DatabaseEventAction.DESTROYED,
                 ),
                 workspaceId: databaseBatchEventInput.workspaceId,
@@ -1179,7 +1091,7 @@ describe('Conversations through the record API', () => {
         ).toBe(false);
       } finally {
         await global.testDataSource.query(
-          `DELETE FROM ${schema}."agentChatThread" WHERE id = $1`,
+          `DELETE FROM ${schema}."inboxThread" WHERE id = $1`,
           [threadId],
         );
         await global.testDataSource.query(

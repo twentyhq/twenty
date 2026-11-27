@@ -101,7 +101,7 @@ const findRecordedTurn = async (threadId: string) => {
   const [[message], [turn]] = await Promise.all([
     globalThis.testDataSource.query(
       `SELECT "senderWorkspaceMemberId", "senderApplicationId"
-       FROM "${WORKSPACE_SCHEMA}"."agentMessage"
+       FROM "${WORKSPACE_SCHEMA}"."inboxMessage"
        WHERE "threadId" = $1 AND role = $2`,
       [threadId, AgentMessageRole.USER],
     ),
@@ -119,7 +119,7 @@ const findRecordedTurn = async (threadId: string) => {
 const findThread = async (threadId: string) => {
   const [thread] = await globalThis.testDataSource.query(
     `SELECT "workspaceMemberId", "deletedAt"
-     FROM "${WORKSPACE_SCHEMA}"."agentChatThread"
+     FROM "${WORKSPACE_SCHEMA}"."inboxThread"
      WHERE id = $1`,
     [threadId],
   );
@@ -138,7 +138,7 @@ const isThreadFollowed = async ({
   workspaceMemberId: string;
 }) => {
   const [participant] = await globalThis.testDataSource.query(
-    `SELECT "isSubscribed" FROM "${WORKSPACE_SCHEMA}"."agentChatThreadParticipant"
+    `SELECT "isSubscribed" FROM "${WORKSPACE_SCHEMA}"."inboxThreadParticipant"
      WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
     [threadId, workspaceMemberId],
   );
@@ -168,11 +168,11 @@ const disownThread = async (threadId: string) => {
     [threadId],
   );
   await globalThis.testDataSource.query(
-    `DELETE FROM "${WORKSPACE_SCHEMA}"."agentChatThreadParticipant" WHERE "threadId" = $1`,
+    `DELETE FROM "${WORKSPACE_SCHEMA}"."inboxThreadParticipant" WHERE "threadId" = $1`,
     [threadId],
   );
   await globalThis.testDataSource.query(
-    `UPDATE "${WORKSPACE_SCHEMA}"."agentChatThread" SET "workspaceMemberId" = NULL WHERE id = $1`,
+    `UPDATE "${WORKSPACE_SCHEMA}"."inboxThread" SET "workspaceMemberId" = NULL WHERE id = $1`,
     [threadId],
   );
 };
@@ -349,7 +349,7 @@ describe('Agent run conversation should be recorded for the caller', () => {
       [threadIds],
     );
     await globalThis.testDataSource.query(
-      `DELETE FROM "${WORKSPACE_SCHEMA}"."agentChatThread" WHERE id = ANY($1)`,
+      `DELETE FROM "${WORKSPACE_SCHEMA}"."inboxThread" WHERE id = ANY($1)`,
       [threadIds],
     );
 
@@ -492,7 +492,7 @@ describe('Agent run conversation should be recorded for the caller', () => {
     const { threadId } = await runAsJony();
 
     await globalThis.testDataSource.query(
-      `UPDATE "${WORKSPACE_SCHEMA}"."agentChatThread" SET "deletedAt" = NOW() WHERE id = $1`,
+      `UPDATE "${WORKSPACE_SCHEMA}"."inboxThread" SET "deletedAt" = NOW() WHERE id = $1`,
       [threadId],
     );
 

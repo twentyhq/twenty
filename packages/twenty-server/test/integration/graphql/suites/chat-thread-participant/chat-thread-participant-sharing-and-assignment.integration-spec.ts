@@ -120,7 +120,7 @@ describe('Chat thread participant sharing, subscription and assignment through t
 
     const rows: { workspaceMemberId: string }[] =
       await global.testDataSource.query(
-        `SELECT "workspaceMemberId" FROM ${SCHEMA}."agentChatThreadParticipant" WHERE "threadId" = $1`,
+        `SELECT "workspaceMemberId" FROM ${SCHEMA}."inboxThreadParticipant" WHERE "threadId" = $1`,
         [threadId],
       );
 

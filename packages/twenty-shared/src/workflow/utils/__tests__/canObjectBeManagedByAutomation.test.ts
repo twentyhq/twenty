@@ -33,6 +33,7 @@ describe('canObjectBeManagedByAutomation', () => {
     'workspaceMember',
     'dashboard',
     'agentChatThread',
+    'inboxThread',
     'message',
     'messageThread',
     'messageChannelMessageAssociation',

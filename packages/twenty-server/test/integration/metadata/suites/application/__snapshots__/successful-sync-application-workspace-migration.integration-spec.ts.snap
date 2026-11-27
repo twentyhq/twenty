@@ -787,7 +787,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
           "isUnique": false,
           "label": "Chats",
           "morphId": null,
-          "name": "agentChatThreadTargets",
+          "name": "inboxThreadTargets",
           "objectMetadataUniversalIdentifier": Any<String>,
           "options": null,
           "overrides": null,
@@ -807,7 +807,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
           "applicationUniversalIdentifier": Any<String>,
           "createdAt": Any<String>,
           "defaultValue": null,
-          "description": "AgentChatThreadTargets Ticket",
+          "description": "InboxThreadTargets Ticket",
           "disabledFieldPermissionActions": null,
           "formula": null,
           "icon": "IconMessage",
@@ -955,7 +955,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
           "indexWhereClause": null,
           "isSystemSideEffect": true,
           "isUnique": false,
-          "name": "IDX_974911afcc7d3f9bbfedee071cf",
+          "name": "IDX_b67bd9da08a607ed8806a63bfda",
           "objectMetadataUniversalIdentifier": Any<String>,
           "universalFlatIndexFieldMetadatas": [
             {
@@ -2633,7 +2633,7 @@ exports[`syncApplication should return workspace migration actions on initial sy
           "isUnique": false,
           "label": "Chats",
           "morphId": null,
-          "name": "agentChatThreadTargets",
+          "name": "inboxThreadTargets",
           "objectMetadataUniversalIdentifier": Any<String>,
           "options": null,
           "overrides": null,
@@ -2653,7 +2653,7 @@ exports[`syncApplication should return workspace migration actions on initial sy
           "applicationUniversalIdentifier": Any<String>,
           "createdAt": Any<String>,
           "defaultValue": null,
-          "description": "AgentChatThreadTargets Ticket",
+          "description": "InboxThreadTargets Ticket",
           "disabledFieldPermissionActions": null,
           "formula": null,
           "icon": "IconMessage",
@@ -2801,7 +2801,7 @@ exports[`syncApplication should return workspace migration actions on initial sy
           "indexWhereClause": null,
           "isSystemSideEffect": true,
           "isUnique": false,
-          "name": "IDX_974911afcc7d3f9bbfedee071cf",
+          "name": "IDX_b67bd9da08a607ed8806a63bfda",
           "objectMetadataUniversalIdentifier": Any<String>,
           "universalFlatIndexFieldMetadatas": [
             {

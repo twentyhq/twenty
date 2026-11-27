@@ -18,7 +18,7 @@ const APPLICATION_WRITABLE_FIELD = {
   name: 'tagline',
 };
 const SYSTEM_WRITABLE_FIELD = {
-  objectNameSingular: 'agentChatThread',
+  objectNameSingular: 'inboxThread',
   name: 'totalInputTokens',
 };
 

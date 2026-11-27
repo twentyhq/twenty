@@ -98,8 +98,8 @@ describe('Attaching a conversation to a record from a chat turn', () => {
   const listConversationIdsAttachedTo = async (recordId: string) => {
     const response = await makeGraphqlApiRequest(
       findManyOperationFactory({
-        objectMetadataSingularName: 'agentChatThreadTarget',
-        objectMetadataPluralName: 'agentChatThreadTargets',
+        objectMetadataSingularName: 'inboxThreadTarget',
+        objectMetadataPluralName: 'inboxThreadTargets',
         gqlFields: 'id threadId',
         filter: { targetCompanyId: { eq: recordId } },
       }),
@@ -107,7 +107,7 @@ describe('Attaching a conversation to a record from a chat turn', () => {
 
     expect(response.body.errors).toBeUndefined();
 
-    return response.body.data.agentChatThreadTargets.edges.map(
+    return response.body.data.inboxThreadTargets.edges.map(
       ({ node }: { node: { threadId: string } }) => node.threadId,
     );
   };

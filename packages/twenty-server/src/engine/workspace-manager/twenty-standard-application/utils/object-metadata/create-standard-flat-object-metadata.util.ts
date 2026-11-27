@@ -27,8 +27,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       context: {
         universalIdentifier:
           STANDARD_OBJECTS.agentChatThread.universalIdentifier,
-        nameSingular: 'agentChatThread',
-        namePlural: 'agentChatThreads',
+        nameSingular: 'inboxThread',
+        namePlural: 'inboxThreads',
         labelSingular: i18nLabel(
           msg({
             message: 'Chat',
@@ -68,8 +68,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       context: {
         universalIdentifier:
           STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier,
-        nameSingular: 'agentChatThreadTarget',
-        namePlural: 'agentChatThreadTargets',
+        nameSingular: 'inboxThreadTarget',
+        namePlural: 'inboxThreadTargets',
         labelSingular: i18nLabel(
           msg({
             message: 'Agent chat thread target',
@@ -146,8 +146,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       objectName: 'agentMessage',
       context: {
         universalIdentifier: STANDARD_OBJECTS.agentMessage.universalIdentifier,
-        nameSingular: 'agentMessage',
-        namePlural: 'agentMessages',
+        nameSingular: 'inboxMessage',
+        namePlural: 'inboxMessages',
         labelSingular: i18nLabel(
           msg({
             message: 'Agent message',
@@ -189,8 +189,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       context: {
         universalIdentifier:
           STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
-        nameSingular: 'agentMessagePart',
-        namePlural: 'agentMessageParts',
+        nameSingular: 'inboxMessagePart',
+        namePlural: 'inboxMessageParts',
         labelSingular: i18nLabel(
           msg({
             message: 'Agent message part',
@@ -232,8 +232,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       context: {
         universalIdentifier:
           STANDARD_OBJECTS.agentMessageReaction.universalIdentifier,
-        nameSingular: 'agentMessageReaction',
-        namePlural: 'agentMessageReactions',
+        nameSingular: 'inboxMessageReaction',
+        namePlural: 'inboxMessageReactions',
         labelSingular: i18nLabel(
           msg({
             message: 'Chat message reaction',
@@ -277,8 +277,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       context: {
         universalIdentifier:
           STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier,
-        nameSingular: 'agentChatThreadParticipant',
-        namePlural: 'agentChatThreadParticipants',
+        nameSingular: 'inboxThreadParticipant',
+        namePlural: 'inboxThreadParticipants',
         labelSingular: i18nLabel(
           msg({
             message: 'Chat thread participant',

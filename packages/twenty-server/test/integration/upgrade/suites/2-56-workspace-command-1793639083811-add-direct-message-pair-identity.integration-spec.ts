@@ -59,7 +59,7 @@ describe('2-56 workspace command - add direct message pair identity (integration
     global.testDataSource
       .createQueryBuilder()
       .delete()
-      .from(`${SCHEMA}.agentChatThread`)
+      .from(`${SCHEMA}.inboxThread`)
       .where('id = :threadId', { threadId })
       .execute();
 
@@ -102,7 +102,7 @@ describe('2-56 workspace command - add direct message pair identity (integration
     const queryRunner = global.testDataSource.createQueryRunner();
 
     try {
-      const table = await queryRunner.getTable(`${SCHEMA}.agentChatThread`);
+      const table = await queryRunner.getTable(`${SCHEMA}.inboxThread`);
 
       if (!isDefined(table)) {
         throw new Error('Agent chat thread table is missing');

@@ -571,9 +571,9 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
     global.testDataSource.query(
       `SELECT part.type, part.state, part."textContent", part."toolOutput" IS NOT NULL AS "hasToolOutput",
          part."providerMetadata"
-       FROM "${schema}"."agentMessagePart" part
+       FROM "${schema}"."inboxMessagePart" part
        WHERE part."messageId" = (
-         SELECT id FROM "${schema}"."agentMessage"
+         SELECT id FROM "${schema}"."inboxMessage"
          WHERE role = 'assistant' ORDER BY "createdAt" DESC LIMIT 1
        )
        ORDER BY part."orderIndex"`,
@@ -630,7 +630,7 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
     });
     expect(
       await global.testDataSource.query(
-        `SELECT id FROM "${schema}"."agentMessage" WHERE "turnId" = $1`,
+        `SELECT id FROM "${schema}"."inboxMessage" WHERE "turnId" = $1`,
         [turn.id],
       ),
     ).toEqual([]);

@@ -134,7 +134,7 @@ describe('2-44 workspace command 1790772993322 - RecordPendingFormConversationsC
     const countThreads = () =>
       inWorkspace(() =>
         workspaceOrmManager
-          .getRepositoryWithoutPermissionChecks('agentChatThread')
+          .getRepositoryWithoutPermissionChecks('inboxThread')
           .count({ withDeleted: true }),
       );
     const threadCountBefore = await countThreads();

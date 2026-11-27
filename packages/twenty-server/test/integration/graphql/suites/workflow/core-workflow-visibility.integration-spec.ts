@@ -1172,7 +1172,7 @@ describe('core workflow visibility (e2e)', () => {
       );
 
       const [{ archivedAt }] = await global.testDataSource.query(
-        `SELECT "archivedAt" FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."agentChatThreadParticipant" WHERE "threadId" = $1`,
+        `SELECT "archivedAt" FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."inboxThreadParticipant" WHERE "threadId" = $1`,
         [threadId],
       );
 

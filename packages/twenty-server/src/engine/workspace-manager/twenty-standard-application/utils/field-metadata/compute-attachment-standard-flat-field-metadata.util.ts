@@ -633,6 +633,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.MORPH_RELATION,
       morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
       fieldName: 'targetAgentChatThread',
+      name: 'targetInboxThread',
       label: i18nLabel(
         msg({ message: `Attached to`, context: 'fieldMetadata.label' }),
       ),
@@ -651,7 +652,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'targetAgentChatThreadId',
+        joinColumnName: 'targetInboxThreadId',
       },
     },
     standardObjectMetadataRelatedEntityIds,

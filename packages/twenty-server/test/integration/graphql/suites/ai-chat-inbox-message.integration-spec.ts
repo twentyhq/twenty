@@ -112,7 +112,7 @@ describe('Sending an inbox message as an application', () => {
   const readPendingQuestionMessageId = async (id = threadId) =>
     (
       await global.testDataSource.query(
-        `SELECT "pendingQuestionMessageId" FROM "${schema}"."agentChatThread" WHERE id = $1`,
+        `SELECT "pendingQuestionMessageId" FROM "${schema}"."inboxThread" WHERE id = $1`,
         [id],
       )
     )[0].pendingQuestionMessageId as string | null;
@@ -120,7 +120,7 @@ describe('Sending an inbox message as an application', () => {
   const readMessages = (id: string) =>
     global.testDataSource.query(
       `SELECT id, role, "senderWorkspaceMemberId", "senderApplicationId"
-       FROM "${schema}"."agentMessage" WHERE "threadId" = $1
+       FROM "${schema}"."inboxMessage" WHERE "threadId" = $1
        ORDER BY "processedAt" ASC, "createdAt" ASC`,
       [id],
     );
@@ -216,7 +216,7 @@ describe('Sending an inbox message as an application', () => {
   it('opens a conversation for the member that starts with the application message', async () => {
     const [thread] = await global.testDataSource.query(
       `SELECT title, "workspaceMemberId", "pendingQuestionMessageId"
-       FROM "${schema}"."agentChatThread" WHERE id = $1`,
+       FROM "${schema}"."inboxThread" WHERE id = $1`,
       [threadId],
     );
     const messages = await readMessages(threadId);
@@ -288,7 +288,7 @@ describe('Sending an inbox message as an application', () => {
     expect(response.body.data.sendInboxMessage.threadId).toBe(threadId);
     expect(
       await global.testDataSource.query(
-        `SELECT "isSubscribed" FROM "${schema}"."agentChatThreadParticipant"
+        `SELECT "isSubscribed" FROM "${schema}"."inboxThreadParticipant"
          WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
         [threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.TIM],
       ),
@@ -346,7 +346,7 @@ describe('Sending an inbox message as an application', () => {
         () =>
           Object.getPrototypeOf(
             workspaceOrmManager.getRepositoryWithoutPermissionChecks(
-              'agentMessagePart',
+              'inboxMessagePart',
             ),
           ),
         buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),
@@ -368,7 +368,7 @@ describe('Sending an inbox message as an application', () => {
 
         // The opener's parts come first, then the application message's.
         if (
-          tableShape.nameSingular === 'agentMessagePart' &&
+          tableShape.nameSingular === 'inboxMessagePart' &&
           ++partWriteCount === 2
         ) {
           return Promise.reject(new Error('Message parts write failed'));
@@ -397,7 +397,7 @@ describe('Sending an inbox message as an application', () => {
       expect(
         (
           await global.testDataSource.query(
-            `SELECT "pendingQuestionMessageId" FROM "${schema}"."agentChatThread" WHERE id = $1`,
+            `SELECT "pendingQuestionMessageId" FROM "${schema}"."inboxThread" WHERE id = $1`,
             [failedThreadId],
           )
         )[0].pendingQuestionMessageId,
@@ -408,7 +408,7 @@ describe('Sending an inbox message as an application', () => {
       });
       const messages = await readMessages(failedThreadId);
       const [assistantParts] = await global.testDataSource.query(
-        `SELECT COUNT(*)::int AS count FROM "${schema}"."agentMessagePart" WHERE "messageId" = $1`,
+        `SELECT COUNT(*)::int AS count FROM "${schema}"."inboxMessagePart" WHERE "messageId" = $1`,
         [messages[1]?.id],
       );
 
@@ -486,7 +486,7 @@ describe('Sending an inbox message as an application', () => {
       expect(response.body.errors).toBeUndefined();
       expect(
         await global.testDataSource.query(
-          `SELECT type, "toolCallId" FROM "${schema}"."agentMessagePart"
+          `SELECT type, "toolCallId" FROM "${schema}"."inboxMessagePart"
            WHERE "messageId" = $1 ORDER BY "orderIndex" ASC`,
           [messageId],
         ),
@@ -777,8 +777,8 @@ describe('Proposing a record call as an application', () => {
     threadId = response.body.data.sendInboxMessage.threadId;
 
     const [part] = await global.testDataSource.query(
-      `SELECT part."toolOutput" FROM "${schema}"."agentMessagePart" part
-       JOIN "${schema}"."agentMessage" message ON message.id = part."messageId"
+      `SELECT part."toolOutput" FROM "${schema}"."inboxMessagePart" part
+       JOIN "${schema}"."inboxMessage" message ON message.id = part."messageId"
        WHERE message."threadId" = $1 AND part."toolName" = 'propose_tool_call'`,
       [threadId],
     );

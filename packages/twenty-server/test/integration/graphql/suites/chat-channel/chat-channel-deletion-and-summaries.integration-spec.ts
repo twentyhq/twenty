@@ -565,11 +565,11 @@ describe('Chat channel deletion and summaries through the authenticated API', ()
     const mentionedThreadId = await createThreadInChannel(channelId);
 
     await global.testDataSource.query(
-      `UPDATE ${SCHEMA}."agentChatThread" SET "pendingQuestionMessageId" = $1 WHERE id = $2`,
+      `UPDATE ${SCHEMA}."inboxThread" SET "pendingQuestionMessageId" = $1 WHERE id = $2`,
       [randomUUID(), needsInputThreadId],
     );
     await global.testDataSource.query(
-      `UPDATE ${SCHEMA}."agentChatThreadParticipant" SET "lastMentionedAt" = now()
+      `UPDATE ${SCHEMA}."inboxThreadParticipant" SET "lastMentionedAt" = now()
        WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
       [mentionedThreadId, JANE],
     );
@@ -627,7 +627,7 @@ describe('Chat channel deletion and summaries through the authenticated API', ()
       }),
     );
     await global.testDataSource.query(
-      `UPDATE ${SCHEMA}."agentChatThreadParticipant"
+      `UPDATE ${SCHEMA}."inboxThreadParticipant"
        SET "lastMentionedAt" = now(), "mentionsResolvedAt" = now()
        WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
       [unassignedThreadId, JANE],
@@ -674,7 +674,7 @@ describe('Chat channel deletion and summaries through the authenticated API', ()
 
     const owners: { id: string; workspaceMemberId: string | null }[] =
       await global.testDataSource.query(
-        `SELECT id, "workspaceMemberId" FROM ${SCHEMA}."agentChatThread"
+        `SELECT id, "workspaceMemberId" FROM ${SCHEMA}."inboxThread"
          WHERE id = ANY($1::uuid[]) ORDER BY id`,
         [[channelThreadId, ownThreadId]],
       );
@@ -695,7 +695,7 @@ describe('Chat channel deletion and summaries through the authenticated API', ()
 
     // Neither chat is Jane's to destroy any more
     await global.testDataSource.query(
-      `DELETE FROM ${SCHEMA}."agentChatThread" WHERE id = ANY($1::uuid[])`,
+      `DELETE FROM ${SCHEMA}."inboxThread" WHERE id = ANY($1::uuid[])`,
       [[channelThreadId, ownThreadId]],
     );
     createdThreadIds.splice(

@@ -66,7 +66,7 @@ describe('Chat message participation with real storage', () => {
       );
       expect(
         await global.testDataSource.query(
-          `SELECT id FROM "${context.schema}"."agentMessage" WHERE "threadId" = $1`,
+          `SELECT id FROM "${context.schema}"."inboxMessage" WHERE "threadId" = $1`,
           [threadId],
         ),
       ).toEqual([]);
@@ -387,7 +387,7 @@ describe('Chat message participation with real storage', () => {
     const participants = await global.testDataSource.query<
       AgentChatThreadParticipantRow[]
     >(
-      `SELECT * FROM "${context.schema}"."agentChatThreadParticipant" WHERE "threadId" = $1`,
+      `SELECT * FROM "${context.schema}"."inboxThreadParticipant" WHERE "threadId" = $1`,
       [threadId],
     );
 
@@ -411,7 +411,7 @@ describe('Chat message participation with real storage', () => {
         .filter(
           ([event]) =>
             isDefined(event) &&
-            event.objectMetadataNameSingular === 'agentChatThreadParticipant' &&
+            event.objectMetadataNameSingular === 'inboxThreadParticipant' &&
             event.events.some(({ recordId }) => recordId === participant.id),
         )
         .map(([event]) => event?.action);
@@ -457,7 +457,7 @@ describe('Chat message participation with real storage', () => {
     );
     expect(
       await global.testDataSource.query(
-        `SELECT id FROM "${context.schema}"."agentMessage" WHERE "threadId" = $1`,
+        `SELECT id FROM "${context.schema}"."inboxMessage" WHERE "threadId" = $1`,
         [threadId],
       ),
     ).toEqual(

@@ -38,7 +38,7 @@ describe('Chat thread participant mentions through the authenticated API', () =>
 
     await setShareWithJony(threadId, true);
     await global.testDataSource.query(
-      `UPDATE ${SCHEMA}."agentChatThread" SET "pendingQuestionMessageId" = $2 WHERE id = $1`,
+      `UPDATE ${SCHEMA}."inboxThread" SET "pendingQuestionMessageId" = $2 WHERE id = $1`,
       [threadId, randomUUID()],
     );
 
@@ -133,7 +133,7 @@ describe('Chat thread participant mentions through the authenticated API', () =>
 
     // Activity brings back a chat filed under done, but not one the member left
     await global.testDataSource.query(
-      `UPDATE ${SCHEMA}."agentChatThread" SET "lastActivityAt" = clock_timestamp() WHERE id = ANY($1)`,
+      `UPDATE ${SCHEMA}."inboxThread" SET "lastActivityAt" = clock_timestamp() WHERE id = ANY($1)`,
       [[mentionedThreadId, assignedThreadId]],
     );
 
@@ -516,7 +516,7 @@ describe('Chat thread participant mentions through the authenticated API', () =>
       workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
     });
     await global.testDataSource.query(
-      `UPDATE ${SCHEMA}."agentChatThreadParticipant"
+      `UPDATE ${SCHEMA}."inboxThreadParticipant"
        SET "lastMentionedAt" = $3, "mentionsResolvedAt" = $3
        WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
       [threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JONY, resolvedAt],

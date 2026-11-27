@@ -2,6 +2,7 @@ import { validateAndReturnIndexWhereClause } from 'src/engine/workspace-manager/
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { isDefined } from 'twenty-shared/utils';
 import { validateMorphOrRelationFlatFieldOnDelete } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-on-delete.util';
+import { INBOX_OBJECT_NAMES_BY_LEGACY_NAME } from 'twenty-shared/ai';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -93,7 +94,7 @@ describe('agent history workspace metadata', () => {
         STANDARD_OBJECTS[name].universalIdentifier
       ],
     ).toMatchObject({
-      nameSingular: name,
+      nameSingular: INBOX_OBJECT_NAMES_BY_LEGACY_NAME[name],
       isSystem: true,
       isSearchable: false,
       isAuditLogged: false,

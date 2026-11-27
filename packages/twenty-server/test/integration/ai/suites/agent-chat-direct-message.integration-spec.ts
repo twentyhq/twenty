@@ -89,17 +89,17 @@ describe('Private text direct messages', () => {
     threadId: string,
   ): Promise<{ id: string; isPrivate: boolean }[]> =>
     global.testDataSource.query(
-      `SELECT id, "_isPrivate" AS "isPrivate" FROM "${context.schema}"."agentChatThread" WHERE id = $1
+      `SELECT id, "_isPrivate" AS "isPrivate" FROM "${context.schema}"."inboxThread" WHERE id = $1
        UNION ALL SELECT id, "_isPrivate" FROM "${context.schema}"."agentTurn" WHERE "threadId" = $1
-       UNION ALL SELECT id, "_isPrivate" FROM "${context.schema}"."agentMessage" WHERE "threadId" = $1
-       UNION ALL SELECT part.id, part."_isPrivate" FROM "${context.schema}"."agentMessagePart" part
-         JOIN "${context.schema}"."agentMessage" message ON message.id = part."messageId" WHERE message."threadId" = $1`,
+       UNION ALL SELECT id, "_isPrivate" FROM "${context.schema}"."inboxMessage" WHERE "threadId" = $1
+       UNION ALL SELECT part.id, part."_isPrivate" FROM "${context.schema}"."inboxMessagePart" part
+         JOIN "${context.schema}"."inboxMessage" message ON message.id = part."messageId" WHERE message."threadId" = $1`,
       [threadId],
     );
 
   const softDeleteThread = (threadId: string) =>
     global.testDataSource.query(
-      `UPDATE "${context.schema}"."agentChatThread" SET "deletedAt" = CURRENT_TIMESTAMP WHERE id = $1`,
+      `UPDATE "${context.schema}"."inboxThread" SET "deletedAt" = CURRENT_TIMESTAMP WHERE id = $1`,
       [threadId],
     );
 
@@ -118,7 +118,7 @@ describe('Private text direct messages', () => {
       .createQueryBuilder()
       .select(['id', '"messageId"', '"textContent"'])
       .addSelect('"_isPrivate"', 'isPrivate')
-      .from(`${context.schema}.agentMessagePart`, 'part')
+      .from(`${context.schema}.inboxMessagePart`, 'part')
       .where('"messageId" = :messageId', { messageId })
       .getRawMany<{
         id: string;

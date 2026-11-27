@@ -123,7 +123,7 @@ describe('Inbox thread mutations for members and applications', () => {
     threadId: string,
   ): Promise<{ archivedAt: Date | null; isSubscribed: boolean }[]> =>
     global.testDataSource.query(
-      `SELECT "archivedAt", "isSubscribed" FROM ${SCHEMA}."agentChatThreadParticipant"
+      `SELECT "archivedAt", "isSubscribed" FROM ${SCHEMA}."inboxThreadParticipant"
        WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
       [threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
     );
@@ -132,7 +132,7 @@ describe('Inbox thread mutations for members and applications', () => {
     threadId: string,
   ): Promise<{ deletedAt: Date | null }[]> =>
     global.testDataSource.query(
-      `SELECT "deletedAt" FROM ${SCHEMA}."agentChatThreadTarget"
+      `SELECT "deletedAt" FROM ${SCHEMA}."inboxThreadTarget"
        WHERE "threadId" = $1 AND "targetCompanyId" = $2
        ORDER BY "createdAt" ASC`,
       [threadId, companyId],
@@ -491,7 +491,7 @@ describe('Inbox thread mutations for members and applications', () => {
     const threadId = await createApplicationThread();
 
     await global.testDataSource.query(
-      `UPDATE ${SCHEMA}."agentChatThreadParticipant" SET "isSubscribed" = false
+      `UPDATE ${SCHEMA}."inboxThreadParticipant" SET "isSubscribed" = false
        WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
       [threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
     );

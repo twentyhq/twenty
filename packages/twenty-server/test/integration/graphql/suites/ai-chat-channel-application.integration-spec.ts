@@ -125,7 +125,7 @@ const readThreadChannelState = (threadId: string) =>
     .select('thread."channelId"', 'channelId')
     .addSelect('thread."channelArchivedAt"', 'channelArchivedAt')
     .addSelect('thread."channelSnoozedUntil"', 'channelSnoozedUntil')
-    .from(`${SCHEMA}.agentChatThread`, 'thread')
+    .from(`${SCHEMA}.inboxThread`, 'thread')
     .where('thread.id = :threadId', { threadId })
     .getRawOne<{
       channelId: string;
@@ -137,7 +137,7 @@ const readThreadParticipants = (threadId: string) =>
   global.testDataSource
     .createQueryBuilder()
     .select('participant.*')
-    .from(`${SCHEMA}.agentChatThreadParticipant`, 'participant')
+    .from(`${SCHEMA}.inboxThreadParticipant`, 'participant')
     .where('participant."threadId" = :threadId', { threadId })
     .orderBy('participant.id')
     .getRawMany<Record<string, unknown>>();
@@ -261,7 +261,7 @@ describe('Inbox channels for applications', () => {
 
     await global.testDataSource
       .createQueryBuilder()
-      .update(`${SCHEMA}.agentChatThread`)
+      .update(`${SCHEMA}.inboxThread`)
       .set({
         assigneeId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
         lastActivityAt: new Date(),
@@ -270,7 +270,7 @@ describe('Inbox channels for applications', () => {
       .execute();
     await global.testDataSource
       .createQueryBuilder()
-      .update(`${SCHEMA}.agentChatThreadParticipant`)
+      .update(`${SCHEMA}.inboxThreadParticipant`)
       .set({ lastMentionedAt: new Date() })
       .where('"threadId" = :threadId', { threadId })
       .execute();

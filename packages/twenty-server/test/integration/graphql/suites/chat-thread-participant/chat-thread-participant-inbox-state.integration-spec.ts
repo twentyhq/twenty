@@ -119,7 +119,7 @@ describe('Chat thread participant inbox state through the authenticated API', ()
     ).toBe(lastActivityAt.getTime());
 
     await global.testDataSource.query(
-      `UPDATE ${SCHEMA}."agentChatThread" SET "lastActivityAt" = $2 WHERE id = $1`,
+      `UPDATE ${SCHEMA}."inboxThread" SET "lastActivityAt" = $2 WHERE id = $1`,
       [threadId, new Date(lastActivityAt.getTime() - 60_000)],
     );
 
@@ -227,7 +227,7 @@ describe('Chat thread participant inbox state through the authenticated API', ()
     const snoozedUntil = new Date(Date.now() - 1000);
 
     await global.testDataSource.query(
-      `UPDATE ${SCHEMA}."agentChatThreadParticipant" SET "snoozedUntil" = $3
+      `UPDATE ${SCHEMA}."inboxThreadParticipant" SET "snoozedUntil" = $3
        WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
       [threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE, snoozedUntil],
     );
@@ -245,7 +245,7 @@ describe('Chat thread participant inbox state through the authenticated API', ()
 
     const [row]: { archivedAt: Date | null; snoozedUntil: Date | null }[] =
       await global.testDataSource.query(
-        `SELECT "archivedAt", "snoozedUntil" FROM ${SCHEMA}."agentChatThreadParticipant"
+        `SELECT "archivedAt", "snoozedUntil" FROM ${SCHEMA}."inboxThreadParticipant"
          WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
         [threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
       );

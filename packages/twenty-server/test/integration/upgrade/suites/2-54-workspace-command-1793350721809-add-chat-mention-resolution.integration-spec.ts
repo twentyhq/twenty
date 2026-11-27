@@ -34,7 +34,7 @@ describe('2-54 workspace command - add chat mention resolution (integration)', (
     const columns: { column_name: string }[] =
       await global.testDataSource.query(
         `SELECT column_name FROM information_schema.columns
-         WHERE table_schema = $1 AND table_name = 'agentChatThreadParticipant'
+         WHERE table_schema = $1 AND table_name = 'inboxThreadParticipant'
            AND column_name = 'mentionsResolvedAt'`,
         [SCHEMA],
       );

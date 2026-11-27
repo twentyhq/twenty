@@ -163,7 +163,7 @@ describe('recordShare object', () => {
     ).findOneOrFail({
       where: {
         workspaceId: SEED_APPLE_WORKSPACE_ID,
-        nameSingular: 'agentChatThread',
+        nameSingular: 'inboxThread',
       },
     });
     const args = {

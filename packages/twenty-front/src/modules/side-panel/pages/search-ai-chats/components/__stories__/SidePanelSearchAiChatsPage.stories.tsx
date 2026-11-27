@@ -1,3 +1,4 @@
+import { LEGACY_INBOX_NAMES_BY_LEGACY_NAME } from '@/ai-chat/constants/LegacyInboxNamesByLegacyName';
 import { askAiSidePanelThreadIdComponentState } from '@/side-panel/states/askAiSidePanelThreadIdComponentState';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -390,7 +391,7 @@ const meta = {
     const chatMetadata: EnrichedObjectMetadataItem = {
       ...noteMetadata,
       id: CHAT_OBJECT_ID,
-      nameSingular: StandardObjectNameSingular.AgentChatThread,
+      nameSingular: LEGACY_INBOX_NAMES_BY_LEGACY_NAME.agentChatThread,
       namePlural: 'agentChatThreads',
       labelSingular: 'Chat',
       labelPlural: 'Chats',

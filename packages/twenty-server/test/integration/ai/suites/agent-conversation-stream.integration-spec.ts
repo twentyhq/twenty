@@ -93,7 +93,7 @@ describe('Agent conversations read by their application (integration)', () => {
   afterAll(async () => {
     // no member is granted the threads runAgent creates, so the API cannot destroy them
     await globalThis.testDataSource.query(
-      `DELETE FROM "${WORKSPACE_SCHEMA}"."agentChatThread" WHERE id = ANY($1)`,
+      `DELETE FROM "${WORKSPACE_SCHEMA}"."inboxThread" WHERE id = ANY($1)`,
       [threadIds],
     );
 

@@ -348,7 +348,7 @@ describe('Access to all records and ownership transfer', () => {
       gqlFields: 'id nameSingular',
     });
     const chatThreadObjectMetadataId = objects.find(
-      (object) => object.nameSingular === 'agentChatThread',
+      (object) => object.nameSingular === 'inboxThread',
     )!.id;
     const privateChatThreadId = randomUUID();
 

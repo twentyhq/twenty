@@ -9,6 +9,7 @@ import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 import { Text } from 'twenty-ui/primitives/typography';
 
+import { LEGACY_INBOX_NAMES_BY_LEGACY_NAME } from '@/ai-chat/constants/LegacyInboxNamesByLegacyName';
 import { InboxDirectMessagePresentationExample } from '@/inbox/components/__stories__/InboxDirectMessagePresentationExample';
 import { InboxOpenDirectMessageButton } from '@/inbox/components/InboxOpenDirectMessageButton';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -244,7 +245,7 @@ export const OpenMemberConversation: Story = {
     setTestObjectMetadataItemsInMetadataStore(jotaiStore, [
       {
         ...noteMetadata,
-        nameSingular: StandardObjectNameSingular.AgentChatThread,
+        nameSingular: LEGACY_INBOX_NAMES_BY_LEGACY_NAME.agentChatThread,
         namePlural: 'agentChatThreads',
         labelSingular: 'Chat',
         labelPlural: 'Chats',

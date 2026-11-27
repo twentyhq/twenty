@@ -62,10 +62,10 @@ describe('seedAgents', () => {
         },
       });
 
-      const threads = tables.get(`${SCHEMA_NAME}.agentChatThread`) ?? [];
+      const threads = tables.get(`${SCHEMA_NAME}.inboxThread`) ?? [];
       const turns = tables.get(`${SCHEMA_NAME}.agentTurn`) ?? [];
-      const messages = tables.get(`${SCHEMA_NAME}.agentMessage`) ?? [];
-      const parts = tables.get(`${SCHEMA_NAME}.agentMessagePart`) ?? [];
+      const messages = tables.get(`${SCHEMA_NAME}.inboxMessage`) ?? [];
+      const parts = tables.get(`${SCHEMA_NAME}.inboxMessagePart`) ?? [];
 
       expect(threads).toHaveLength(threadCount);
       expect(messages).toHaveLength(messageCount);

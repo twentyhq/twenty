@@ -132,7 +132,7 @@ describe('Inbox thread views', () => {
 
   beforeAll(async () => {
     inboxThreadObjectMetadataId =
-      await findObjectMetadataIdByName('agentChatThread');
+      await findObjectMetadataIdByName('inboxThread');
 
     const findInboxThreadFieldMetadataId = (fieldName: string) =>
       findFieldMetadataIdByName({
