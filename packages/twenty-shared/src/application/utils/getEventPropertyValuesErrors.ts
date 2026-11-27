@@ -5,6 +5,10 @@ import { type InputJsonSchema } from '@/logic-function/input-json-schema.type';
 import { fastDeepEqual } from '@/utils/json/fast-deep-equal';
 import { isDefined } from '@/utils/validation/isDefined';
 
+// Inherited members such as constructor are neither properties nor values
+const hasOwnKey = (object: object, key: string) =>
+  Object.prototype.hasOwnProperty.call(object, key);
+
 const isValueOfPropertySchema = ({
   value,
   propertySchema,
@@ -80,19 +84,15 @@ export const getEventPropertyValuesErrors = ({
   const errors: string[] = [];
   const properties = schema.properties ?? {};
   const requiredNames = new Set(schema.required ?? []);
-  const isDeclared = (name: string) =>
-    Object.prototype.hasOwnProperty.call(properties, name);
-
   for (const valueName of Object.keys(values)) {
-    if (!isDeclared(valueName)) {
+    if (!hasOwnKey(properties, valueName)) {
       errors.push(`Event "${eventName}" has no property "${valueName}"`);
     }
   }
 
   for (const [propertyName, propertySchema] of Object.entries(properties)) {
     const label = `Event "${eventName}" property "${propertyName}"`;
-    // Inherited members such as constructor are not part of the payload
-    const value = Object.prototype.hasOwnProperty.call(values, propertyName)
+    const value = hasOwnKey(values, propertyName)
       ? values[propertyName]
       : undefined;
 

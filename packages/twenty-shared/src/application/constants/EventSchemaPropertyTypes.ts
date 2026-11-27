@@ -1,4 +1,3 @@
-// Untyped properties accept any JSON value
 export const EVENT_SCHEMA_PROPERTY_TYPES = [
   'string',
   'number',
