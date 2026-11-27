@@ -16,6 +16,12 @@ export default defineConnectionProvider({
   type: 'custom',
   scope: 'USER',
   logo: 'public/whatsapp-logomark.svg',
+  via: {
+    name: 'Unipile',
+    description: 'Connects your WhatsApp account and syncs its messages.',
+    logo: 'public/unipile-logomark.svg',
+    url: 'https://www.unipile.com',
+  },
   custom: {
     authorizeLogicFunction: {
       universalIdentifier: WHATSAPP_AUTHORIZE_UNIVERSAL_IDENTIFIER,
