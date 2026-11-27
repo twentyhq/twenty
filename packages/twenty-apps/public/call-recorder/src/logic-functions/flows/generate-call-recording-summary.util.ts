@@ -1,6 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { runAgent } from 'twenty-sdk/logic-function';
 
+import { CALL_RECORDING_SUMMARY_UNAVAILABLE_HEADING } from 'src/constants/call-recording-summary-unavailable-heading';
 import { CALL_RECORDING_SUMMARIZER_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { findCallRecordingForSummary } from 'src/logic-functions/data/find-call-recording-for-summary.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
@@ -79,7 +80,7 @@ export const generateCallRecordingSummary = async (
 
   const summaryMarkdown =
     parsedAgentResponse.outcome === 'not-summarizable'
-      ? `## Summary unavailable\n\n${parsedAgentResponse.reason}`
+      ? `${CALL_RECORDING_SUMMARY_UNAVAILABLE_HEADING}\n\n${parsedAgentResponse.reason}`
       : parsedAgentResponse.markdown;
 
   try {

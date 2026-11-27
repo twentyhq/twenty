@@ -5,8 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { NavigationDrawerInboxThreadItem } from '@/inbox/components/NavigationDrawerInboxThreadItem';
 import { type InboxThreadListItemData } from '@/inbox/types/InboxThreadListItemData';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
-
-const INBOX_FAVORITES_NAVIGATION_SECTION_ID = 'AiChatFavorites';
+import { INBOX_FAVORITES_NAVIGATION_SECTION_ID } from '@/inbox/constants/InboxFavoritesNavigationSectionId';
 
 type NavigationDrawerInboxFavoritesSectionProps = {
   label?: string;

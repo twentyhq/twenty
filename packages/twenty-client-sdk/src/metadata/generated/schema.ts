@@ -850,7 +850,8 @@ export interface AuthToken {
 
 export interface AuthTokenPair {
     accessOrWorkspaceAgnosticToken: AuthToken
-    refreshToken: AuthToken
+    /** @deprecated Always null. Will be removed. */
+    refreshToken?: AuthToken
     __typename: 'AuthTokenPair'
 }
 
@@ -2650,6 +2651,7 @@ export interface Mutation {
     removeRecordShare: RecordSharingDTO
     removeRoleFromAgent: Scalars['Boolean']
     renewApplicationToken: ApplicationTokenPair
+    /** @deprecated Refresh tokens are no longer issued; this is removed once the last one expires. */
     renewToken: AuthTokens
     reopenAgentChatThreadInChannel: Scalars['Boolean']
     reportAppConnectionAuthFailure: Scalars['Boolean']
@@ -5553,6 +5555,7 @@ export interface AuthTokenGenqlSelection{
 
 export interface AuthTokenPairGenqlSelection{
     accessOrWorkspaceAgnosticToken?: AuthTokenGenqlSelection
+    /** @deprecated Always null. Will be removed. */
     refreshToken?: AuthTokenGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -7612,6 +7615,7 @@ export interface MutationGenqlSelection{
     removeRecordShare?: (RecordSharingDTOGenqlSelection & { __args: {principal: RecordSharePrincipalInput, target: RecordTargetInput} })
     removeRoleFromAgent?: { __args: {agentId: Scalars['UUID']} }
     renewApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationRefreshToken: Scalars['String']} })
+    /** @deprecated Refresh tokens are no longer issued; this is removed once the last one expires. */
     renewToken?: (AuthTokensGenqlSelection & { __args: {appToken: Scalars['String']} })
     reopenAgentChatThreadInChannel?: { __args: {threadId: Scalars['UUID']} }
     reportAppConnectionAuthFailure?: { __args: {input: ReportAppConnectionAuthFailureInput} }
