@@ -18,10 +18,6 @@ const StyledContainer = styled.div`
   overflow: hidden;
 `;
 
-const StyledLoaderContainer = styled.div`
-  height: ${themeCssVariables.spacing[20]};
-`;
-
 type AiChatToolFrontComponentProps = {
   frontComponentId: string;
   toolCall: FrontComponentToolCall;
@@ -38,9 +34,7 @@ export const AiChatToolFrontComponent = ({
   errorFallback,
 }: AiChatToolFrontComponentProps) => {
   const loadingFallback = (
-    <StyledLoaderContainer>
-      <FrontComponentSkeletonLoader />
-    </StyledLoaderContainer>
+    <FrontComponentSkeletonLoader height={themeCssVariables.spacing[20]} />
   );
 
   return (
