@@ -2,7 +2,6 @@ import { REST_API_BASE_URL } from '@/apollo/constants/RestApiBaseUrl';
 import { FrontComponentRendererPrerequisitesLoader } from '@/front-components/components/FrontComponentRendererPrerequisitesLoader';
 import { useFrontComponentRendererPrerequisitesOrThrow } from '@/front-components/contexts/FrontComponentRendererPrerequisitesContext';
 import { FrontComponentInstanceContext } from '@/front-components/states/contexts/FrontComponentInstanceContext';
-import { type FrontComponentFieldsNeededToStartLoading } from '@/front-components/types/FrontComponentFieldsNeededToStartLoading';
 import { type ResolvedFrontComponent } from '@/front-components/types/ResolvedFrontComponent';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, http, HttpResponse } from 'msw';
@@ -20,14 +19,22 @@ const ACCESS_TOKEN = 'story-access-token';
 
 const componentSourceRequested = fn();
 
-const buildFrontComponentFields = (
+const buildStoryFrontComponent = (
   applicationId: string,
-): FrontComponentFieldsNeededToStartLoading => ({
+): ResolvedFrontComponent => ({
+  __typename: 'FrontComponent',
   id: FRONT_COMPONENT_ID,
+  name: 'Story front component',
   applicationId,
+  applicationName: 'Story application',
+  applicationFunctionsBaseUrl: null,
+  applicationGrantedCapabilities: null,
   builtComponentChecksum: 'story-checksum',
+  isHeadless: false,
   usesSdkClient: false,
   frontComponentSharedDependenciesChecksum: null,
+  applicationVariables: {},
+  applicationGrantedIframeMediaPermissions: null,
 });
 
 const LoadedPrerequisites = () => {
@@ -52,7 +59,7 @@ const PrerequisitesLoaderStory = ({
 }: PrerequisitesLoaderStoryProps) => {
   const [hasFindOneQueryAnswered, setHasFindOneQueryAnswered] = useState(false);
 
-  const frontComponentFields = buildFrontComponentFields(applicationId);
+  const storyFrontComponent = buildStoryFrontComponent(applicationId);
 
   return (
     <FrontComponentInstanceContext.Provider
@@ -62,14 +69,9 @@ const PrerequisitesLoaderStory = ({
         Answer find-one query
       </button>
       <FrontComponentRendererPrerequisitesLoader
-        frontComponentFieldsNeededToStartLoading={frontComponentFields}
+        frontComponentFieldsNeededToStartLoading={storyFrontComponent}
         frontComponentFromFindOneQuery={
-          hasFindOneQueryAnswered
-            ? ({
-                ...frontComponentFields,
-                name: 'Story front component',
-              } as ResolvedFrontComponent)
-            : undefined
+          hasFindOneQueryAnswered ? storyFrontComponent : undefined
         }
         loadingFallback="Loading front component"
         unavailableFallback="Front component unavailable"
