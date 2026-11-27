@@ -27,7 +27,7 @@ export class ConnectionProviderReportedAccountService {
     scope,
     reconnectingConnectedAccountId,
     authorizationIssuedAtSeconds,
-    reportedAccount: { externalAccountId, handle, accessToken },
+    reportedAccount: { externalAccountId, handle, name, accessToken },
   }: {
     provider: Pick<
       ConnectionProviderEntity,
@@ -46,6 +46,7 @@ export class ConnectionProviderReportedAccountService {
     reportedAccount: {
       externalAccountId: string;
       handle?: string;
+      name?: string;
       accessToken?: PlaintextString;
     };
   }): Promise<string | null> {
@@ -82,7 +83,7 @@ export class ConnectionProviderReportedAccountService {
               ? { accessToken, refreshToken: null, scopes: null }
               : undefined,
             handle,
-            identifiedAccount: { externalAccountId },
+            identifiedAccount: { externalAccountId, name },
             workspaceId,
             userId,
             userWorkspaceId,

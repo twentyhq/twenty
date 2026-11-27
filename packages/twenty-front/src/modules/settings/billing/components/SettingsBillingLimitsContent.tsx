@@ -6,6 +6,7 @@ import { SettingsBillingLimitsTable } from '@/settings/billing/components/Settin
 import { useUsageQuotaDefinitions } from '@/settings/billing/hooks/useUsageQuotaDefinitions';
 import { useUsageQuotasWithConsumption } from '@/settings/billing/hooks/useUsageQuotasWithConsumption';
 import { hasKnownUsageLimitSpender } from '@/settings/billing/utils/hasKnownUsageLimitSpender';
+import { SettingsPageContentSkeleton } from '@/settings/components/SettingsPageContentSkeleton';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { Section } from 'twenty-ui/components/layout';
 
@@ -19,7 +20,7 @@ export const SettingsBillingLimitsContent = () => {
   const quotas = usageQuotasWithConsumption.filter(hasKnownUsageLimitSpender);
 
   if (loading || definitionsLoading) {
-    return null;
+    return <SettingsPageContentSkeleton />;
   }
 
   if (isDefined(error)) {

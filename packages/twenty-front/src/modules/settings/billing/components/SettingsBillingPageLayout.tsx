@@ -7,7 +7,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
-import { SettingsBillingContentSkeleton } from '@/settings/billing/components/SettingsBillingContentSkeleton';
+import { SettingsPageContentSkeleton } from '@/settings/components/SettingsPageContentSkeleton';
 import { SettingsBillingPlansErrorState } from '@/settings/billing/components/SettingsBillingPlansErrorState';
 import { SettingsBillingTabBar } from '@/settings/billing/components/SettingsBillingTabBar';
 import { usePlans } from '@/settings/billing/hooks/usePlans';
@@ -68,7 +68,7 @@ export const SettingsBillingPageLayout = ({
         {!isDefined(currentWorkspace) ||
         !isBillingLoaded ||
         (isBillingEnabled && arePlansLoading) ? (
-          <SettingsBillingContentSkeleton />
+          <SettingsPageContentSkeleton />
         ) : isPlansLoaded ? (
           children
         ) : (
