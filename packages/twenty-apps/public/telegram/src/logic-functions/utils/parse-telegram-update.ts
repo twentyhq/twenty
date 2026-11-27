@@ -4,10 +4,10 @@ import { isDefined } from 'twenty-sdk/utils';
 import { TELEGRAM_ASSISTANT_FEEDBACK } from 'src/logic-functions/constants/telegram-assistant-feedback';
 import { TELEGRAM_DISCONNECT_COMMAND } from 'src/logic-functions/constants/telegram-disconnect-command';
 import { TELEGRAM_FEEDBACK_CALLBACK_PREFIX } from 'src/logic-functions/constants/telegram-feedback-callback-prefix';
-import { getTelegramInboundAttachment } from 'src/logic-functions/utils/get-telegram-inbound-attachment';
 import { type TelegramInboundEvent } from 'src/logic-functions/types/telegram-inbound-event.type';
 import { type TelegramUpdate } from 'src/logic-functions/types/telegram-update.type';
 import { type TelegramUser } from 'src/logic-functions/types/telegram-user.type';
+import { getTelegramInboundAttachment } from 'src/logic-functions/utils/get-telegram-inbound-attachment';
 
 const PRIVATE_CHAT_TYPE = 'private';
 const BLOCKED_MEMBER_STATUS = 'kicked';

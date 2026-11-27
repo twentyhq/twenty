@@ -3,9 +3,9 @@ import { runAgent } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { TELEGRAM_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { type TelegramAssistantAttachment } from 'src/logic-functions/types/telegram-assistant-attachment.type';
 import { TelegramAssistantDeadlineError } from 'src/logic-functions/types/telegram-assistant-deadline-error';
 import { TelegramAssistantEmptyResponseError } from 'src/logic-functions/types/telegram-assistant-empty-response-error';
-import { type TelegramAssistantAttachment } from 'src/logic-functions/types/telegram-assistant-attachment.type';
 import { type TelegramAssistantTurn } from 'src/logic-functions/types/telegram-assistant-turn.type';
 import { buildTelegramAssistantInstructions } from 'src/logic-functions/utils/build-telegram-assistant-instructions';
 import { buildTelegramAssistantRequestName } from 'src/logic-functions/utils/build-telegram-assistant-request-name';

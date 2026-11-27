@@ -3,8 +3,8 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { claimTelegramAssistantRequest } from 'src/logic-functions/data/claim-telegram-assistant-request';
 import { findTelegramAssistantHistory } from 'src/logic-functions/data/find-telegram-assistant-history';
-import { type TelegramInboundAttachment } from 'src/logic-functions/types/telegram-inbound-attachment.type';
 import { TelegramAssistantDeadlineError } from 'src/logic-functions/types/telegram-assistant-deadline-error';
+import { type TelegramInboundAttachment } from 'src/logic-functions/types/telegram-inbound-attachment.type';
 import { deliverTelegramAssistantAnswer } from 'src/logic-functions/utils/deliver-telegram-assistant-answer';
 import { failTelegramAssistantRequest } from 'src/logic-functions/utils/fail-telegram-assistant-request';
 import { fetchWorkspaceBaseUrl } from 'src/logic-functions/utils/fetch-workspace-base-url';

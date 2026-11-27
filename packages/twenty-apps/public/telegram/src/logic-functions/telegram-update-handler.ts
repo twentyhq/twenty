@@ -6,11 +6,11 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { TELEGRAM_UPDATE_HANDLER_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { TELEGRAM_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/constants/telegram-assistant-agent-budget-seconds';
-import { TELEGRAM_ASSISTANT_DELIVERY_BUDGET_SECONDS } from 'src/logic-functions/constants/telegram-assistant-delivery-budget-seconds';
 import { TELEGRAM_ASSISTANT_ATTACHMENT_REFUSED_TEXT } from 'src/logic-functions/constants/telegram-assistant-attachment-refused-text';
+import { TELEGRAM_ASSISTANT_DELIVERY_BUDGET_SECONDS } from 'src/logic-functions/constants/telegram-assistant-delivery-budget-seconds';
 import { TELEGRAM_ASSISTANT_HELP_TEXT } from 'src/logic-functions/constants/telegram-assistant-help-text';
 import { TELEGRAM_ASSISTANT_REQUEST_TIMEOUT_SECONDS } from 'src/logic-functions/constants/telegram-assistant-request-timeout-seconds';
-import { TELEGRAM_ASSISTANT_TEXT_ONLY_TEXT } from 'src/logic-functions/constants/telegram-assistant-text-only-text';
+import { TELEGRAM_ASSISTANT_UNSUPPORTED_MESSAGE_TEXT } from 'src/logic-functions/constants/telegram-assistant-unsupported-message-text';
 import { TELEGRAM_CONNECTED_TEXT } from 'src/logic-functions/constants/telegram-connected-text';
 import { TELEGRAM_DISCONNECTED_TEXT } from 'src/logic-functions/constants/telegram-disconnected-text';
 import { TELEGRAM_FEEDBACK_NOT_SAVED_TEXT } from 'src/logic-functions/constants/telegram-feedback-not-saved-text';
@@ -128,9 +128,9 @@ export const telegramUpdateHandler = async (
   }
 
   if (!isNonEmptyString(event.text) && !isDefined(attachment)) {
-    await reply(TELEGRAM_ASSISTANT_TEXT_ONLY_TEXT);
+    await reply(TELEGRAM_ASSISTANT_UNSUPPORTED_MESSAGE_TEXT);
 
-    return { outcome: 'TEXT_ONLY' };
+    return { outcome: 'UNSUPPORTED_MESSAGE' };
   }
 
   if (event.text.startsWith('/')) {

@@ -1,9 +1,11 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isNumber } from '@sniptt/guards';
 
 import { TELEGRAM_API_BASE_URL } from 'src/logic-functions/constants/telegram-api-base-url';
 import { TELEGRAM_ASSISTANT_ATTACHMENT_DOWNLOAD_TIMEOUT_MS } from 'src/logic-functions/constants/telegram-assistant-attachment-download-timeout-ms';
 import { TELEGRAM_ASSISTANT_MAX_ATTACHMENT_SIZE_BYTES } from 'src/logic-functions/constants/telegram-assistant-max-attachment-size-bytes';
 import { callTelegramApiOrThrow } from 'src/logic-functions/utils/call-telegram-api-or-throw';
+
+const FILE_OVER_SIZE_LIMIT_MESSAGE = 'the file is over the size limit';
 
 export const downloadTelegramFileOrThrow = async ({
   botToken,
@@ -12,7 +14,10 @@ export const downloadTelegramFileOrThrow = async ({
   botToken: string;
   telegramFileId: string;
 }): Promise<Uint8Array<ArrayBuffer>> => {
-  const file = await callTelegramApiOrThrow<{ file_path?: string }>({
+  const file = await callTelegramApiOrThrow<{
+    file_path?: string;
+    file_size?: number;
+  }>({
     botToken,
     method: 'getFile',
     params: { file_id: telegramFileId },
@@ -20,6 +25,13 @@ export const downloadTelegramFileOrThrow = async ({
 
   if (!isNonEmptyString(file.file_path)) {
     throw new Error('Telegram did not return a path for the file');
+  }
+
+  if (
+    isNumber(file.file_size) &&
+    file.file_size > TELEGRAM_ASSISTANT_MAX_ATTACHMENT_SIZE_BYTES
+  ) {
+    throw new Error(FILE_OVER_SIZE_LIMIT_MESSAGE);
   }
 
   const response = await fetch(
@@ -40,7 +52,7 @@ export const downloadTelegramFileOrThrow = async ({
   const bytes = new Uint8Array(await response.arrayBuffer());
 
   if (bytes.byteLength > TELEGRAM_ASSISTANT_MAX_ATTACHMENT_SIZE_BYTES) {
-    throw new Error('the file is over the size limit');
+    throw new Error(FILE_OVER_SIZE_LIMIT_MESSAGE);
   }
 
   return bytes;
