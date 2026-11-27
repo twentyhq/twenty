@@ -62,14 +62,6 @@ const TOOL_SETTINGS = {
   },
 } satisfies HalftoneModelProps['settings'];
 
-// The pointer thickens the dashes under it, as on the partners' icons.
-const HERO_HOVER = {
-  hoverHalftoneEnabled: true,
-  hoverHalftoneRadius: 0.22,
-  hoverHalftonePowerShift: 0.5,
-  hoverHalftoneWidthShift: 0.4,
-};
-
 // The three, composed into one model (integrator-tools.glb: the middle one large,
 // the sides smaller and turned in), so the hero holds two canvases and
 // leaves the page's budget to the sections below.
@@ -107,14 +99,13 @@ const BASE_BUILD_MS = 2400;
 const BASE_START_MS = 1200;
 const BASE_COIN_SIZE = { scaleTarget: 0.9 };
 // The same line spacing as the row above (its cells are larger, as the
-// camera stands farther back), and the same hover.
+// camera stands farther back).
 const BASE_SETTINGS = {
   ...TOOL_SETTINGS,
   previewDistance: 9,
   halftone: { ...TOOL_SETTINGS.halftone, scale: 13.5 },
   animation: {
     ...TOOL_SETTINGS.animation,
-    ...HERO_HOVER,
     floatEnabled: false,
   },
 } satisfies HalftoneModelProps['settings'];
@@ -129,7 +120,6 @@ const ROW_SETTINGS = {
   // as a single one did: the row's model is three tools wide
   animation: {
     ...TOOL_SETTINGS.animation,
-    ...HERO_HOVER,
     floatAmplitude: 0.12,
   },
 } satisfies HalftoneModelProps['settings'];
