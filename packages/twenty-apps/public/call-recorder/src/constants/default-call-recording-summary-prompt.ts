@@ -1,3 +1,4 @@
+import { CALL_RECORDING_SUMMARY_GIST_HEADING } from 'src/constants/call-recording-summary-gist-heading';
 import { CALL_RECORDING_SUMMARY_UNAVAILABLE_PREFIX } from 'src/constants/call-recording-summary-unavailable-prefix';
 
 export const DEFAULT_CALL_RECORDING_SUMMARY_PROMPT = [
@@ -10,7 +11,7 @@ export const DEFAULT_CALL_RECORDING_SUMMARY_PROMPT = [
   'with its heading exactly as written. Omit a section only when its rule says',
   'to.',
   '',
-  '## Gist',
+  CALL_RECORDING_SUMMARY_GIST_HEADING,
   'A single sentence (no bullet) capturing the essence of the meeting.',
   '',
   '## Overview',

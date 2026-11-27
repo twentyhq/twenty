@@ -1,3 +1,4 @@
+import { isUndefined } from '@sniptt/guards';
 import { RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -69,11 +70,15 @@ const seed = ({
   callRecording = CALL_RECORDING,
   calendarOwnerWorkspaceMemberIds = ['member-1', 'member-2'],
   attendeeWorkspaceMemberIds = [],
+  recapsValueByWorkspaceMemberId = {},
+  calendarEventTitle = 'Weekly sync',
 }: {
   isInboxEnabled?: boolean;
   callRecording?: object;
   calendarOwnerWorkspaceMemberIds?: string[];
   attendeeWorkspaceMemberIds?: string[];
+  recapsValueByWorkspaceMemberId?: Record<string, string>;
+  calendarEventTitle?: string;
 } = {}) => {
   const workspaceMemberIds = [
     ...new Set([
@@ -83,7 +88,7 @@ const seed = ({
   ];
   const calendarEvent = {
     id: 'calendar-event-1',
-    title: 'Weekly sync',
+    title: calendarEventTitle,
     calendarChannelEventAssociations: {
       edges: calendarOwnerWorkspaceMemberIds.map((workspaceMemberId) => ({
         node: { calendarChannelId: buildCalendarChannelId(workspaceMemberId) },
@@ -140,7 +145,16 @@ const seed = ({
         (workspaceMemberId) => ({
           userWorkspaceId: buildUserWorkspaceId(workspaceMemberId),
           workspaceMemberId,
-          variables: [],
+          variables: isUndefined(
+            recapsValueByWorkspaceMemberId[workspaceMemberId],
+          )
+            ? []
+            : [
+                {
+                  key: 'CALL_RECORDER_MEMBER_INBOX_RECAPS_ENABLED',
+                  value: recapsValueByWorkspaceMemberId[workspaceMemberId],
+                },
+              ],
         }),
       ),
     };
@@ -166,6 +180,7 @@ describe('post-call-recording-to-inbox logic function', () => {
       callRecordingId: 'call-recording-1',
       outcome: 'sent',
       workspaceMemberCount: 2,
+      recapWorkspaceMemberCount: 0,
       skippedWorkspaceMemberCount: 0,
     });
     expect(sendInboxMessageMock.mock.calls).toEqual([
@@ -213,6 +228,110 @@ describe('post-call-recording-to-inbox logic function', () => {
     expect(sendInboxMessageMock.mock.calls).toEqual([
       [expect.objectContaining({ workspaceMemberIds: ['member-1'] })],
     ]);
+  });
+
+  it('sends the members who asked for recaps their own conversation per call', async () => {
+    seed({
+      calendarOwnerWorkspaceMemberIds: ['member-1', 'member-2', 'member-3'],
+      recapsValueByWorkspaceMemberId: {
+        'member-1': 'true',
+        'member-3': 'true',
+      },
+    });
+
+    expect(
+      await postCallRecordingToInboxHandler(buildSummaryUpdateEvent()),
+    ).toMatchObject({ workspaceMemberCount: 3, recapWorkspaceMemberCount: 2 });
+
+    const recap = {
+      title: 'Weekly sync',
+      text: 'Good call.\n\n[[record:call-recording-1]]',
+    };
+
+    expect(sendInboxMessageMock.mock.calls).toEqual([
+      [
+        {
+          ...recap,
+          workspaceMemberIds: ['member-1'],
+          threadKey: 'call-recording-recap-call-recording-1-member-1',
+          idempotencyKey: 'call-recording-recap-call-recording-1-member-1',
+        },
+      ],
+      [
+        {
+          ...recap,
+          workspaceMemberIds: ['member-3'],
+          threadKey: 'call-recording-recap-call-recording-1-member-3',
+          idempotencyKey: 'call-recording-recap-call-recording-1-member-3',
+        },
+      ],
+      [
+        expect.objectContaining({
+          workspaceMemberIds: ['member-2'],
+          threadKey: 'call-recording-ready-member-2',
+        }),
+      ],
+    ]);
+  });
+
+  it('sends no recap to a member who asked for recaps but does not have the meeting on a calendar of theirs', async () => {
+    seed({
+      calendarOwnerWorkspaceMemberIds: ['member-1'],
+      attendeeWorkspaceMemberIds: ['member-2'],
+      recapsValueByWorkspaceMemberId: { 'member-2': 'true' },
+    });
+
+    expect(
+      await postCallRecordingToInboxHandler(buildSummaryUpdateEvent()),
+    ).toMatchObject({ workspaceMemberCount: 1, recapWorkspaceMemberCount: 0 });
+    expect(sendInboxMessageMock.mock.calls).toEqual([
+      [expect.objectContaining({ workspaceMemberIds: ['member-1'] })],
+    ]);
+  });
+
+  it('treats recaps switched off or never set as off', async () => {
+    seed({ recapsValueByWorkspaceMemberId: { 'member-1': 'false' } });
+
+    expect(
+      await postCallRecordingToInboxHandler(buildSummaryUpdateEvent()),
+    ).toMatchObject({ workspaceMemberCount: 2, recapWorkspaceMemberCount: 0 });
+    expect(sendInboxMessageMock).toHaveBeenCalledTimes(2);
+    expect(sendInboxMessageMock).toHaveBeenCalledWith(
+      expect.objectContaining({ title: 'Your call recording is ready' }),
+    );
+  });
+
+  it('does not show a meeting title that is not shared', async () => {
+    seed({
+      calendarOwnerWorkspaceMemberIds: ['member-1'],
+      recapsValueByWorkspaceMemberId: { 'member-1': 'true' },
+      calendarEventTitle: 'FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED',
+    });
+
+    await postCallRecordingToInboxHandler(buildSummaryUpdateEvent());
+
+    expect(sendInboxMessageMock).toHaveBeenCalledWith(
+      expect.objectContaining({ title: 'Call recap' }),
+    );
+  });
+
+  it('sends a recap without a gist when the summary has none', async () => {
+    seed({
+      callRecording: {
+        ...CALL_RECORDING,
+        summary: { markdown: '## Overview\nA short sync.' },
+      },
+      calendarOwnerWorkspaceMemberIds: ['member-1'],
+      recapsValueByWorkspaceMemberId: { 'member-1': 'true' },
+    });
+
+    await postCallRecordingToInboxHandler(buildSummaryUpdateEvent());
+
+    expect(sendInboxMessageMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        text: 'Your call was recorded: [[record:call-recording-1]].',
+      }),
+    );
   });
 
   it('sends when a summary replaces an unavailable one', async () => {

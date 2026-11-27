@@ -45,7 +45,9 @@ ones, only external ones, or none.
 ## 📥 Recording message in the inbox
 
 When Inbox is turned on, each member gets a one-time message in their inbox
-when a recording of theirs has its summary, with a link to it.
+when a recording of theirs has its summary, with a link to it. Members who turn
+on **Recaps in my inbox** get a recap after each of their recorded calls
+instead.
 
 ## 👥 Calls on record pages
 
