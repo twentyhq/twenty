@@ -31,7 +31,7 @@ describe('getAccentCssVariables', () => {
       >;
 
       for (const [cssVariable, reference] of Object.entries(
-        getAccentCssVariables('blue', colorScheme),
+        getAccentCssVariables({ accentColor: 'blue', colorScheme }),
       )) {
         const accentKey = cssVariable.replace('--t-accent-', '');
 
@@ -43,9 +43,12 @@ describe('getAccentCssVariables', () => {
   );
 
   it('covers every accent token', () => {
-    const accentKeys = Object.keys(getAccentCssVariables('red', 'light')).map(
-      (cssVariable) => cssVariable.replace('--t-accent-', ''),
-    );
+    const accentKeys = Object.keys(
+      getAccentCssVariables({
+        accentColor: 'red',
+        colorScheme: 'light',
+      }),
+    ).map((cssVariable) => cssVariable.replace('--t-accent-', ''));
 
     expect(accentKeys.sort()).toEqual(Object.keys(THEME_LIGHT.accent).sort());
   });
