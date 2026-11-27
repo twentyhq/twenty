@@ -78,6 +78,7 @@ export const FrontComponentWidgetRenderer = ({
       )}
       <Suspense fallback={loadingFallback}>
         <LazyFrontComponentRenderer
+          instanceId={`front-component-widget-${widget.id}`}
           frontComponentId={frontComponentId}
           selectedRecordIds={selectedRecordIds}
           objectNameSingular={targetRecordIdentifier?.targetObjectNameSingular}

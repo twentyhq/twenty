@@ -4,7 +4,7 @@ import { FrontComponentInstanceContext } from '@/front-components/states/context
 import { frontComponentsSelector } from '@/front-components/states/frontComponentsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
-import { Fragment, type ReactNode, useId } from 'react';
+import { Fragment, type ReactNode } from 'react';
 import { type FrontComponentToolCall } from 'twenty-sdk/front-component';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,6 +19,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { FindOneFrontComponentDocument } from '~/generated-metadata/graphql';
 
 type FrontComponentRendererProps = {
+  instanceId: string;
   frontComponentId: string;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
@@ -34,6 +35,7 @@ type FrontComponentRendererProps = {
 };
 
 export const FrontComponentRenderer = ({
+  instanceId,
   frontComponentId,
   commandMenuItemId,
   selectedRecordIds,
@@ -47,8 +49,7 @@ export const FrontComponentRenderer = ({
   errorFallback,
   shouldPreventPageZoom,
 }: FrontComponentRendererProps) => {
-  const frontComponentRendererMountId = useId();
-  const frontComponentInstanceId = `${frontComponentId}-${frontComponentRendererMountId}`;
+  const frontComponentInstanceId = `${instanceId}-${frontComponentId}`;
 
   const { data, loading, error } = useQuery(FindOneFrontComponentDocument, {
     variables: { id: frontComponentId },

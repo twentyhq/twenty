@@ -29,6 +29,7 @@ export const SettingsApplicationCustomSettingsSection = ({
       <StyledRendererContainer>
         <Suspense fallback={loadingFallback}>
           <LazyFrontComponentRenderer
+            instanceId="settings-application-custom-settings"
             frontComponentId={frontComponentId}
             loadingFallback={loadingFallback}
           />

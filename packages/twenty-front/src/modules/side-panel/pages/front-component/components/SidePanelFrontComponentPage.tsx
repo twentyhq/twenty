@@ -4,10 +4,16 @@ import { Suspense } from 'react';
 import { FrontComponentSkeletonLoader } from '@/front-components/components/FrontComponentSkeletonLoader';
 import { viewableFrontComponentIdComponentState } from '@/side-panel/pages/front-component/states/viewableFrontComponentIdComponentState';
 import { viewableFrontComponentRecordContextComponentState } from '@/side-panel/pages/front-component/states/viewableFrontComponentRecordContextComponentState';
+import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const SidePanelFrontComponentPage = () => {
+  const sidePanelPageInstanceId = useAvailableComponentInstanceIdOrThrow(
+    SidePanelPageComponentInstanceContext,
+  );
+
   const viewableFrontComponentId = useAtomComponentStateValue(
     viewableFrontComponentIdComponentState,
   );
@@ -23,6 +29,7 @@ export const SidePanelFrontComponentPage = () => {
   return (
     <Suspense fallback={<FrontComponentSkeletonLoader />}>
       <LazyFrontComponentRenderer
+        instanceId={`side-panel-page-${sidePanelPageInstanceId}`}
         frontComponentId={viewableFrontComponentId}
         selectedRecordIds={
           viewableFrontComponentRecordContext?.selectedRecordIds

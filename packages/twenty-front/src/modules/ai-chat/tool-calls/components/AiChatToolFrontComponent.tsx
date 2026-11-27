@@ -31,6 +31,7 @@ export const AiChatToolFrontComponent = ({
   <StyledContainer>
     <Suspense fallback={<FrontComponentSkeletonLoader />}>
       <LazyFrontComponentRenderer
+        instanceId={`ai-chat-tool-call-${toolCall.toolCallId}`}
         frontComponentId={frontComponentId}
         toolCall={toolCall}
         onToolCallArgumentsChange={onToolCallArgumentsChange}

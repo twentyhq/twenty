@@ -81,6 +81,7 @@ export const EventRowDynamicComponent = ({
               />
             ) : (
               <LazyFrontComponentRenderer
+                instanceId={`timeline-activity-${event.id}`}
                 frontComponentId={renderer.frontComponentId}
                 timelineActivityId={event.id}
                 objectNameSingular={mainObjectMetadataItem.nameSingular}
