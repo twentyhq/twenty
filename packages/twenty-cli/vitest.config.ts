@@ -10,6 +10,6 @@ export default defineConfig({
   test: {
     name: 'twenty-cli',
     environment: 'node',
-    include: ['src/**/__tests__/**/*.spec.ts'],
+    include: ['src/**/*.spec.ts'],
   },
 });
