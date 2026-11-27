@@ -290,7 +290,10 @@ describe('validateFlatFieldMetadataFormula', () => {
           name: 'averagePrice',
           universalIdentifier: 'supplier-average-price-uid',
           objectMetadataUniversalIdentifier: 'supplier-object-uid',
-          formula: { expression: 'avg(gadgets.price)' },
+          formula: {
+            expression: 'avg(gadgets.price)',
+            evaluation: 'QUERY_TIME',
+          },
         },
       }),
     ).toEqual([

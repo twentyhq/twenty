@@ -93,6 +93,7 @@ export const setFormulaFieldTrees = <
     const compilation = compileFormulaExpression({
       expression: formulaExpression,
       fields,
+      evaluation: writtenFormula?.evaluation,
     });
     const parsing = parseExpressionNode(formulaExpression);
 

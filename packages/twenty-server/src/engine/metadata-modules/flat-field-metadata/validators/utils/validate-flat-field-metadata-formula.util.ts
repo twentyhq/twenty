@@ -240,7 +240,8 @@ export const validateFlatFieldMetadataFormula = ({
       const compilation = compileFormulaExpression({
         expression: formulaExpression,
         fields,
-        evaluation: getFieldMetadataFormulaEvaluation({ formula }),
+        // Left unset when the setter could not compile the formula, so it follows from the expression
+        evaluation: formula?.evaluation,
       });
 
       return compilation.isValid

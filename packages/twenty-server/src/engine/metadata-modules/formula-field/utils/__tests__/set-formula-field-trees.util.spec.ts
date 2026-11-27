@@ -136,7 +136,7 @@ describe('setFormulaFieldTrees', () => {
         universalFlatObjectMetadataMaps: FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
         universalFlatFieldMetadataMaps: FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK,
       }).formula,
-    ).not.toHaveProperty('evaluation');
+    ).toMatchObject({ evaluation: 'QUERY_TIME' });
   });
 
   it('should keep a stored formula stored when its new expression leaves the evaluation out', () => {
