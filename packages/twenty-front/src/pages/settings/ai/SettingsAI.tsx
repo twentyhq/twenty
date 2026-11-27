@@ -1,5 +1,4 @@
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
-import { getSettingsAiTabs } from '@/settings/ai/utils/getSettingsAiTabs';
 import { SettingsAiWorkspaceAssistantSection } from '~/pages/settings/ai/components/SettingsAiWorkspaceAssistantSection';
 
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
@@ -8,7 +7,10 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { getAvailableSettingsTabs } from '@/settings/utils/getAvailableSettingsTabs';
+import { useWorkspaceFeatureFlagsMap } from '@/workspace/hooks/useWorkspaceFeatureFlagsMap';
+import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
@@ -29,10 +31,7 @@ import { SettingsAiWorkspaceBehaviorSection } from '~/pages/settings/ai/componen
 import { SettingsAiMcpSection } from '~/pages/settings/ai/components/SettingsAiMcpSection';
 import { SettingsAiWorkspaceInstructionsSection } from '~/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection';
 import { SettingsAiSystemPromptsSection } from '~/pages/settings/ai/components/SettingsAiSystemPromptsSection';
-import {
-  FeatureFlagKey,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
 
 const AI_HERO_LIGHT = '/images/ai/ai-tools-cover-light.png';
@@ -41,13 +40,16 @@ const AI_HERO_DARK = '/images/ai/ai-tools-cover-dark.png';
 const SETTINGS_AI_HERO_INSTANCE_ID_PREFIX = 'settings-ai-hero';
 
 export const SettingsAI = () => {
-  const { t } = useLingui();
+  const { t, i18n } = useLingui();
   const { handleCreateTool, isCreatingTool } = useCreateTool();
   const canReadSystemPrompts = useHasPermissionFlag(PermissionFlagType.AI);
-  const isInboxEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-  );
-  const tabs = getSettingsAiTabs(isInboxEnabled);
+  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
+  const featureFlagsMap = useWorkspaceFeatureFlagsMap();
+  const tabs = getAvailableSettingsTabs({
+    tabs: SETTINGS_AI_TABS.TABS,
+    permissionFlagMap,
+    featureFlagsMap,
+  }).map(({ id, title, Icon }) => ({ id, title: i18n._(title), Icon }));
   const activeTabId = useSettingsActiveTabId(
     SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID,
     tabs.map((tab) => tab.id),

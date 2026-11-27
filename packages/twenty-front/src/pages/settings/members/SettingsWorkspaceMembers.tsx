@@ -13,6 +13,7 @@ import { SETTINGS_WORKSPACE_MEMBERS_TABS } from '@/settings/members/constants/Se
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { getAvailableSettingsTabs } from '@/settings/utils/getAvailableSettingsTabs';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useWorkspaceFeatureFlagsMap } from '@/workspace/hooks/useWorkspaceFeatureFlagsMap';
 import coverDark from '~/pages/settings/members/assets/cover-dark.png';
 import coverLight from '~/pages/settings/members/assets/cover-light.png';
 import { SettingsWorkspaceMembersInviteTab } from '~/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab';
@@ -25,10 +26,12 @@ export const SettingsWorkspaceMembers = () => {
   const { t, i18n } = useLingui();
 
   const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
+  const featureFlagsMap = useWorkspaceFeatureFlagsMap();
 
   const tabs = getAvailableSettingsTabs({
     tabs: SETTINGS_WORKSPACE_MEMBERS_TABS.TABS,
     permissionFlagMap,
+    featureFlagsMap,
   }).map(({ id, title, Icon }) => ({ id, title: i18n._(title), Icon }));
 
   const activeTabId = useSettingsActiveTabId(
