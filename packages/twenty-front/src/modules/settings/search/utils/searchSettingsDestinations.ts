@@ -12,7 +12,6 @@ const PREFIX_MATCH_QUALITY = 3;
 const SUBSTRING_MATCH_QUALITY = 2;
 const TYPO_MATCH_QUALITY = 1;
 const MINIMUM_TYPO_TOLERANT_LENGTH = 5;
-const CURRENT_OBJECT_BOOST_FACTOR = 2;
 
 type WeightedWords = { words: string[]; weight: number };
 
@@ -115,17 +114,16 @@ export const searchSettingsDestinations = ({
   return destinations
     .map((destination) => ({
       destination,
-      score:
-        getDestinationScore({ destination, searchWords }) *
-        (isDefined(boostedObjectNamePlural) &&
-        destination.objectNamePlural === boostedObjectNamePlural
-          ? CURRENT_OBJECT_BOOST_FACTOR
-          : 1),
+      score: getDestinationScore({ destination, searchWords }),
+      isBoosted:
+        isDefined(boostedObjectNamePlural) &&
+        destination.objectNamePlural === boostedObjectNamePlural,
     }))
     .filter(({ score }) => score > 0)
     .sort(
       (first, second) =>
         second.score - first.score ||
+        Number(second.isBoosted) - Number(first.isBoosted) ||
         first.destination.breadcrumbs.length -
           second.destination.breadcrumbs.length,
     )

@@ -113,4 +113,26 @@ describe('searchSettingsDestinations', () => {
     expect(searchTranslations()).toEqual(['people', 'companies']);
     expect(searchTranslations('companies')).toEqual(['companies', 'people']);
   });
+
+  it('never ranks a boosted breadcrumb match above a better title match', () => {
+    expect(
+      searchSettingsDestinations({
+        destinations: [
+          {
+            ...createDestination({
+              title: 'Companies',
+              breadcrumbs: ['Workspace', 'Data model'],
+            }),
+            objectNamePlural: 'companies',
+          },
+          createDestination({
+            title: 'Data model',
+            breadcrumbs: ['Workspace'],
+          }),
+        ],
+        search: 'data model',
+        boostedObjectNamePlural: 'companies',
+      }).map(({ title }) => title),
+    ).toEqual(['Data model', 'Companies']);
+  });
 });
