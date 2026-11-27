@@ -16,12 +16,6 @@ export default defineConnectionProvider({
   type: 'custom',
   scope: 'USER',
   logo: 'public/linkedin-logomark.svg',
-  via: {
-    name: 'Unipile',
-    description: 'Connects your LinkedIn account and syncs its messages.',
-    logo: 'public/unipile-logomark.svg',
-    url: 'https://www.unipile.com',
-  },
   custom: {
     authorizeLogicFunction: {
       universalIdentifier: LINKEDIN_AUTHORIZE_UNIVERSAL_IDENTIFIER,
