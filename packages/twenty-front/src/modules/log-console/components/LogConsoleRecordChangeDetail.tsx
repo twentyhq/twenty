@@ -13,13 +13,13 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { EventFieldDiffValue } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffValue';
 import { EventFieldDiffValueEffect } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffValueEffect';
 import { EventRelationFieldDiffValues } from '@/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues';
-import { LogConsoleFieldsCard } from '@/log-console/components/LogConsoleFieldsCard';
 import { LOG_CONSOLE_RECORD_ACTIONS } from '@/log-console/constants/LogConsoleRecordActions';
 import { getLogConsoleRecordChangeFieldDiffs } from '@/log-console/utils/getLogConsoleRecordChangeFieldDiffs';
 import { isLogConsoleFieldValueEmpty } from '@/log-console/utils/isLogConsoleFieldValueEmpty';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { BillingFieldRow } from '@/settings/billing/components/internal/SettingsBillingCardField';
+import { DetailFieldRow } from '@/ui/layout/details/components/DetailFieldRow';
+import { DetailFieldsCard } from '@/ui/layout/details/components/DetailFieldsCard';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type EventLogRecord } from '~/generated-metadata/graphql';
@@ -132,9 +132,9 @@ export const LogConsoleRecordChangeDetail = ({
               }
             />
             {isNonEmptyArray(fieldDiffs) && (
-              <LogConsoleFieldsCard>
+              <DetailFieldsCard>
                 {fieldDiffs.map((fieldDiff) => (
-                  <BillingFieldRow
+                  <DetailFieldRow
                     key={fieldDiff.key}
                     Icon={getIcon(fieldDiff.fieldMetadataItem.icon)}
                     label={fieldDiff.fieldMetadataItem.label}
@@ -145,9 +145,9 @@ export const LogConsoleRecordChangeDetail = ({
                         recordStoreId: `${diffId}-${fieldDiff.key}`,
                       })}
                     </ErrorBoundary>
-                  </BillingFieldRow>
+                  </DetailFieldRow>
                 ))}
-              </LogConsoleFieldsCard>
+              </DetailFieldsCard>
             )}
           </Section.Root>
         )}

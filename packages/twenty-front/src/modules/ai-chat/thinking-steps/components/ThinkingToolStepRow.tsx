@@ -1,66 +1,21 @@
-import { styled } from '@linaria/react';
-import { isNonEmptyString } from '@sniptt/guards';
-import { getToolName, type DynamicToolUIPart, type ToolUIPart } from 'ai';
-import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
-import { JsonTree } from 'twenty-ui/components/data-display';
-import { Tabs } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme';
-import { type JsonValue } from 'type-fest';
-
-import { ThinkingStepRowLayout } from '@/ai-chat/thinking-steps/components/ThinkingStepRowLayout';
-import { ToolRecordsWidget } from '@/ai-chat/thinking-steps/components/ToolRecordsWidget';
-import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
-import { getThinkingStepLabel } from '@/ai-chat/thinking-steps/utils/getThinkingStepLabel';
-import { getToolIcon } from '@/ai/utils/getToolIcon';
-import { getToolRecordOutput } from '@/ai-chat/thinking-steps/utils/getToolRecordOutput';
-import { unwrapToolPartInput } from '@/ai/utils/tool-display/unwrapToolPartInput';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
-import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { type DynamicToolUIPart, type ToolUIPart } from 'ai';
+import { isNonEmptyArray } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconTerminal } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledToolDetailsContainer = styled.div`
-  background: ${themeCssVariables.background.transparent.lighter};
-  border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  margin-left: ${themeCssVariables.spacing[3]};
-  min-width: 0;
-  overflow: hidden;
-`;
-
-const StyledToolRecordsContainer = styled.div`
-  padding: 0 ${themeCssVariables.spacing[2]};
-`;
-
-const StyledToolTabListContainer = styled.div`
-  background-color: ${themeCssVariables.background.secondary};
-  padding-left: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledToolDetailsContent = styled.div`
-  min-width: 0;
-`;
-
-const StyledToolJsonContent = styled.div`
-  padding: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledJsonTreeContainer = styled.div`
-  overflow-x: auto;
-`;
-
-const StyledToolErrorText = styled.p`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  line-height: ${themeCssVariables.text.lineHeight.lg};
-  margin: 0;
-  white-space: pre-wrap;
-`;
-
-type ToolDetailsTab = 'output' | 'input';
+import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
+import { ThinkingStepRowLayout } from '@/ai-chat/thinking-steps/components/ThinkingStepRowLayout';
+import { ThinkingToolStepRecordsDetail } from '@/ai-chat/thinking-steps/components/ThinkingToolStepRecordsDetail';
+import { getThinkingStepLabel } from '@/ai-chat/thinking-steps/utils/getThinkingStepLabel';
+import { getToolPartError } from '@/ai-chat/thinking-steps/utils/getToolPartError';
+import { getToolRecordOutput } from '@/ai-chat/thinking-steps/utils/getToolRecordOutput';
+import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
+import { getToolIcon } from '@/ai/utils/getToolIcon';
+import { unwrapToolPartInput } from '@/ai/utils/tool-display/unwrapToolPartInput';
+import { useOpenAiChatToolCallInSidePanel } from '@/side-panel/hooks/useOpenAiChatToolCallInSidePanel';
 
 type ThinkingToolStepRowProps = {
   isActive: boolean;
@@ -72,94 +27,61 @@ export const ThinkingToolStepRow = ({
   part,
 }: ThinkingToolStepRowProps) => {
   const { t } = useLingui();
-  const { copyToClipboard } = useCopyToClipboard();
-  const rawToolName = getToolName(part);
-  const { toolInput, toolName } = unwrapToolPartInput(part);
-
+  const { threadId } = useAiChatInstanceOrThrow();
+  const { toolName } = unwrapToolPartInput(part);
   const displayContext = useToolDisplayContext();
+  const { openAiChatToolCallInSidePanel } = useOpenAiChatToolCallInSidePanel();
+
   const ToolIcon = getToolIcon(toolName);
   const displayMessage = getThinkingStepLabel({
     part,
     isActive,
     displayContext,
   });
-  const hasError = part.state === 'output-error';
-  const { message: recordsMessage, recordReferences } =
-    getToolRecordOutput(part);
-  const isExpandable = isDefined(part.output) || hasError;
-
-  const toolOutput =
-    isPlainObject(part.output) && isNonEmptyString(part.output.error)
-      ? { error: part.output.error }
-      : part.output;
-  const toolTabListComponentInstanceId = `ai-thinking-tool-tabs-${part.toolCallId ?? rawToolName}`;
-  const activeTabId = useAtomComponentStateValue(
-    activeTabIdComponentState,
-    toolTabListComponentInstanceId,
-  );
-  const activeTab: ToolDetailsTab =
-    activeTabId === 'input' ? 'input' : 'output';
-  const toolTabs = [
-    { id: 'output', title: t`Output` },
-    { id: 'input', title: t`Input` },
-  ];
+  const { hasError, errorText } = getToolPartError(part);
+  const isFinished =
+    part.state === 'output-available' || part.state === 'output-error';
+  const { recordReferences } = getToolRecordOutput(part);
+  const [errorFirstLine] = (errorText ?? '').split('\n');
+  const errorDetail =
+    hasError && isNonEmptyString(errorFirstLine) ? errorFirstLine : undefined;
+  const recordsDetail = isNonEmptyArray(recordReferences) ? (
+    <ThinkingToolStepRecordsDetail recordReferences={recordReferences} />
+  ) : undefined;
+  const showDetailsLabel = t`Show details`;
 
   return (
     <ThinkingStepRowLayout
-      icon={<ToolIcon size={14} />}
+      icon={
+        <ToolIcon
+          size={14}
+          color={hasError ? themeCssVariables.font.color.danger : undefined}
+        />
+      }
       label={displayMessage}
+      detail={errorDetail ?? recordsDetail}
       isActive={isActive}
-      details={
-        isExpandable ? (
-          <StyledToolDetailsContainer>
-            {isNonEmptyArray(recordReferences) && (
-              <StyledToolRecordsContainer>
-                <ToolRecordsWidget
-                  message={recordsMessage ?? ''}
-                  recordReferences={recordReferences}
-                />
-              </StyledToolRecordsContainer>
-            )}
-            {hasError ? (
-              <StyledToolErrorText>{part.errorText}</StyledToolErrorText>
-            ) : (
-              <TabListRoot componentInstanceId={toolTabListComponentInstanceId}>
-                <StyledToolDetailsContent>
-                  <StyledToolTabListContainer>
-                    <TabList
-                      aria-label={t`Tool details: ${displayMessage}`}
-                      tabs={toolTabs}
-                      behaveAsLinks={false}
-                      componentInstanceId={toolTabListComponentInstanceId}
-                    />
-                  </StyledToolTabListContainer>
-                  <Tabs.Panel
-                    value={activeTab}
-                    render={<StyledToolJsonContent />}
-                  >
-                    <StyledJsonTreeContainer>
-                      <JsonTree
-                        value={
-                          (activeTab === 'output'
-                            ? toolOutput
-                            : toolInput) as JsonValue
-                        }
-                        shouldExpandNodeInitially={() => false}
-                        emptyArrayLabel={t`Empty Array`}
-                        emptyObjectLabel={t`Empty Object`}
-                        emptyStringLabel={t`[empty string]`}
-                        arrowButtonCollapsedLabel={t`Expand`}
-                        arrowButtonExpandedLabel={t`Collapse`}
-                        onNodeValueClick={copyToClipboard}
-                      />
-                    </StyledJsonTreeContainer>
-                  </Tabs.Panel>
-                </StyledToolDetailsContent>
-              </TabListRoot>
-            )}
-          </StyledToolDetailsContainer>
+      action={
+        isFinished ? (
+          <LightIconButton
+            size="xs"
+            color={hasError ? 'danger' : 'neutral'}
+            aria-label={showDetailsLabel}
+            tooltip={showDetailsLabel}
+            onClick={() =>
+              openAiChatToolCallInSidePanel({
+                threadId,
+                toolCallId: part.toolCallId,
+                title: displayMessage,
+                Icon: ToolIcon,
+              })
+            }
+          >
+            <IconTerminal />
+          </LightIconButton>
         ) : undefined
       }
+      isError={hasError}
     />
   );
 };

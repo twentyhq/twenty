@@ -28,6 +28,7 @@ import { SidePanelShareRecordPage } from '@/side-panel/pages/share-record/compon
 import { SidePanelSnoozeAiChatPage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage';
 import { SidePanelAddAiChatParticipantsPage } from '@/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage';
 import { SidePanelAiChatParticipantsPage } from '@/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPage';
+import { SidePanelAiChatToolCallPage } from '@/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPage';
 import { SidePanelAssignAiChatPage } from '@/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage';
 import { SidePanelFrontComponentPage } from '@/side-panel/pages/front-component/components/SidePanelFrontComponentPage';
 import { SidePanelDashboardChartSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardChartSettings';
@@ -142,5 +143,6 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
     SidePanelPages.AddAiChatParticipants,
     <SidePanelAddAiChatParticipantsPage />,
   ],
+  [SidePanelPages.AiChatToolCall, <SidePanelAiChatToolCallPage />],
   [SidePanelPages.EditColumn, <SidePanelEditColumnPage />],
 ]);

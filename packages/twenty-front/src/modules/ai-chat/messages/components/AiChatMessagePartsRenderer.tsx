@@ -27,6 +27,7 @@ const StyledMessagePartsContainer = styled.div`
 `;
 
 export const AiChatMessagePartsRenderer = ({
+  messageId,
   messageParts,
   isLastMessageStreaming,
   isUserMessage,
@@ -34,6 +35,7 @@ export const AiChatMessagePartsRenderer = ({
   shouldHideThinkingSteps = false,
   workDurationMs,
 }: {
+  messageId: string;
   messageParts: ExtendedUIMessagePart[];
   isLastMessageStreaming: boolean;
   isUserMessage?: boolean;
@@ -116,6 +118,8 @@ export const AiChatMessagePartsRenderer = ({
           renderItem.type === 'thinking-steps' ? (
             <ThinkingStepsDisplay
               key={index}
+              messageId={messageId}
+              renderItemIndex={index}
               parts={renderItem.parts}
               isLastMessageStreaming={isLastMessageStreaming}
               isTrailingWhileStreaming={
