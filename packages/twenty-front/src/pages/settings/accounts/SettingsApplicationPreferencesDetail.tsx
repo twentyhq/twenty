@@ -158,6 +158,25 @@ export const SettingsApplicationPreferencesDetail = ({
     );
   }
 
+  const healthCheckBanner = !hasMissingRequiredVariables ? (
+    <SettingsApplicationHealthCheckBanner
+      applicationId={application.id}
+      healthCheckFamilyState={
+        MY_APPLICATION_HEALTH_CHECK_RUNNER.healthCheckFamilyState
+      }
+      fallbackLocation={
+        activeTabId === SETTINGS_GENERAL_TAB_ID
+          ? undefined
+          : getSettingsPath(
+              SettingsPath.AppPreferencesApp,
+              { applicationId: application.id },
+              undefined,
+              SETTINGS_GENERAL_TAB_ID,
+            )
+      }
+    />
+  ) : null;
+
   return (
     <SettingsApplicationDetailPageLayout
       applicationId={application.id}
@@ -208,30 +227,13 @@ export const SettingsApplicationPreferencesDetail = ({
           />
         )}
       {!hasMissingRequiredVariables && (
-        <>
-          <SettingsApplicationHealthCheckEffect
-            key={application.id}
-            applicationId={application.id}
-            runner={MY_APPLICATION_HEALTH_CHECK_RUNNER}
-          />
-          <SettingsApplicationHealthCheckBanner
-            applicationId={application.id}
-            healthCheckFamilyState={
-              MY_APPLICATION_HEALTH_CHECK_RUNNER.healthCheckFamilyState
-            }
-            fallbackLocation={
-              activeTabId === SETTINGS_GENERAL_TAB_ID
-                ? undefined
-                : getSettingsPath(
-                    SettingsPath.AppPreferencesApp,
-                    { applicationId: application.id },
-                    undefined,
-                    SETTINGS_GENERAL_TAB_ID,
-                  )
-            }
-          />
-        </>
+        <SettingsApplicationHealthCheckEffect
+          key={application.id}
+          applicationId={application.id}
+          runner={MY_APPLICATION_HEALTH_CHECK_RUNNER}
+        />
       )}
+      {activeTabId !== SETTINGS_GENERAL_TAB_ID && healthCheckBanner}
       <SettingsApplicationStoppedBanner
         applicationUniversalIdentifier={application.universalIdentifier}
       />
@@ -241,6 +243,7 @@ export const SettingsApplicationPreferencesDetail = ({
           displayName={appName}
           connectionProviders={connectionProviders}
           settingsMenuItems={settingsMenuItems}
+          healthCheckBanner={healthCheckBanner}
         />
       )}
       {activeTabId === SETTINGS_VARIABLES_TAB_ID && (
