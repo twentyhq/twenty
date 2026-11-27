@@ -162,6 +162,10 @@ const compileNodeSqlOrThrow = ({
       throw new FormulaSqlCompilationException({
         message: 'A list can only be written after "in"',
       });
+    case 'FIELD':
+      throw new FormulaSqlCompilationException({
+        message: 'A field reference must be printed before it is compiled',
+      });
     case 'MEMBER':
       throw new FormulaSqlCompilationException({
         message: `".${node.property}" can only follow a field`,

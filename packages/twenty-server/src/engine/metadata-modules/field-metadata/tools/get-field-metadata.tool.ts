@@ -1,4 +1,8 @@
 import { ToolCategory } from 'twenty-shared/ai';
+import {
+  getFieldMetadataFormulaEvaluation,
+  isDefined,
+} from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { METADATA_TOOL_EXCLUDED_FIELD_NAMES } from 'src/engine/core-modules/tool-provider/constants/metadata-tool-excluded-field-names.constant';
@@ -9,7 +13,11 @@ import { compactMetadataOutput } from 'src/engine/core-modules/tool-provider/uti
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { FIELD_METADATA_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-read-access-policy.constant';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { buildFormulaFieldDescriptorsFromFlatEntityMaps } from 'src/engine/metadata-modules/formula-field/utils/build-formula-field-descriptors-from-flat-entity-maps.util';
+import { printFormulaFieldText } from 'src/engine/metadata-modules/formula-field/utils/print-formula-field-text.util';
 import { MetadataToolIdentifierService } from 'src/engine/metadata-modules/object-metadata/tools/services/metadata-tool-identifier.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const FIELD_STRIP_WHEN_NULLISH = [
   'options',
@@ -67,6 +75,7 @@ export class GetFieldMetadataTool extends BaseTool<
   constructor(
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly metadataToolIdentifierService: MetadataToolIdentifierService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {
     super();
   }
@@ -91,6 +100,41 @@ export class GetFieldMetadataTool extends BaseTool<
       limit: input.limit ?? 100,
     });
 
+    const { flatObjectMetadataMaps, flatFieldMetadataMapsOrm } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMapsOrm',
+      ]);
+    const printFormula = (field: (typeof rawResults)[number]) => {
+      if (!isDefined(field.formula)) {
+        return null;
+      }
+
+      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: field.objectMetadataId,
+        flatEntityMaps: flatObjectMetadataMaps,
+      });
+      const formulaText = printFormulaFieldText({
+        formula: field.formula,
+        fields: buildFormulaFieldDescriptorsFromFlatEntityMaps({
+          flatObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
+        }).filter(({ name }) => name !== field.name),
+      });
+
+      if (!isDefined(formulaText)) {
+        return null;
+      }
+
+      return {
+        ...formulaText,
+        evaluation: getFieldMetadataFormulaEvaluation({
+          formula: field.formula,
+        }),
+      };
+    };
+
     const compactedFields = rawResults
       .filter((field) => !METADATA_TOOL_EXCLUDED_FIELD_NAMES.has(field.name))
       .map((field) => {
@@ -103,7 +147,7 @@ export class GetFieldMetadataTool extends BaseTool<
         }
 
         return compactMetadataOutput(
-          { ...field },
+          { ...field, formula: printFormula(field) },
           {
             stripWhenNullish: FIELD_STRIP_WHEN_NULLISH,
             stripWhenFalse: FIELD_STRIP_WHEN_FALSE,

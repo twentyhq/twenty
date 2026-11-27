@@ -333,7 +333,7 @@ describe('Private text direct messages', () => {
           id: messageId,
           role: AgentMessageRole.ASSISTANT,
           agentId: null,
-          senderUserWorkspaceId: null,
+          senderWorkspaceMemberId: null,
           parts: [{ type: 'text', text: 'Uncommitted reply' }],
         }),
       ).rejects.toThrow(sharingFailure.message);

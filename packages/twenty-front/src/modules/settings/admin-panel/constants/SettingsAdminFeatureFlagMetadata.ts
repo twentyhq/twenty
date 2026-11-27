@@ -44,10 +44,15 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`MCP servers`,
     description: msg`Register external MCP servers in Developers settings and expose their tools to AI chat.`,
   },
+  // TODO(@charlesBochet): remove after 2026-12-27. Temporary channel write access for admins and API keys, only to unblock customers who reported broken links, merges and deletes
+  [FeatureFlagKey.IS_ADMIN_CHANNEL_WRITE_ACCESS_RESTORED]: {
+    label: msg`Admin channel write access`,
+    description: msg`Turn on for a workspace that reported broken links, merges or deletes. Gives the Admin role back its write access to messages and calendar events, without letting it see more of them.`,
+  },
   // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
   [FeatureFlagKey.IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS]: {
     label: msg`Channel visibility on API keys`,
-    description: msg`Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would.`,
+    description: msg`Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would, and keep their role's write access to them.`,
   },
   [FeatureFlagKey.IS_GETTING_STARTED_ENABLED]: {
     label: msg`Getting started`,

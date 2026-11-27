@@ -51,6 +51,7 @@ jest.mock('@/ai-chat/tool-calls/components/AiChatToolCallApprovalCard', () => ({
   }) => (
     <div role="group" aria-label="Tool call approval">
       {proposal.summary}
+      <textarea aria-label="Email body" />
     </div>
   ),
 }));
@@ -71,6 +72,7 @@ const EMAIL_APPROVAL = {
     arguments: {},
     template: 'email',
   },
+  isPostedByWorkflow: false,
 };
 
 const renderGate = () =>
@@ -100,8 +102,21 @@ describe('AiChatPendingAskGate', () => {
     expect(screen.queryByRole('textbox', { name: 'Message' })).toBeNull();
   });
 
-  it('shows an email waiting for approval in place of the composer', () => {
+  it('keeps the composer usable under an email waiting for approval', () => {
     useAiChatPendingToolCalls.mockReturnValue([EMAIL_APPROVAL]);
+
+    renderGate();
+
+    expect(
+      screen.getByRole('group', { name: 'Tool call approval' }),
+    ).toHaveTextContent('Your renewal');
+    expect(screen.getByRole('textbox', { name: 'Message' })).toBeVisible();
+  });
+
+  it('shows an approval a workflow waits on in place of the composer', () => {
+    useAiChatPendingToolCalls.mockReturnValue([
+      { ...EMAIL_APPROVAL, isPostedByWorkflow: true },
+    ]);
 
     renderGate();
 
@@ -182,6 +197,33 @@ describe('AiChatPendingAskGate', () => {
 
     expect(screen.getByText('Request 2 of 2')).toBeInTheDocument();
     expect(screen.getByRole('group', { name: 'Form' })).toBeVisible();
+  });
+
+  it('keeps an edited email draft once the question beside it is answered', async () => {
+    useAiChatPendingToolCalls.mockReturnValue([
+      EMAIL_APPROVAL,
+      { toolCallId: 'call-3', kind: 'question', question: QUESTION },
+    ]);
+
+    const { rerender } = renderGate();
+
+    await userEvent.type(
+      screen.getByRole('textbox', { name: 'Email body' }),
+      'See you Monday',
+    );
+    useAiChatPendingToolCalls.mockReturnValue([EMAIL_APPROVAL]);
+    rerender(
+      <I18nProvider i18n={i18n}>
+        <AiChatPendingAskGate>
+          <textarea aria-label="Message" />
+        </AiChatPendingAskGate>
+      </I18nProvider>,
+    );
+
+    expect(screen.getByRole('textbox', { name: 'Email body' })).toHaveValue(
+      'See you Monday',
+    );
+    expect(screen.getByRole('textbox', { name: 'Message' })).toBeVisible();
   });
 
   it('opens another conversation on its oldest request', async () => {

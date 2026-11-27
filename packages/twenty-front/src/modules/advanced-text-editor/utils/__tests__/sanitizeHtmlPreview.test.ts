@@ -1,6 +1,64 @@
 import { sanitizeHtmlPreview } from '@/advanced-text-editor/utils/sanitizeHtmlPreview';
 
+const renderPreview = (html: string): HTMLElement => {
+  const container = document.createElement('div');
+
+  document.body.appendChild(container);
+  container.innerHTML = sanitizeHtmlPreview(html);
+
+  return container;
+};
+
+const findElementsWithInlineHandlers = (container: HTMLElement): Element[] =>
+  [...container.querySelectorAll('*')].filter((element) =>
+    element.getAttributeNames().some((name) => name.startsWith('on')),
+  );
+
 describe('sanitizeHtmlPreview', () => {
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('should not turn markup nested in noscript into live elements', () => {
+    const payloads = [
+      '<div>x</div><noscript><!--</noscript><img src=x onerror="alert(1)">--></noscript>',
+      '<div>x</div><noscript><xmp></noscript><img src=x onerror="alert(1)"></xmp></noscript>',
+      '<div>x</div><noscript><noembed></noscript><img src=x onerror="alert(1)"></noembed></noscript>',
+    ];
+
+    for (const payload of payloads) {
+      expect(findElementsWithInlineHandlers(renderPreview(payload))).toEqual(
+        [],
+      );
+    }
+  });
+
+  it('should drop style elements so they cannot restyle the page', () => {
+    const container = renderPreview(
+      '<p>a</p><style>body { display: none }</style>',
+    );
+
+    expect(container.querySelector('style')).toBeNull();
+    expect(container.textContent).toBe('a');
+  });
+
+  it('should drop form controls', () => {
+    const container = renderPreview(
+      '<form action="https://example.com"><input name="email"><button>Go</button></form>',
+    );
+
+    expect(container.querySelector('form, input, button')).toBeNull();
+  });
+
+  it('should open links in a new tab without exposing the opener', () => {
+    const link = renderPreview(
+      '<a href="https://example.com" target="_self">x</a>',
+    ).querySelector('a');
+
+    expect(link?.getAttribute('target')).toBe('_blank');
+    expect(link?.getAttribute('rel')).toBe('noopener noreferrer');
+  });
+
   it('should keep benign presentational markup', () => {
     const html =
       '<table><tbody><tr><td style="padding: 8px">Hi</td></tr></tbody></table>';

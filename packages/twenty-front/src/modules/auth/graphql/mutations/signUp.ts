@@ -20,9 +20,6 @@ export const SIGN_UP = gql`
       availableWorkspaces {
         ...AvailableWorkspacesFragment
       }
-      tokens {
-        ...AuthTokenPairFragment
-      }
     }
   }
 `;

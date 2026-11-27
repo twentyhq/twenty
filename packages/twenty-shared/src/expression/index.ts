@@ -16,6 +16,7 @@ export type { ExpressionArithmeticOperator } from './types/ExpressionArithmeticO
 export type { ExpressionComparisonNode } from './types/ExpressionComparisonNode';
 export type { ExpressionComparisonOperator } from './types/ExpressionComparisonOperator';
 export type { ExpressionConcatenationNode } from './types/ExpressionConcatenationNode';
+export type { ExpressionFieldNode } from './types/ExpressionFieldNode';
 export type { ExpressionFunctionCallNode } from './types/ExpressionFunctionCallNode';
 export type { ExpressionGroupNode } from './types/ExpressionGroupNode';
 export type { ExpressionInNode } from './types/ExpressionInNode';
@@ -31,4 +32,6 @@ export type { ExpressionUnaryOperator } from './types/ExpressionUnaryOperator';
 export type { ExpressionVariableNode } from './types/ExpressionVariableNode';
 export { expressionComparisonOperatorSchema } from './utils/expressionComparisonOperatorSchema';
 export { expressionLogicalOperatorSchema } from './utils/expressionLogicalOperatorSchema';
+export { expressionNodeSchema } from './utils/expressionNodeSchema';
+export { parseStoredExpressionTree } from './utils/parseStoredExpressionTree';
 export { printExpressionNode } from './utils/printExpressionNode';

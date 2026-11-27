@@ -13,7 +13,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { AuthContext } from 'src/engine/decorators/auth/auth-context.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { fromFlatAgentWithRoleIdToAgentDto } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-agent-dto.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
@@ -69,16 +68,17 @@ export class AgentResolver {
       workspaceId,
     });
 
-    return flatAgentsWithRoleId
-      .filter((flatAgent) =>
+    return this.agentService.toAgentDtos({
+      flatAgentsWithRoleId: flatAgentsWithRoleId.filter((flatAgent) =>
         canCallerReachApplication({
           callingApplication,
           applicationId: flatAgent.applicationId,
           operation: 'read',
           workspaceCustomApplicationId,
         }),
-      )
-      .map(fromFlatAgentWithRoleIdToAgentDto);
+      ),
+      workspaceId,
+    });
   }
 
   @Query(() => AgentDTO)
@@ -101,7 +101,10 @@ export class AgentResolver {
       id,
     });
 
-    return fromFlatAgentWithRoleIdToAgentDto(fatAgentWithRoleId);
+    return this.agentService.toAgentDto({
+      flatAgentWithRoleId: fatAgentWithRoleId,
+      workspaceId,
+    });
   }
 
   @Mutation(() => AgentDTO)
@@ -127,7 +130,10 @@ export class AgentResolver {
       authContext,
     });
 
-    return fromFlatAgentWithRoleIdToAgentDto(createdAgent);
+    return this.agentService.toAgentDto({
+      flatAgentWithRoleId: createdAgent,
+      workspaceId: workspace.id,
+    });
   }
 
   @Mutation(() => AgentDTO)
@@ -162,7 +168,10 @@ export class AgentResolver {
       authContext,
     });
 
-    return fromFlatAgentWithRoleIdToAgentDto(updatedAgent);
+    return this.agentService.toAgentDto({
+      flatAgentWithRoleId: updatedAgent,
+      workspaceId: workspace.id,
+    });
   }
 
   @Mutation(() => AgentDTO)
@@ -185,6 +194,9 @@ export class AgentResolver {
       workspaceId,
     });
 
-    return fromFlatAgentWithRoleIdToAgentDto(deletedFlatAgent);
+    return this.agentService.toAgentDto({
+      flatAgentWithRoleId: deletedFlatAgent,
+      workspaceId,
+    });
   }
 }

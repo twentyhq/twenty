@@ -21,7 +21,9 @@ type WorkspaceSectionListReadOnlyProps = Pick<
   | 'folderChildrenById'
   | 'onActiveObjectMetadataItemClick'
   | 'renderSection'
->;
+> & {
+  folderCount?: number;
+};
 
 const READ_ONLY_EDIT_MODE_PROPS = {
   isSelectedInEditMode: false,
@@ -33,11 +35,10 @@ export const WorkspaceSectionListReadOnly = ({
   folderChildrenById,
   onActiveObjectMetadataItemClick,
   renderSection,
-}: WorkspaceSectionListReadOnlyProps) => {
-  const folderCount = filteredItems.filter(
+  folderCount = filteredItems.filter(
     (item) => item.type === NavigationMenuItemType.FOLDER,
-  ).length;
-
+  ).length,
+}: WorkspaceSectionListReadOnlyProps) => {
   const renderListEntry = (item: NavigationMenuItem) => {
     if (
       item.type === NavigationMenuItemType.SECTION &&
