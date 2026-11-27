@@ -105,6 +105,15 @@ export class WorkspaceDomainsService {
     return foundWorkspace;
   }
 
+  private isRegistrablePublicDomain(
+    customDomain: string | null,
+  ): customDomain is string {
+    return (
+      isDefined(customDomain) &&
+      !this.domainServerConfigService.isInstanceHostname(customDomain)
+    );
+  }
+
   private findValidatedPublicDomain(domain: string) {
     return this.publicDomainRepository.findOne({
       where: { domain, isValidated: true },
@@ -128,7 +137,7 @@ export class WorkspaceDomainsService {
 
     if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
       // Still resolve the public domain so route triggers can scope by application.
-      const publicDomain = isDefined(customDomain)
+      const publicDomain = this.isRegistrablePublicDomain(customDomain)
         ? await this.findValidatedPublicDomain(customDomain)
         : null;
 
@@ -189,7 +198,9 @@ export class WorkspaceDomainsService {
       };
     }
 
-    const publicDomain = await this.findValidatedPublicDomain(customDomain);
+    const publicDomain = this.isRegistrablePublicDomain(customDomain)
+      ? await this.findValidatedPublicDomain(customDomain)
+      : null;
 
     return {
       workspace: publicDomain?.workspace ?? undefined,
@@ -202,7 +213,7 @@ export class WorkspaceDomainsService {
     const { customDomain } =
       this.domainServerConfigService.getSubdomainAndCustomDomainFromUrl(origin);
 
-    if (!isDefined(customDomain)) {
+    if (!this.isRegistrablePublicDomain(customDomain)) {
       return false;
     }
 

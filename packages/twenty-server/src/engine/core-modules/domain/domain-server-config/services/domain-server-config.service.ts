@@ -76,7 +76,6 @@ export class DomainServerConfigService {
     getSubdomainAndCustomDomainFromHostname({
       hostname: new URL(url).hostname,
       frontDomain: this.getFrontUrl().hostname,
-      serverDomain: this.getServerHostname(),
       publicBaseDomain: this.getPublicBaseHostnameOrUndefined(),
       defaultSubdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
     });

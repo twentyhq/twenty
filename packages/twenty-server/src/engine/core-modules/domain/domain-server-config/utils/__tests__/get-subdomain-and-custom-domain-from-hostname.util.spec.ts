@@ -89,38 +89,6 @@ describe('getSubdomainAndCustomDomainFromHostname', () => {
     });
   });
 
-  it.each([
-    {
-      case: 'outside the front domain',
-      hostname: 'api.example.org',
-      frontDomain: 'app.example.org',
-      publicBaseDomain: 'withtwenty.com',
-    },
-    {
-      case: 'under the public domain',
-      hostname: 'api.example.com',
-      frontDomain: 'twenty.example.com',
-      publicBaseDomain: 'example.com',
-    },
-  ])(
-    'should never resolve the server host as a public or custom domain when it is $case',
-    ({ hostname, frontDomain, publicBaseDomain }) => {
-      expect(
-        getSubdomainAndCustomDomainFromHostname({
-          hostname,
-          frontDomain,
-          serverDomain: hostname,
-          publicBaseDomain,
-          defaultSubdomain: 'app',
-        }),
-      ).toEqual({
-        subdomain: undefined,
-        customDomain: null,
-        isUnderPublicDomainUrl: false,
-      });
-    },
-  );
-
   it('should not treat hosts as public domains when no public domain is configured', () => {
     expect(
       getSubdomainAndCustomDomainFromHostname({

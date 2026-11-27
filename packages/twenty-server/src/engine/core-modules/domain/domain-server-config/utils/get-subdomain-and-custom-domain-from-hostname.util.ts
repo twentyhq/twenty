@@ -5,13 +5,11 @@ import { isHostUnderPublicFunctionDomain } from 'src/engine/core-modules/domain/
 export const getSubdomainAndCustomDomainFromHostname = ({
   hostname,
   frontDomain,
-  serverDomain,
   publicBaseDomain,
   defaultSubdomain,
 }: {
   hostname: string;
   frontDomain: string;
-  serverDomain?: string;
   publicBaseDomain?: string;
   defaultSubdomain?: string;
 }): {
@@ -30,14 +28,6 @@ export const getSubdomainAndCustomDomainFromHostname = ({
 
     return {
       subdomain: subdomain === defaultSubdomain ? undefined : subdomain,
-      customDomain: null,
-      isUnderPublicDomainUrl: false,
-    };
-  }
-
-  if (isDefined(serverDomain) && hostname === serverDomain) {
-    return {
-      subdomain: undefined,
       customDomain: null,
       isUnderPublicDomainUrl: false,
     };
