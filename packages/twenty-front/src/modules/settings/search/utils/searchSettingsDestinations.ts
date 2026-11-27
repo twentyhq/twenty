@@ -71,7 +71,10 @@ const getDestinationScore = ({
   destination,
   searchWords,
 }: {
-  destination: SettingsSearchDestination;
+  destination: Pick<
+    SettingsSearchDestination,
+    'title' | 'breadcrumbs' | 'keywords'
+  >;
   searchWords: string[];
 }) => {
   const fields: WeightedWords[] = [
