@@ -6,7 +6,7 @@ import {
 import { findApplicationRoleIds } from 'test/integration/metadata/suites/application-grant-role/utils/find-application-role-ids.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type RemoveTwentyStandardApplicationRoleCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-workspace-command-1795788354200-remove-twenty-standard-application-role.command';
+import { type RemoveTwentyStandardApplicationRoleCommand } from 'src/database/commands/upgrade-version-command/2-66/2-66-workspace-command-1795791151025-remove-twenty-standard-application-role.command';
 import { type ApplicationGrantRoleService } from 'src/engine/core-modules/application/application-grant-role/services/application-grant-role.service';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -16,7 +16,7 @@ import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty
 
 jest.setTimeout(120000);
 
-describe('2-65 workspace command 1795788354200 - RemoveTwentyStandardApplicationRoleCommand (integration)', () => {
+describe('2-66 workspace command 1795791151025 - RemoveTwentyStandardApplicationRoleCommand (integration)', () => {
   let command: RemoveTwentyStandardApplicationRoleCommand;
   let twentyStandardApplicationId: string;
   let adminRoleId: string;
