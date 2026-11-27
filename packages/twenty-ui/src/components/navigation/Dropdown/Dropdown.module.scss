@@ -13,6 +13,7 @@
   }
 
   &[data-ending-style] {
+    transition-duration: duration(instant);
     transition-timing-function: ease-in;
   }
 
