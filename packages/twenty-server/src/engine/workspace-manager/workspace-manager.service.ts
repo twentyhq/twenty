@@ -65,6 +65,24 @@ export class WorkspaceManagerService {
       workspaceId,
     });
 
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
+    const existingAdminRole = await this.roleRepository.findOne(workspaceId, {
+      where: { universalIdentifier: STANDARD_ROLE.admin.universalIdentifier },
+    });
+
+    const adminRole =
+      existingAdminRole ??
+      (await this.roleService.createAdminRole({
+        workspaceId,
+        ownerFlatApplication: workspaceCustomFlatApplication,
+      }));
+
     await this.twentyStandardApplicationService.synchronizeTwentyStandardApplicationOrThrow(
       {
         workspaceId,
@@ -81,13 +99,6 @@ export class WorkspaceManagerService {
       `Metadata creation took ${dataSourceMetadataCreationEnd - dataSourceMetadataCreationStart}ms`,
     );
 
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspaceId,
-        },
-      );
-
     await this.roleService.createWorkspaceCustomApplicationRole({
       workspaceId,
       workspaceCustomFlatApplication,
@@ -96,6 +107,7 @@ export class WorkspaceManagerService {
     await this.setupDefaultRoles({
       workspaceId,
       userId,
+      adminRoleId: adminRole.id,
       workspaceCustomFlatApplication,
     });
   }
@@ -103,29 +115,23 @@ export class WorkspaceManagerService {
   private async setupDefaultRoles({
     userId,
     workspaceId,
+    adminRoleId,
     workspaceCustomFlatApplication,
   }: {
     workspaceId: string;
     userId: string;
+    adminRoleId: string;
     workspaceCustomFlatApplication: FlatApplication;
   }): Promise<void> {
-    const adminRole = await this.roleRepository.findOne(workspaceId, {
-      where: {
-        universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
-      },
+    const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
+      where: { workspaceId, userId },
     });
 
-    if (adminRole) {
-      const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
-        where: { workspaceId, userId },
-      });
-
-      await this.roleAssignmentWriteService.assignRoleToUserWorkspaces({
-        workspaceId,
-        userWorkspaceIds: [userWorkspace.id],
-        roleId: adminRole.id,
-      });
-    }
+    await this.roleAssignmentWriteService.assignRoleToUserWorkspaces({
+      workspaceId,
+      userWorkspaceIds: [userWorkspace.id],
+      roleId: adminRoleId,
+    });
 
     const existingMemberRole = await this.roleRepository.findOne(workspaceId, {
       where: { universalIdentifier: MEMBER_ROLE_UNIVERSAL_IDENTIFIER },

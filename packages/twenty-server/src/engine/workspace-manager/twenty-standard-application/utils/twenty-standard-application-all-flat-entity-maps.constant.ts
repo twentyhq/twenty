@@ -21,7 +21,6 @@ import { computeStandardRecordFormFlatEntities } from 'src/engine/workspace-mana
 import { buildStandardFlatPageLayoutMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout/build-standard-flat-page-layout-metadata-maps.util';
 import { buildStandardFlatRelatedRecordPathMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/related-record-path/build-standard-flat-related-record-path-maps.util';
 import { buildStandardFlatPermissionFlagMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/permission-flag/build-standard-flat-permission-flag-metadata-maps.util';
-import { buildStandardFlatRoleMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/role-metadata/build-standard-flat-role-metadata-maps.util';
 import { buildStandardFlatSearchFieldMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/build-standard-flat-search-field-metadata-maps.util';
 import { buildStandardFlatSkillMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/build-standard-flat-skill-metadata-maps.util';
 import { buildStandardFlatTimelineActivityTypeMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/timeline-activity-type/build-standard-flat-timeline-activity-type-maps.util';
@@ -162,14 +161,6 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     workspaceId,
   });
 
-  const flatRoleMaps = buildStandardFlatRoleMetadataMaps({
-    now,
-    workspaceId,
-    twentyStandardApplicationId,
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps: undefined,
-  });
-
   const flatPermissionFlagMaps = buildStandardFlatPermissionFlagMetadataMaps({
     now,
     workspaceId,
@@ -302,7 +293,6 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     flatObjectMetadataMaps,
     flatNavigationMenuItemMaps,
     flatPermissionFlagMaps,
-    flatRoleMaps,
     flatAgentMaps,
     flatSkillMaps,
     flatPageLayoutMaps: flatPageLayoutMapsWithRecordForms,
