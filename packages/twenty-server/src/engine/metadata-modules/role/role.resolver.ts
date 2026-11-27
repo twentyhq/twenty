@@ -59,6 +59,7 @@ import {
 } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role.input';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { areRoleRecordPermissionsEditable } from 'src/engine/metadata-modules/role/utils/are-role-record-permissions-editable.util';
 import { UpsertRowLevelPermissionRulesInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-rules.input';
 import { RowLevelPermissionPredicateGroupDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate-group.dto';
 import { RowLevelPermissionRuleDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-rule.dto';
@@ -353,6 +354,12 @@ export class RoleResolver {
     });
 
     return true;
+  }
+
+  @ResolveField('areRecordPermissionsEditable', () => Boolean)
+  @UseGuards(NoPermissionGuard)
+  getAreRecordPermissionsEditable(@Parent() role: RoleDTO): boolean {
+    return areRoleRecordPermissionsEditable(role);
   }
 
   @ResolveField('workspaceMembers', () => [WorkspaceMemberDTO])

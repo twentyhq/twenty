@@ -13086,6 +13086,9 @@ export default {
             "applicationId": [
                 573
             ],
+            "areRecordPermissionsEditable": [
+                1
+            ],
             "canAccessAllAgentChatChannels": [
                 1
             ],

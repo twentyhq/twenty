@@ -24,7 +24,6 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useRefreshInboxChannels } from '@/inbox/hooks/useRefreshInboxChannels';
 import { useState } from 'react';
-import { areRoleRecordPermissionsEditable } from '@/settings/roles/role/utils/areRoleRecordPermissionsEditable';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -96,7 +95,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
 
   const isRoleEditable = settingsDraftRole.isEditable;
   const areRecordPermissionsEditable =
-    areRoleRecordPermissionsEditable(settingsDraftRole);
+    settingsDraftRole.areRecordPermissionsEditable;
 
   const tabs = [
     {
@@ -221,8 +220,8 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
         {activeTabId === SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.PERMISSIONS && (
           <SettingsRolePermissions
             roleId={roleId}
-            isEditable={isRoleEditable}
             areRecordPermissionsEditable={areRecordPermissionsEditable}
+            arePermissionFlagsEditable={isRoleEditable}
           />
         )}
         {activeTabId === SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.SETTINGS && (

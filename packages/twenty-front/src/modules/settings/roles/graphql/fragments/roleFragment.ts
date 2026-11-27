@@ -10,6 +10,7 @@ export const ROLE_FRAGMENT = gql`
     canAccessAllTools
     canAccessAllAgentChatChannels
     isEditable
+    areRecordPermissionsEditable
     canReadAllObjectRecords
     canUpdateAllObjectRecords
     canSoftDeleteAllObjectRecords

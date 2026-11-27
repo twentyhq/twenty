@@ -20,15 +20,15 @@ const StyledRolePermissionsContainer = styled.div`
 
 type SettingsRolePermissionsProps = {
   roleId: string;
-  isEditable: boolean;
-  areRecordPermissionsEditable?: boolean;
+  areRecordPermissionsEditable: boolean;
+  arePermissionFlagsEditable: boolean;
   fromAgentId?: string;
 };
 
 export const SettingsRolePermissions = ({
   roleId,
-  isEditable,
-  areRecordPermissionsEditable = isEditable,
+  areRecordPermissionsEditable,
+  arePermissionFlagsEditable,
   fromAgentId,
 }: SettingsRolePermissionsProps) => {
   const isAiChatInboxEnabled = useIsFeatureEnabled(
@@ -50,20 +50,19 @@ export const SettingsRolePermissions = ({
       <SettingsRolePermissionsObjectsSection
         roleId={roleId}
         isEditable={areRecordPermissionsEditable}
-        areRoleWideDefaultsEditable={isEditable}
       />
       <SettingsRolePermissionsSettingsSection
         roleId={roleId}
-        isEditable={isEditable}
+        isEditable={arePermissionFlagsEditable}
       />
       <SettingsRolePermissionsToolSection
         roleId={roleId}
-        isEditable={isEditable}
+        isEditable={arePermissionFlagsEditable}
       />
       {shouldShowInboxChannelsSection && (
         <SettingsRolePermissionsInboxChannelsSection
           roleId={roleId}
-          isEditable={isEditable}
+          isEditable={arePermissionFlagsEditable}
         />
       )}
     </StyledRolePermissionsContainer>

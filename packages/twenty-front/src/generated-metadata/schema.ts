@@ -7170,6 +7170,7 @@ export type Role = {
   agents: Array<Agent>;
   apiKeys: Array<ApiKeyForRole>;
   applicationId: Scalars['UUID']['output'];
+  areRecordPermissionsEditable: Scalars['Boolean']['output'];
   canAccessAllAgentChatChannels: Scalars['Boolean']['output'];
   canAccessAllTools: Scalars['Boolean']['output'];
   canBeAssignedToAgents: Scalars['Boolean']['output'];

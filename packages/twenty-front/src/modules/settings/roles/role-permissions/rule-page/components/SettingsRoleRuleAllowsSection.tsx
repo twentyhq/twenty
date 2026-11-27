@@ -17,7 +17,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { type RowLevelPermissionRule } from '~/generated-metadata/graphql';
-import { areRoleRecordPermissionsEditable } from '@/settings/roles/role/utils/areRoleRecordPermissionsEditable';
 
 type SettingsRoleRuleAllowsSectionProps = {
   roleId: string;
@@ -128,7 +127,7 @@ export const SettingsRoleRuleAllowsSection = ({
                 isAllowedOnAllRecords || ruleOperations.includes(operation)
               }
               disabled={
-                !areRoleRecordPermissionsEditable(settingsDraftRole) ||
+                !settingsDraftRole.areRecordPermissionsEditable ||
                 isAllowedOnAllRecords ||
                 !isOperationEnabled(operation)
               }

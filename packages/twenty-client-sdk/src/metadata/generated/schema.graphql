@@ -4798,6 +4798,7 @@ type Role {
   agents: [Agent!]!
   apiKeys: [ApiKeyForRole!]!
   applicationId: UUID!
+  areRecordPermissionsEditable: Boolean!
   canAccessAllAgentChatChannels: Boolean!
   canAccessAllTools: Boolean!
   canBeAssignedToAgents: Boolean!

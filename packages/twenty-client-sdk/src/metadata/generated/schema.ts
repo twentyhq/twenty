@@ -3553,6 +3553,7 @@ export interface Role {
     agents: Agent[]
     apiKeys: ApiKeyForRole[]
     applicationId: Scalars['UUID']
+    areRecordPermissionsEditable: Scalars['Boolean']
     canAccessAllAgentChatChannels: Scalars['Boolean']
     canAccessAllTools: Scalars['Boolean']
     canBeAssignedToAgents: Scalars['Boolean']
@@ -8586,6 +8587,7 @@ export interface RoleGenqlSelection{
     agents?: AgentGenqlSelection
     apiKeys?: ApiKeyForRoleGenqlSelection
     applicationId?: boolean | number
+    areRecordPermissionsEditable?: boolean | number
     canAccessAllAgentChatChannels?: boolean | number
     canAccessAllTools?: boolean | number
     canBeAssignedToAgents?: boolean | number
