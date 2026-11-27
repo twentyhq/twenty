@@ -13,22 +13,27 @@ import { type IconComponent } from 'twenty-ui/icon';
 import { RelationType } from '~/generated-metadata/graphql';
 
 export const getConditionalAvailabilityRecordFilterFields = ({
-  objectMetadataItem,
+  objectMetadataId,
   objectMetadataItems,
   workspaceMembers,
   getIcon,
 }: {
-  objectMetadataItem: Pick<
-    EnrichedObjectMetadataItem,
-    'labelSingular' | 'fields'
-  >;
+  objectMetadataId: string | null | undefined;
   objectMetadataItems: Pick<
     EnrichedObjectMetadataItem,
-    'id' | 'nameSingular' | 'fields'
+    'id' | 'nameSingular' | 'labelSingular' | 'fields'
   >[];
   workspaceMembers: Pick<PartialWorkspaceMember, 'id' | 'name' | 'avatarUrl'>[];
   getIcon: (iconKey?: string | null) => IconComponent;
 }): ConditionalAvailabilityFilterField[] => {
+  const objectMetadataItem = objectMetadataItems.find(
+    (candidate) => candidate.id === objectMetadataId,
+  );
+
+  if (!isDefined(objectMetadataItem)) {
+    return [];
+  }
+
   const workspaceMemberObjectMetadataItem = objectMetadataItems.find(
     (candidate) =>
       candidate.nameSingular === StandardObjectNameSingular.WorkspaceMember,
@@ -47,17 +52,19 @@ export const getConditionalAvailabilityRecordFilterFields = ({
     .flatMap((fieldMetadataItem): ConditionalAvailabilityFilterField[] => {
       const fieldUniversalIdentifier =
         fieldMetadataItem.universalIdentifier ?? fieldMetadataItem.id;
-      const objectLabelSingular = objectMetadataItem.labelSingular;
-      const label = fieldMetadataItem.label;
-      const Icon = getIcon(fieldMetadataItem.icon);
+
+      const filterField = {
+        key: fieldUniversalIdentifier,
+        objectLabelSingular: objectMetadataItem.labelSingular,
+        label: fieldMetadataItem.label,
+        Icon: getIcon(fieldMetadataItem.icon),
+      };
 
       if (fieldMetadataItem.type === FieldMetadataType.SELECT) {
         return [
           {
+            ...filterField,
             field: { type: 'FIELD', fieldUniversalIdentifier },
-            objectLabelSingular,
-            label,
-            Icon,
             options: (fieldMetadataItem.options ?? []).map((option) => ({
               value: option.value,
               label: option.label,
@@ -78,6 +85,7 @@ export const getConditionalAvailabilityRecordFilterFields = ({
 
       return [
         {
+          ...filterField,
           field: {
             type: 'FIELD',
             relationFieldUniversalIdentifier: fieldUniversalIdentifier,
@@ -85,9 +93,6 @@ export const getConditionalAvailabilityRecordFilterFields = ({
               workspaceMemberIdField.universalIdentifier ??
               workspaceMemberIdField.id,
           },
-          objectLabelSingular,
-          label,
-          Icon,
           options: workspaceMemberOptions,
         },
       ];

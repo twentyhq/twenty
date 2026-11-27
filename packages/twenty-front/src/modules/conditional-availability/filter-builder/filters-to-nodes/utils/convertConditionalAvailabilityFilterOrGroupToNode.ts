@@ -1,8 +1,8 @@
 import { type ConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilter';
 import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterGroup';
+import { convertConditionalAvailabilityFilterValueToNode } from '@/conditional-availability/filter-builder/filters-to-nodes/utils/convertConditionalAvailabilityFilterValueToNode';
 import { getConditionalAvailabilityFilterComparisonOperator } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterComparisonOperator';
-import { getConditionalAvailabilityFilterLeftNode } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterLeftNode';
-import { getConditionalAvailabilityFilterRightNode } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterRightNode';
+import { getConditionalAvailabilityFilterVariableOrFieldNode } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterVariableOrFieldNode';
 import {
   type ConditionalEvaluationNode,
   joinConditionalEvaluationNodes,
@@ -40,9 +40,10 @@ export const convertConditionalAvailabilityFilterOrGroupToNode = ({
     return null;
   }
 
-  const leftNode = getConditionalAvailabilityFilterLeftNode({
-    filter: filterOrGroup,
-  });
+  const variableOrFieldNode =
+    getConditionalAvailabilityFilterVariableOrFieldNode({
+      filter: filterOrGroup,
+    });
   const comparisonOperator = getConditionalAvailabilityFilterComparisonOperator(
     { operator },
   );
@@ -51,8 +52,8 @@ export const convertConditionalAvailabilityFilterOrGroupToNode = ({
     nodes: values.map((value) => ({
       type: 'COMPARISON',
       operator: comparisonOperator,
-      left: leftNode,
-      right: getConditionalAvailabilityFilterRightNode({
+      left: variableOrFieldNode,
+      right: convertConditionalAvailabilityFilterValueToNode({
         filter: filterOrGroup,
         value,
       }),

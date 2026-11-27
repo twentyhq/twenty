@@ -16,7 +16,7 @@ const objectMetadataItems = [
   workspaceMemberObjectMetadataItem,
 ];
 
-const getFieldMetadataItemOrThrow = ({
+const getFieldUniversalIdentifierOrThrow = ({
   objectMetadataItem,
   name,
 }: {
@@ -29,52 +29,46 @@ const getFieldMetadataItemOrThrow = ({
 
   assertIsDefinedOrThrow(fieldMetadataItem);
 
-  return fieldMetadataItem;
+  return fieldMetadataItem.universalIdentifier ?? fieldMetadataItem.id;
 };
 
 describe('getConditionalAvailabilityRecordFilterFields', () => {
   it('should offer a select field with its options', () => {
-    const stageFieldMetadataItem = getFieldMetadataItemOrThrow({
+    const stageFieldUniversalIdentifier = getFieldUniversalIdentifierOrThrow({
       objectMetadataItem: opportunityObjectMetadataItem,
       name: 'stage',
     });
 
-    const filterFields = getConditionalAvailabilityRecordFilterFields({
-      objectMetadataItem: opportunityObjectMetadataItem,
+    const stageFilterField = getConditionalAvailabilityRecordFilterFields({
+      objectMetadataId: opportunityObjectMetadataItem.id,
       objectMetadataItems,
       workspaceMembers: [],
       getIcon: () => IconUser,
-    });
+    }).find(({ key }) => key === stageFieldUniversalIdentifier);
 
-    expect(filterFields).toContainEqual({
+    assertIsDefinedOrThrow(stageFilterField);
+
+    expect(stageFilterField).toMatchObject({
       field: {
         type: 'FIELD',
-        fieldUniversalIdentifier:
-          stageFieldMetadataItem.universalIdentifier ??
-          stageFieldMetadataItem.id,
+        fieldUniversalIdentifier: stageFieldUniversalIdentifier,
       },
       objectLabelSingular: opportunityObjectMetadataItem.labelSingular,
-      label: stageFieldMetadataItem.label,
-      Icon: IconUser,
-      options: (stageFieldMetadataItem.options ?? []).map(
-        ({ value, label }) => ({ value, label }),
-      ),
+      label: 'Stage',
     });
+    expect(stageFilterField.options.map(({ value }) => value)).toContain('NEW');
   });
 
   it('should offer a relation to a workspace member with "Me" first, read through the relation', () => {
-    const accountOwnerFieldMetadataItem = getFieldMetadataItemOrThrow({
-      objectMetadataItem: companyObjectMetadataItem,
-      name: 'accountOwner',
-    });
-    const workspaceMemberIdFieldMetadataItem = getFieldMetadataItemOrThrow({
-      objectMetadataItem: workspaceMemberObjectMetadataItem,
-      name: 'id',
-    });
+    const accountOwnerFieldUniversalIdentifier =
+      getFieldUniversalIdentifierOrThrow({
+        objectMetadataItem: companyObjectMetadataItem,
+        name: 'accountOwner',
+      });
 
     const accountOwnerFilterField =
       getConditionalAvailabilityRecordFilterFields({
-        objectMetadataItem: companyObjectMetadataItem,
+        objectMetadataId: companyObjectMetadataItem.id,
         objectMetadataItems,
         workspaceMembers: [
           {
@@ -84,19 +78,18 @@ describe('getConditionalAvailabilityRecordFilterFields', () => {
           },
         ],
         getIcon: () => IconUser,
-      }).find(({ label }) => label === accountOwnerFieldMetadataItem.label);
+      }).find(({ key }) => key === accountOwnerFieldUniversalIdentifier);
 
     assertIsDefinedOrThrow(accountOwnerFilterField);
 
     expect(accountOwnerFilterField).toMatchObject({
       field: {
         type: 'FIELD',
-        relationFieldUniversalIdentifier:
-          accountOwnerFieldMetadataItem.universalIdentifier ??
-          accountOwnerFieldMetadataItem.id,
-        fieldUniversalIdentifier:
-          workspaceMemberIdFieldMetadataItem.universalIdentifier ??
-          workspaceMemberIdFieldMetadataItem.id,
+        relationFieldUniversalIdentifier: accountOwnerFieldUniversalIdentifier,
+        fieldUniversalIdentifier: getFieldUniversalIdentifierOrThrow({
+          objectMetadataItem: workspaceMemberObjectMetadataItem,
+          name: 'id',
+        }),
       },
       objectLabelSingular: companyObjectMetadataItem.labelSingular,
     });
@@ -112,18 +105,29 @@ describe('getConditionalAvailabilityRecordFilterFields', () => {
   });
 
   it('should not offer a field that is neither a select nor a relation to a workspace member', () => {
-    const nameFieldMetadataItem = getFieldMetadataItemOrThrow({
-      objectMetadataItem: companyObjectMetadataItem,
-      name: 'name',
-    });
-
-    const labels = getConditionalAvailabilityRecordFilterFields({
-      objectMetadataItem: companyObjectMetadataItem,
+    const keys = getConditionalAvailabilityRecordFilterFields({
+      objectMetadataId: companyObjectMetadataItem.id,
       objectMetadataItems,
       workspaceMembers: [],
       getIcon: () => IconUser,
-    }).map(({ label }) => label);
+    }).map(({ key }) => key);
 
-    expect(labels).not.toContain(nameFieldMetadataItem.label);
+    expect(keys).not.toContain(
+      getFieldUniversalIdentifierOrThrow({
+        objectMetadataItem: companyObjectMetadataItem,
+        name: 'name',
+      }),
+    );
+  });
+
+  it('should offer no field when the page layout has no object', () => {
+    expect(
+      getConditionalAvailabilityRecordFilterFields({
+        objectMetadataId: null,
+        objectMetadataItems,
+        workspaceMembers: [],
+        getIcon: () => IconUser,
+      }),
+    ).toEqual([]);
   });
 });

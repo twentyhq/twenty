@@ -9,5 +9,10 @@ export type ConditionalAvailabilityFilterField = {
   options: SelectOption<string>[];
 } & (
   | { key: ConditionalAvailabilityFilterVariable; label: MessageDescriptor }
-  | { field: ExpressionFieldNode; label: string; objectLabelSingular: string }
+  | {
+      key: string;
+      field: ExpressionFieldNode;
+      label: string;
+      objectLabelSingular: string;
+    }
 );

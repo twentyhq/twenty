@@ -72,6 +72,7 @@ const ACCOUNT_OWNER_FIELD: ExpressionFieldNode = {
 const FILTER_FIELDS_WITH_RECORD_FIELDS: ConditionalAvailabilityFilterField[] = [
   ...FILTER_FIELDS,
   {
+    key: 'account-owner-universal-identifier',
     field: ACCOUNT_OWNER_FIELD,
     objectLabelSingular: 'Company',
     label: 'Account owner',
@@ -82,6 +83,7 @@ const FILTER_FIELDS_WITH_RECORD_FIELDS: ConditionalAvailabilityFilterField[] = [
     ],
   },
   {
+    key: 'stage-universal-identifier',
     field: STAGE_FIELD,
     objectLabelSingular: 'Company',
     label: 'Stage',

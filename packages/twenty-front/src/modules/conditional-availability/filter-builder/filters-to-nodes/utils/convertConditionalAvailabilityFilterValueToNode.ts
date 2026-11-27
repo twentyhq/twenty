@@ -6,7 +6,7 @@ import {
   type ExpressionVariableNode,
 } from 'twenty-shared/expression';
 
-export const getConditionalAvailabilityFilterRightNode = ({
+export const convertConditionalAvailabilityFilterValueToNode = ({
   filter,
   value,
 }: {

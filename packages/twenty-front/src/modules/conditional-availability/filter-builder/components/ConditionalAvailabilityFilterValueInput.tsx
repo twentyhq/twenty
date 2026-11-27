@@ -62,16 +62,14 @@ export const ConditionalAvailabilityFilterValueInput = ({
       operator: filter.operator,
     });
 
-  const getVariableValueSettings = (): {
+  const getValueSettings = (): {
     placeholder: string;
     searchPlaceholder: string | null;
     unknownValueLabel: string | null;
   } => {
     if ('field' in filter) {
       return {
-        placeholder: canHoldSeveralValues
-          ? t`Select values`
-          : t`Select a value`,
+        placeholder: t`Select a value`,
         searchPlaceholder: t`Search`,
         unknownValueLabel: null,
       };
@@ -104,7 +102,7 @@ export const ConditionalAvailabilityFilterValueInput = ({
   };
 
   const { placeholder, searchPlaceholder, unknownValueLabel } =
-    getVariableValueSettings();
+    getValueSettings();
 
   const options =
     findConditionalAvailabilityFilterField({ filterFields, filter })?.options ??

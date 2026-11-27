@@ -5,7 +5,6 @@ import { getConditionalAvailabilityRecordFilterFields } from '@/conditional-avai
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
-import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { GetRolesDocument } from '~/generated-metadata/graphql';
 
@@ -21,23 +20,13 @@ export const useConditionalAvailabilityFilterFields = ({
   const { objectMetadataItems } = useObjectMetadataItems();
   const { getIcon } = useIcons();
 
-  const filterFields = getConditionalAvailabilityFilterFields({
-    roles: data?.getRoles ?? [],
-    workspaceMembers: currentWorkspaceMembers,
-  });
-
-  const objectMetadataItem = objectMetadataItems.find(
-    (candidate) => candidate.id === objectMetadataId,
-  );
-
-  if (!isDefined(objectMetadataItem)) {
-    return filterFields;
-  }
-
   return [
-    ...filterFields,
+    ...getConditionalAvailabilityFilterFields({
+      roles: data?.getRoles ?? [],
+      workspaceMembers: currentWorkspaceMembers,
+    }),
     ...getConditionalAvailabilityRecordFilterFields({
-      objectMetadataItem,
+      objectMetadataId,
       objectMetadataItems,
       workspaceMembers: currentWorkspaceMembers,
       getIcon,

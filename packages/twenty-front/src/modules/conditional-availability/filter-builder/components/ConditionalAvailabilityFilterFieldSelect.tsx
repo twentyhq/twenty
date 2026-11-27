@@ -3,9 +3,7 @@ import { useUpdateConditionalAvailabilityFilterSettings } from '@/conditional-av
 import { type ConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilter';
 import { type ConditionalAvailabilityFilterField } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterField';
 import { createEmptyConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/utils/createEmptyConditionalAvailabilityFilter';
-import { createEmptyConditionalAvailabilityFilterOnField } from '@/conditional-availability/filter-builder/utils/createEmptyConditionalAvailabilityFilterOnField';
 import { findConditionalAvailabilityFilterField } from '@/conditional-availability/filter-builder/utils/findConditionalAvailabilityFilterField';
-import { getConditionalAvailabilityFilterFieldKey } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterFieldKey';
 import { updateConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/utils/updateConditionalAvailabilityFilter';
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownSideOffset';
 import { SelectControl } from '@/ui/input/components/SelectControl';
@@ -41,9 +39,7 @@ export const ConditionalAvailabilityFilterFieldSelect = ({
     filterFields,
     filter,
   });
-  const selectedFieldKey = isDefined(selectedField)
-    ? getConditionalAvailabilityFilterFieldKey({ filterField: selectedField })
-    : null;
+  const selectedFieldKey = selectedField?.key ?? null;
 
   const control = (
     <SelectControl
@@ -71,20 +67,17 @@ export const ConditionalAvailabilityFilterFieldSelect = ({
   const recordFields = matchingFields.flatMap((field) =>
     'field' in field ? [field] : [],
   );
+  const variableFields = matchingFields.filter((field) => !('field' in field));
   const [firstRecordField] = recordFields;
 
   const sections = [
     {
       label: t`Current user`,
-      fields: matchingFields.filter(
-        (field) => 'key' in field && field.key !== 'device',
-      ),
+      fields: variableFields.filter((field) => field.key !== 'device'),
     },
     {
       label: t`Device`,
-      fields: matchingFields.filter(
-        (field) => 'key' in field && field.key === 'device',
-      ),
+      fields: variableFields.filter((field) => field.key === 'device'),
     },
     {
       label: firstRecordField?.objectLabelSingular ?? '',
@@ -93,10 +86,7 @@ export const ConditionalAvailabilityFilterFieldSelect = ({
   ].filter(({ fields }) => isNonEmptyArray(fields));
 
   const handleFieldChange = (fieldKey: string | null) => {
-    const field = filterFields.find(
-      (filterField) =>
-        getConditionalAvailabilityFilterFieldKey({ filterField }) === fieldKey,
-    );
+    const field = filterFields.find(({ key }) => key === fieldKey);
 
     if (!isDefined(field)) {
       return;
@@ -104,9 +94,7 @@ export const ConditionalAvailabilityFilterFieldSelect = ({
 
     const emptyFilter =
       'field' in field
-        ? createEmptyConditionalAvailabilityFilterOnField({
-            field: field.field,
-          })
+        ? createEmptyConditionalAvailabilityFilter({ field: field.field })
         : createEmptyConditionalAvailabilityFilter({ variable: field.key });
 
     updateConditionalAvailabilityFilterSettings(
@@ -157,21 +145,15 @@ export const ConditionalAvailabilityFilterFieldSelect = ({
               <Fragment key={section.label}>
                 {sectionIndex > 0 && <Dropdown.Separator />}
                 <Dropdown.Section label={section.label}>
-                  {section.fields.map((field) => {
-                    const fieldKey = getConditionalAvailabilityFilterFieldKey({
-                      filterField: field,
-                    });
-
-                    return (
-                      <Dropdown.OptionItem
-                        key={fieldKey}
-                        value={fieldKey}
-                        startIcon={<field.Icon size={theme.icon.size.md} />}
-                      >
-                        {getFieldLabel(field)}
-                      </Dropdown.OptionItem>
-                    );
-                  })}
+                  {section.fields.map((field) => (
+                    <Dropdown.OptionItem
+                      key={field.key}
+                      value={field.key}
+                      startIcon={<field.Icon size={theme.icon.size.md} />}
+                    >
+                      {getFieldLabel(field)}
+                    </Dropdown.OptionItem>
+                  ))}
                 </Dropdown.Section>
               </Fragment>
             ))}

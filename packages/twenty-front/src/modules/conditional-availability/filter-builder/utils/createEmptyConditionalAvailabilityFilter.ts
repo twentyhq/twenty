@@ -1,21 +1,22 @@
 import { type ConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilter';
 import { type ConditionalAvailabilityFilterVariable } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterVariable';
-import { getConditionalAvailabilityFilterVariableOperators } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterVariableOperators';
+import { getConditionalAvailabilityFilterOperators } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperators';
+import { type ExpressionFieldNode } from 'twenty-shared/expression';
 import { v4 } from 'uuid';
 
-export const createEmptyConditionalAvailabilityFilter = ({
-  variable,
-}: {
-  variable: ConditionalAvailabilityFilterVariable;
-}): ConditionalAvailabilityFilter => {
-  const [defaultOperator] = getConditionalAvailabilityFilterVariableOperators({
-    variable,
+export const createEmptyConditionalAvailabilityFilter = (
+  variableOrField:
+    | { variable: ConditionalAvailabilityFilterVariable }
+    | { field: ExpressionFieldNode },
+): ConditionalAvailabilityFilter => {
+  const [defaultOperator] = getConditionalAvailabilityFilterOperators({
+    filter: variableOrField,
   });
 
   return {
     type: 'filter',
     id: v4(),
-    variable,
+    ...variableOrField,
     operator: defaultOperator,
     values: [],
   };

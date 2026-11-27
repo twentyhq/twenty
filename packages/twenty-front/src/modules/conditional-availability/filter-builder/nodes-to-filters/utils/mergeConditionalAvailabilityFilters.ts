@@ -2,8 +2,8 @@ import { type ConditionalAvailabilityFilter } from '@/conditional-availability/f
 import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterGroup';
 import { canConditionalAvailabilityFilterOperatorHoldSeveralValues } from '@/conditional-availability/filter-builder/utils/canConditionalAvailabilityFilterOperatorHoldSeveralValues';
 import { getConditionalAvailabilityFilterComparisonOperator } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterComparisonOperator';
-import { getConditionalAvailabilityFilterLeftNode } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterLeftNode';
 import { getConditionalAvailabilityFilterOperators } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperators';
+import { getConditionalAvailabilityFilterVariableOrFieldNode } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterVariableOrFieldNode';
 import { type ExpressionLogicalOperator } from 'twenty-shared/expression';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,10 +27,12 @@ export const mergeConditionalAvailabilityFilters = ({
     previousFilterOrGroup?.type !== 'filter' ||
     filterOrGroup.type !== 'filter' ||
     !isDeeplyEqual(
-      getConditionalAvailabilityFilterLeftNode({
+      getConditionalAvailabilityFilterVariableOrFieldNode({
         filter: previousFilterOrGroup,
       }),
-      getConditionalAvailabilityFilterLeftNode({ filter: filterOrGroup }),
+      getConditionalAvailabilityFilterVariableOrFieldNode({
+        filter: filterOrGroup,
+      }),
     )
   ) {
     return null;

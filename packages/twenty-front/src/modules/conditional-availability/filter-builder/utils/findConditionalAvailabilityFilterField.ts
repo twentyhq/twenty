@@ -10,11 +10,11 @@ export const findConditionalAvailabilityFilterField = ({
   filter: ConditionalAvailabilityFilter;
 }): ConditionalAvailabilityFilterField | undefined =>
   filterFields.find((filterField) => {
-    if ('field' in filter) {
+    if ('field' in filterField) {
       return (
-        'field' in filterField && isDeeplyEqual(filterField.field, filter.field)
+        'field' in filter && isDeeplyEqual(filterField.field, filter.field)
       );
     }
 
-    return 'key' in filterField && filterField.key === filter.variable;
+    return !('field' in filter) && filterField.key === filter.variable;
   });

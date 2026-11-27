@@ -1,11 +1,14 @@
-import { type ConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilter';
 import { type ConditionalAvailabilityFilterOperator } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterOperator';
+import { type ConditionalAvailabilityFilterVariable } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterVariable';
 import { getConditionalAvailabilityFilterVariableOperators } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterVariableOperators';
+import { type ExpressionFieldNode } from 'twenty-shared/expression';
 
 export const getConditionalAvailabilityFilterOperators = ({
   filter,
 }: {
-  filter: ConditionalAvailabilityFilter;
+  filter:
+    | { variable: ConditionalAvailabilityFilterVariable }
+    | { field: ExpressionFieldNode };
 }): [
   ConditionalAvailabilityFilterOperator,
   ...ConditionalAvailabilityFilterOperator[],

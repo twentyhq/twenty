@@ -1,52 +1,30 @@
+import { convertConditionalAvailabilityNodeToFilterValue } from '@/conditional-availability/filter-builder/nodes-to-filters/utils/convertConditionalAvailabilityNodeToFilterValue';
 import { type ConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilter';
-import { createEmptyConditionalAvailabilityFilterOnField } from '@/conditional-availability/filter-builder/utils/createEmptyConditionalAvailabilityFilterOnField';
 import { getConditionalAvailabilityFilterComparisonOperator } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterComparisonOperator';
 import { getConditionalAvailabilityFilterOperators } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperators';
-import { getConditionalAvailabilityFilterVariablePath } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterVariablePath';
-import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/object-filter-dropdown/constants/CurrentWorkspaceMemberSelectableItemId';
-import { isNonEmptyString } from '@sniptt/guards';
 import { type ConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
 import {
-  type ExpressionComparisonNode,
+  type ExpressionComparisonOperator,
   type ExpressionFieldNode,
 } from 'twenty-shared/expression';
 import { isDefined } from 'twenty-shared/utils';
-
-const getFilterValue = (
-  valueNode: ConditionalEvaluationNode,
-): string | null => {
-  if (valueNode.type === 'LITERAL' && isNonEmptyString(valueNode.value)) {
-    return valueNode.value;
-  }
-
-  const isCurrentWorkspaceMember =
-    valueNode.type === 'VARIABLE' &&
-    valueNode.path ===
-      getConditionalAvailabilityFilterVariablePath({
-        variable: 'currentWorkspaceMember',
-      });
-
-  return isCurrentWorkspaceMember
-    ? CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID
-    : null;
-};
+import { v4 } from 'uuid';
 
 export const convertConditionalAvailabilityFieldComparisonNodeToFilter = ({
   comparisonOperator,
   field,
   valueNode,
 }: {
-  comparisonOperator: ExpressionComparisonNode<ConditionalEvaluationNode>['operator'];
+  comparisonOperator: ExpressionComparisonOperator;
   field: ExpressionFieldNode;
   valueNode: ConditionalEvaluationNode;
 }): ConditionalAvailabilityFilter | null => {
-  const value = getFilterValue(valueNode);
-  const emptyFilter = createEmptyConditionalAvailabilityFilterOnField({
-    field,
+  const value = convertConditionalAvailabilityNodeToFilterValue({
+    node: valueNode,
   });
 
   const operator = getConditionalAvailabilityFilterOperators({
-    filter: emptyFilter,
+    filter: { field },
   }).find(
     (candidateOperator) =>
       getConditionalAvailabilityFilterComparisonOperator({
@@ -58,5 +36,5 @@ export const convertConditionalAvailabilityFieldComparisonNodeToFilter = ({
     return null;
   }
 
-  return { ...emptyFilter, operator, values: [value] };
+  return { type: 'filter', id: v4(), field, operator, values: [value] };
 };
