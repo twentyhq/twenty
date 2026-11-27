@@ -993,7 +993,7 @@ const createSettingsRouteElements = ({
           settingsSearch: {
             title: msg`Usage`,
             parentPath: SettingsPath.Billing,
-            requiresBillingEnabled: true,
+            isHiddenWhenBillingDisabled: true,
           },
         })}
       />
@@ -1009,7 +1009,7 @@ const createSettingsRouteElements = ({
             title: msg`Limits`,
             parentPath: SettingsPath.Billing,
             keywords: [msg`Usage limits`],
-            requiresBillingEnabled: true,
+            isHiddenWhenBillingDisabled: true,
           },
         })}
       />
@@ -1070,7 +1070,7 @@ const createSettingsRouteElements = ({
           settingsSearch: {
             title: msg`Billing`,
             section: WORKSPACE_SECTION,
-            requiresBillingEnabled: true,
+            isHiddenWhenBillingDisabled: true,
           },
         })}
       />
@@ -1081,7 +1081,7 @@ const createSettingsRouteElements = ({
           settingsSearch: {
             title: msg`Plans`,
             parentPath: SettingsPath.Billing,
-            requiresBillingEnabled: true,
+            isHiddenWhenBillingDisabled: true,
           },
         })}
       />
