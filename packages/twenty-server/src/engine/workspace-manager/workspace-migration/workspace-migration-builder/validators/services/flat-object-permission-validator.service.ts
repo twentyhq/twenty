@@ -11,7 +11,9 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { validateObjectPermissionGrantsNoDisabledAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util';
-import { getRoleRecordPermissionsTargetErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-record-permissions-target-errors.util';
+import { isWorkspaceEditingAdminRecordPermissions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-workspace-editing-admin-record-permissions.util';
+import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
+import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
 
 @Injectable()
 export class FlatObjectPermissionValidatorService {
@@ -63,12 +65,21 @@ export class FlatObjectPermissionValidatorService {
         message: t`Role not found`,
         userFriendlyMessage: msg`Role not found`,
       });
-    } else {
+    } else if (
+      !isWorkspaceEditingAdminRecordPermissions({
+        flatRole: referencedRole,
+        buildOptions,
+      })
+    ) {
       validationResult.errors.push(
-        ...getRoleRecordPermissionsTargetErrors({
-          flatRole: referencedRole,
+        ...validateRoleBelongsToCallerApplication({
+          referencedRole,
           buildOptions,
         }),
+      );
+
+      validationResult.errors.push(
+        ...getRoleNotEditableErrors({ flatRole: referencedRole, buildOptions }),
       );
     }
 
@@ -173,12 +184,21 @@ export class FlatObjectPermissionValidatorService {
         message: t`Role not found`,
         userFriendlyMessage: msg`Role not found`,
       });
-    } else {
+    } else if (
+      !isWorkspaceEditingAdminRecordPermissions({
+        flatRole: referencedRole,
+        buildOptions,
+      })
+    ) {
       validationResult.errors.push(
-        ...getRoleRecordPermissionsTargetErrors({
-          flatRole: referencedRole,
+        ...validateRoleBelongsToCallerApplication({
+          referencedRole,
           buildOptions,
         }),
+      );
+
+      validationResult.errors.push(
+        ...getRoleNotEditableErrors({ flatRole: referencedRole, buildOptions }),
       );
     }
 
@@ -273,12 +293,17 @@ export class FlatObjectPermissionValidatorService {
         flatEntityMaps: flatRoleMaps,
       });
 
-      if (isDefined(referencedRole)) {
+      if (
+        isDefined(referencedRole) &&
+        !isWorkspaceEditingAdminRecordPermissions({
+          flatRole: referencedRole,
+          buildOptions,
+        })
+      ) {
         validationResult.errors.push(
-          ...getRoleRecordPermissionsTargetErrors({
+          ...getRoleNotEditableErrors({
             flatRole: referencedRole,
             buildOptions,
-            shouldCheckRoleApplication: false,
           }),
         );
       }

@@ -15,12 +15,21 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { getMarketplaceApplicationRoleAssignabilityErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util';
-import { isAdminRoleWideRecordPermissionsUpdate } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-admin-role-wide-record-permissions-update.util';
+import { isWorkspaceEditingAdminRecordPermissions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-workspace-editing-admin-record-permissions.util';
 import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
 import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
 import { validateRoleLabelUniqueness } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util';
 import { validateRoleReadWritePermissionsConsistency } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-read-write-permissions-consistency.util';
 import { validateRoleRequiredPropertiesAreDefined } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util';
+
+const ROLE_WIDE_RECORD_PERMISSION_KEYS: string[] = [
+  'canReadAllObjectRecords',
+  'canCreateAllObjectRecords',
+  'canUpdateAllObjectRecords',
+  'canSoftDeleteAllObjectRecords',
+  'canDestroyAllObjectRecords',
+  'updatedAt',
+];
 
 @Injectable()
 export class FlatRoleValidatorService {
@@ -177,11 +186,13 @@ export class FlatRoleValidatorService {
     }
 
     if (
-      !isAdminRoleWideRecordPermissionsUpdate({
+      !isWorkspaceEditingAdminRecordPermissions({
         flatRole: fromFlatRole,
-        flatEntityUpdate,
         buildOptions,
-      })
+      }) ||
+      !Object.keys(flatEntityUpdate).every((key) =>
+        ROLE_WIDE_RECORD_PERMISSION_KEYS.includes(key),
+      )
     ) {
       validationResult.errors.push(
         ...getRoleNotEditableErrors({

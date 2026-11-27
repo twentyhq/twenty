@@ -14,7 +14,8 @@ import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/wor
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { getNestedPredicateGroupOperationErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util';
 import { getMarketplaceApplicationRoleRestrictionErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util';
-import { getRoleRecordPermissionsTargetErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-record-permissions-target-errors.util';
+import { isWorkspaceEditingAdminRecordPermissions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-workspace-editing-admin-record-permissions.util';
+import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
 
 @Injectable()
 export class FlatRowLevelPermissionPredicateGroupValidatorService {
@@ -96,13 +97,14 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
         message: t`Role not found`,
         userFriendlyMessage: msg`Role not found`,
       });
-    } else {
+    } else if (
+      !isWorkspaceEditingAdminRecordPermissions({
+        flatRole: role,
+        buildOptions,
+      })
+    ) {
       validationResult.errors.push(
-        ...getRoleRecordPermissionsTargetErrors({
-          flatRole: role,
-          buildOptions,
-          shouldCheckRoleApplication: false,
-        }),
+        ...getRoleNotEditableErrors({ flatRole: role, buildOptions }),
       );
     }
 
@@ -278,13 +280,14 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
         message: t`Role not found`,
         userFriendlyMessage: msg`Role not found`,
       });
-    } else {
+    } else if (
+      !isWorkspaceEditingAdminRecordPermissions({
+        flatRole: role,
+        buildOptions,
+      })
+    ) {
       validationResult.errors.push(
-        ...getRoleRecordPermissionsTargetErrors({
-          flatRole: role,
-          buildOptions,
-          shouldCheckRoleApplication: false,
-        }),
+        ...getRoleNotEditableErrors({ flatRole: role, buildOptions }),
       );
     }
 
