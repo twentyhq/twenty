@@ -37,7 +37,7 @@ export const getSettingsSearchDestinations = ({
     metadata: { title },
     objectMetadataItem,
   }: {
-    metadata: SettingsSearchRouteMetadata;
+    metadata: Pick<SettingsSearchRouteMetadata, 'title'>;
     objectMetadataItem: SettingsSearchObject | undefined;
   }) =>
     isDefined(title) ? i18n._(title) : (objectMetadataItem?.labelPlural ?? '');
