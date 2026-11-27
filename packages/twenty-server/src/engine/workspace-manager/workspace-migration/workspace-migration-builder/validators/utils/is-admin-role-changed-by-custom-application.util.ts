@@ -1,6 +1,6 @@
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/role/constants/admin-role-universal-identifier.constant';
 import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
 import { type WorkspaceMigrationValidationBuildOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 // TODO(@charlesBochet): temporary Admin record permissions exception, remove once the workspace owns Admin's record permissions
 export const isAdminRoleChangedByCustomApplication = ({
@@ -19,6 +19,6 @@ export const isAdminRoleChangedByCustomApplication = ({
       >
     >;
 }): boolean =>
-  flatRole.universalIdentifier === STANDARD_ROLE.admin.universalIdentifier &&
+  flatRole.universalIdentifier === ADMIN_ROLE_UNIVERSAL_IDENTIFIER &&
   buildOptions.applicationUniversalIdentifier ===
     buildOptions.workspaceCustomApplicationUniversalIdentifier;

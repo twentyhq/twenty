@@ -19,10 +19,10 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/role/constants/admin-role-universal-identifier.constant';
 import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 @Injectable()
 export class AdminPanelUserLookupService {
@@ -76,8 +76,7 @@ export class AdminPanelUserLookupService {
             .get(workspaceUser.id)
             ?.some(
               (role) =>
-                role.universalIdentifier ===
-                STANDARD_ROLE.admin.universalIdentifier,
+                role.universalIdentifier === ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
             ),
         )
         .map((workspaceUser) => workspaceUser.user.id),

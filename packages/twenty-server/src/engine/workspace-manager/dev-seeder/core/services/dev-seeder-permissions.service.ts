@@ -13,8 +13,8 @@ import { ObjectPermissionService } from 'src/engine/metadata-modules/object-perm
 import { RolePermissionFlagService } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.service';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { WorkspaceActivationRoleService } from 'src/engine/metadata-modules/role/services/workspace-activation-role.service';
 import { ChannelVisibilityRoleWideAccessRevokeService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-role-wide-access-revoke.service';
 import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -28,7 +28,6 @@ import {
   USER_WORKSPACE_DATA_SEED_IDS,
 } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 @Injectable()
 export class DevSeederPermissionsService {
@@ -36,13 +35,12 @@ export class DevSeederPermissionsService {
 
   constructor(
     private readonly roleService: RoleService,
+    private readonly workspaceActivationRoleService: WorkspaceActivationRoleService,
     private readonly roleAssignmentWriteService: RoleAssignmentWriteService,
     private readonly channelVisibilityRoleWideAccessRevokeService: ChannelVisibilityRoleWideAccessRevokeService,
     private readonly objectPermissionService: ObjectPermissionService,
     @InjectWorkspaceScopedRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: WorkspaceScopedRepository<ObjectMetadataEntity>,
-    @InjectWorkspaceScopedRepository(RoleEntity)
-    private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
     private readonly fieldPermissionService: FieldPermissionService,
     private readonly roleTargetService: RoleTargetService,
     private readonly rolePermissionFlagService: RolePermissionFlagService,
@@ -61,21 +59,15 @@ export class DevSeederPermissionsService {
     workspaceCustomFlatApplication: FlatApplication;
     light?: boolean;
   }) {
-    const adminRole = await this.roleRepository.findOne(workspaceId, {
-      where: {
-        universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
-      },
-    });
-
-    if (!adminRole) {
-      throw new Error(
-        'Required roles not found. Make sure the permission sync has run.',
-      );
-    }
+    const adminRoleId =
+      await this.workspaceActivationRoleService.findOrCreateAdminRoleOrThrow({
+        workspaceId,
+        workspaceCustomFlatApplication,
+      });
 
     await this.roleTargetService.create({
       createRoleTargetInput: {
-        roleId: adminRole.id,
+        roleId: adminRoleId,
         targetId: API_KEY_DATA_SEED_IDS.ID_1,
         targetMetadataForeignKey: 'apiKeyId',
         applicationId: twentyStandardFlatApplication.id,
@@ -108,7 +100,7 @@ export class DevSeederPermissionsService {
           ...Object.values(RANDOM_USER_WORKSPACE_IDS),
         ];
 
-        const guestRole = await this.roleService.createGuestRole({
+        const guestRole = await this.createGuestRoleForSeedWorkspace({
           workspaceId,
           ownerFlatApplication: workspaceCustomFlatApplication,
         });
@@ -162,7 +154,7 @@ export class DevSeederPermissionsService {
     await this.roleAssignmentWriteService.assignRoleToUserWorkspaces({
       workspaceId,
       userWorkspaceIds: [adminUserWorkspaceId],
-      roleId: adminRole.id,
+      roleId: adminRoleId,
     });
 
     const memberRole = await this.initMinimalPermissionsAndActivateWorkspace({
@@ -186,15 +178,18 @@ export class DevSeederPermissionsService {
     workspaceId: string;
     workspaceCustomFlatApplication: FlatApplication;
   }): Promise<RoleDTO> {
-    await this.roleService.createWorkspaceCustomApplicationRole({
-      workspaceId,
-      workspaceCustomFlatApplication,
-    });
+    await this.workspaceActivationRoleService.findOrCreateCustomApplicationGrantedRoleOrThrow(
+      {
+        workspaceId,
+        workspaceCustomFlatApplication,
+      },
+    );
 
-    const memberRole = await this.roleService.createMemberRole({
-      workspaceId,
-      ownerFlatApplication: workspaceCustomFlatApplication,
-    });
+    const memberRole =
+      await this.workspaceActivationRoleService.createMemberRoleOrThrow({
+        workspaceId,
+        workspaceCustomFlatApplication,
+      });
 
     await this.channelVisibilityRoleWideAccessRevokeService.revokeRoleWideAccess(
       { workspaceId },
@@ -247,6 +242,34 @@ export class DevSeederPermissionsService {
     });
 
     return impersonateOnlyRole;
+  }
+
+  private async createGuestRoleForSeedWorkspace({
+    workspaceId,
+    ownerFlatApplication,
+  }: {
+    workspaceId: string;
+    ownerFlatApplication: FlatApplication;
+  }): Promise<RoleDTO> {
+    return this.roleService.createRole({
+      input: {
+        label: 'Guest',
+        description: 'Guest role',
+        icon: 'IconUser',
+        canUpdateAllSettings: false,
+        canAccessAllTools: false,
+        canAccessAllAgentChatChannels: false,
+        canReadAllObjectRecords: true,
+        canUpdateAllObjectRecords: false,
+        canSoftDeleteAllObjectRecords: false,
+        canDestroyAllObjectRecords: false,
+        canBeAssignedToUsers: true,
+        canBeAssignedToAgents: false,
+        canBeAssignedToApiKeys: false,
+      },
+      workspaceId,
+      ownerFlatApplication,
+    });
   }
 
   private async createLimitedRoleForSeedWorkspace({

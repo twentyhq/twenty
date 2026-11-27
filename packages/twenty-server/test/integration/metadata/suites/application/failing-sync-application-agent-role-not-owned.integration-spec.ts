@@ -6,7 +6,7 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/role/constants/admin-role-universal-identifier.constant';
 
 const TEST_APP_ID = 'a1b2c3d4-0030-4000-a000-000000000001';
 const TEST_ROLE_ID = 'a1b2c3d4-0030-4000-a000-000000000002';
@@ -128,9 +128,7 @@ describe('Sync application should fail when an agent uses a role the application
 
   it('should fail when an agent uses the standard admin role', async () => {
     const { errors } = await syncApplication({
-      manifest: buildManifestWithAgentRole(
-        STANDARD_ROLE.admin.universalIdentifier,
-      ),
+      manifest: buildManifestWithAgentRole(ADMIN_ROLE_UNIVERSAL_IDENTIFIER),
       expectToFail: true,
     });
 

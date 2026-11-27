@@ -8,10 +8,10 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { fromCreateRoleTargetInputToFlatRoleTargetToCreate } from 'src/engine/metadata-modules/role-target/utils/from-create-role-target-input-to-flat-role-target-to-create.util';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/role/constants/admin-role-universal-identifier.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 @RegisteredWorkspaceCommand('2.55.0', 1793369399691)
 @Command({
@@ -58,7 +58,7 @@ export class BackfillWebhookAdminRoleCommand extends ProvisionedWorkspaceCommand
     }
 
     const adminFlatRole = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
+      universalIdentifier: ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
       flatEntityMaps: flatRoleMaps,
     });
 

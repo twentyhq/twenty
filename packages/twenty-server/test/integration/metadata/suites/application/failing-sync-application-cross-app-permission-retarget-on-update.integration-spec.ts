@@ -7,7 +7,7 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/role/constants/admin-role-universal-identifier.constant';
 
 const TEST_APP_ID = 'a1b2c3d4-0020-4000-a000-000000000010';
 const TEST_ROLE_ID = 'a1b2c3d4-0020-4000-a000-000000000011';
@@ -65,7 +65,7 @@ describe('Sync application should fail when retargeting existing permissions to 
             description: 'Default role for the test app',
           },
           {
-            universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
+            universalIdentifier: ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
             label: 'Admin',
             canBeAssignedToUsers: false,
             canBeAssignedToApiKeys: false,
@@ -123,7 +123,7 @@ describe('Sync application should fail when retargeting existing permissions to 
             description: 'Default role for the test app',
           },
           {
-            universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
+            universalIdentifier: ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
             label: 'Admin',
             canBeAssignedToUsers: false,
             canBeAssignedToApiKeys: false,

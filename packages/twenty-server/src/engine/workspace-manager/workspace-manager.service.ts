@@ -10,12 +10,11 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { WorkspaceActivationRoleService } from 'src/engine/metadata-modules/role/services/workspace-activation-role.service';
 import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceSchemaService } from 'src/engine/workspace-datasource/workspace-schema.service';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 
 @Injectable()
@@ -26,7 +25,7 @@ export class WorkspaceManagerService {
     private readonly workspaceSchemaService: WorkspaceSchemaService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    private readonly roleService: RoleService,
+    private readonly workspaceActivationRoleService: WorkspaceActivationRoleService,
     private readonly roleAssignmentWriteService: RoleAssignmentWriteService,
     private readonly twentyStandardApplicationService: TwentyStandardApplicationService,
     @InjectRepository(WorkspaceEntity)
@@ -88,10 +87,12 @@ export class WorkspaceManagerService {
         },
       );
 
-    await this.roleService.createWorkspaceCustomApplicationRole({
-      workspaceId,
-      workspaceCustomFlatApplication,
-    });
+    await this.workspaceActivationRoleService.findOrCreateCustomApplicationGrantedRoleOrThrow(
+      {
+        workspaceId,
+        workspaceCustomFlatApplication,
+      },
+    );
 
     await this.setupDefaultRoles({
       workspaceId,
@@ -109,23 +110,21 @@ export class WorkspaceManagerService {
     userId: string;
     workspaceCustomFlatApplication: FlatApplication;
   }): Promise<void> {
-    const adminRole = await this.roleRepository.findOne(workspaceId, {
-      where: {
-        universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
-      },
+    const adminRoleId =
+      await this.workspaceActivationRoleService.findOrCreateAdminRoleOrThrow({
+        workspaceId,
+        workspaceCustomFlatApplication,
+      });
+
+    const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
+      where: { workspaceId, userId },
     });
 
-    if (adminRole) {
-      const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
-        where: { workspaceId, userId },
-      });
-
-      await this.roleAssignmentWriteService.assignRoleToUserWorkspaces({
-        workspaceId,
-        userWorkspaceIds: [userWorkspace.id],
-        roleId: adminRole.id,
-      });
-    }
+    await this.roleAssignmentWriteService.assignRoleToUserWorkspaces({
+      workspaceId,
+      userWorkspaceIds: [userWorkspace.id],
+      roleId: adminRoleId,
+    });
 
     const existingMemberRole = await this.roleRepository.findOne(workspaceId, {
       where: { universalIdentifier: MEMBER_ROLE_UNIVERSAL_IDENTIFIER },
@@ -133,9 +132,9 @@ export class WorkspaceManagerService {
 
     const memberRole =
       existingMemberRole ??
-      (await this.roleService.createMemberRole({
+      (await this.workspaceActivationRoleService.createMemberRoleOrThrow({
         workspaceId,
-        ownerFlatApplication: workspaceCustomFlatApplication,
+        workspaceCustomFlatApplication,
       }));
 
     await this.workspaceRepository.update(workspaceId, {

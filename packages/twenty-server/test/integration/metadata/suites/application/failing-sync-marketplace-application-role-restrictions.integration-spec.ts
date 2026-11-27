@@ -18,8 +18,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { type BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/role/constants/admin-role-universal-identifier.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 jest.setTimeout(120000);
 
@@ -387,7 +387,7 @@ describe('Marketplace application roles', () => {
       const { errors } = await syncApplication({
         manifest: buildBaseManifest({
           appId: customApplication.universalIdentifier,
-          roleId: STANDARD_ROLE.admin.universalIdentifier,
+          roleId: ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
           overrides: {
             roles: [
               {

@@ -5,8 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { Not, Repository } from 'typeorm';
 
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/role/constants/admin-role-universal-identifier.constant';
 import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 @Injectable()
 export class UserWorkspaceSuccessorService {
@@ -57,8 +57,7 @@ export class UserWorkspaceSuccessorService {
           .get(otherUserWorkspace.id)
           ?.some(
             (role) =>
-              role.universalIdentifier ===
-              STANDARD_ROLE.admin.universalIdentifier,
+              role.universalIdentifier === ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
           ),
     );
 

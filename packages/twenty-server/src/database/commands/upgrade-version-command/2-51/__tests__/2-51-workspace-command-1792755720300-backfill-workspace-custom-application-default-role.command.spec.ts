@@ -4,9 +4,9 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { BackfillWorkspaceCustomApplicationDefaultRoleCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-workspace-command-1792755720300-backfill-workspace-custom-application-default-role.command';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import {
-  WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL,
-  WORKSPACE_CUSTOM_APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
-} from 'src/engine/core-modules/application/constants/workspace-custom-application-role.constant';
+  WORKSPACE_CUSTOM_APPLICATION_GRANTED_ROLE_LABEL,
+  WORKSPACE_CUSTOM_APPLICATION_GRANTED_ROLE_UNIVERSAL_IDENTIFIER,
+} from 'src/engine/core-modules/application/constants/workspace-custom-application-granted-role.constant';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -39,7 +39,7 @@ describe('BackfillWorkspaceCustomApplicationDefaultRoleCommand', () => {
     roles.find(
       (role) =>
         role.universalIdentifier ===
-        WORKSPACE_CUSTOM_APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
+        WORKSPACE_CUSTOM_APPLICATION_GRANTED_ROLE_UNIVERSAL_IDENTIFIER,
     );
 
   beforeEach(async () => {
@@ -120,7 +120,7 @@ describe('BackfillWorkspaceCustomApplicationDefaultRoleCommand', () => {
     const customApplicationRole = getCustomApplicationRole();
 
     expect(customApplicationRole).toMatchObject({
-      label: WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL,
+      label: WORKSPACE_CUSTOM_APPLICATION_GRANTED_ROLE_LABEL,
       applicationId: CUSTOM_APPLICATION_ID,
       isEditable: false,
       canUpdateAllSettings: true,
@@ -169,14 +169,14 @@ describe('BackfillWorkspaceCustomApplicationDefaultRoleCommand', () => {
 
   it('picks a free label when a role already uses the default one', async () => {
     roles.push(
-      buildExistingRole(WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL),
-      buildExistingRole(`${WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL} 2`),
+      buildExistingRole(WORKSPACE_CUSTOM_APPLICATION_GRANTED_ROLE_LABEL),
+      buildExistingRole(`${WORKSPACE_CUSTOM_APPLICATION_GRANTED_ROLE_LABEL} 2`),
     );
 
     await run();
 
     expect(getCustomApplicationRole()?.label).toBe(
-      `${WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL} 3`,
+      `${WORKSPACE_CUSTOM_APPLICATION_GRANTED_ROLE_LABEL} 3`,
     );
   });
 

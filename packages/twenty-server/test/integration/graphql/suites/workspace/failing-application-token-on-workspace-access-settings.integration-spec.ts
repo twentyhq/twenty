@@ -19,8 +19,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
 import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/role/constants/admin-role-universal-identifier.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 type WorkspaceAccessSettings = {
   defaultRoleId: string | null;
@@ -223,7 +223,7 @@ describe('Workspace access settings with an application token should fail', () =
 
     const [adminRole] = await globalThis.testDataSource.query(
       `SELECT id FROM core."role" WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
-      [STANDARD_ROLE.admin.universalIdentifier, SEED_APPLE_WORKSPACE_ID],
+      [ADMIN_ROLE_UNIVERSAL_IDENTIFIER, SEED_APPLE_WORKSPACE_ID],
     );
 
     const [userBoundTokenPair, unboundTokenPair] = await Promise.all([

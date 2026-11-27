@@ -36,11 +36,11 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { findActiveFlatApplicationByUniversalIdentifier } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-universal-identifier.util';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/role/constants/admin-role-universal-identifier.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 const PLACEHOLDER_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
-  STANDARD_ROLE.admin.universalIdentifier;
+  ADMIN_ROLE_UNIVERSAL_IDENTIFIER;
 
 const findUniversalIdentifierById = ({
   flatEntityMaps,

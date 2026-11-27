@@ -1,32 +1,24 @@
 import { v4 } from 'uuid';
 
-import {
-  WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL,
-  WORKSPACE_CUSTOM_APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
-} from 'src/engine/core-modules/application/constants/workspace-custom-application-role.constant';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/role/constants/admin-role-universal-identifier.constant';
 
-export const buildWorkspaceCustomApplicationFlatRole = ({
+export const buildWorkspaceCustomApplicationAdminFlatRole = ({
   workspaceId,
-  workspaceCustomFlatApplication,
-  label = WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL,
+  ownerFlatApplication,
 }: {
   workspaceId: string;
-  workspaceCustomFlatApplication: Pick<
-    FlatApplication,
-    'id' | 'universalIdentifier'
-  >;
-  label?: string;
+  ownerFlatApplication: Pick<FlatApplication, 'id' | 'universalIdentifier'>;
 }): FlatRole => {
   const now = new Date().toISOString();
 
   return {
     id: v4(),
-    universalIdentifier: WORKSPACE_CUSTOM_APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
-    label,
-    description: 'Default role of the workspace custom application',
-    icon: 'IconApps',
+    universalIdentifier: ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
+    label: 'Admin',
+    description: 'Admin role',
+    icon: 'IconUserCog',
     isEditable: false,
     isSystemSideEffect: false,
     canUpdateAllSettings: true,
@@ -37,16 +29,15 @@ export const buildWorkspaceCustomApplicationFlatRole = ({
     canUpdateAllObjectRecords: true,
     canSoftDeleteAllObjectRecords: true,
     canDestroyAllObjectRecords: true,
-    canBeAssignedToUsers: false,
+    canBeAssignedToUsers: true,
     canBeAssignedToAgents: false,
-    canBeAssignedToApiKeys: false,
+    canBeAssignedToApiKeys: true,
     canBeAssignedToApplications: false,
     workspaceId,
     createdAt: now,
     updatedAt: now,
-    applicationId: workspaceCustomFlatApplication.id,
-    applicationUniversalIdentifier:
-      workspaceCustomFlatApplication.universalIdentifier,
+    applicationId: ownerFlatApplication.id,
+    applicationUniversalIdentifier: ownerFlatApplication.universalIdentifier,
     roleTargetIds: [],
     roleTargetUniversalIdentifiers: [],
     objectPermissionIds: [],

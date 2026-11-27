@@ -15,7 +15,7 @@ import {
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/role/constants/admin-role-universal-identifier.constant';
 
 const ROLE_LABEL = 'Derived Permission Identifiers Role';
 
@@ -121,7 +121,7 @@ describe('Sync application should derive the permission identifiers the metadata
       const dryRun = await syncApplication({
         manifest: buildBaseManifest({
           appId: customApplication.universalIdentifier,
-          roleId: STANDARD_ROLE.admin.universalIdentifier,
+          roleId: ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
           overrides: {
             roles: [
               {

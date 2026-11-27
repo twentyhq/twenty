@@ -1,3 +1,4 @@
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/role/constants/admin-role-universal-identifier.constant';
 import { seedAgentChatThreadInboxState } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-agent-chat-thread-inbox-state.util';
 import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
 import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
@@ -58,7 +59,6 @@ import { DevSeederWorkflowPendingInputWorkspaceService } from 'src/engine/worksp
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
 import { PrefillFrontComponentService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-front-component.service';
 import { getSeedFrontComponentDefinitions } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-front-component-definitions.util';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
@@ -204,7 +204,7 @@ export class DevSeederWorkspaceService {
       }),
       this.coreDataSource.getRepository(RoleEntity).findOneByOrFail({
         workspaceId,
-        universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
+        universalIdentifier: ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
       }),
     ]);
 

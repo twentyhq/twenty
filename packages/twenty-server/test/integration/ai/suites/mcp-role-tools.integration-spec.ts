@@ -8,7 +8,7 @@ import {
 } from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { ToolCategory } from 'twenty-shared/ai';
-import { WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL } from 'src/engine/core-modules/application/constants/workspace-custom-application-role.constant';
+import { WORKSPACE_CUSTOM_APPLICATION_GRANTED_ROLE_LABEL } from 'src/engine/core-modules/application/constants/workspace-custom-application-granted-role.constant';
 
 const ROLE_TOOL_NAMES = [
   'list_roles',
@@ -148,7 +148,7 @@ describe('MCP role tools (integration)', () => {
 
   it('should refuse row-level rules on a non-editable role', async () => {
     const nonEditableRole = (await listRolesThroughMcp()).find(
-      ({ label }) => label === WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL,
+      ({ label }) => label === WORKSPACE_CUSTOM_APPLICATION_GRANTED_ROLE_LABEL,
     );
 
     jestExpectToBeDefined(nonEditableRole);

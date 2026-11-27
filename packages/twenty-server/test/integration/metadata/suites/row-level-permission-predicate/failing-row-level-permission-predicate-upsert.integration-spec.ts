@@ -20,7 +20,7 @@ import {
 import { v4 } from 'uuid';
 
 import { type UpsertRowLevelPermissionRulesInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-rules.input';
-import { WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL } from 'src/engine/core-modules/application/constants/workspace-custom-application-role.constant';
+import { WORKSPACE_CUSTOM_APPLICATION_GRANTED_ROLE_LABEL } from 'src/engine/core-modules/application/constants/workspace-custom-application-granted-role.constant';
 
 type TestSetup = {
   createdRoleId: string;
@@ -429,7 +429,7 @@ describe('Row Level Permission Predicate upsert should fail', () => {
 
     nonEditableRoleId = (
       await findOneRoleByLabel({
-        label: WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL,
+        label: WORKSPACE_CUSTOM_APPLICATION_GRANTED_ROLE_LABEL,
       })
     ).id;
   });
