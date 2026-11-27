@@ -148,20 +148,8 @@ export class WorkspaceDomainsService {
       };
     }
 
+    // Older rows under the public base must not take over the workspace's shared host.
     if (isUnderPublicDomainUrl) {
-      const hostname = new URL(origin).hostname;
-
-      const registeredPublicDomain =
-        await this.findValidatedPublicDomain(hostname);
-
-      if (isDefined(registeredPublicDomain)) {
-        return {
-          workspace: registeredPublicDomain.workspace ?? undefined,
-          publicDomain: registeredPublicDomain,
-          publicDomainType: 'application',
-        };
-      }
-
       const workspaceFromSubdomain = isDefined(subdomain)
         ? ((await this.workspaceRepository.findOne({
             where: { subdomain },
@@ -232,27 +220,25 @@ export class WorkspaceDomainsService {
     workspace: Pick<WorkspaceEntity, 'id' | 'subdomain'>;
     flatApplication: Pick<FlatApplication, 'id' | 'primaryPublicDomainId'>;
   }): Promise<string | undefined> {
-    const validatedPublicDomainWhere = {
-      workspaceId: workspace.id,
-      applicationId: flatApplication.id,
-      isValidated: true,
-    };
+    const validatedPublicDomains = await this.publicDomainRepository.find({
+      where: {
+        workspaceId: workspace.id,
+        applicationId: flatApplication.id,
+        isValidated: true,
+      },
+      order: { createdAt: 'ASC' },
+    });
 
-    const primaryPublicDomain = isDefined(flatApplication.primaryPublicDomainId)
-      ? await this.publicDomainRepository.findOne({
-          where: {
-            ...validatedPublicDomainWhere,
-            id: flatApplication.primaryPublicDomainId,
-          },
-        })
-      : null;
+    // Rows on an instance hostname are never routed to the application.
+    const routablePublicDomains = validatedPublicDomains.filter(
+      ({ domain }) =>
+        !this.domainServerConfigService.isInstanceHostname(domain),
+    );
 
     const functionsPublicDomain =
-      primaryPublicDomain ??
-      (await this.publicDomainRepository.findOne({
-        where: validatedPublicDomainWhere,
-        order: { createdAt: 'ASC' },
-      }));
+      routablePublicDomains.find(
+        ({ id }) => id === flatApplication.primaryPublicDomainId,
+      ) ?? routablePublicDomains[0];
 
     return this.buildPublicFunctionBaseUrl({
       workspace,

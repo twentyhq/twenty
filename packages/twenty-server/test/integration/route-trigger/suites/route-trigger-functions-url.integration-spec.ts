@@ -210,4 +210,32 @@ describe('RouteTrigger TWENTY_FUNCTIONS_URL (integration)', () => {
       });
     }
   }, 60000);
+  it('skips a validated public domain on an instance hostname', async () => {
+    const instancePublicDomain = `${uuidv4()}.localhost`;
+    const publicDomain = `${uuidv4()}.example.com`;
+    const { path, applicationId, applicationUniversalIdentifier } =
+      await setupEchoFunctionsUrlApplication();
+
+    try {
+      await insertPublicDomain({
+        domain: instancePublicDomain,
+        isValidated: true,
+        applicationId,
+        createdAt: new Date('2026-01-01T00:00:00.000Z'),
+      });
+      await insertPublicDomain({
+        domain: publicDomain,
+        isValidated: true,
+        applicationId,
+        createdAt: new Date('2026-02-01T00:00:00.000Z'),
+      });
+
+      expect(await requestFunctionsUrl(path)).toBe(`https://${publicDomain}`);
+    } finally {
+      await deletePublicDomains([instancePublicDomain, publicDomain]);
+      await cleanupApplicationAndAppRegistration({
+        applicationUniversalIdentifier,
+      });
+    }
+  }, 60000);
 });
