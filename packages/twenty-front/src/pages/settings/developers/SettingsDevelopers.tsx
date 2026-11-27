@@ -17,14 +17,7 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
-import {
-  IconApi,
-  IconApps,
-  IconPlus,
-  IconSparkle2,
-  IconTerminal2,
-  IconWebhook,
-} from 'twenty-ui/icon';
+import { IconPlus, IconSparkle2 } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
 import AppsCoverDark from '~/pages/settings/applications/assets/cover-dark.png';
@@ -53,30 +46,13 @@ const StyledTableContainer = styled.div<{ isMobile?: boolean }>`
 
 export const SettingsDevelopers = () => {
   const isMobile = useIsMobile();
-  const { t } = useLingui();
+  const { t, i18n } = useLingui();
 
-  const tabs = [
-    {
-      id: SETTINGS_DEVELOPERS_TABS.TABS_IDS.API,
-      title: t`API`,
-      Icon: IconApi,
-    },
-    {
-      id: SETTINGS_DEVELOPERS_TABS.TABS_IDS.WEBHOOKS,
-      title: t`Webhooks`,
-      Icon: IconWebhook,
-    },
-    {
-      id: SETTINGS_DEVELOPERS_TABS.TABS_IDS.APPS,
-      title: t`Apps`,
-      Icon: IconApps,
-    },
-    {
-      id: SETTINGS_DEVELOPERS_TABS.TABS_IDS.CLI,
-      title: t`CLI`,
-      Icon: IconTerminal2,
-    },
-  ];
+  const tabs = SETTINGS_DEVELOPERS_TABS.TABS.map(({ id, title, Icon }) => ({
+    id,
+    title: i18n._(title),
+    Icon,
+  }));
 
   const activeTab: TabKey =
     (useSettingsActiveTabId(

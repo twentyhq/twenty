@@ -3,6 +3,7 @@ import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsPro
 import { type SettingsSearchDestination } from '@/settings/search/types/SettingsSearchDestination';
 import { type SettingsSearchRouteHandle } from '@/settings/search/types/SettingsSearchRouteHandle';
 import { type SettingsSearchRouteMetadata } from '@/settings/search/types/SettingsSearchRouteMetadata';
+import { getAvailableSettingsTabs } from '@/settings/utils/getAvailableSettingsTabs';
 import { isSettingsRouteAccessible } from '@/settings/utils/isSettingsRouteAccessible';
 import { type I18n } from '@lingui/core';
 import { isValidElement, type ComponentProps } from 'react';
@@ -119,11 +120,29 @@ export const getSettingsSearchDestinations = ({
 
   return routes
     .filter((route) => isRouteAvailable({ route, availability }))
-    .map(({ path, metadata }) => ({
-      id: `settings-search-${path}`,
-      path: getSettingsPath(path),
-      title: i18n._(metadata.title),
-      breadcrumbs: getBreadcrumbs(metadata),
-      keywords: (metadata.keywords ?? []).map((keyword) => i18n._(keyword)),
-    }));
+    .flatMap(({ path, metadata }) => {
+      const title = i18n._(metadata.title);
+      const breadcrumbs = getBreadcrumbs(metadata);
+      const tabs = getAvailableSettingsTabs({
+        tabs: metadata.tabs ?? [],
+        permissionFlagMap: availability.permissionFlagMap,
+      });
+
+      return [
+        {
+          id: `settings-search-${path}`,
+          path: getSettingsPath(path),
+          title,
+          breadcrumbs,
+          keywords: (metadata.keywords ?? []).map((keyword) => i18n._(keyword)),
+        },
+        ...tabs.map((tab) => ({
+          id: `settings-search-${path}#${tab.id}`,
+          path: getSettingsPath(path, undefined, undefined, tab.id),
+          title: i18n._(tab.title),
+          breadcrumbs: [...breadcrumbs, title],
+          keywords: [],
+        })),
+      ];
+    });
 };

@@ -99,4 +99,27 @@ describe('getSettingsSearchDestinations', () => {
       '/settings/objects/new',
     );
   });
+
+  it('lists tabs as deep links under their page', () => {
+    expect(getDestinations()).toContainEqual({
+      id: 'settings-search-members#roles',
+      path: '/settings/members#roles',
+      title: 'Roles',
+      breadcrumbs: ['Workspace', 'Members'],
+      keywords: [],
+    });
+  });
+
+  it('applies the tab permission on top of the page guard', () => {
+    const paths = getDestinations({
+      ...FULL_AVAILABILITY,
+      permissionFlagMap: {
+        ...ALL_PERMISSIONS,
+        [PermissionFlagType.ROLES]: false,
+      },
+    }).map(({ path }) => path);
+
+    expect(paths).toContain('/settings/members#invite');
+    expect(paths).not.toContain('/settings/members#roles');
+  });
 });
