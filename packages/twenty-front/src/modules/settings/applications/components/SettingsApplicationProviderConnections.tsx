@@ -9,7 +9,7 @@ type SettingsApplicationProviderConnectionsProps = {
   applicationId: string;
   connectionProvider: Pick<
     ApplicationWithPreferences['connectionProviders'][number],
-    'name' | 'type' | 'displayName' | 'logoUrl' | 'via'
+    'name' | 'type' | 'displayName' | 'logoUrl'
   >;
   connections: ConnectedAccount[];
   canStartAuthorization: boolean;

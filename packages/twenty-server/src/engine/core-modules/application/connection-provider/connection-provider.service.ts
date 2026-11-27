@@ -256,7 +256,6 @@ export class ConnectionProviderService {
       displayName: provider.displayName,
       scope: provider.scope,
       logo: provider.logo,
-      storedVia: provider.via,
       oauth:
         provider.type === 'oauth' && isDefined(provider.oauthConfig)
           ? {

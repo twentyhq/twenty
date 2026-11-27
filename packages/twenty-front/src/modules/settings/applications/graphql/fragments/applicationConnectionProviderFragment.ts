@@ -9,12 +9,6 @@ export const APPLICATION_CONNECTION_PROVIDER_FRAGMENT = gql`
     displayName
     scope
     logoUrl
-    via {
-      name
-      description
-      logoUrl
-      url
-    }
     oauth {
       scopes
       isClientCredentialsConfigured

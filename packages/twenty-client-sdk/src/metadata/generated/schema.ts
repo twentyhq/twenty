@@ -533,7 +533,6 @@ export interface ApplicationConnectionProvider {
     oauth?: ApplicationConnectionProviderOAuthConfig
     scope: ConnectionProviderScope
     type: Scalars['String']
-    via?: ApplicationConnectionProviderVia
     __typename: 'ApplicationConnectionProvider'
 }
 
@@ -541,14 +540,6 @@ export interface ApplicationConnectionProviderOAuthConfig {
     isClientCredentialsConfigured: Scalars['Boolean']
     scopes: Scalars['String'][]
     __typename: 'ApplicationConnectionProviderOAuthConfig'
-}
-
-export interface ApplicationConnectionProviderVia {
-    description?: Scalars['String']
-    logoUrl?: Scalars['String']
-    name: Scalars['String']
-    url?: Scalars['String']
-    __typename: 'ApplicationConnectionProviderVia'
 }
 
 export interface ApplicationContent {
@@ -5228,7 +5219,6 @@ export interface ApplicationConnectionProviderGenqlSelection{
     oauth?: ApplicationConnectionProviderOAuthConfigGenqlSelection
     scope?: boolean | number
     type?: boolean | number
-    via?: ApplicationConnectionProviderViaGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5236,15 +5226,6 @@ export interface ApplicationConnectionProviderGenqlSelection{
 export interface ApplicationConnectionProviderOAuthConfigGenqlSelection{
     isClientCredentialsConfigured?: boolean | number
     scopes?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ApplicationConnectionProviderViaGenqlSelection{
-    description?: boolean | number
-    logoUrl?: boolean | number
-    name?: boolean | number
-    url?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -10428,14 +10409,6 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isApplicationConnectionProviderOAuthConfig = (obj?: { __typename?: any } | null): obj is ApplicationConnectionProviderOAuthConfig => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationConnectionProviderOAuthConfig"')
       return ApplicationConnectionProviderOAuthConfig_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ApplicationConnectionProviderVia_possibleTypes: string[] = ['ApplicationConnectionProviderVia']
-    export const isApplicationConnectionProviderVia = (obj?: { __typename?: any } | null): obj is ApplicationConnectionProviderVia => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationConnectionProviderVia"')
-      return ApplicationConnectionProviderVia_possibleTypes.includes(obj.__typename)
     }
     
 

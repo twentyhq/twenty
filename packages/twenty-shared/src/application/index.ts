@@ -84,7 +84,6 @@ export type {
 export type { ConnectionProviderManifest } from './connectionProviderManifestType';
 export type { ConnectionProviderScope } from './connectionProviderScopeType';
 export type { ConnectionProviderType } from './connectionProviderType';
-export type { ConnectionProviderVia } from './connectionProviderViaType';
 export { AGENT_TRIGGER_EVENT_NAME_PATTERN } from './constants/AgentTriggerEventNamePattern';
 export { AGENT_TRIGGER_LIMITS } from './constants/AgentTriggerLimits';
 export { AGENT_TRIGGER_TYPES } from './constants/AgentTriggerTypes';
@@ -350,7 +349,6 @@ export type {
   StartAppConversationResultRecipient,
   StartAppConversationResult,
 } from './startAppConversationType';
-export type { StoredConnectionProviderVia } from './storedConnectionProviderViaType';
 export type { StoredCustomConnectionProviderConfig } from './storedCustomConnectionProviderConfigType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
 export type { StoredOAuthDiscoveryConnectionProviderConfig } from './storedOAuthDiscoveryConnectionProviderConfigType';

@@ -3,7 +3,6 @@ import {
   type ConnectionProviderScope,
   type ConnectionProviderType,
   DEFAULT_CONNECTION_PROVIDER_SCOPE,
-  type StoredConnectionProviderVia,
   type StoredCustomConnectionProviderConfig,
   type StoredOAuthConnectionProviderConfig,
   type StoredOAuthDiscoveryConnectionProviderConfig,
@@ -18,7 +17,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ADD_VIA_TO_CONNECTION_PROVIDER_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-66/add-via-to-connection-provider-upgrade-command-name.constant';
 import { ADD_OAUTH_DISCOVERY_TO_CONNECTION_PROVIDER_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-59/add-oauth-discovery-to-connection-provider-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
@@ -48,12 +46,6 @@ export class ConnectionProviderEntity
       '2.39.0_AddLogoToConnectionProviderFastInstanceCommand_1788542613404',
   })
   logo: string | null;
-
-  @Column({ nullable: true, type: 'jsonb' })
-  @WasIntroducedInUpgrade({
-    upgradeCommandName: ADD_VIA_TO_CONNECTION_PROVIDER_UPGRADE_COMMAND_NAME,
-  })
-  via: StoredConnectionProviderVia | null;
 
   @Column({ nullable: false, type: 'varchar' })
   type: ConnectionProviderType;

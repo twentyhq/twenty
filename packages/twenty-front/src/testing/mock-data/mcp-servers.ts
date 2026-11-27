@@ -46,7 +46,6 @@ export const mockedMcpServerSignInConnectionProvider: ApplicationConnectionProvi
     displayName: 'Linear',
     scope: ConnectionProviderScope.USER,
     logoUrl: null,
-    via: null,
     oauth: null,
   };
 

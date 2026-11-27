@@ -1,5 +1,4 @@
 import { type ConnectionProviderScope } from '@/application/connectionProviderScopeType';
-import { type ConnectionProviderVia } from '@/application/connectionProviderViaType';
 import { type CustomConnectionProviderConfig } from '@/application/customConnectionProviderConfigType';
 import { type OAuthConnectionProviderConfig } from '@/application/oauthConnectionProviderConfigType';
 import { type OAuthDiscoveryConnectionProviderConfig } from '@/application/oauthDiscoveryConnectionProviderConfigType';
@@ -9,7 +8,6 @@ type ConnectionProviderManifestBase = SyncableEntityOptions & {
   name: string;
   displayName: string;
   logo?: string;
-  via?: ConnectionProviderVia;
   scope?: ConnectionProviderScope;
   identifyAccountLogicFunctionUniversalIdentifier?: string;
   onConnectLogicFunctionUniversalIdentifier?: string;

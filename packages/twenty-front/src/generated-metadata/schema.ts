@@ -710,21 +710,12 @@ export type ApplicationConnectionProvider = {
   oauth?: Maybe<ApplicationConnectionProviderOAuthConfig>;
   scope: ConnectionProviderScope;
   type: Scalars['String']['output'];
-  via?: Maybe<ApplicationConnectionProviderVia>;
 };
 
 export type ApplicationConnectionProviderOAuthConfig = {
   __typename?: 'ApplicationConnectionProviderOAuthConfig';
   isClientCredentialsConfigured: Scalars['Boolean']['output'];
   scopes: Array<Scalars['String']['output']>;
-};
-
-export type ApplicationConnectionProviderVia = {
-  __typename?: 'ApplicationConnectionProviderVia';
-  description?: Maybe<Scalars['String']['output']>;
-  logoUrl?: Maybe<Scalars['String']['output']>;
-  name: Scalars['String']['output'];
-  url?: Maybe<Scalars['String']['output']>;
 };
 
 export type ApplicationContent = {

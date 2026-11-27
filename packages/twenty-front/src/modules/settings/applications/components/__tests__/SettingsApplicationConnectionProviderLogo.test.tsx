@@ -9,7 +9,6 @@ describe('SettingsApplicationConnectionProviderLogo', () => {
         connectionProvider={{
           displayName: 'LinkedIn',
           logoUrl: null,
-          via: { name: 'Unipile', logoUrl: 'https://example.com/unipile.svg' },
         }}
       />,
     );
@@ -23,7 +22,6 @@ describe('SettingsApplicationConnectionProviderLogo', () => {
         connectionProvider={{
           displayName: 'LinkedIn',
           logoUrl: 'https://example.com/linkedin.svg',
-          via: null,
         }}
       />,
     );

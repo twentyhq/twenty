@@ -31,7 +31,6 @@ const buildProvider = (
   name: universalIdentifier,
   displayName: universalIdentifier,
   logo: null,
-  via: null,
   type: 'oauth',
   scope: 'WORKSPACE',
   oauthConfig: null,

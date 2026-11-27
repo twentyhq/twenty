@@ -86,7 +86,6 @@ const buildUserConnectionProvider = ({
   displayName: 'Linear',
   scope: ConnectionProviderScope.USER,
   logoUrl: null,
-  via: null,
   oauth: {
     __typename: 'ApplicationConnectionProviderOAuthConfig' as const,
     scopes: ['read'],

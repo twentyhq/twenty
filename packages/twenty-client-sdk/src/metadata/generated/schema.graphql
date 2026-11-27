@@ -662,19 +662,11 @@ type ApplicationConnectionProvider {
   oauth: ApplicationConnectionProviderOAuthConfig
   scope: ConnectionProviderScope!
   type: String!
-  via: ApplicationConnectionProviderVia
 }
 
 type ApplicationConnectionProviderOAuthConfig {
   isClientCredentialsConfigured: Boolean!
   scopes: [String!]!
-}
-
-type ApplicationConnectionProviderVia {
-  description: String
-  logoUrl: String
-  name: String!
-  url: String
 }
 
 type ApplicationContent {

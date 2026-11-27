@@ -1,2 +1,0 @@
-export const ADD_VIA_TO_CONNECTION_PROVIDER_UPGRADE_COMMAND_NAME =
-  '2.66.0_AddViaToConnectionProviderFastInstanceCommand_1795813664106';

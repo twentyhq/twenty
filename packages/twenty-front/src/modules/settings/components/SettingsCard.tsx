@@ -22,7 +22,6 @@ type SettingsCardProps = {
   to?: string;
   href?: string;
   title: string;
-  titleAccessory?: ReactNode;
   className?: string;
   Status?: ReactNode;
 };
@@ -120,7 +119,6 @@ export const SettingsCard = ({
   to,
   href,
   title,
-  titleAccessory,
   className,
   Status,
 }: SettingsCardProps) => {
@@ -151,7 +149,6 @@ export const SettingsCard = ({
     <>
       <StyledTitle disabled={disabled}>
         {title}
-        {titleAccessory}
         {soon && <Badge>{t`Soon`}</Badge>}
       </StyledTitle>
       {isDefined(Status) && Status}
