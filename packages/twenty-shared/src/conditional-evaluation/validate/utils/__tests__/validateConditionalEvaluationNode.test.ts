@@ -66,18 +66,6 @@ describe('validateConditionalEvaluationNode', () => {
       { ...DEVICE_IS_MOBILE, left: { type: 'FIELD' } },
       'left.fieldUniversalIdentifier',
     ],
-    [
-      'a record field read at its previous value',
-      {
-        ...DEVICE_IS_MOBILE,
-        left: {
-          type: 'FIELD',
-          fieldUniversalIdentifier: 'stage-universal-identifier',
-          isPreviousValue: true,
-        },
-      },
-      'left',
-    ],
     ['an unknown kind of node', { type: 'ASSIGNMENT' }, 'type'],
     [
       'an unknown comparison operator',

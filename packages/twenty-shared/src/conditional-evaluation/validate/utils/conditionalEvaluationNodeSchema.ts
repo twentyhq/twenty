@@ -32,6 +32,7 @@ export const conditionalEvaluationNodeSchema: z.ZodType<ConditionalEvaluationNod
         fieldUniversalIdentifier: z.string().min(1),
         relationFieldUniversalIdentifier: z.string().min(1).optional(),
         subFieldName: z.string().min(1).optional(),
+        isPreviousValue: z.boolean().optional(),
       }),
       z.strictObject({
         type: z.literal('COMPARISON'),
