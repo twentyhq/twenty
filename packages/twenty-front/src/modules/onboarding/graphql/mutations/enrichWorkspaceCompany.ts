@@ -7,7 +7,6 @@ export const ENRICH_WORKSPACE_COMPANY = gql`
       enrichment
       personOutcome
       personEnrichment
-      isBookCallOnboardingStepPending
     }
   }
 `;

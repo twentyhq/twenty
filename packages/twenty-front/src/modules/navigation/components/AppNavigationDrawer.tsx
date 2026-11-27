@@ -24,8 +24,21 @@ const StyledBottomTabs = styled.div`
   flex-shrink: 0;
   margin-bottom: calc(-1 * ${themeCssVariables.spacing[4]});
   margin-left: calc(-1 * ${themeCssVariables.spacing[2]});
+  margin-top: calc(-1 * ${themeCssVariables.spacing[2]});
   min-height: ${themeCssVariables.spacing[12]};
   padding: ${themeCssVariables.spacing[2]};
+
+  &:empty {
+    display: none;
+  }
+`;
+
+const StyledGettingStartedCardContainer = styled.div`
+  padding-bottom: ${themeCssVariables.spacing[2]};
+
+  &:empty {
+    display: none;
+  }
 `;
 
 export type AppNavigationDrawerProps = {
@@ -71,9 +84,11 @@ export const AppNavigationDrawer = ({
           )}
         </NavigationDrawerModeTransition>
 
-        {shouldPinTabsToBottom && (
+        {shouldPinTabsToBottom && !isSettingsDrawer && (
           <>
-            {gettingStartedCard}
+            <StyledGettingStartedCardContainer>
+              {gettingStartedCard}
+            </StyledGettingStartedCardContainer>
             <StyledBottomTabs>
               <MainNavigationDrawerTabSwitcher isPinnedToBottom />
             </StyledBottomTabs>

@@ -809,6 +809,18 @@ msgstr "Došlo k chybě skupiny zobrazení."
 msgid "A view sort error occurred."
 msgstr "Došlo k chybě řazení zobrazení."
 
+#. js-lingui-id: r0+ZZA
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A visibleItemLimit is only allowed on SECTION type"
+msgstr "VisibleItemLimit je povolen pouze u typu SECTION"
+
+#. js-lingui-id: +DI2pX
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A visibleItemLimit must be an integer between {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN} and {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX}"
+msgstr "VisibleItemLimit musí být celé číslo mezi {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN} a {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX}"
+
 #. js-lingui-id: SMhyGZ
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "A webhook with this configuration already exists."
@@ -6626,11 +6638,11 @@ msgctxt "commandMenuItem.label"
 msgid "Go to {objectLabelPlural}"
 msgstr "Přejít na {objectLabelPlural}"
 
-#. js-lingui-id: tKVJbL
+#. js-lingui-id: RQG1+p
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Admin Panel Settings"
-msgstr "Přejít do nastavení Admin panelu"
+msgid "Go to Admin Panel"
+msgstr "Přejít do administračního panelu"
 
 #. js-lingui-id: zPVvLp
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6638,11 +6650,17 @@ msgctxt "commandMenuItem.label"
 msgid "Go to Agents"
 msgstr "Přejít na agenty"
 
-#. js-lingui-id: iLqs3S
+#. js-lingui-id: EiL/A6
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to AI Settings"
-msgstr "Přejít do nastavení AI"
+msgid "Go to AI"
+msgstr "Přejít do AI"
+
+#. js-lingui-id: OVO+nS
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Go to Apps"
+msgstr "Přejít do aplikací"
 
 #. js-lingui-id: TndVqR
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6650,71 +6668,65 @@ msgctxt "commandMenuItem.label"
 msgid "Go to Apps preferences"
 msgstr "Přejít do předvoleb aplikací"
 
-#. js-lingui-id: 60o/+J
+#. js-lingui-id: zsFm1q
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Apps Settings"
-msgstr "Přejít do nastavení aplikací"
+msgid "Go to Billing"
+msgstr "Přejít na fakturaci"
 
-#. js-lingui-id: tlIbgN
+#. js-lingui-id: xk8nZG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Billing Settings"
-msgstr "Přejít do nastavení fakturace"
+msgid "Go to Community"
+msgstr "Přejít na Komunitu"
 
-#. js-lingui-id: u5u/QJ
+#. js-lingui-id: TMv4vU
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Community Settings"
-msgstr "Přejít do nastavení komunity"
+msgid "Go to Data Model"
+msgstr "Přejít na Datový model"
 
-#. js-lingui-id: dZPXqH
+#. js-lingui-id: nvVoDQ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Data Model Settings"
-msgstr "Přejít do nastavení datového modelu"
+msgid "Go to Developers"
+msgstr "Přejít na Vývojáře"
 
-#. js-lingui-id: SNbGsK
+#. js-lingui-id: YTMzOA
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Developers Settings"
-msgstr "Přejít do nastavení pro vývojáře"
+msgid "Go to Domains"
+msgstr "Přejít na Domény"
 
-#. js-lingui-id: OLopIl
+#. js-lingui-id: 8V43iD
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Domains Settings"
-msgstr "Přejít do nastavení domén"
+msgid "Go to Experience"
+msgstr "Přejít na Zkušenosti"
 
-#. js-lingui-id: 46ZD9h
+#. js-lingui-id: YA1mxo
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Experience Settings"
-msgstr "Přejít do nastavení prostředí"
+msgid "Go to General"
+msgstr "Přejít na Obecné"
 
-#. js-lingui-id: gfZlPy
+#. js-lingui-id: bSctn/
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to General Settings"
-msgstr "Přejít do obecných nastavení"
+msgid "Go to Members"
+msgstr "Přejít na Členy"
 
-#. js-lingui-id: vPl+B/
+#. js-lingui-id: F15zBM
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Members Settings"
-msgstr "Přejít do nastavení členů"
+msgid "Go to Roles"
+msgstr "Přejít na Role"
 
-#. js-lingui-id: qN3wNQ
+#. js-lingui-id: R1fbZB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Roles Settings"
-msgstr "Přejít do nastavení rolí"
-
-#. js-lingui-id: xAAHTC
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Security Settings"
-msgstr "Přejít do nastavení zabezpečení"
+msgid "Go to Security"
+msgstr "Přejít na Zabezpečení"
 
 #. js-lingui-id: Rrvufq
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -15518,6 +15530,11 @@ msgstr "Tato doména je již zaregistrována."
 msgid "This domain is already taken."
 msgstr "Tato doména je již obsazená."
 
+#. js-lingui-id: IBjn2S
+#: src/engine/core-modules/public-domain/public-domain.exception.ts
+msgid "This domain is used by Twenty itself and cannot be a public domain."
+msgstr ""
+
 #. js-lingui-id: Ukfndw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This draft is being updated. Try again."
@@ -16074,11 +16091,6 @@ msgstr "Tento uživatel je již členem pracovního prostoru."
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
 msgid "This user is not a member of the workspace."
 msgstr "Tento uživatel není členem pracovního prostoru."
-
-#. js-lingui-id: BFSoo/
-#: src/engine/metadata-modules/validation-rule/validation-rule.service.ts
-msgid "This validation rule is being upgraded. Try again in a few minutes."
-msgstr "Toto validační pravidlo se aktualizuje. Zkuste to znovu za několik minut."
 
 #. js-lingui-id: LtsBYU
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts

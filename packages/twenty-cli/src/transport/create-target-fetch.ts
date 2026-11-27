@@ -6,6 +6,7 @@ import { EXIT_CODE } from '@/output/constants/exit-code.constant';
 import { type ProxyHeaders } from '@/proxy-headers/types/proxy-headers.type';
 import { type ResolvedTarget } from '@/target/types/resolved-target.type';
 import { assertUrlWithinTarget } from '@/transport/assert-url-within-target';
+import { CERTIFICATE_ERROR_MESSAGES } from '@/transport/constants/certificate-error-messages.constant';
 import { REQUEST_TIMEOUT_MILLISECONDS } from '@/transport/constants/request-timeout-milliseconds.constant';
 import { RESPONSE_BYTE_LIMIT } from '@/transport/constants/response-byte-limit.constant';
 import { fetchWithProxy } from '@/transport/fetch-with-proxy';
@@ -60,6 +61,18 @@ export const toTransportError = ({
     cause instanceof Error && 'code' in cause && isString(cause.code)
       ? cause.code
       : undefined;
+
+  if (
+    isDefined(networkCode) &&
+    Object.hasOwn(CERTIFICATE_ERROR_MESSAGES, networkCode)
+  ) {
+    return new CliError({
+      code: 'NETWORK_ERROR',
+      message: `Could not verify the TLS certificate for ${url.origin} (${networkCode}).`,
+      hint: 'Check the server certificate and the trusted certificates on your computer. If your organization inspects HTTPS, ask IT to install its root CA in the system trust store, or set NODE_EXTRA_CA_CERTS to its trusted PEM file before starting twenty.',
+      details: { reason, networkCode },
+    });
+  }
 
   return new CliError({
     code: 'NETWORK_ERROR',

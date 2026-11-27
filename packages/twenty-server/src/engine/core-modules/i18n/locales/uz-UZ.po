@@ -809,6 +809,18 @@ msgstr "Ko‘rinish guruhi bo‘yicha xato yuz berdi."
 msgid "A view sort error occurred."
 msgstr "Ko‘rinish saralash bo‘yicha xato yuz berdi."
 
+#. js-lingui-id: r0+ZZA
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A visibleItemLimit is only allowed on SECTION type"
+msgstr "visibleItemLimit faqat SECTION turida ruxsat etiladi"
+
+#. js-lingui-id: +DI2pX
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A visibleItemLimit must be an integer between {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN} and {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX}"
+msgstr "visibleItemLimit {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN} va {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX} oralig‘idagi butun son bo‘lishi kerak"
+
 #. js-lingui-id: SMhyGZ
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "A webhook with this configuration already exists."
@@ -6626,11 +6638,11 @@ msgctxt "commandMenuItem.label"
 msgid "Go to {objectLabelPlural}"
 msgstr "{objectLabelPlural}ga o‘tish"
 
-#. js-lingui-id: tKVJbL
+#. js-lingui-id: RQG1+p
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Admin Panel Settings"
-msgstr "Admin paneli sozlamalariga o‘tish"
+msgid "Go to Admin Panel"
+msgstr "Administrator paneliga o'tish"
 
 #. js-lingui-id: zPVvLp
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6638,11 +6650,17 @@ msgctxt "commandMenuItem.label"
 msgid "Go to Agents"
 msgstr "Agentlarga o'tish"
 
-#. js-lingui-id: iLqs3S
+#. js-lingui-id: EiL/A6
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to AI Settings"
-msgstr "AI sozlamalariga o‘tish"
+msgid "Go to AI"
+msgstr "Sun’iy intellektga o'tish"
+
+#. js-lingui-id: OVO+nS
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Go to Apps"
+msgstr "Ilovalarga o'tish"
 
 #. js-lingui-id: TndVqR
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6650,71 +6668,65 @@ msgctxt "commandMenuItem.label"
 msgid "Go to Apps preferences"
 msgstr "Ilovalar sozlamalariga o'tish"
 
-#. js-lingui-id: 60o/+J
+#. js-lingui-id: zsFm1q
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Apps Settings"
-msgstr "Ilovalar sozlamalariga o‘tish"
+msgid "Go to Billing"
+msgstr "Hisob-kitobga o‘tish"
 
-#. js-lingui-id: tlIbgN
+#. js-lingui-id: xk8nZG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Billing Settings"
-msgstr "Hisob-kitob sozlamalariga o‘tish"
+msgid "Go to Community"
+msgstr "Hamjamiyatga o‘tish"
 
-#. js-lingui-id: u5u/QJ
+#. js-lingui-id: TMv4vU
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Community Settings"
-msgstr "Hamjamiyat sozlamalariga o‘tish"
+msgid "Go to Data Model"
+msgstr "Maʼlumot modeliga o‘tish"
 
-#. js-lingui-id: dZPXqH
+#. js-lingui-id: nvVoDQ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Data Model Settings"
-msgstr "Ma’lumotlar modeli sozlamalariga o‘tish"
+msgid "Go to Developers"
+msgstr "Dasturchilarga o‘tish"
 
-#. js-lingui-id: SNbGsK
+#. js-lingui-id: YTMzOA
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Developers Settings"
-msgstr "Dasturchilar sozlamalariga o‘tish"
+msgid "Go to Domains"
+msgstr "Domenlarga o‘tish"
 
-#. js-lingui-id: OLopIl
+#. js-lingui-id: 8V43iD
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Domains Settings"
-msgstr "Domenlar sozlamalariga o‘tish"
+msgid "Go to Experience"
+msgstr "Tajribaga o‘tish"
 
-#. js-lingui-id: 46ZD9h
+#. js-lingui-id: YA1mxo
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Experience Settings"
-msgstr "Tajriba sozlamalariga o‘tish"
+msgid "Go to General"
+msgstr "Umumiy bo‘limga o‘tish"
 
-#. js-lingui-id: gfZlPy
+#. js-lingui-id: bSctn/
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to General Settings"
-msgstr "Umumiy sozlamalarga o‘tish"
+msgid "Go to Members"
+msgstr "Aʼzolarga o‘tish"
 
-#. js-lingui-id: vPl+B/
+#. js-lingui-id: F15zBM
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Members Settings"
-msgstr "A’zolar sozlamalariga o‘tish"
+msgid "Go to Roles"
+msgstr "Rollarga o‘tish"
 
-#. js-lingui-id: qN3wNQ
+#. js-lingui-id: R1fbZB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Roles Settings"
-msgstr "Rollar sozlamalariga o‘tish"
-
-#. js-lingui-id: xAAHTC
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Security Settings"
-msgstr "Xavfsizlik sozlamalariga o‘tish"
+msgid "Go to Security"
+msgstr "Xavfsizlikka o‘tish"
 
 #. js-lingui-id: Rrvufq
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -15518,6 +15530,11 @@ msgstr "Ushbu domen allaqachon ro‘yxatdan o‘tgan."
 msgid "This domain is already taken."
 msgstr "Ushbu domen allaqachon band qilingan."
 
+#. js-lingui-id: IBjn2S
+#: src/engine/core-modules/public-domain/public-domain.exception.ts
+msgid "This domain is used by Twenty itself and cannot be a public domain."
+msgstr ""
+
 #. js-lingui-id: Ukfndw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This draft is being updated. Try again."
@@ -16074,11 +16091,6 @@ msgstr "Ushbu foydalanuvchi ish maydoni a’zosi sifatida allaqachon qo‘shilga
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
 msgid "This user is not a member of the workspace."
 msgstr "Bu foydalanuvchi ish maydonining a’zosi emas."
-
-#. js-lingui-id: BFSoo/
-#: src/engine/metadata-modules/validation-rule/validation-rule.service.ts
-msgid "This validation rule is being upgraded. Try again in a few minutes."
-msgstr "Ushbu tekshirish qoidasi yangilanmoqda. Bir necha daqiqadan keyin yana urinib ko‘ring."
 
 #. js-lingui-id: LtsBYU
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts

@@ -146,7 +146,7 @@ export const resolveRuntimeLimitingRole = ({
         scope.canSoftDeleteAllObjectRecords ?? false,
       canDestroyAllObjectRecords: scope.canDestroyAllObjectRecords ?? false,
       isPermissionFlagGranted,
-      areSystemObjectsReadOnlyByDefault: true,
+      areSystemObjectsReadableByDefault: true,
       objectPermissions,
       fieldPermissions: (scope.fieldPermissions ?? []).flatMap(
         (fieldPermission) => {

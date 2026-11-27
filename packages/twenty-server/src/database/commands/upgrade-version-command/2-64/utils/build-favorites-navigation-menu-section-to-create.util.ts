@@ -51,6 +51,7 @@ export const buildFavoritesNavigationMenuSectionToCreate = ({
     link: null,
     nativePageKey: null,
     builtInSectionKey: favoritesSectionDefinition.builtInSectionKey,
+    visibleItemLimit: null,
     isActive: true,
     overrides: null,
     userWorkspaceId: null,

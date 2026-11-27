@@ -9,6 +9,8 @@ export type TelegramUpdateHandlerResult = {
     | 'CONNECTED'
     | 'TEXT_ONLY'
     | 'ANSWERED'
+    | 'FEEDBACK_SAVED'
+    | 'FEEDBACK_NOT_SAVED'
     | 'STILL_RUNNING'
     | 'FAILED';
 };

@@ -10,6 +10,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { SEND_AGENT_CHAT_WEB_PUSH_NOTIFICATIONS_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/send-agent-chat-web-push-notifications-job-name.constant';
 import { type SendAgentChatWebPushNotificationsJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/send-agent-chat-web-push-notifications-job.types';
+import { InboxObjectNamesResolverService } from 'src/engine/metadata-modules/ai/ai-history/services/inbox-object-names-resolver.service';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { OnDatabaseBatchEvent } from 'src/engine/workspace-event-emitter/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
@@ -21,14 +22,26 @@ export class AgentChatWebPushNotificationListener {
     @InjectMessageQueue(MessageQueue.webPushQueue)
     private readonly webPushQueueService: MessageQueueService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly inboxObjectNamesResolverService: InboxObjectNamesResolverService,
   ) {}
 
+  // TODO(@bosiraphael): remove the agentChatThread decorator with IS_INBOX_OBJECT_NAMING_ENABLED
   @OnDatabaseBatchEvent('agentChatThread', DatabaseEventAction.UPDATED)
+  @OnDatabaseBatchEvent('inboxThread', DatabaseEventAction.UPDATED)
   async handleUpdatedThreads(
     payload: WorkspaceEventBatch<
       ObjectRecordUpdateEvent<AgentChatThreadWorkspaceEntity>
     >,
   ): Promise<void> {
+    if (
+      !(await this.inboxObjectNamesResolverService.isInboxThreadObjectName({
+        workspaceId: payload.workspaceId,
+        objectNameSingular: payload.objectMetadata.nameSingular,
+      }))
+    ) {
+      return;
+    }
+
     const threadActivities = payload.events.flatMap(
       ({ properties: { updatedFields, after: thread } }) =>
         updatedFields.includes('lastActivityAt') &&

@@ -307,19 +307,18 @@ describe('systemObjectRecordsPermissions', () => {
   });
 
   describe('API key whose role has no override on message', () => {
-    it('should allow updating a message through the system object default', async () => {
+    it('should deny updating a message, as the role denies updates by default', async () => {
       const response = await makeGraphqlApiRequest(
         updateOneOperationFactory({
           objectMetadataSingularName: 'message',
           gqlFields: MESSAGE_GQL_FIELDS,
           recordId: messageId,
-          data: { text: 'Updated through the system object default' },
+          data: { text: 'Updated without an override' },
         }),
         noOverrideApiKeyToken,
       );
 
-      expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.updateMessage.id).toBe(messageId);
+      expectPermissionDenied(response);
     });
 
     it('should deny updating a standard object', async () => {

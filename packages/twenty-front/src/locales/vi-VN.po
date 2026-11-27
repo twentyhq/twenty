@@ -1070,6 +1070,11 @@ msgstr "{label}, {statusLabel}"
 msgid "{label}, {unreadOpenThreadCount} unread"
 msgstr "{label}, {unreadOpenThreadCount} chưa đọc"
 
+#. js-lingui-id: B+e4L5
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
+msgid "{limit, plural, one {# item} other {# items}}"
+msgstr ""
+
 #. js-lingui-id: 1DrH/j
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{memberCount, plural, one {{memberCount} member} other {{memberCount} members}}"
@@ -2515,11 +2520,6 @@ msgstr "Thêm kênh email"
 msgid "Add embedded website"
 msgstr "Thêm trang web được nhúng"
 
-#. js-lingui-id: 6kC3KJ
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCardLayout.tsx
-msgid "Add feedback"
-msgstr "Thêm phản hồi"
-
 #. js-lingui-id: Va3xJe
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderLabelIdentifierCellPlusButton.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -2551,6 +2551,8 @@ msgid "Add filter"
 msgstr "Thêm bộ lọc"
 
 #. js-lingui-id: +NDti1
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterAddFilterRuleSelect.tsx
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterAddFilterRuleSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
@@ -2604,6 +2606,11 @@ msgstr "Thêm mục sau"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 msgid "Add item before"
 msgstr "Thêm mục trước"
+
+#. js-lingui-id: /kLKYB
+#: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
+msgid "Add item to {targetSectionName}"
+msgstr "Thêm mục vào {targetSectionName}"
 
 #. js-lingui-id: VzGJRl
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
@@ -2743,6 +2750,9 @@ msgid "Add row below"
 msgstr "Thêm hàng phía dưới"
 
 #. js-lingui-id: O8tK4v
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterAddFilterRuleSelect.tsx
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterAddFilterRuleSelect.tsx
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterAddFilterRuleSelect.tsx
 #: src/modules/object-core/filters/components/CoreObjectFilterAddRuleButton.tsx
 #: src/modules/object-core/filters/components/CoreObjectFilterAddRuleButton.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
@@ -2756,6 +2766,7 @@ msgid "Add rule"
 msgstr "Thêm quy tắc"
 
 #. js-lingui-id: cLBcTT
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterAddFilterRuleSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
 msgid "Add rule group"
@@ -2764,6 +2775,7 @@ msgstr "Thêm nhóm quy tắc"
 #. js-lingui-id: RxFV0G
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+#: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Add section"
 msgstr "Thêm phần"
 
@@ -3031,6 +3043,11 @@ msgstr ""
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Admin & Member"
 msgstr "Quản trị viên & Thành viên"
+
+#. js-lingui-id: ZHWySn
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Admin channel write access"
+msgstr "Quyền ghi của kênh quản trị viên"
 
 #. js-lingui-id: SsHJsm
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -3615,6 +3632,11 @@ msgstr "Tất cả nhóm"
 msgid "All it takes is their email."
 msgstr "Chỉ cần email của họ."
 
+#. js-lingui-id: J3EsIX
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
+msgid "All items"
+msgstr ""
+
 #. js-lingui-id: 623MHa
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "All lines"
@@ -4038,6 +4060,7 @@ msgid "and"
 msgstr "và"
 
 #. js-lingui-id: qVyNMm
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityLogicalOperatorLabel.ts
 #: src/modules/object-record/advanced-filter/constants/AdvancedFilterLogicalOperatorOptions.ts
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterLogicalOperatorCell.tsx
 msgid "And"
@@ -4915,6 +4938,8 @@ msgstr "Đính kèm tệp"
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAttachFileButton.tsx
+#: src/modules/ai-chat/composer/components/AiChatAttachFileButton.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Attach files"
@@ -6169,6 +6194,7 @@ msgstr "Đã hủy vào ngày"
 
 #. js-lingui-id: vv7kpg
 #: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 msgid "Cancelled"
 msgstr "Đã hủy"
@@ -7111,6 +7137,11 @@ msgstr "Đóng trang"
 msgid "Close preview"
 msgstr "Đóng bản xem trước"
 
+#. js-lingui-id: QBOwbf
+#: src/modules/navigation/components/NavigationDrawerCloseSettingsButton.tsx
+msgid "Close settings"
+msgstr "Đóng cài đặt"
+
 #. js-lingui-id: saip/v
 #: src/modules/side-panel/components/SidePanelCloseButton.tsx
 msgid "Close side panel"
@@ -7239,6 +7270,11 @@ msgstr "Thu gọn"
 #: src/modules/command-menu-item/display/components/CommandMenuItemCollapsibleSectionHeading.tsx
 msgid "Collapse {heading}"
 msgstr "Thu gọn {heading}"
+
+#. js-lingui-id: LeVkuA
+#: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
+msgid "Collapse all sections"
+msgstr "Thu gọn tất cả các phần"
 
 #. js-lingui-id: kBUgVh
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -9343,6 +9379,11 @@ msgstr "gói hiện tại"
 msgid "Current subscription state and line items"
 msgstr "Trạng thái đăng ký hiện tại và các hạng mục"
 
+#. js-lingui-id: GvB/Ni
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterFieldSelect.tsx
+msgid "Current user"
+msgstr ""
+
 #. js-lingui-id: 6YzXhC
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Current value from server environment. Set a custom value to override."
@@ -9505,6 +9546,12 @@ msgstr "Các nhà cung cấp tùy chỉnh được miễn phí cho tối đa {0}
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Custom roles"
 msgstr "Vai trò tùy chỉnh"
+
+#. js-lingui-id: cHOtZ9
+#: src/modules/side-panel/pages/page-layout/components/WidgetVisibilitySettingItem.tsx
+#: src/modules/side-panel/pages/page-layout/components/WidgetVisibilitySettings.tsx
+msgid "Custom rule"
+msgstr ""
 
 #. js-lingui-id: 2jzCZZ
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
@@ -10124,6 +10171,7 @@ msgstr "xóa"
 #: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorBlockHandleMenu.tsx
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterOptionsDropdown.tsx
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
@@ -10343,6 +10391,7 @@ msgid "Delete Folder"
 msgstr "Xóa thư mục"
 
 #. js-lingui-id: k/RLDM
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterOptionsDropdown.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterGroupOptionsDropdown.tsx
 msgid "Delete group"
 msgstr "Xóa nhóm"
@@ -10586,6 +10635,7 @@ msgid "Deleted record"
 msgstr "Bản ghi đã xóa"
 
 #. js-lingui-id: vaFq49
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 msgid "Deleted role"
 msgstr "Vai trò đã bị xóa"
@@ -10693,6 +10743,7 @@ msgid "Description provided by the application"
 msgstr "Mô tả do ứng dụng cung cấp"
 
 #. js-lingui-id: BBqGS9
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterFields.tsx
 #: src/modules/side-panel/pages/page-layout/hooks/useVisibilityLabels.ts
 msgid "Desktop"
 msgstr "Máy tính"
@@ -10802,6 +10853,13 @@ msgstr "Cài đặt - Nhà phát triển"
 msgid "Development instance"
 msgstr "Phiên bản phát triển"
 
+#. js-lingui-id: PEHQTf
+#: src/modules/conditional-availability/filter-builder/components/__stories__/ConditionalAvailabilityFilterBuilder.stories.tsx
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterFieldSelect.tsx
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterFields.tsx
+msgid "Device"
+msgstr ""
+
 #. js-lingui-id: le4Hch
 #: src/modules/settings/profile/devices/components/SettingsDeviceSessionRowDropdownMenu.tsx
 msgid "Device logged out"
@@ -10861,11 +10919,6 @@ msgstr "Tin nhắn trực tiếp"
 #: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
 msgid "Direct messages and mentions"
 msgstr "Tin nhắn trực tiếp và lượt nhắc đến"
-
-#. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
-msgid "Direct messages don't support attachments."
-msgstr "Tin nhắn trực tiếp không hỗ trợ tệp đính kèm."
 
 #. js-lingui-id: +ILAOG
 #: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
@@ -13046,6 +13099,8 @@ msgstr ""
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/WidgetVisibilitySettingItem.tsx
+#: src/modules/side-panel/pages/page-layout/components/WidgetVisibilitySettings.tsx
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Everyone"
 msgstr "Mọi người"
@@ -13197,6 +13252,11 @@ msgstr "Mở rộng"
 #: src/modules/command-menu-item/display/components/CommandMenuItemCollapsibleSectionHeading.tsx
 msgid "Expand {heading}"
 msgstr "Mở rộng {heading}"
+
+#. js-lingui-id: m2n9ZO
+#: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
+msgid "Expand all sections"
+msgstr "Mở rộng tất cả các phần"
 
 #. js-lingui-id: JjrOSL
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -14122,18 +14182,13 @@ msgstr "Tính năng"
 msgid "Features active until"
 msgstr "Tính năng hoạt động đến"
 
-#. js-lingui-id: YirHq7
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
-#: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
-msgid "Feedback"
-msgstr "Phản hồi"
-
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "field"
 msgstr "trường"
 
 #. js-lingui-id: AXjA78
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterFieldSelect.tsx
 #: src/modules/settings/applications/constants/ApplicationContentFilterLabels.ts
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetLayoutDropdownContent.tsx
@@ -14555,6 +14610,11 @@ msgstr "Hoàn tất chỉnh sửa bố cục để mở Hộp thư đến"
 #: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "Finish editing the layout to open Settings"
 msgstr "Hoàn tất chỉnh sửa bố cục để mở Cài đặt"
+
+#. js-lingui-id: aFsDUw
+#: src/modules/navigation/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton.tsx
+msgid "Finish editing the layout to open this menu"
+msgstr ""
 
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -15239,7 +15299,6 @@ msgstr "Chỉ nhận bản ghi này: vai trò của họ không thể truy cập
 #: src/modules/getting-started/components/GettingStartedOpenedSection.tsx
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 #: src/pages/getting-started/GettingStartedPage.tsx
 #: src/pages/getting-started/GettingStartedPage.tsx
 msgid "Getting started"
@@ -17110,6 +17169,7 @@ msgid "Iris"
 msgstr "Tím iris"
 
 #. js-lingui-id: W153SA
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperatorLabel.ts
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is"
 msgstr "Là"
@@ -17118,6 +17178,11 @@ msgstr "Là"
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is after or equal"
 msgstr "Sau hoặc bằng"
+
+#. js-lingui-id: RPm4Rj
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperatorLabel.ts
+msgid "Is any of"
+msgstr ""
 
 #. js-lingui-id: NgIlDJ
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -17139,7 +17204,13 @@ msgstr "Là trong tương lai"
 msgid "Is in past"
 msgstr "Là trong quá khứ"
 
+#. js-lingui-id: T9KiSu
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperatorLabel.ts
+msgid "Is none of"
+msgstr ""
+
 #. js-lingui-id: 5pz6vU
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperatorLabel.ts
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is not"
 msgstr "Không phải"
@@ -19576,6 +19647,7 @@ msgid "Mission accomplished!"
 msgstr "Nhiệm vụ đã hoàn thành!"
 
 #. js-lingui-id: dMsM20
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterFields.tsx
 #: src/modules/side-panel/pages/page-layout/hooks/useVisibilityLabels.ts
 msgid "Mobile"
 msgstr "Thiết bị di động"
@@ -20629,7 +20701,7 @@ msgid "Next record"
 msgstr "Bản ghi tiếp theo"
 
 #. js-lingui-id: +VXdSO
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Next request"
 msgstr "Yêu cầu tiếp theo"
 
@@ -21450,6 +21522,7 @@ msgstr "Không có phản hồi từ máy chủ"
 
 #. js-lingui-id: Ev2r9A
 #: src/modules/activities/emails/recipients/components/EmailRecipientSuggestionsDropdownContent.tsx
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect.tsx
@@ -21788,6 +21861,8 @@ msgstr "Cài đặt nút"
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownListPinnedFieldContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -22919,6 +22994,7 @@ msgid "or"
 msgstr "hoặc"
 
 #. js-lingui-id: ZAVklK
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityLogicalOperatorLabel.ts
 #: src/modules/object-record/advanced-filter/constants/AdvancedFilterLogicalOperatorOptions.ts
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
@@ -23506,7 +23582,7 @@ msgid "Pending"
 msgstr "Đang chờ xử lý"
 
 #. js-lingui-id: 2B0V9T
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Pending requests"
 msgstr "Yêu cầu đang chờ"
 
@@ -23812,6 +23888,12 @@ msgstr "Hồng"
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 msgid "Pinned"
 msgstr "Đã ghim"
+
+#. js-lingui-id: eLzh58
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownListPinnedFieldContent.tsx
+msgid "Pinned field"
+msgstr "Trường đã ghim"
 
 #. js-lingui-id: OFY07S
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
@@ -24154,7 +24236,7 @@ msgid "Previous record"
 msgstr "Bản ghi trước"
 
 #. js-lingui-id: ToM1t/
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Previous request"
 msgstr "Yêu cầu trước"
 
@@ -25600,10 +25682,10 @@ msgstr "Gỡ bỏ sắp xếp"
 msgid "Remove sorting?"
 msgstr "Gỡ bỏ sắp xếp?"
 
-#. js-lingui-id: J8gtSc
+#. js-lingui-id: koiY9C
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would."
-msgstr "Xóa quyền truy cập tin nhắn và lịch của các khóa API đối với các vai trò có thể gán cho người dùng. Khi tắt, các khóa API đó đọc chúng như một thành viên không sở hữu kênh sẽ đọc."
+msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would, and keep their role's write access to them."
+msgstr "Xóa quyền truy cập tin nhắn và lịch của khóa API đối với các vai trò có thể gán cho người dùng. Khi tắt, các khóa API đó đọc chúng như một thành viên không sở hữu kênh và vẫn giữ quyền ghi của vai trò đối với chúng."
 
 #. js-lingui-id: yBC05U
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -25757,7 +25839,7 @@ msgid "Request"
 msgstr "Yêu cầu"
 
 #. js-lingui-id: tZ7Xci
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Request {requestNumber} of {requestCount}"
 msgstr "Yêu cầu {requestNumber} trong số {requestCount}"
 
@@ -26169,6 +26251,8 @@ msgid "role"
 msgstr "vai trò"
 
 #. js-lingui-id: GDvlUT
+#: src/modules/conditional-availability/filter-builder/components/__stories__/ConditionalAvailabilityFilterBuilder.stories.tsx
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterFields.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
@@ -26346,6 +26430,16 @@ msgstr "Đã vô hiệu hóa quy tắc."
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Rule enabled."
 msgstr "Đã bật quy tắc."
+
+#. js-lingui-id: N/BlR5
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterOptionsDropdown.tsx
+msgid "Rule group options"
+msgstr ""
+
+#. js-lingui-id: 9Ggzqm
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterOptionsDropdown.tsx
+msgid "Rule options"
+msgstr ""
 
 #. js-lingui-id: sBTDyi
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -26945,11 +27039,14 @@ msgid "search field metadata"
 msgstr "siêu dữ liệu trường tìm kiếm"
 
 #. js-lingui-id: 7taA9j
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterFieldSelect.tsx
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterFieldSelect.tsx
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownListPinnedFieldContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -27008,6 +27105,7 @@ msgid "Search icon"
 msgstr "Biểu tượng tìm kiếm"
 
 #. js-lingui-id: AaDUlx
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
 #: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
 #: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
 #: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
@@ -27070,6 +27168,11 @@ msgstr "Tìm kiếm đăng ký..."
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 msgid "Search relations"
 msgstr "Tìm kiếm quan hệ"
+
+#. js-lingui-id: pzfKRn
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
+msgid "Search roles"
+msgstr ""
 
 #. js-lingui-id: BlLxpG
 #: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
@@ -27142,6 +27245,11 @@ msgstr "Đang tìm kiếm {objectLabel}"
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSearchResults.tsx
 msgid "Searching chats..."
 msgstr "Đang tìm kiếm cuộc trò chuyện..."
+
+#. js-lingui-id: xrtPMt
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+msgid "Searching records..."
+msgstr "Đang tìm kiếm hồ sơ..."
 
 #. js-lingui-id: KhCAL1
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -27311,14 +27419,18 @@ msgstr "Xem cài đặt mô hình dữ liệu"
 msgid "See function"
 msgstr "Xem hàm"
 
+#. js-lingui-id: kuQBTx
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+msgid "See in search results"
+msgstr "Xem trong kết quả tìm kiếm"
+
 #. js-lingui-id: 1HzZ+y
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "See installed applications"
 msgstr "Xem ứng dụng đã cài đặt"
 
 #. js-lingui-id: uPo3PQ
-#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
-#: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
+#: src/modules/navigation-menu-item/display/sections/components/NavigationMenuSectionSeeMore.tsx
 msgid "See less"
 msgstr "Xem ít hơn"
 
@@ -27328,16 +27440,10 @@ msgid "See matching {objectLabelPlural}"
 msgstr "Xem {objectLabelPlural} phù hợp"
 
 #. js-lingui-id: V1fa9u
-#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
-#: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
+#: src/modules/navigation-menu-item/display/sections/components/NavigationMenuSectionSeeMore.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentSummarySection.tsx
 msgid "See more"
 msgstr "Xem thêm"
-
-#. js-lingui-id: ssRcpB
-#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
-msgid "See more results"
-msgstr "Xem thêm kết quả"
 
 #. js-lingui-id: V7TecA
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -27469,6 +27575,11 @@ msgstr "Chọn ngày"
 msgid "Select a date and time"
 msgstr "Chọn ngày và giờ"
 
+#. js-lingui-id: cggcog
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
+msgid "Select a device"
+msgstr ""
+
 #. js-lingui-id: 1YV5aa
 #: src/modules/object-core/filters/components/CoreObjectFilterFieldSelect.tsx
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexFieldsForm.tsx
@@ -27500,6 +27611,11 @@ msgstr "Chọn một mô hình đã biết hoặc thêm một mô hình tùy ch�
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Select a known provider or create a custom one"
 msgstr "Chọn một nhà cung cấp đã biết hoặc tạo nhà cung cấp tùy chỉnh"
+
+#. js-lingui-id: E5eC82
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
+msgid "Select a member"
+msgstr ""
 
 #. js-lingui-id: KQtk7u
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInsertionPreview.tsx
@@ -27663,6 +27779,11 @@ msgstr "Chọn hàng tiêu đề"
 msgid "Select matching field"
 msgstr "Chọn trường khớp"
 
+#. js-lingui-id: 76TVV2
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
+msgid "Select members"
+msgstr ""
+
 #. js-lingui-id: ezY8Ut
 #: src/modules/ui/input/components/internal/date/components/DateTimePickerHeader.tsx
 msgid "Select month and year"
@@ -27692,6 +27813,11 @@ msgstr "Chọn người nhận"
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiRecordPicker.tsx
 msgid "Select records"
 msgstr "Chọn bản ghi"
+
+#. js-lingui-id: 1Ky5Mj
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
+msgid "Select roles"
+msgstr ""
 
 #. js-lingui-id: 9c44h0
 #: src/modules/object-core/components/CoreObjectTable.tsx
@@ -28163,6 +28289,7 @@ msgstr "Đang thiết lập <0>cơ sở dữ liệu</0> của bạn..."
 #. js-lingui-id: Tz0i8g
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/command-menu-item/utils/getCommandMenuItemSubtitle.ts
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
@@ -28352,6 +28479,8 @@ msgid "Should changing the label also change the API name?"
 msgstr "Việc thay đổi nhãn có nên thay đổi cả tên API không?"
 
 #. js-lingui-id: 8vETh9
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 #: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
 msgid "Show"
 msgstr "Hiển thị"
@@ -28468,11 +28597,6 @@ msgstr "Hiển thị trên"
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Show only rows with errors"
 msgstr "Chỉ hiển thị các hàng có lỗi"
-
-#. js-lingui-id: 9u2I/P
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
-msgstr "Hiển thị trang Bắt đầu và thẻ thanh bên, đồng thời mở trang này khi vào trang đích trong thời gian dùng thử."
 
 #. js-lingui-id: fTPKt5
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -28724,7 +28848,6 @@ msgstr "Bỏ qua đối tượng liên kết (tương tự quan hệ nhiều-nhi
 
 #. js-lingui-id: 9NyAH9
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
 msgid "Skipped"
 msgstr "Bị bỏ qua"
@@ -30111,11 +30234,6 @@ msgstr "Đồng đội"
 msgid "Teammates see who you talk to, not what you write."
 msgstr "Đồng đội thấy người bạn trò chuyện cùng, không thấy nội dung bạn viết."
 
-#. js-lingui-id: XpPpz7
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
-msgid "Tell the agent what to change"
-msgstr "Cho tác nhân biết cần thay đổi điều gì"
-
 #. js-lingui-id: lKXcJz
 #: src/modules/settings/emailing-domains/utils/getEmailingDomainStatusDisplay.ts
 msgid "Temporary Failure"
@@ -31264,6 +31382,11 @@ msgstr "Bản ghi này sẽ bị xóa:"
 msgid "This role is assigned to these {roleTargetDisplayName}."
 msgstr "Vai trò này được chỉ định cho {roleTargetDisplayName} này."
 
+#. js-lingui-id: 0bjsKH
+#: src/modules/side-panel/pages/page-layout/components/WidgetVisibilitySettings.tsx
+msgid "This rule cannot be edited here. Select Everyone to remove it."
+msgstr ""
+
 #. js-lingui-id: 9IqK24
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "This rule is disabled. Records are not checked against it."
@@ -32125,6 +32248,11 @@ msgstr "Tiếng Thổ Nhĩ Kỳ"
 msgid "Turn into"
 msgstr "Chuyển thành"
 
+#. js-lingui-id: rjkNOe
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Turn on for a workspace that reported broken links, merges or deletes. Gives the Admin role back its write access to messages and calendar events, without letting it see more of them."
+msgstr "Bật cho không gian làm việc đã báo cáo các liên kết bị hỏng, thao tác hợp nhất hoặc xóa. Trả lại cho vai trò Quản trị viên quyền ghi vào tin nhắn và sự kiện lịch mà không cho phép vai trò này xem nhiều hơn."
+
 #. js-lingui-id: Njwcqh
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Turn on notifications"
@@ -32570,6 +32698,11 @@ msgstr "Trường không xác định \"{fieldName}\" trên \"{relationFieldName
 #: src/modules/chat/components/ChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "Tệp không xác định"
+
+#. js-lingui-id: rIOkYf
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
+msgid "Unknown member"
+msgstr ""
 
 #. js-lingui-id: num3KD
 #: src/modules/mention/components/MentionRecordChip.tsx
@@ -33985,6 +34118,8 @@ msgstr "Tím"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 #: src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
+#: src/modules/side-panel/pages/page-layout/components/WidgetVisibilitySettingItem.tsx
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
 msgid "Visibility"
@@ -34050,6 +34185,7 @@ msgid "Wait for Event"
 msgstr "Chờ sự kiện"
 
 #. js-lingui-id: 3wIkaN
+#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 #: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Hãy chờ tệp đính kèm tải lên hoàn tất."
@@ -34575,6 +34711,7 @@ msgid "When your trial ends, you will be charged {priceLabel}."
 msgstr "Khi thời gian dùng thử của bạn kết thúc, bạn sẽ bị tính phí {priceLabel}."
 
 #. js-lingui-id: YvwwqC
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterLogicalOperatorCell.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorCell.tsx
 #: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelLogicalOperatorCell.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterLogicalOperatorCell.tsx
@@ -35012,6 +35149,8 @@ msgid "Workspace logo upload failed"
 msgstr "Tải lên logo không gian làm việc thất bại"
 
 #. js-lingui-id: CbGxon
+#: src/modules/conditional-availability/filter-builder/components/__stories__/ConditionalAvailabilityFilterBuilder.stories.tsx
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterFields.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableRow.tsx
 msgid "Workspace member"

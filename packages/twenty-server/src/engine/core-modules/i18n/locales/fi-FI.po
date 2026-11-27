@@ -809,6 +809,18 @@ msgstr "Näkymäryhmässä tapahtui virhe."
 msgid "A view sort error occurred."
 msgstr "Näkymän lajittelussa tapahtui virhe."
 
+#. js-lingui-id: r0+ZZA
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A visibleItemLimit is only allowed on SECTION type"
+msgstr "visibleItemLimit on sallittu vain SECTION-tyypissä"
+
+#. js-lingui-id: +DI2pX
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A visibleItemLimit must be an integer between {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN} and {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX}"
+msgstr "visibleItemLimit-arvon on oltava kokonaisluku välillä {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN} ja {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX}"
+
 #. js-lingui-id: SMhyGZ
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "A webhook with this configuration already exists."
@@ -6626,11 +6638,11 @@ msgctxt "commandMenuItem.label"
 msgid "Go to {objectLabelPlural}"
 msgstr "Siirry kohtaan {objectLabelPlural}"
 
-#. js-lingui-id: tKVJbL
+#. js-lingui-id: RQG1+p
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Admin Panel Settings"
-msgstr "Siirry järjestelmänvalvojan paneelin asetuksiin"
+msgid "Go to Admin Panel"
+msgstr "Siirry hallintapaneeliin"
 
 #. js-lingui-id: zPVvLp
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6638,11 +6650,17 @@ msgctxt "commandMenuItem.label"
 msgid "Go to Agents"
 msgstr "Siirry agentteihin"
 
-#. js-lingui-id: iLqs3S
+#. js-lingui-id: EiL/A6
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to AI Settings"
-msgstr "Siirry tekoälyn asetuksiin"
+msgid "Go to AI"
+msgstr "Siirry tekoälyyn"
+
+#. js-lingui-id: OVO+nS
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Go to Apps"
+msgstr "Siirry sovelluksiin"
 
 #. js-lingui-id: TndVqR
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6650,71 +6668,65 @@ msgctxt "commandMenuItem.label"
 msgid "Go to Apps preferences"
 msgstr "Siirry sovellusten asetuksiin"
 
-#. js-lingui-id: 60o/+J
+#. js-lingui-id: zsFm1q
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Apps Settings"
-msgstr "Siirry sovellusten asetuksiin"
+msgid "Go to Billing"
+msgstr "Siirry laskutukseen"
 
-#. js-lingui-id: tlIbgN
+#. js-lingui-id: xk8nZG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Billing Settings"
-msgstr "Siirry laskutusasetuksiin"
+msgid "Go to Community"
+msgstr "Siirry yhteisöön"
 
-#. js-lingui-id: u5u/QJ
+#. js-lingui-id: TMv4vU
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Community Settings"
-msgstr "Siirry yhteisön asetuksiin"
+msgid "Go to Data Model"
+msgstr "Siirry tietomalliin"
 
-#. js-lingui-id: dZPXqH
+#. js-lingui-id: nvVoDQ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Data Model Settings"
-msgstr "Siirry tietomallin asetuksiin"
+msgid "Go to Developers"
+msgstr "Siirry kehittäjiin"
 
-#. js-lingui-id: SNbGsK
+#. js-lingui-id: YTMzOA
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Developers Settings"
-msgstr "Siirry kehittäjäasetuksiin"
+msgid "Go to Domains"
+msgstr "Siirry verkkotunnuksiin"
 
-#. js-lingui-id: OLopIl
+#. js-lingui-id: 8V43iD
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Domains Settings"
-msgstr "Siirry toimialueasetuksiin"
+msgid "Go to Experience"
+msgstr "Siirry kokemukseen"
 
-#. js-lingui-id: 46ZD9h
+#. js-lingui-id: YA1mxo
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Experience Settings"
-msgstr "Siirry käyttökokemuksen asetuksiin"
-
-#. js-lingui-id: gfZlPy
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to General Settings"
+msgid "Go to General"
 msgstr "Siirry yleisiin asetuksiin"
 
-#. js-lingui-id: vPl+B/
+#. js-lingui-id: bSctn/
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Members Settings"
-msgstr "Siirry jäsenasetuksiin"
+msgid "Go to Members"
+msgstr "Siirry jäseniin"
 
-#. js-lingui-id: qN3wNQ
+#. js-lingui-id: F15zBM
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Roles Settings"
-msgstr "Siirry rooliasetuksiin"
+msgid "Go to Roles"
+msgstr "Siirry rooleihin"
 
-#. js-lingui-id: xAAHTC
+#. js-lingui-id: R1fbZB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Security Settings"
-msgstr "Siirry suojausasetuksiin"
+msgid "Go to Security"
+msgstr "Siirry tietoturvaan"
 
 #. js-lingui-id: Rrvufq
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -15518,6 +15530,11 @@ msgstr "Tämä verkkotunnus on jo rekisteröity."
 msgid "This domain is already taken."
 msgstr "Tämä verkkotunnus on jo varattu."
 
+#. js-lingui-id: IBjn2S
+#: src/engine/core-modules/public-domain/public-domain.exception.ts
+msgid "This domain is used by Twenty itself and cannot be a public domain."
+msgstr ""
+
 #. js-lingui-id: Ukfndw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This draft is being updated. Try again."
@@ -16074,11 +16091,6 @@ msgstr "Tämä käyttäjä on jo työtilan jäsen."
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
 msgid "This user is not a member of the workspace."
 msgstr "Tämä käyttäjä ei ole työtilan jäsen."
-
-#. js-lingui-id: BFSoo/
-#: src/engine/metadata-modules/validation-rule/validation-rule.service.ts
-msgid "This validation rule is being upgraded. Try again in a few minutes."
-msgstr "Tätä validointisääntöä päivitetään. Yritä uudelleen muutaman minuutin kuluttua."
 
 #. js-lingui-id: LtsBYU
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts

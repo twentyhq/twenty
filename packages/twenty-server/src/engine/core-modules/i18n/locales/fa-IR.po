@@ -809,6 +809,18 @@ msgstr "خطای گروه نما رخ داد."
 msgid "A view sort error occurred."
 msgstr "خطای مرتب‌سازی نما رخ داد."
 
+#. js-lingui-id: r0+ZZA
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A visibleItemLimit is only allowed on SECTION type"
+msgstr "visibleItemLimit فقط برای نوع SECTION مجاز است"
+
+#. js-lingui-id: +DI2pX
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A visibleItemLimit must be an integer between {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN} and {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX}"
+msgstr "visibleItemLimit باید یک عدد صحیح بین {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN} و {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX} باشد"
+
 #. js-lingui-id: SMhyGZ
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "A webhook with this configuration already exists."
@@ -6626,11 +6638,11 @@ msgctxt "commandMenuItem.label"
 msgid "Go to {objectLabelPlural}"
 msgstr "رفتن به {objectLabelPlural}"
 
-#. js-lingui-id: tKVJbL
+#. js-lingui-id: RQG1+p
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Admin Panel Settings"
-msgstr "رفتن به تنظیمات پنل مدیریت"
+msgid "Go to Admin Panel"
+msgstr "رفتن به پنل مدیریت"
 
 #. js-lingui-id: zPVvLp
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6638,11 +6650,17 @@ msgctxt "commandMenuItem.label"
 msgid "Go to Agents"
 msgstr "رفتن به عامل‌ها"
 
-#. js-lingui-id: iLqs3S
+#. js-lingui-id: EiL/A6
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to AI Settings"
-msgstr "رفتن به تنظیمات هوش مصنوعی"
+msgid "Go to AI"
+msgstr "رفتن به هوش مصنوعی"
+
+#. js-lingui-id: OVO+nS
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Go to Apps"
+msgstr "رفتن به برنامه‌ها"
 
 #. js-lingui-id: TndVqR
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6650,71 +6668,65 @@ msgctxt "commandMenuItem.label"
 msgid "Go to Apps preferences"
 msgstr "رفتن به تنظیمات برنامه‌ها"
 
-#. js-lingui-id: 60o/+J
+#. js-lingui-id: zsFm1q
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Apps Settings"
-msgstr "رفتن به تنظیمات برنامه‌ها"
+msgid "Go to Billing"
+msgstr "رفتن به صورتحساب"
 
-#. js-lingui-id: tlIbgN
+#. js-lingui-id: xk8nZG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Billing Settings"
-msgstr "رفتن به تنظیمات صورت‌حساب"
+msgid "Go to Community"
+msgstr "رفتن به انجمن"
 
-#. js-lingui-id: u5u/QJ
+#. js-lingui-id: TMv4vU
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Community Settings"
-msgstr "رفتن به تنظیمات جامعه"
+msgid "Go to Data Model"
+msgstr "رفتن به مدل داده"
 
-#. js-lingui-id: dZPXqH
+#. js-lingui-id: nvVoDQ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Data Model Settings"
-msgstr "رفتن به تنظیمات مدل داده"
+msgid "Go to Developers"
+msgstr "رفتن به توسعه‌دهندگان"
 
-#. js-lingui-id: SNbGsK
+#. js-lingui-id: YTMzOA
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Developers Settings"
-msgstr "رفتن به تنظیمات توسعه‌دهندگان"
+msgid "Go to Domains"
+msgstr "رفتن به دامنه‌ها"
 
-#. js-lingui-id: OLopIl
+#. js-lingui-id: 8V43iD
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Domains Settings"
-msgstr "رفتن به تنظیمات دامنه‌ها"
+msgid "Go to Experience"
+msgstr "رفتن به تجربه"
 
-#. js-lingui-id: 46ZD9h
+#. js-lingui-id: YA1mxo
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Experience Settings"
-msgstr "رفتن به تنظیمات تجربه"
+msgid "Go to General"
+msgstr "رفتن به عمومی"
 
-#. js-lingui-id: gfZlPy
+#. js-lingui-id: bSctn/
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to General Settings"
-msgstr "رفتن به تنظیمات عمومی"
+msgid "Go to Members"
+msgstr "رفتن به اعضا"
 
-#. js-lingui-id: vPl+B/
+#. js-lingui-id: F15zBM
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Members Settings"
-msgstr "رفتن به تنظیمات اعضا"
+msgid "Go to Roles"
+msgstr "رفتن به نقش‌ها"
 
-#. js-lingui-id: qN3wNQ
+#. js-lingui-id: R1fbZB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Roles Settings"
-msgstr "رفتن به تنظیمات نقش‌ها"
-
-#. js-lingui-id: xAAHTC
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Security Settings"
-msgstr "رفتن به تنظیمات امنیت"
+msgid "Go to Security"
+msgstr "رفتن به امنیت"
 
 #. js-lingui-id: Rrvufq
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -15518,6 +15530,11 @@ msgstr "این دامنه از قبل ثبت شده است."
 msgid "This domain is already taken."
 msgstr "این دامنه از قبل گرفته شده است."
 
+#. js-lingui-id: IBjn2S
+#: src/engine/core-modules/public-domain/public-domain.exception.ts
+msgid "This domain is used by Twenty itself and cannot be a public domain."
+msgstr ""
+
 #. js-lingui-id: Ukfndw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This draft is being updated. Try again."
@@ -16074,11 +16091,6 @@ msgstr "این کاربر از قبل عضو فضای کاری است."
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
 msgid "This user is not a member of the workspace."
 msgstr "این کاربر عضو فضای کاری نیست."
-
-#. js-lingui-id: BFSoo/
-#: src/engine/metadata-modules/validation-rule/validation-rule.service.ts
-msgid "This validation rule is being upgraded. Try again in a few minutes."
-msgstr "این قانون اعتبارسنجی در حال ارتقا است. چند دقیقه دیگر دوباره تلاش کنید."
 
 #. js-lingui-id: LtsBYU
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts

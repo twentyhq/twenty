@@ -809,6 +809,18 @@ msgstr "Det oppstod en feil i visningsgruppen."
 msgid "A view sort error occurred."
 msgstr "Det oppstod en feil i visningssorteringen."
 
+#. js-lingui-id: r0+ZZA
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A visibleItemLimit is only allowed on SECTION type"
+msgstr "En visibleItemLimit er bare tillatt for typen SECTION"
+
+#. js-lingui-id: +DI2pX
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A visibleItemLimit must be an integer between {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN} and {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX}"
+msgstr "En visibleItemLimit må være et heltall mellom {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN} og {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX}"
+
 #. js-lingui-id: SMhyGZ
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "A webhook with this configuration already exists."
@@ -6626,11 +6638,11 @@ msgctxt "commandMenuItem.label"
 msgid "Go to {objectLabelPlural}"
 msgstr "Gå til {objectLabelPlural}"
 
-#. js-lingui-id: tKVJbL
+#. js-lingui-id: RQG1+p
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Admin Panel Settings"
-msgstr "Gå til innstillinger for administrasjonspanel"
+msgid "Go to Admin Panel"
+msgstr "Gå til administrasjonspanelet"
 
 #. js-lingui-id: zPVvLp
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6638,11 +6650,17 @@ msgctxt "commandMenuItem.label"
 msgid "Go to Agents"
 msgstr "Gå til agenter"
 
-#. js-lingui-id: iLqs3S
+#. js-lingui-id: EiL/A6
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to AI Settings"
-msgstr "Gå til KI-innstillinger"
+msgid "Go to AI"
+msgstr "Gå til AI"
+
+#. js-lingui-id: OVO+nS
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Go to Apps"
+msgstr "Gå til apper"
 
 #. js-lingui-id: TndVqR
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6650,71 +6668,65 @@ msgctxt "commandMenuItem.label"
 msgid "Go to Apps preferences"
 msgstr "Gå til appinnstillinger"
 
-#. js-lingui-id: 60o/+J
+#. js-lingui-id: zsFm1q
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Apps Settings"
-msgstr "Gå til appinnstillinger"
+msgid "Go to Billing"
+msgstr "Gå til fakturering"
 
-#. js-lingui-id: tlIbgN
+#. js-lingui-id: xk8nZG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Billing Settings"
-msgstr "Gå til faktureringsinnstillinger"
+msgid "Go to Community"
+msgstr "Gå til fellesskapet"
 
-#. js-lingui-id: u5u/QJ
+#. js-lingui-id: TMv4vU
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Community Settings"
-msgstr "Gå til fellesskapsinnstillinger"
+msgid "Go to Data Model"
+msgstr "Gå til datamodell"
 
-#. js-lingui-id: dZPXqH
+#. js-lingui-id: nvVoDQ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Data Model Settings"
-msgstr "Gå til innstillinger for datamodell"
+msgid "Go to Developers"
+msgstr "Gå til utviklere"
 
-#. js-lingui-id: SNbGsK
+#. js-lingui-id: YTMzOA
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Developers Settings"
-msgstr "Gå til utviklerinnstillinger"
+msgid "Go to Domains"
+msgstr "Gå til domener"
 
-#. js-lingui-id: OLopIl
+#. js-lingui-id: 8V43iD
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Domains Settings"
-msgstr "Gå til domeneinnstillinger"
+msgid "Go to Experience"
+msgstr "Gå til erfaring"
 
-#. js-lingui-id: 46ZD9h
+#. js-lingui-id: YA1mxo
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Experience Settings"
-msgstr "Gå til opplevelsesinnstillinger"
+msgid "Go to General"
+msgstr "Gå til generelt"
 
-#. js-lingui-id: gfZlPy
+#. js-lingui-id: bSctn/
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to General Settings"
-msgstr "Gå til generelle innstillinger"
+msgid "Go to Members"
+msgstr "Gå til medlemmer"
 
-#. js-lingui-id: vPl+B/
+#. js-lingui-id: F15zBM
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Members Settings"
-msgstr "Gå til medlemsinnstillinger"
+msgid "Go to Roles"
+msgstr "Gå til roller"
 
-#. js-lingui-id: qN3wNQ
+#. js-lingui-id: R1fbZB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Roles Settings"
-msgstr "Gå til rolleinnstillinger"
-
-#. js-lingui-id: xAAHTC
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Security Settings"
-msgstr "Gå til sikkerhetsinnstillinger"
+msgid "Go to Security"
+msgstr "Gå til sikkerhet"
 
 #. js-lingui-id: Rrvufq
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -15518,6 +15530,11 @@ msgstr "Dette domenet er allerede registrert."
 msgid "This domain is already taken."
 msgstr "Dette domenet er allerede tatt."
 
+#. js-lingui-id: IBjn2S
+#: src/engine/core-modules/public-domain/public-domain.exception.ts
+msgid "This domain is used by Twenty itself and cannot be a public domain."
+msgstr ""
+
 #. js-lingui-id: Ukfndw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This draft is being updated. Try again."
@@ -16074,11 +16091,6 @@ msgstr "Denne brukeren er allerede medlem av arbeidsområdet."
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
 msgid "This user is not a member of the workspace."
 msgstr "Denne brukeren er ikke medlem av arbeidsområdet."
-
-#. js-lingui-id: BFSoo/
-#: src/engine/metadata-modules/validation-rule/validation-rule.service.ts
-msgid "This validation rule is being upgraded. Try again in a few minutes."
-msgstr "Denne valideringsregelen oppgraderes. Prøv igjen om noen minutter."
 
 #. js-lingui-id: LtsBYU
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts

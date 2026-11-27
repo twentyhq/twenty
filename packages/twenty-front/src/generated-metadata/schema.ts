@@ -1060,7 +1060,8 @@ export type AuthToken = {
 export type AuthTokenPair = {
   __typename?: 'AuthTokenPair';
   accessOrWorkspaceAgnosticToken: AuthToken;
-  refreshToken: AuthToken;
+  /** @deprecated Always null. Will be removed. */
+  refreshToken?: Maybe<AuthToken>;
 };
 
 export type AuthTokens = {
@@ -1631,7 +1632,6 @@ export type ClientConfig = {
   enterpriseInstanceType: Scalars['String']['output'];
   frontDomain: Scalars['String']['output'];
   isAttachmentPreviewEnabled: Scalars['Boolean']['output'];
-  isBookCallOnboardingStepEnabled: Scalars['Boolean']['output'];
   isClickHouseConfigured: Scalars['Boolean']['output'];
   isCloudflareIntegrationEnabled: Scalars['Boolean']['output'];
   isCompanyEnrichmentEnabled: Scalars['Boolean']['output'];
@@ -1989,6 +1989,7 @@ export type CreateNavigationMenuItemInput = {
   type: NavigationMenuItemType;
   userWorkspaceId?: InputMaybe<Scalars['UUID']['input']>;
   viewId?: InputMaybe<Scalars['UUID']['input']>;
+  visibleItemLimit?: InputMaybe<Scalars['Int']['input']>;
   workflowId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
@@ -2694,6 +2695,7 @@ export type FeatureFlag = {
 };
 
 export enum FeatureFlagKey {
+  IS_ADMIN_CHANNEL_WRITE_ACCESS_RESTORED = 'IS_ADMIN_CHANNEL_WRITE_ACCESS_RESTORED',
   IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED = 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED',
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED = 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED',
   IS_AI_CHAT_INBOX_ENABLED = 'IS_AI_CHAT_INBOX_ENABLED',
@@ -2702,7 +2704,6 @@ export enum FeatureFlagKey {
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_CUSTOMIZABLE_SIDEBAR_ENABLED = 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED',
   IS_FORMULA_FIELD_ENABLED = 'IS_FORMULA_FIELD_ENABLED',
-  IS_GETTING_STARTED_ENABLED = 'IS_GETTING_STARTED_ENABLED',
   IS_INBOX_OBJECT_NAMING_ENABLED = 'IS_INBOX_OBJECT_NAMING_ENABLED',
   IS_INTERNAL_IMPORT_COLUMN_ENABLED = 'IS_INTERNAL_IMPORT_COLUMN_ENABLED',
   IS_LOOKUP_COLUMNS_ENABLED = 'IS_LOOKUP_COLUMNS_ENABLED',
@@ -2936,6 +2937,7 @@ export type FormFieldConfiguration = {
 
 export type FrontComponent = {
   __typename?: 'FrontComponent';
+  applicationFunctionsBaseUrl?: Maybe<Scalars['String']['output']>;
   applicationGrantedCapabilities?: Maybe<Array<Scalars['String']['output']>>;
   applicationGrantedIframeMediaPermissions?: Maybe<Array<IframeMediaPermission>>;
   applicationId: Scalars['UUID']['output'];
@@ -3806,7 +3808,6 @@ export type Mutation = {
   claimApplicationRegistrationOwnership: ApplicationRegistration;
   completeAppTarballUpload: ApplicationRegistration;
   completeApplicationFileUploads: CompleteApplicationFileUploadsResult;
-  completeBookCallOnboardingStep: OnboardingStepSuccess;
   completeFileUpload: FileWithSignedUrl;
   completeNewWorkspaceLogoUpload: FileWithSignedUrl;
   completeWorkspaceLogoUpload: FileWithSignedUrl;
@@ -3960,6 +3961,7 @@ export type Mutation = {
   removeRecordShare: RecordSharingDto;
   removeRoleFromAgent: Scalars['Boolean']['output'];
   renewApplicationToken: ApplicationTokenPair;
+  /** @deprecated Refresh tokens are no longer issued; this is removed once the last one expires. */
   renewToken: AuthTokens;
   reopenAgentChatThreadInChannel: Scalars['Boolean']['output'];
   reportAppConnectionAuthFailure: Scalars['Boolean']['output'];
@@ -4210,12 +4212,6 @@ export type MutationCompleteAppTarballUploadArgs = {
 export type MutationCompleteApplicationFileUploadsArgs = {
   applicationUniversalIdentifier: Scalars['String']['input'];
   fileIds: Array<Scalars['UUID']['input']>;
-};
-
-
-export type MutationCompleteBookCallOnboardingStepArgs = {
-  hasBookedCall?: Scalars['Boolean']['input'];
-  isAutoSkipped?: Scalars['Boolean']['input'];
 };
 
 
@@ -5160,11 +5156,6 @@ export type MutationSignInArgs = {
 };
 
 
-export type MutationSignOutArgs = {
-  refreshToken?: InputMaybe<Scalars['String']['input']>;
-};
-
-
 export type MutationSignUpArgs = {
   affiliatePartnerName?: InputMaybe<Scalars['String']['input']>;
   captchaToken?: InputMaybe<Scalars['String']['input']>;
@@ -5724,6 +5715,7 @@ export type NavigationMenuItem = {
   updatedAt: Scalars['DateTime']['output'];
   userWorkspaceId?: Maybe<Scalars['UUID']['output']>;
   viewId?: Maybe<Scalars['UUID']['output']>;
+  visibleItemLimit?: Maybe<Scalars['Int']['output']>;
   workflowId?: Maybe<Scalars['UUID']['output']>;
 };
 
@@ -5938,7 +5930,6 @@ export type ObjectRecordsPermissions = {
 
 /** Onboarding status */
 export enum OnboardingStatus {
-  BOOK_CALL = 'BOOK_CALL',
   COMPLETED = 'COMPLETED',
   INVITE_TEAM = 'INVITE_TEAM',
   PLAN_REQUIRED = 'PLAN_REQUIRED',
@@ -7173,6 +7164,7 @@ export type Role = {
   agents: Array<Agent>;
   apiKeys: Array<ApiKeyForRole>;
   applicationId: Scalars['UUID']['output'];
+  areRecordPermissionsEditable: Scalars['Boolean']['output'];
   canAccessAllAgentChatChannels: Scalars['Boolean']['output'];
   canAccessAllTools: Scalars['Boolean']['output'];
   canBeAssignedToAgents: Scalars['Boolean']['output'];
@@ -7489,7 +7481,7 @@ export type SendInboxMessageInput = {
   text: Scalars['String']['input'];
   threadKey: Scalars['String']['input'];
   title: Scalars['String']['input'];
-  toolCall?: InputMaybe<Scalars['JSON']['input']>;
+  toolCalls?: InputMaybe<Array<Scalars['JSON']['input']>>;
   workspaceMemberIds: Array<Scalars['UUID']['input']>;
 };
 
@@ -8139,6 +8131,7 @@ export type UpdateNavigationMenuItemInput = {
   pageLayoutId?: InputMaybe<Scalars['UUID']['input']>;
   parentId?: InputMaybe<Scalars['UUID']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
+  visibleItemLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UpdateObjectPayload = {
@@ -9406,7 +9399,6 @@ export enum WorkspaceCompanyEnrichmentOutcome {
 export type WorkspaceCompanyEnrichmentResult = {
   __typename?: 'WorkspaceCompanyEnrichmentResult';
   enrichment?: Maybe<Scalars['JSON']['output']>;
-  isBookCallOnboardingStepPending: Scalars['Boolean']['output'];
   outcome: WorkspaceCompanyEnrichmentOutcome;
   personEnrichment?: Maybe<Scalars['JSON']['output']>;
   personOutcome: WorkspacePersonEnrichmentOutcome;

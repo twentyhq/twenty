@@ -9,7 +9,6 @@ import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/
 import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { SsoExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
@@ -107,10 +106,6 @@ describe('AuthResolver', () => {
             joinWorkspaceIfInvited: jest.fn(),
             signInUp: jest.fn(),
           },
-        },
-        {
-          provide: RefreshTokenService,
-          useValue: {},
         },
         {
           provide: UserService,

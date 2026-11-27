@@ -4,6 +4,7 @@ import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import {
@@ -20,6 +21,7 @@ type UseRuleConditionSyncToDraftRoleProps = {
   currentRecordFilters: RecordFilter[];
   currentRecordFilterGroups: RecordFilterGroup[];
   hasInitialized: boolean;
+  filterableFieldMetadataItems: FieldMetadataItem[];
 };
 
 export const useRuleConditionSyncToDraftRole = ({
@@ -29,6 +31,7 @@ export const useRuleConditionSyncToDraftRole = ({
   currentRecordFilters,
   currentRecordFilterGroups,
   hasInitialized,
+  filterableFieldMetadataItems,
 }: UseRuleConditionSyncToDraftRoleProps) => {
   const setSettingsDraftRole = useSetAtomFamilyState(
     settingsDraftRoleFamilyState,
@@ -42,7 +45,11 @@ export const useRuleConditionSyncToDraftRole = ({
       ).filter(
         (predicate) =>
           predicate.rowLevelPermissionRuleId !== rowLevelPermissionRuleId ||
-          isDefined(predicate.relationFieldMetadataId),
+          isDefined(predicate.relationFieldMetadataId) ||
+          !filterableFieldMetadataItems.some(
+            (fieldMetadataItem) =>
+              fieldMetadataItem.id === predicate.fieldMetadataId,
+          ),
       );
 
       const otherRuleGroups = (
@@ -91,6 +98,7 @@ export const useRuleConditionSyncToDraftRole = ({
   }, [
     currentRecordFilters,
     currentRecordFilterGroups,
+    filterableFieldMetadataItems,
     objectMetadataItem.id,
     roleId,
     rowLevelPermissionRuleId,

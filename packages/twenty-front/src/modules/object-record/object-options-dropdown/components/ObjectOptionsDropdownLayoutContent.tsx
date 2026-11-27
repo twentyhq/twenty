@@ -2,6 +2,7 @@ import { ListItemButton } from 'twenty-ui/components/navigation';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useSetViewTypeFromLayoutOptionsMenu } from '@/object-record/object-options-dropdown/hooks/useSetViewTypeFromLayoutOptionsMenu';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
+import { recordIndexListPinnedFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexListPinnedFieldMetadataIdComponentState';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
@@ -36,6 +37,7 @@ import {
   IconCalendarWeek,
   IconChevronLeft,
   IconLayoutList,
+  IconPin,
   IconTable,
 } from 'twenty-ui/icon';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
@@ -68,6 +70,14 @@ export const ObjectOptionsDropdownLayoutContent = () => {
   );
   const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
+  );
+
+  const recordIndexListPinnedFieldMetadataId = useAtomComponentStateValue(
+    recordIndexListPinnedFieldMetadataIdComponentState,
+  );
+
+  const listPinnedFieldMetadataItem = objectMetadataItem.fields.find(
+    (field) => field.id === recordIndexListPinnedFieldMetadataId,
   );
 
   const calendarFieldMetadata = currentView?.calendarFieldMetadataId
@@ -112,8 +122,8 @@ export const ObjectOptionsDropdownLayoutContent = () => {
   };
 
   const isDefaultView = currentView?.key === 'INDEX';
-  const hasViewTypeSettings =
-    currentView?.type !== ViewType.TABLE && currentView?.type !== ViewType.LIST;
+  const isListView = currentView?.type === ViewType.LIST;
+  const hasViewTypeSettings = currentView?.type !== ViewType.TABLE;
   const nbsp = '\u00A0';
 
   const selectableItemIdArray = [
@@ -125,7 +135,8 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     ...(currentView?.type === ViewType.CALENDAR
       ? ['CalendarView', 'CalendarDateField']
       : []),
-    ...(hasViewTypeSettings
+    ...(isListView ? ['ListPinnedField'] : []),
+    ...(hasViewTypeSettings && !isListView
       ? // Selectable list ids must match their stable item ids.
         [doNotTranslate('Compact view')]
       : []),
@@ -325,27 +336,46 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                     >{t`Group`}</ListItemButton>
                   </SelectableListItem>
                 )}
-                <SelectableListItem
-                  itemId="Compact view"
-                  onEnter={() => {
-                    setAndPersistIsCompactModeActive(
-                      !isCompactModeActive,
-                      currentView,
-                    );
-                  }}
-                >
-                  <SettingsRow
-                    focused={selectedItemId === 'Compact view'}
-                    startElement={<IconBaselineDensitySmall />}
-                    onCheckedChange={() =>
+                {isListView && (
+                  <SelectableListItem
+                    itemId="ListPinnedField"
+                    onEnter={() => onContentChange('listPinnedField')}
+                  >
+                    <ListItemButton
+                      focused={selectedItemId === 'ListPinnedField'}
+                      onClick={() => onContentChange('listPinnedField')}
+                      startIcon={<IconPin />}
+                      description={
+                        listPinnedFieldMetadataItem?.label ?? t`None`
+                      }
+                      descriptionPlacement="end"
+                      hasSubmenu
+                    >{t`Pinned field`}</ListItemButton>
+                  </SelectableListItem>
+                )}
+                {!isListView && (
+                  <SelectableListItem
+                    itemId="Compact view"
+                    onEnter={() => {
                       setAndPersistIsCompactModeActive(
                         !isCompactModeActive,
                         currentView,
-                      )
-                    }
-                    checked={isCompactModeActive}
-                  >{t`Compact view`}</SettingsRow>
-                </SelectableListItem>
+                      );
+                    }}
+                  >
+                    <SettingsRow
+                      focused={selectedItemId === 'Compact view'}
+                      startElement={<IconBaselineDensitySmall />}
+                      onCheckedChange={() =>
+                        setAndPersistIsCompactModeActive(
+                          !isCompactModeActive,
+                          currentView,
+                        )
+                      }
+                      checked={isCompactModeActive}
+                    >{t`Compact view`}</SettingsRow>
+                  </SelectableListItem>
+                )}
               </DropdownMenuItemsContainer>
             </>
           )}

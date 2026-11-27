@@ -7,7 +7,7 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Panoramica
 
-La tua app può iniziare e continuare le conversazioni nella casella di posta dei membri del workspace, dove parlano anche con l'assistente di Twenty. Un messaggio può terminare su una domanda, un modulo o una modifica da approvare, che il membro risponde dalla chat prima della conversazione continua con l'assistente.
+La tua app può iniziare e continuare le conversazioni nella casella di posta dei membri del workspace, dove parlano anche con l'assistente di Twenty. Un messaggio può terminare con domande, moduli o modifiche da approvare, a cui il membro risponde dalla chat prima che la conversazione continui con l'assistente.
 
 Gli helper della posta in arrivo vengono esportati sia da `twenty-sdk/logic-function` che da `twenty-sdk/front-component`, quindi una esecuzione pianificata e un pulsante nella tua app postare allo stesso modo.
 
@@ -24,14 +24,16 @@ const { threadId } = await sendInboxMessage({
   idempotencyKey: 'first-call-recording',
   title: 'Your first call recording is ready',
   text: 'Your first call was recorded: **Weekly sync**.',
-  toolCall: {
-    toolName: 'ask_question',
-    input: {
-      header: 'Share',
-      question: 'Do you want to share it with the other attendees?',
-      options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
+  toolCalls: [
+    {
+      toolName: 'ask_question',
+      input: {
+        header: 'Share',
+        question: 'Do you want to share it with the other attendees?',
+        options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
+      },
     },
-  },
+  ],
 });
 ```
 
@@ -41,12 +43,57 @@ Punti chiave:
 * `threadKey` sceglie la conversazione per questa app, condivisa da ogni membro a cui viene inviata. Una nuova chiave avvia una conversazione intitolata `titolo`; una chiave usata prima di aggiungere il messaggio a quella conversazione.
 * `idempotencyKey` identifica il messaggio all'interno della conversazione. Invio di nuovo con le stesse chiavi non scrive nulla di nuovo, quindi riprova e simultaneo non duplica mai un messaggio.
 * `text` è markdown, e può portare [menzioni e riferimenti di record](#mentions-and-record-references). Un membro menzionato riceve una notifica, anche quando non è presente in `workspaceMemberIds`.
-* `toolCall` (opzionale) termina il messaggio su uno di:
+* `toolCalls` (facoltativo) termina il messaggio con [una o più azioni](#several-actions-in-one-message), ciascuna delle quali è:
   * a call the member answers, which pauses the conversation: `ask_question` (one multiple choice question), `request_form` (fields to fill in) or `propose_tool_call` (call to approve). Il suo `input` prende il `toolName`, gli `arguments` con cui chiameresti lo strumento e un `summary` di una frase. Lo strumento deve essere uno che il ruolo predefinito della tua app potrebbe eseguire autonomamente, come `create_one_person` o `update_one_opportunity` (con l'`id` del record); un'email (`send_email` o `draft_email`, con `recipients`, `subject` e un `body` che ne indichi il formato: `{ type: 'html', html }` o `{ type: 'text', text }`; una stringa semplice viene rifiutata) non richiede alcuna autorizzazione della tua app. Il membro esamina la chiamata nella stessa carta di una chiamata che l'assistente propone, lo modifica se lo desiderano, e la chiamata approvata viene eseguita con il proprio accesso;
   * uno degli strumenti della tua app, da `logicFunctionUniversalIdentifier`, renderizzato dal suo componente frontale con `input` e `output` che passi. Non interrompe la conversazione.
-* Solo una chiamata le risposte del membro possono aspettare in una conversazione alla volta: inviarne un'altra prima che la risposta fallisca con `THREAD_AWAITING_ANSWER`. I messaggi semplici e le chiamate degli strumenti dell'app sono ancora accettati.
+* `toolCall` è deprecato e verrà rimosso: accetta una singola azione, come `toolCalls` con una voce. Usa `toolCalls` e non impostarli mai entrambi.
+* Una conversazione attende un messaggio alla volta: l'invio di un altro messaggio con una chiamata a cui il membro risponde, prima che abbia risposto a ogni chiamata di quello in attesa, non riesce con `THREAD_AWAITING_ANSWER`. I messaggi semplici e le chiamate degli strumenti dell'app sono ancora accettati.
 * Solo il membro che possiede una conversazione può eliminarla, e una conversazione cancellata è andata per ogni membro: non è ricreato, e nulla è aggiunto ad esso. Gli altri membri possono annullare l'iscrizione per toglierla dalla propria casella di posta.
 * Ogni membro deve avere il permesso `AI` e la chiamata fallisce senza scrivere il messaggio quando uno di loro non può avere la conversazione. Il [ruolo predefinito](/it/developers/extend/apps/config/roles) della tua app deve concedere `SystemPermissionFlag.AI`.
+
+### Più azioni in un messaggio
+
+`toolCalls` accetta fino a 10 chiamate, nell'ordine in cui il messaggio le mostra. Le chiamate a cui il membro risponde si accumulano come quelle che l'assistente propone in un'unica risposta: il membro approva, modifica o scarta ciascuna singolarmente e l'assistente riprende la conversazione dopo l'ultima risposta. Gli strumenti della tua app nell'elenco vengono visualizzati con il messaggio e non attendono nulla.
+
+```ts src/logic-functions/post-call-recap.ts
+import { sendInboxMessage } from 'twenty-sdk/logic-function';
+
+await sendInboxMessage({
+  workspaceMemberIds: [workspaceMemberId],
+  threadKey: `call-recap-${call.id}`,
+  idempotencyKey: `call-recap-${call.id}`,
+  title: `Recap of ${call.title}`,
+  text: call.summary,
+  toolCalls: [
+    {
+      logicFunctionUniversalIdentifier: CALL_RECORDING_TOOL_UNIVERSAL_IDENTIFIER,
+      input: { callRecordingId: call.id },
+    },
+    {
+      toolName: 'propose_tool_call',
+      input: {
+        toolName: 'send_email',
+        arguments: {
+          recipients: { to: attendeeEmails.join(', '), cc: '', bcc: '' },
+          subject: `Follow-up: ${call.title}`,
+          body: { type: 'text', text: followUpEmailText },
+        },
+        summary: 'Send the follow-up email to the attendees',
+      },
+    },
+    {
+      toolName: 'propose_tool_call',
+      input: {
+        toolName: 'update_one_opportunity',
+        arguments: { id: opportunity.id, stage: 'PROPOSAL' },
+        summary: 'Move the deal to proposal',
+      },
+    },
+  ],
+});
+```
+
+Un messaggio con più di 10 chiamate, o con entrambi `toolCall` e `toolCalls`, viene rifiutato senza scrivere nulla, così come un messaggio con una chiamata non valida.
 
 ### Chi invia il messaggio
 

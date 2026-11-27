@@ -1070,6 +1070,11 @@ msgstr "{label}, {statusLabel}"
 msgid "{label}, {unreadOpenThreadCount} unread"
 msgstr "{label}, {unreadOpenThreadCount} não lidas"
 
+#. js-lingui-id: B+e4L5
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
+msgid "{limit, plural, one {# item} other {# items}}"
+msgstr ""
+
 #. js-lingui-id: 1DrH/j
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{memberCount, plural, one {{memberCount} member} other {{memberCount} members}}"
@@ -2515,11 +2520,6 @@ msgstr "Adicionar canal de e-mail"
 msgid "Add embedded website"
 msgstr "Adicionar site incorporado"
 
-#. js-lingui-id: 6kC3KJ
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCardLayout.tsx
-msgid "Add feedback"
-msgstr "Adicionar feedback"
-
 #. js-lingui-id: Va3xJe
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderLabelIdentifierCellPlusButton.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -2551,6 +2551,8 @@ msgid "Add filter"
 msgstr "Adicionar filtro"
 
 #. js-lingui-id: +NDti1
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterAddFilterRuleSelect.tsx
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterAddFilterRuleSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
@@ -2604,6 +2606,11 @@ msgstr "Adicionar item depois"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 msgid "Add item before"
 msgstr "Adicionar item antes"
+
+#. js-lingui-id: /kLKYB
+#: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
+msgid "Add item to {targetSectionName}"
+msgstr "Adicionar item a {targetSectionName}"
 
 #. js-lingui-id: VzGJRl
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
@@ -2743,6 +2750,9 @@ msgid "Add row below"
 msgstr "Adicionar linha abaixo"
 
 #. js-lingui-id: O8tK4v
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterAddFilterRuleSelect.tsx
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterAddFilterRuleSelect.tsx
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterAddFilterRuleSelect.tsx
 #: src/modules/object-core/filters/components/CoreObjectFilterAddRuleButton.tsx
 #: src/modules/object-core/filters/components/CoreObjectFilterAddRuleButton.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
@@ -2756,6 +2766,7 @@ msgid "Add rule"
 msgstr "Adicionar regra"
 
 #. js-lingui-id: cLBcTT
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterAddFilterRuleSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
 msgid "Add rule group"
@@ -2764,6 +2775,7 @@ msgstr "Adicionar grupo de regras"
 #. js-lingui-id: RxFV0G
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+#: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Add section"
 msgstr "Adicionar seção"
 
@@ -3031,6 +3043,11 @@ msgstr "Administrador"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Admin & Member"
 msgstr "Administrador e membro"
+
+#. js-lingui-id: ZHWySn
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Admin channel write access"
+msgstr "Acesso de gravação ao canal do administrador"
 
 #. js-lingui-id: SsHJsm
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -3615,6 +3632,11 @@ msgstr "Todos os grupos"
 msgid "All it takes is their email."
 msgstr "Tudo o que precisamos é do e-mail da pessoa."
 
+#. js-lingui-id: J3EsIX
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
+msgid "All items"
+msgstr ""
+
 #. js-lingui-id: 623MHa
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "All lines"
@@ -4038,6 +4060,7 @@ msgid "and"
 msgstr "e"
 
 #. js-lingui-id: qVyNMm
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityLogicalOperatorLabel.ts
 #: src/modules/object-record/advanced-filter/constants/AdvancedFilterLogicalOperatorOptions.ts
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterLogicalOperatorCell.tsx
 msgid "And"
@@ -4915,6 +4938,8 @@ msgstr "Anexar arquivo"
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAttachFileButton.tsx
+#: src/modules/ai-chat/composer/components/AiChatAttachFileButton.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Attach files"
@@ -6169,6 +6194,7 @@ msgstr "Cancelado em"
 
 #. js-lingui-id: vv7kpg
 #: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 msgid "Cancelled"
 msgstr "Cancelado"
@@ -7111,6 +7137,11 @@ msgstr "Fechar página"
 msgid "Close preview"
 msgstr "Fechar visualização"
 
+#. js-lingui-id: QBOwbf
+#: src/modules/navigation/components/NavigationDrawerCloseSettingsButton.tsx
+msgid "Close settings"
+msgstr "Fechar configurações"
+
 #. js-lingui-id: saip/v
 #: src/modules/side-panel/components/SidePanelCloseButton.tsx
 msgid "Close side panel"
@@ -7239,6 +7270,11 @@ msgstr "Colapsar"
 #: src/modules/command-menu-item/display/components/CommandMenuItemCollapsibleSectionHeading.tsx
 msgid "Collapse {heading}"
 msgstr "Recolher {heading}"
+
+#. js-lingui-id: LeVkuA
+#: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
+msgid "Collapse all sections"
+msgstr "Recolher todas as seções"
 
 #. js-lingui-id: kBUgVh
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -9343,6 +9379,11 @@ msgstr "plano atual"
 msgid "Current subscription state and line items"
 msgstr "Status atual da assinatura e itens de cobrança"
 
+#. js-lingui-id: GvB/Ni
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterFieldSelect.tsx
+msgid "Current user"
+msgstr ""
+
 #. js-lingui-id: 6YzXhC
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Current value from server environment. Set a custom value to override."
@@ -9505,6 +9546,12 @@ msgstr "Provedores personalizados são gratuitos para até {0} assentos. Esta in
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Custom roles"
 msgstr "Funções personalizadas"
+
+#. js-lingui-id: cHOtZ9
+#: src/modules/side-panel/pages/page-layout/components/WidgetVisibilitySettingItem.tsx
+#: src/modules/side-panel/pages/page-layout/components/WidgetVisibilitySettings.tsx
+msgid "Custom rule"
+msgstr ""
 
 #. js-lingui-id: 2jzCZZ
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
@@ -10124,6 +10171,7 @@ msgstr "excluir"
 #: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorBlockHandleMenu.tsx
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterOptionsDropdown.tsx
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
@@ -10343,6 +10391,7 @@ msgid "Delete Folder"
 msgstr "Excluir pasta"
 
 #. js-lingui-id: k/RLDM
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterOptionsDropdown.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterGroupOptionsDropdown.tsx
 msgid "Delete group"
 msgstr "Excluir grupo"
@@ -10586,6 +10635,7 @@ msgid "Deleted record"
 msgstr "Registro excluído"
 
 #. js-lingui-id: vaFq49
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 msgid "Deleted role"
 msgstr "Função excluída"
@@ -10693,6 +10743,7 @@ msgid "Description provided by the application"
 msgstr "Descrição fornecida pelo aplicativo"
 
 #. js-lingui-id: BBqGS9
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterFields.tsx
 #: src/modules/side-panel/pages/page-layout/hooks/useVisibilityLabels.ts
 msgid "Desktop"
 msgstr "Computador"
@@ -10802,6 +10853,13 @@ msgstr "Desenvolvedores - Configurações"
 msgid "Development instance"
 msgstr "Instância de desenvolvimento"
 
+#. js-lingui-id: PEHQTf
+#: src/modules/conditional-availability/filter-builder/components/__stories__/ConditionalAvailabilityFilterBuilder.stories.tsx
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterFieldSelect.tsx
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterFields.tsx
+msgid "Device"
+msgstr ""
+
 #. js-lingui-id: le4Hch
 #: src/modules/settings/profile/devices/components/SettingsDeviceSessionRowDropdownMenu.tsx
 msgid "Device logged out"
@@ -10861,11 +10919,6 @@ msgstr "Mensagens diretas"
 #: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
 msgid "Direct messages and mentions"
 msgstr "Mensagens diretas e menções"
-
-#. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
-msgid "Direct messages don't support attachments."
-msgstr "As mensagens diretas não aceitam anexos."
 
 #. js-lingui-id: +ILAOG
 #: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
@@ -13046,6 +13099,8 @@ msgstr ""
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/WidgetVisibilitySettingItem.tsx
+#: src/modules/side-panel/pages/page-layout/components/WidgetVisibilitySettings.tsx
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Everyone"
 msgstr "Todos"
@@ -13197,6 +13252,11 @@ msgstr "Expandir"
 #: src/modules/command-menu-item/display/components/CommandMenuItemCollapsibleSectionHeading.tsx
 msgid "Expand {heading}"
 msgstr "Expandir {heading}"
+
+#. js-lingui-id: m2n9ZO
+#: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
+msgid "Expand all sections"
+msgstr "Expandir todas as seções"
 
 #. js-lingui-id: JjrOSL
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -14122,18 +14182,13 @@ msgstr "Recursos"
 msgid "Features active until"
 msgstr "Recursos ativos até"
 
-#. js-lingui-id: YirHq7
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
-#: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
-msgid "Feedback"
-msgstr "Feedback"
-
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "field"
 msgstr "campo"
 
 #. js-lingui-id: AXjA78
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterFieldSelect.tsx
 #: src/modules/settings/applications/constants/ApplicationContentFilterLabels.ts
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetLayoutDropdownContent.tsx
@@ -14555,6 +14610,11 @@ msgstr "Conclua a edição do layout para abrir a Caixa de entrada"
 #: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "Finish editing the layout to open Settings"
 msgstr "Conclua a edição do layout para abrir as Configurações"
+
+#. js-lingui-id: aFsDUw
+#: src/modules/navigation/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton.tsx
+msgid "Finish editing the layout to open this menu"
+msgstr ""
 
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -15239,7 +15299,6 @@ msgstr "Recebe apenas este registro: a função dele não pode acessar {objectLa
 #: src/modules/getting-started/components/GettingStartedOpenedSection.tsx
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 #: src/pages/getting-started/GettingStartedPage.tsx
 #: src/pages/getting-started/GettingStartedPage.tsx
 msgid "Getting started"
@@ -17110,6 +17169,7 @@ msgid "Iris"
 msgstr "Íris"
 
 #. js-lingui-id: W153SA
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperatorLabel.ts
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is"
 msgstr "É"
@@ -17118,6 +17178,11 @@ msgstr "É"
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is after or equal"
 msgstr "É depois de ou igual a"
+
+#. js-lingui-id: RPm4Rj
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperatorLabel.ts
+msgid "Is any of"
+msgstr ""
 
 #. js-lingui-id: NgIlDJ
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -17139,7 +17204,13 @@ msgstr "Está no futuro"
 msgid "Is in past"
 msgstr "Está no passado"
 
+#. js-lingui-id: T9KiSu
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperatorLabel.ts
+msgid "Is none of"
+msgstr ""
+
 #. js-lingui-id: 5pz6vU
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperatorLabel.ts
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is not"
 msgstr "Não é"
@@ -19576,6 +19647,7 @@ msgid "Mission accomplished!"
 msgstr "Missão cumprida!"
 
 #. js-lingui-id: dMsM20
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterFields.tsx
 #: src/modules/side-panel/pages/page-layout/hooks/useVisibilityLabels.ts
 msgid "Mobile"
 msgstr "Celular"
@@ -20629,7 +20701,7 @@ msgid "Next record"
 msgstr "Próximo registro"
 
 #. js-lingui-id: +VXdSO
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Next request"
 msgstr "Próxima solicitação"
 
@@ -21450,6 +21522,7 @@ msgstr "Sem resposta do servidor"
 
 #. js-lingui-id: Ev2r9A
 #: src/modules/activities/emails/recipients/components/EmailRecipientSuggestionsDropdownContent.tsx
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect.tsx
@@ -21788,6 +21861,8 @@ msgstr "Configurações do nó"
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownListPinnedFieldContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -22919,6 +22994,7 @@ msgid "or"
 msgstr "ou"
 
 #. js-lingui-id: ZAVklK
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityLogicalOperatorLabel.ts
 #: src/modules/object-record/advanced-filter/constants/AdvancedFilterLogicalOperatorOptions.ts
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
@@ -23506,7 +23582,7 @@ msgid "Pending"
 msgstr "Pendente"
 
 #. js-lingui-id: 2B0V9T
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Pending requests"
 msgstr "Solicitações pendentes"
 
@@ -23812,6 +23888,12 @@ msgstr "Rosa"
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 msgid "Pinned"
 msgstr "Fixado"
+
+#. js-lingui-id: eLzh58
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownListPinnedFieldContent.tsx
+msgid "Pinned field"
+msgstr "Campo fixado"
 
 #. js-lingui-id: OFY07S
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
@@ -24154,7 +24236,7 @@ msgid "Previous record"
 msgstr "Registro anterior"
 
 #. js-lingui-id: ToM1t/
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Previous request"
 msgstr "Solicitação anterior"
 
@@ -25600,10 +25682,10 @@ msgstr "Remover Ordenação"
 msgid "Remove sorting?"
 msgstr "Remover ordenação?"
 
-#. js-lingui-id: J8gtSc
+#. js-lingui-id: koiY9C
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would."
-msgstr "Remova o acesso a mensagens e calendários das chaves de API em funções atribuíveis a usuários. Quando desativado, essas chaves de API as leem como um membro que não é proprietário do canal leria."
+msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would, and keep their role's write access to them."
+msgstr "Remove o acesso a mensagens e calendário das chaves de API em funções atribuíveis a usuários. Quando desativado, essas chaves de API os leem como um membro que não possui o canal leria e mantêm o acesso de gravação de sua função a eles."
 
 #. js-lingui-id: yBC05U
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -25757,7 +25839,7 @@ msgid "Request"
 msgstr "Requisição"
 
 #. js-lingui-id: tZ7Xci
-#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingToolCallRequests.tsx
 msgid "Request {requestNumber} of {requestCount}"
 msgstr "Solicitação {requestNumber} de {requestCount}"
 
@@ -26169,6 +26251,8 @@ msgid "role"
 msgstr "papel"
 
 #. js-lingui-id: GDvlUT
+#: src/modules/conditional-availability/filter-builder/components/__stories__/ConditionalAvailabilityFilterBuilder.stories.tsx
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterFields.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
@@ -26346,6 +26430,16 @@ msgstr "Regra desativada."
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Rule enabled."
 msgstr "Regra ativada."
+
+#. js-lingui-id: N/BlR5
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterOptionsDropdown.tsx
+msgid "Rule group options"
+msgstr ""
+
+#. js-lingui-id: 9Ggzqm
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterOptionsDropdown.tsx
+msgid "Rule options"
+msgstr ""
 
 #. js-lingui-id: sBTDyi
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -26945,11 +27039,14 @@ msgid "search field metadata"
 msgstr "metadados do campo de pesquisa"
 
 #. js-lingui-id: 7taA9j
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterFieldSelect.tsx
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterFieldSelect.tsx
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownListPinnedFieldContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -27008,6 +27105,7 @@ msgid "Search icon"
 msgstr "Ícone de pesquisa"
 
 #. js-lingui-id: AaDUlx
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
 #: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
 #: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
 #: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
@@ -27070,6 +27168,11 @@ msgstr "Pesquisar registros..."
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 msgid "Search relations"
 msgstr "Pesquisar relações"
+
+#. js-lingui-id: pzfKRn
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
+msgid "Search roles"
+msgstr ""
 
 #. js-lingui-id: BlLxpG
 #: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
@@ -27142,6 +27245,11 @@ msgstr "Pesquisando {objectLabel}"
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSearchResults.tsx
 msgid "Searching chats..."
 msgstr "Pesquisando chats..."
+
+#. js-lingui-id: xrtPMt
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+msgid "Searching records..."
+msgstr "Pesquisando registros..."
 
 #. js-lingui-id: KhCAL1
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -27311,14 +27419,18 @@ msgstr "Ver configurações do modelo de dados"
 msgid "See function"
 msgstr "Ver função"
 
+#. js-lingui-id: kuQBTx
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+msgid "See in search results"
+msgstr "Ver nos resultados da pesquisa"
+
 #. js-lingui-id: 1HzZ+y
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "See installed applications"
 msgstr "Ver aplicativos instalados"
 
 #. js-lingui-id: uPo3PQ
-#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
-#: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
+#: src/modules/navigation-menu-item/display/sections/components/NavigationMenuSectionSeeMore.tsx
 msgid "See less"
 msgstr "Ver menos"
 
@@ -27328,16 +27440,10 @@ msgid "See matching {objectLabelPlural}"
 msgstr "Visualizar {objectLabelPlural} correspondentes"
 
 #. js-lingui-id: V1fa9u
-#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
-#: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
+#: src/modules/navigation-menu-item/display/sections/components/NavigationMenuSectionSeeMore.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentSummarySection.tsx
 msgid "See more"
 msgstr "Ver mais"
-
-#. js-lingui-id: ssRcpB
-#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
-msgid "See more results"
-msgstr "Ver mais resultados"
 
 #. js-lingui-id: V7TecA
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -27469,6 +27575,11 @@ msgstr "Selecione uma data"
 msgid "Select a date and time"
 msgstr "Selecione data e hora"
 
+#. js-lingui-id: cggcog
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
+msgid "Select a device"
+msgstr ""
+
 #. js-lingui-id: 1YV5aa
 #: src/modules/object-core/filters/components/CoreObjectFilterFieldSelect.tsx
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexFieldsForm.tsx
@@ -27500,6 +27611,11 @@ msgstr "Selecione um modelo conhecido ou adicione um personalizado"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Select a known provider or create a custom one"
 msgstr "Selecione um provedor conhecido ou crie um personalizado"
+
+#. js-lingui-id: E5eC82
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
+msgid "Select a member"
+msgstr ""
 
 #. js-lingui-id: KQtk7u
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInsertionPreview.tsx
@@ -27663,6 +27779,11 @@ msgstr "Selecionar linha de cabeçalho"
 msgid "Select matching field"
 msgstr "Selecione o campo correspondente"
 
+#. js-lingui-id: 76TVV2
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
+msgid "Select members"
+msgstr ""
+
 #. js-lingui-id: ezY8Ut
 #: src/modules/ui/input/components/internal/date/components/DateTimePickerHeader.tsx
 msgid "Select month and year"
@@ -27692,6 +27813,11 @@ msgstr "Selecionar destinatários"
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiRecordPicker.tsx
 msgid "Select records"
 msgstr "Selecionar registros"
+
+#. js-lingui-id: 1Ky5Mj
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
+msgid "Select roles"
+msgstr ""
 
 #. js-lingui-id: 9c44h0
 #: src/modules/object-core/components/CoreObjectTable.tsx
@@ -28163,6 +28289,7 @@ msgstr "Configurando seu <0>banco de dados</0>..."
 #. js-lingui-id: Tz0i8g
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/command-menu-item/utils/getCommandMenuItemSubtitle.ts
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
@@ -28352,6 +28479,8 @@ msgid "Should changing the label also change the API name?"
 msgstr "Alterar o rótulo também deve alterar o nome da API?"
 
 #. js-lingui-id: 8vETh9
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 #: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
 msgid "Show"
 msgstr "Mostrar"
@@ -28468,11 +28597,6 @@ msgstr "Mostrar em"
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Show only rows with errors"
 msgstr "Mostrar apenas linhas com erros"
-
-#. js-lingui-id: 9u2I/P
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
-msgstr "Mostre a página Primeiros passos e o cartão da barra lateral e abra-a ao acessar durante o período de teste."
 
 #. js-lingui-id: fTPKt5
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -28724,7 +28848,6 @@ msgstr "Ignorar o objeto de junção (semelhante a relações muitos-para-muitos
 
 #. js-lingui-id: 9NyAH9
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
 msgid "Skipped"
 msgstr "Ignorado"
@@ -30111,11 +30234,6 @@ msgstr "Colegas de equipe"
 msgid "Teammates see who you talk to, not what you write."
 msgstr "Os colegas de equipe veem com quem você fala, não o que você escreve."
 
-#. js-lingui-id: XpPpz7
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
-msgid "Tell the agent what to change"
-msgstr "Diga ao agente o que mudar"
-
 #. js-lingui-id: lKXcJz
 #: src/modules/settings/emailing-domains/utils/getEmailingDomainStatusDisplay.ts
 msgid "Temporary Failure"
@@ -31264,6 +31382,11 @@ msgstr "Este registro será excluído:"
 msgid "This role is assigned to these {roleTargetDisplayName}."
 msgstr "Este papel está atribuído a estes {roleTargetDisplayName}."
 
+#. js-lingui-id: 0bjsKH
+#: src/modules/side-panel/pages/page-layout/components/WidgetVisibilitySettings.tsx
+msgid "This rule cannot be edited here. Select Everyone to remove it."
+msgstr ""
+
 #. js-lingui-id: 9IqK24
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "This rule is disabled. Records are not checked against it."
@@ -32125,6 +32248,11 @@ msgstr "Turco"
 msgid "Turn into"
 msgstr "Transformar em"
 
+#. js-lingui-id: rjkNOe
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Turn on for a workspace that reported broken links, merges or deletes. Gives the Admin role back its write access to messages and calendar events, without letting it see more of them."
+msgstr "Ative para um espaço de trabalho que relatou links quebrados, mesclagens ou exclusões. Devolve à função Administrador o acesso de gravação a mensagens e eventos do calendário, sem permitir que ela veja mais deles."
+
 #. js-lingui-id: Njwcqh
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Turn on notifications"
@@ -32570,6 +32698,11 @@ msgstr "Campo desconhecido \"{fieldName}\" em \"{relationFieldName}\""
 #: src/modules/chat/components/ChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "Arquivo desconhecido"
+
+#. js-lingui-id: rIOkYf
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
+msgid "Unknown member"
+msgstr ""
 
 #. js-lingui-id: num3KD
 #: src/modules/mention/components/MentionRecordChip.tsx
@@ -33985,6 +34118,8 @@ msgstr "Violeta"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 #: src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
+#: src/modules/side-panel/pages/page-layout/components/WidgetVisibilitySettingItem.tsx
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
 msgid "Visibility"
@@ -34050,6 +34185,7 @@ msgid "Wait for Event"
 msgstr "Aguardar evento"
 
 #. js-lingui-id: 3wIkaN
+#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 #: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Aguarde até que os anexos terminem de ser enviados."
@@ -34575,6 +34711,7 @@ msgid "When your trial ends, you will be charged {priceLabel}."
 msgstr "Quando sua avaliação terminar, será cobrado {priceLabel}."
 
 #. js-lingui-id: YvwwqC
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterLogicalOperatorCell.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorCell.tsx
 #: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelLogicalOperatorCell.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterLogicalOperatorCell.tsx
@@ -35012,6 +35149,8 @@ msgid "Workspace logo upload failed"
 msgstr "Falha no upload do logotipo do workspace"
 
 #. js-lingui-id: CbGxon
+#: src/modules/conditional-availability/filter-builder/components/__stories__/ConditionalAvailabilityFilterBuilder.stories.tsx
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterFields.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableRow.tsx
 msgid "Workspace member"

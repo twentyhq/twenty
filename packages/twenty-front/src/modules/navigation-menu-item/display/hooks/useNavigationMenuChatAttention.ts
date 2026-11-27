@@ -34,6 +34,8 @@ export const useNavigationMenuChatAttention = () => {
   return {
     chatAttention,
     unreadOpenThreadCount,
+    hasChatNeedingInput:
+      isCustomizableSidebarEnabled && chatAttention === 'needs-input',
     getTabChatAttention: (tabId: string | null) =>
       isCustomizableSidebarEnabled && tabIdsWithAttentionSection.has(tabId)
         ? chatAttention

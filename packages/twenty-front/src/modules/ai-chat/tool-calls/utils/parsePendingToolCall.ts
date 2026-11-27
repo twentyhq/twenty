@@ -30,6 +30,7 @@ export const parsePendingToolCall = (
 
   const { toolCallId, input } = part;
   const { proposal } = part.output.result;
+  const isPostedByWorkflow = part.output.result.isPostedByWorkflow === true;
 
   switch (getToolName(part)) {
     case ASK_QUESTION_TOOL_NAME:
@@ -71,6 +72,7 @@ export const parsePendingToolCall = (
           toolCallId,
           kind: 'toolCallApproval',
           proposal: proposal as ProposedToolCall,
+          isPostedByWorkflow,
         };
       }
 
@@ -85,6 +87,7 @@ export const parsePendingToolCall = (
               summary: input.summary,
               arguments: input.arguments,
             }),
+            isPostedByWorkflow,
           }
         : null;
     }

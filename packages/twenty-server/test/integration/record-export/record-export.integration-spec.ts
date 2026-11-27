@@ -1266,7 +1266,6 @@ describe('record export lifecycle (integration)', () => {
           workspaceId: requester.workspace.id,
           userWorkspaceId: requester.userWorkspaceId,
           authProvider: AuthProviderEnum.Password,
-          origin: 'renewal_bridge',
         });
         sessionTokens.add(sessionToken);
         return sessionToken;

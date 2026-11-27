@@ -1,4 +1,5 @@
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useHandleSidePanelEscape } from '@/side-panel/hooks/useHandleSidePanelEscape';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
@@ -6,7 +7,9 @@ import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenR
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Key } from 'ts-key-enum';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useCommandMenuHotKeys = () => {
   const { toggleSidePanelMenu } = useSidePanelMenu();
@@ -19,6 +22,18 @@ export const useCommandMenuHotKeys = () => {
 
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
+
+  const isSettingsPage = useIsSettingsPage();
+
+  const searchAndAskAiHotkeysOptions = {
+    ignoreModifiers: true,
+    enableOnFormTags: !isSettingsPage,
+    enableOnContentEditable: !isSettingsPage,
+  };
+
   useGlobalHotkeys({
     keys: ['ctrl+k', 'meta+k'],
     callback: () => {
@@ -26,7 +41,12 @@ export const useCommandMenuHotKeys = () => {
       toggleSidePanelMenu();
     },
     containsModifier: true,
-    dependencies: [closeKeyboardShortcutMenu, toggleSidePanelMenu],
+    enableOnSettingsPage: isCustomizableSidebarEnabled,
+    dependencies: [
+      closeKeyboardShortcutMenu,
+      toggleSidePanelMenu,
+      isCustomizableSidebarEnabled,
+    ],
   });
 
   useGlobalHotkeys({
@@ -35,10 +55,9 @@ export const useCommandMenuHotKeys = () => {
       openRecordsSearchPage();
     },
     containsModifier: false,
-    dependencies: [openRecordsSearchPage],
-    options: {
-      ignoreModifiers: true,
-    },
+    enableOnSettingsPage: isCustomizableSidebarEnabled,
+    dependencies: [openRecordsSearchPage, isCustomizableSidebarEnabled],
+    options: searchAndAskAiHotkeysOptions,
   });
 
   useGlobalHotkeys({
@@ -47,10 +66,9 @@ export const useCommandMenuHotKeys = () => {
       openAskAiPage({ resetNavigationStack: true });
     },
     containsModifier: false,
-    dependencies: [openAskAiPage],
-    options: {
-      ignoreModifiers: true,
-    },
+    enableOnSettingsPage: isCustomizableSidebarEnabled,
+    dependencies: [openAskAiPage, isCustomizableSidebarEnabled],
+    options: searchAndAskAiHotkeysOptions,
   });
 
   useHotkeysOnFocusedElement({

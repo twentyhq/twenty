@@ -145,4 +145,39 @@ describe('useFilterCommandMenuItemsWithSidePanelSearch', () => {
 
     expect(filtered).toHaveLength(3);
   });
+
+  it('should match settings Go to commands by their Settings subtitle', () => {
+    const settingsGoToCommandMenuItems = [
+      buildMockItem({
+        id: 'go-to-settings-experience',
+        label: 'Go to Experience',
+        engineComponentKey: EngineComponentKey.NAVIGATION,
+        payload: {
+          __typename: 'PathCommandMenuItemPayload',
+          path: '/settings/experience',
+        },
+      }),
+      buildMockItem({
+        id: 'go-to-people',
+        label: 'Go to People',
+        engineComponentKey: EngineComponentKey.NAVIGATION,
+        payload: { __typename: 'PathCommandMenuItemPayload', path: '/people' },
+      }),
+    ];
+
+    const { result } = renderHook(() =>
+      useFilterCommandMenuItemsWithSidePanelSearch({
+        sidePanelSearch: 'experience settings',
+        commandMenuContextApi: MOCK_CONTEXT_API,
+      }),
+    );
+
+    const filtered = result.current.filterCommandMenuItemsWithSidePanelSearch(
+      settingsGoToCommandMenuItems,
+    );
+
+    expect(filtered.map((item) => item.id)).toEqual([
+      'go-to-settings-experience',
+    ]);
+  });
 });

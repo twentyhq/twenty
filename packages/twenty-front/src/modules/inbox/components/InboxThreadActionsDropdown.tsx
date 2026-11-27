@@ -1,13 +1,14 @@
 import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent } from 'react';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
-import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconDotsVertical, IconPencil, IconUnlink } from 'twenty-ui/icon';
 
 import { InboxThreadRowTriage } from '@/inbox/components/InboxThreadRowTriage';
+import { inboxNamesByLegacyNameSelector } from '@/ai-chat/states/selectors/inboxNamesByLegacyNameSelector';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AiChatThreadCommandMenuItems } from '@/ai-chat/threads/components/AiChatThreadCommandMenuItems';
 import { useRefreshAiChatThreadPermissions } from '@/ai-chat/threads/hooks/useRefreshAiChatThreadPermissions';
 import { useTargetAiChatThreadsInContextStore } from '@/ai-chat/threads/hooks/useTargetAiChatThreadsInContextStore';
@@ -18,6 +19,7 @@ import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/u
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -48,6 +50,9 @@ export const InboxThreadActionsDropdown = ({
   shouldShowMore = true,
 }: InboxThreadActionsDropdownProps) => {
   const { t } = useLingui();
+  const inboxNamesByLegacyName = useAtomStateValue(
+    inboxNamesByLegacyNameSelector,
+  );
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const { targetAiChatThreadsInContextStore } =
     useTargetAiChatThreadsInContextStore();
@@ -56,7 +61,7 @@ export const InboxThreadActionsDropdown = ({
   const chatObjectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {
-      objectName: StandardObjectNameSingular.AgentChatThread,
+      objectName: inboxNamesByLegacyName.agentChatThread,
       objectNameType: 'singular',
     },
   );
@@ -105,7 +110,9 @@ export const InboxThreadActionsDropdown = ({
                 upsertRecordsInStore({
                   partialRecords: [
                     {
-                      __typename: 'AgentChatThread',
+                      __typename: getObjectTypename(
+                        inboxNamesByLegacyName.agentChatThread,
+                      ),
                       id: thread.id,
                       title: thread.title ?? null,
                       deletedAt: thread.deletedAt ?? null,
