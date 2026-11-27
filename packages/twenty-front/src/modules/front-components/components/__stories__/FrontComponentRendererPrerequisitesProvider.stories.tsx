@@ -1,5 +1,5 @@
 import { REST_API_BASE_URL } from '@/apollo/constants/RestApiBaseUrl';
-import { FrontComponentRendererPrerequisitesLoader } from '@/front-components/components/FrontComponentRendererPrerequisitesLoader';
+import { FrontComponentRendererPrerequisitesProvider } from '@/front-components/components/FrontComponentRendererPrerequisitesProvider';
 import { useFrontComponentRendererPrerequisitesOrThrow } from '@/front-components/contexts/FrontComponentRendererPrerequisitesContext';
 import { FrontComponentInstanceContext } from '@/front-components/states/contexts/FrontComponentInstanceContext';
 import { type ResolvedFrontComponent } from '@/front-components/types/ResolvedFrontComponent';
@@ -12,9 +12,10 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
-const FRONT_COMPONENT_ID = 'prerequisites-loader-story-front-component';
-const APPLICATION_ID = 'prerequisites-loader-story-application';
-const FAILING_APPLICATION_ID = 'prerequisites-loader-story-failing-application';
+const FRONT_COMPONENT_ID = 'prerequisites-provider-story-front-component';
+const APPLICATION_ID = 'prerequisites-provider-story-application';
+const FAILING_APPLICATION_ID =
+  'prerequisites-provider-story-failing-application';
 const ACCESS_TOKEN = 'story-access-token';
 
 const componentSourceRequested = fn();
@@ -50,13 +51,13 @@ const LoadedPrerequisites = () => {
   );
 };
 
-type PrerequisitesLoaderStoryProps = {
+type PrerequisitesProviderStoryProps = {
   applicationId: string;
 };
 
-const PrerequisitesLoaderStory = ({
+const PrerequisitesProviderStory = ({
   applicationId,
-}: PrerequisitesLoaderStoryProps) => {
+}: PrerequisitesProviderStoryProps) => {
   const [hasFindOneQueryAnswered, setHasFindOneQueryAnswered] = useState(false);
 
   const storyFrontComponent = buildStoryFrontComponent(applicationId);
@@ -68,7 +69,7 @@ const PrerequisitesLoaderStory = ({
       <button type="button" onClick={() => setHasFindOneQueryAnswered(true)}>
         Answer find-one query
       </button>
-      <FrontComponentRendererPrerequisitesLoader
+      <FrontComponentRendererPrerequisitesProvider
         frontComponentFieldsNeededToStartLoading={storyFrontComponent}
         frontComponentFromFindOneQuery={
           hasFindOneQueryAnswered ? storyFrontComponent : undefined
@@ -77,14 +78,14 @@ const PrerequisitesLoaderStory = ({
         unavailableFallback="Front component unavailable"
       >
         <LoadedPrerequisites />
-      </FrontComponentRendererPrerequisitesLoader>
+      </FrontComponentRendererPrerequisitesProvider>
     </FrontComponentInstanceContext.Provider>
   );
 };
 
-const meta: Meta<typeof PrerequisitesLoaderStory> = {
-  title: 'Modules/FrontComponents/FrontComponentRendererPrerequisitesLoader',
-  component: PrerequisitesLoaderStory,
+const meta: Meta<typeof PrerequisitesProviderStory> = {
+  title: 'Modules/FrontComponents/FrontComponentRendererPrerequisitesProvider',
+  component: PrerequisitesProviderStory,
   decorators: [RootDecorator, ToastDecorator, ComponentDecorator],
   beforeEach: () => {
     componentSourceRequested.mockClear();
@@ -134,7 +135,7 @@ const meta: Meta<typeof PrerequisitesLoaderStory> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof PrerequisitesLoaderStory>;
+type Story = StoryObj<typeof PrerequisitesProviderStory>;
 
 export const PreloadsSourcesBeforeFindOneQueryAnswers: Story = {
   play: async ({ canvasElement }) => {

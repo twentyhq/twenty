@@ -9,7 +9,7 @@ import { type FrontComponentToolCall } from 'twenty-sdk/front-component';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FrontComponentRendererContent } from '@/front-components/components/FrontComponentRendererContent';
-import { FrontComponentRendererPrerequisitesLoader } from '@/front-components/components/FrontComponentRendererPrerequisitesLoader';
+import { FrontComponentRendererPrerequisitesProvider } from '@/front-components/components/FrontComponentRendererPrerequisitesProvider';
 import { FindOneFrontComponentDocument } from '~/generated-metadata/graphql';
 
 type FrontComponentRendererProps = {
@@ -79,7 +79,7 @@ export const FrontComponentRenderer = ({
           <FrontComponentInstanceContext.Provider
             value={{ instanceId: frontComponentInstanceId }}
           >
-            <FrontComponentRendererPrerequisitesLoader
+            <FrontComponentRendererPrerequisitesProvider
               key={frontComponentInstanceId}
               frontComponentFieldsNeededToStartLoading={
                 frontComponentFieldsNeededToStartLoading
@@ -100,7 +100,7 @@ export const FrontComponentRenderer = ({
                 errorFallback={errorFallback}
                 shouldPreventPageZoom={shouldPreventPageZoom}
               />
-            </FrontComponentRendererPrerequisitesLoader>
+            </FrontComponentRendererPrerequisitesProvider>
           </FrontComponentInstanceContext.Provider>
         )}
     </>

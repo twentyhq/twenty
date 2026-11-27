@@ -2,7 +2,7 @@ import { FrontComponentApplicationTokenPairEffect } from '@/front-components/com
 import { FrontComponentLoadErrorToastEffect } from '@/front-components/components/FrontComponentLoadErrorToastEffect';
 import { FrontComponentSourcesPreloadEffect } from '@/front-components/components/FrontComponentSourcesPreloadEffect';
 import { FrontComponentRendererLoadingStatesResetEffect } from '@/front-components/components/FrontComponentRendererLoadingStatesResetEffect';
-import { FrontComponentRendererPrerequisitesProvider } from '@/front-components/contexts/FrontComponentRendererPrerequisitesContext';
+import { FrontComponentRendererPrerequisitesContextProvider } from '@/front-components/contexts/FrontComponentRendererPrerequisitesContext';
 import { useFrontComponentSourceUrls } from '@/front-components/hooks/useFrontComponentSourceUrls';
 import { frontComponentApplicationTokenPairLoadErrorComponentState } from '@/front-components/states/frontComponentApplicationTokenPairLoadErrorComponentState';
 import { frontComponentInitialApplicationAccessTokenComponentState } from '@/front-components/states/frontComponentInitialApplicationAccessTokenComponentState';
@@ -13,7 +13,7 @@ import { type ResolvedFrontComponent } from '@/front-components/types/ResolvedFr
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-type FrontComponentRendererPrerequisitesLoaderProps = {
+type FrontComponentRendererPrerequisitesProviderProps = {
   frontComponentFieldsNeededToStartLoading: FrontComponentFieldsNeededToStartLoading;
   frontComponentFromFindOneQuery?: ResolvedFrontComponent;
   loadingFallback?: ReactNode;
@@ -21,13 +21,13 @@ type FrontComponentRendererPrerequisitesLoaderProps = {
   children: ReactNode;
 };
 
-export const FrontComponentRendererPrerequisitesLoader = ({
+export const FrontComponentRendererPrerequisitesProvider = ({
   frontComponentFieldsNeededToStartLoading,
   frontComponentFromFindOneQuery,
   loadingFallback,
   unavailableFallback,
   children,
-}: FrontComponentRendererPrerequisitesLoaderProps) => {
+}: FrontComponentRendererPrerequisitesProviderProps) => {
   const { applicationId, usesSdkClient } =
     frontComponentFieldsNeededToStartLoading;
 
@@ -86,7 +86,7 @@ export const FrontComponentRendererPrerequisitesLoader = ({
         !isReadyToRender &&
         loadingFallback}
       {isReadyToRender && (
-        <FrontComponentRendererPrerequisitesProvider
+        <FrontComponentRendererPrerequisitesContextProvider
           value={{
             frontComponent: frontComponentFromFindOneQuery,
             applicationAccessToken: frontComponentInitialApplicationAccessToken,
@@ -99,7 +99,7 @@ export const FrontComponentRendererPrerequisitesLoader = ({
           }}
         >
           {children}
-        </FrontComponentRendererPrerequisitesProvider>
+        </FrontComponentRendererPrerequisitesContextProvider>
       )}
     </>
   );

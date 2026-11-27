@@ -2,7 +2,7 @@ import { type FrontComponentRendererPrerequisites } from '@/front-components/typ
 import { createRequiredContext } from '~/utils/createRequiredContext';
 
 export const [
-  FrontComponentRendererPrerequisitesProvider,
+  FrontComponentRendererPrerequisitesContextProvider,
   useFrontComponentRendererPrerequisitesOrThrow,
 ] = createRequiredContext<FrontComponentRendererPrerequisites>(
   'FrontComponentRendererPrerequisites',
