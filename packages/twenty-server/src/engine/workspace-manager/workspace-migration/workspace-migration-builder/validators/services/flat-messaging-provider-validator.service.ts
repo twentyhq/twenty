@@ -43,6 +43,7 @@ const validateMessagingProviderReferences = ({
     | 'connectionProviderUniversalIdentifier'
     | 'sendMessageLogicFunctionUniversalIdentifier'
     | 'markThreadAsReadLogicFunctionUniversalIdentifier'
+    | 'startConversationLogicFunctionUniversalIdentifier'
     | 'conversationStyle'
   >;
   flatConnectionProviderMaps: MetadataUniversalFlatEntityMaps<'connectionProvider'>;
@@ -101,6 +102,25 @@ const validateMessagingProviderReferences = ({
       code: MessagingProviderExceptionCode.INVALID_MESSAGING_PROVIDER_INPUT,
       message: t`Mark thread as read logic function "${markThreadAsReadLogicFunctionUniversalIdentifier}" was not found in this application`,
       userFriendlyMessage: msg`The logic function this messaging provider marks threads as read with was not found in its application.`,
+    });
+  }
+
+  const startConversationLogicFunctionUniversalIdentifier =
+    flatMessagingProvider.startConversationLogicFunctionUniversalIdentifier;
+
+  if (
+    isDefined(startConversationLogicFunctionUniversalIdentifier) &&
+    !isInApplication({
+      flatEntityMaps: flatLogicFunctionMaps,
+      universalIdentifier: startConversationLogicFunctionUniversalIdentifier,
+      applicationUniversalIdentifier:
+        flatMessagingProvider.applicationUniversalIdentifier,
+    })
+  ) {
+    errors.push({
+      code: MessagingProviderExceptionCode.INVALID_MESSAGING_PROVIDER_INPUT,
+      message: t`Start conversation logic function "${startConversationLogicFunctionUniversalIdentifier}" was not found in this application`,
+      userFriendlyMessage: msg`The logic function this messaging provider starts conversations with was not found in its application.`,
     });
   }
 

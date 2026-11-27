@@ -204,11 +204,9 @@ export class ConnectionProviderConnectedAccountService {
       return connectedAccount;
     }
 
-    const existingCount = await this.connectedAccountRepository.count({
-      where: { connectionProviderId: provider.id, workspaceId },
-    });
-
-    const name = `${provider.displayName} #${existingCount + 1}`;
+    const name =
+      identifiedAccount?.name ??
+      (await this.buildDefaultConnectedAccountName({ provider, workspaceId }));
 
     const created = this.connectedAccountRepository.create({
       ...sharedFields,
@@ -231,6 +229,20 @@ export class ConnectionProviderConnectedAccountService {
     this.emitConnectionChanged(connectedAccount);
 
     return connectedAccount;
+  }
+
+  private async buildDefaultConnectedAccountName({
+    provider,
+    workspaceId,
+  }: {
+    provider: Pick<ConnectionProviderEntity, 'id' | 'displayName'>;
+    workspaceId: string;
+  }): Promise<string> {
+    const existingCount = await this.connectedAccountRepository.count({
+      where: { connectionProviderId: provider.id, workspaceId },
+    });
+
+    return `${provider.displayName} #${existingCount + 1}`;
   }
 
   private async chargeThenPersist({

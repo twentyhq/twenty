@@ -14,6 +14,7 @@ import { expect, userEvent, within } from 'storybook/test';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const ROLE_ID = 'role-id';
@@ -234,6 +235,7 @@ let releaseRoles: () => void;
 let rolesReady: Promise<void>;
 
 export const InitialRolesLoading: Story = {
+  decorators: [ComponentWithRouterDecorator],
   render: () => (
     <SettingsRoleRouteGuard roleId={ROLE_ID}>
       <SettingsRolePermissionsFlagSections isEditable assignment="users" />

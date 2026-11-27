@@ -7,6 +7,7 @@ export type MessagingProviderManifest = SyncableEntityOptions & {
   connectionProviderUniversalIdentifier?: string;
   sendMessageLogicFunctionUniversalIdentifier?: string;
   markThreadAsReadLogicFunctionUniversalIdentifier?: string;
+  startConversationLogicFunctionUniversalIdentifier?: string;
   /** @deprecated Use `connectionProviderUniversalIdentifier` instead. */
   connectionProvider?: SyncableEntityOptions;
   /** @deprecated Use `sendMessageLogicFunctionUniversalIdentifier` instead. */
