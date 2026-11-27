@@ -7,6 +7,7 @@ import { LINKEDIN_ENRICHMENT_DAILY_PROFILE_LOOKUP_LIMIT } from 'src/constants/li
 import { buildLinkedinPersonEnrichment } from 'src/logic-functions/utils/build-linkedin-person-enrichment.util';
 import { getLinkedinEnrichedPersonKey } from 'src/logic-functions/utils/get-linkedin-enriched-person-key.util';
 import { consumeLinkedinProfileLookupOrThrow } from 'src/logic-functions/utils/consume-linkedin-profile-lookup-or-throw.util';
+import { isTransientLinkedinError } from 'src/logic-functions/utils/is-transient-linkedin-error.util';
 import { getUnipileUserProfile } from 'src/unipile/utils/get-unipile-user-profile.util';
 
 type EnrichablePersonRecord = {
@@ -100,6 +101,11 @@ const setEmptyPersonFieldOrWarn = async ({
       },
     });
   } catch (error) {
+    // Rethrown so the job retries before the person is marked as enriched
+    if (isTransientLinkedinError(error)) {
+      throw error;
+    }
+
     console.warn(
       `[linkedin] could not set the ${field} of person ${personId}: ${error instanceof Error ? error.message : String(error)}`,
     );

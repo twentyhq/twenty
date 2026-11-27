@@ -102,6 +102,17 @@ describe('enrichLinkedinPerson', () => {
     ]);
   });
 
+  it('lets the job retry a person whose update failed on a network error', async () => {
+    mockPerson(EMPTY_PERSON);
+    mocks.mutation.mockRejectedValueOnce(
+      Object.assign(new Error('fetch failed'), { name: 'TypeError' }),
+    );
+
+    await expect(enrich()).rejects.toThrow('fetch failed');
+
+    expect(mocks.kvStore.has('linkedin-enriched-person:priya-id')).toBe(false);
+  });
+
   it('keeps a value a member types while the profile is looked up', async () => {
     mockPerson(EMPTY_PERSON);
 
