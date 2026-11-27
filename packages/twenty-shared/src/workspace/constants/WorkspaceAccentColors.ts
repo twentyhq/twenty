@@ -1,0 +1,17 @@
+export const WORKSPACE_ACCENT_COLORS = [
+  'blue',
+  'iris',
+  'violet',
+  'purple',
+  'plum',
+  'pink',
+  'crimson',
+  'red',
+  'tomato',
+  'orange',
+  'grass',
+  'green',
+  'jade',
+  'turquoise',
+  'cyan',
+] as const;

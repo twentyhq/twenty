@@ -1,0 +1,2 @@
+export const ADD_ACCENT_COLOR_AND_UI_SCALE_TO_WORKSPACE_UPGRADE_COMMAND_NAME =
+  '2.66.0_AddAccentColorAndUiScaleToWorkspaceSlowInstanceCommand_1795793649487';

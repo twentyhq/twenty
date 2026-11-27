@@ -12,7 +12,13 @@ import {
 } from 'twenty-shared/ai';
 import { EVENT_LOG_RETENTION } from 'twenty-shared/constants';
 import { type IframeMediaPermission } from 'twenty-shared/types';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import {
+  DEFAULT_WORKSPACE_ACCENT_COLOR,
+  DEFAULT_WORKSPACE_UI_SCALE,
+  WorkspaceActivationStatus,
+  type WorkspaceAccentColor,
+  type WorkspaceUiScale,
+} from 'twenty-shared/workspace';
 import {
   Check,
   Column,
@@ -35,6 +41,7 @@ import { ADD_WORKSPACE_CHAT_ASSISTANT_MODES_UPGRADE_COMMAND_NAME } from 'src/dat
 import { ADD_WORKSPACE_ASSISTANT_PROFILE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-56/add-workspace-assistant-profile-upgrade-command-name.constant';
 import { ADD_AI_DATA_POLICY_TO_WORKSPACE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-57/add-ai-data-policy-to-workspace-upgrade-command-name.constant';
 import { ADD_IS_INTERNAL_IMPORT_ENABLED_TO_WORKSPACE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-59/add-is-internal-import-enabled-to-workspace-upgrade-command-name.constant';
+import { ADD_ACCENT_COLOR_AND_UI_SCALE_TO_WORKSPACE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-66/add-accent-color-and-ui-scale-to-workspace-upgrade-command-name.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
@@ -113,6 +120,28 @@ export class WorkspaceEntity {
   })
   @JoinColumn({ name: 'logoFileId' })
   logoFile: Relation<FileEntity>;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_ACCENT_COLOR_AND_UI_SCALE_TO_WORKSPACE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({
+    type: 'varchar',
+    nullable: false,
+    default: DEFAULT_WORKSPACE_ACCENT_COLOR,
+  })
+  accentColor: WorkspaceAccentColor;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_ACCENT_COLOR_AND_UI_SCALE_TO_WORKSPACE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({
+    type: 'varchar',
+    nullable: false,
+    default: DEFAULT_WORKSPACE_UI_SCALE,
+  })
+  uiScale: WorkspaceUiScale;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
