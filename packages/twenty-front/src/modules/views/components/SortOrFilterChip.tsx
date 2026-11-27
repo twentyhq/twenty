@@ -4,7 +4,10 @@ import { type IconComponent, IconX } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
+const StyledChip = styled.div<{
+  variant: SortOrFilterChipVariant;
+  isInteractive: boolean;
+}>`
   align-items: center;
   background-color: ${({ variant }) => {
     switch (variant) {
@@ -38,7 +41,7 @@ const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   }};
   column-gap: ${themeCssVariables.spacing[1]};
   corner-shape: round;
-  cursor: pointer;
+  cursor: ${({ isInteractive }) => (isInteractive ? 'pointer' : 'default')};
   display: flex;
   flex-direction: row;
   flex-shrink: 0;
@@ -135,7 +138,11 @@ export const SortOrFilterChip = ({
   };
 
   return (
-    <StyledChip onClick={onClick} variant={variant}>
+    <StyledChip
+      onClick={onClick}
+      variant={variant}
+      isInteractive={isDefined(onClick) || isDefined(onRemove)}
+    >
       {Icon && (
         <StyledIcon>
           <Icon size={theme.icon.size.sm} />
