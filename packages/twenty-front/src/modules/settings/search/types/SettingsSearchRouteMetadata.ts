@@ -8,5 +8,5 @@ export type SettingsSearchRouteMetadata = {
   keywords?: MessageDescriptor[];
   tabs?: SettingsTabDefinition[];
   isHiddenWhenBillingDisabled?: boolean;
-  expandsPerObject?: boolean;
+  isExpandedPerObject?: boolean;
 } & ({ section: MessageDescriptor } | { parentPath: SettingsPath });

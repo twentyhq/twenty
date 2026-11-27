@@ -61,7 +61,7 @@ describe('settings search route coverage', () => {
 
   it('expands per object only routes keyed by the object name alone', () => {
     const expandedRoutes = SEARCHABLE_ROUTES.filter(
-      ({ settingsSearch }) => settingsSearch.expandsPerObject === true,
+      ({ settingsSearch }) => settingsSearch.isExpandedPerObject === true,
     );
     const expandedPaths = expandedRoutes.map(({ path }) => path);
 
@@ -74,7 +74,7 @@ describe('settings search route coverage', () => {
     expect(
       SEARCHABLE_ROUTES.filter(
         ({ settingsSearch }) =>
-          settingsSearch.expandsPerObject !== true &&
+          settingsSearch.isExpandedPerObject !== true &&
           (settingsSearch.title === SETTINGS_SEARCH_OBJECT_LABEL_TITLE ||
             ('parentPath' in settingsSearch &&
               expandedPaths.includes(settingsSearch.parentPath))),
