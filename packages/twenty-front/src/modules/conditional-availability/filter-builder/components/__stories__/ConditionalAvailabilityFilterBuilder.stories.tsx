@@ -2,10 +2,12 @@ import { ConditionalAvailabilityFilterBuilder } from '@/conditional-availability
 import { type ConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilter';
 import { type ConditionalAvailabilityFilterField } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterField';
 import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterGroup';
+import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/object-filter-dropdown/constants/CurrentWorkspaceMemberSelectableItemId';
 import { msg } from '@lingui/core/macro';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, fn, within } from 'storybook/test';
-import { IconPhone, IconUser, IconUserCircle } from 'twenty-ui/icon';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import { type ExpressionFieldNode } from 'twenty-shared/expression';
+import { IconPhone, IconTag, IconUser, IconUserCircle } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -53,6 +55,41 @@ const FILTER_FIELDS: ConditionalAvailabilityFilterField[] = [
     label: msg`Device`,
     Icon: IconPhone,
     options: DEVICE_OPTIONS,
+  },
+];
+
+const STAGE_FIELD: ExpressionFieldNode = {
+  type: 'FIELD',
+  fieldUniversalIdentifier: 'stage-universal-identifier',
+};
+
+const ACCOUNT_OWNER_FIELD: ExpressionFieldNode = {
+  type: 'FIELD',
+  relationFieldUniversalIdentifier: 'account-owner-universal-identifier',
+  fieldUniversalIdentifier: 'workspace-member-id-universal-identifier',
+};
+
+const FILTER_FIELDS_WITH_RECORD_FIELDS: ConditionalAvailabilityFilterField[] = [
+  ...FILTER_FIELDS,
+  {
+    field: ACCOUNT_OWNER_FIELD,
+    objectLabelSingular: 'Company',
+    label: 'Account owner',
+    Icon: IconUser,
+    options: [
+      { value: CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID, label: 'Me' },
+      ...WORKSPACE_MEMBER_OPTIONS,
+    ],
+  },
+  {
+    field: STAGE_FIELD,
+    objectLabelSingular: 'Company',
+    label: 'Stage',
+    Icon: IconTag,
+    options: [
+      { value: 'NEW', label: 'New' },
+      { value: 'WON', label: 'Won' },
+    ],
   },
 ];
 
@@ -187,6 +224,70 @@ export const Empty: Story = {
 
     await expect(await canvas.findByText('Add filter rule')).toBeVisible();
     await expect(canvas.queryByText('Where')).toBeNull();
+  },
+};
+
+export const RecordFieldIsMe: Story = {
+  args: {
+    instanceId: 'record-field-is-me',
+    filterFields: FILTER_FIELDS_WITH_RECORD_FIELDS,
+    defaultValue: {
+      ...EMPTY_FILTER_GROUP,
+      children: [
+        {
+          type: 'filter',
+          id: 'account-owner-filter',
+          field: ACCOUNT_OWNER_FIELD,
+          operator: 'is',
+          values: [CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID],
+        },
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByText('Account owner')).toBeVisible();
+    await expect(await canvas.findByText('Is')).toBeVisible();
+    await expect(await canvas.findByText('Me')).toBeVisible();
+  },
+};
+
+export const PickRecordField: Story = {
+  args: {
+    instanceId: 'pick-record-field',
+    filterFields: FILTER_FIELDS_WITH_RECORD_FIELDS,
+    defaultValue: {
+      ...EMPTY_FILTER_GROUP,
+      children: [{ ...ROLE_IS_ANY_OF_FILTER, values: [] }],
+    },
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(await canvas.findByText('Role'));
+    await expect(await body.findByText('Company')).toBeVisible();
+    await userEvent.click(await body.findByRole('option', { name: 'Stage' }));
+
+    await userEvent.click(await canvas.findByText('Select a value'));
+    await userEvent.click(await body.findByRole('option', { name: 'Won' }));
+
+    await waitFor(() =>
+      expect(args.onFilterSettingsUpdate).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          children: [
+            {
+              type: 'filter',
+              id: ROLE_IS_ANY_OF_FILTER.id,
+              field: STAGE_FIELD,
+              operator: 'is',
+              values: ['WON'],
+            },
+          ],
+        }),
+      ),
+    );
   },
 };
 
