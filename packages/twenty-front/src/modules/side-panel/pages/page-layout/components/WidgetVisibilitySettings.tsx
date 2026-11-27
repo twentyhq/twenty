@@ -6,6 +6,7 @@ import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availabil
 import { createEmptyConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/utils/createEmptyConditionalAvailabilityFilter';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { getWidgetConditionalAvailabilityUpdate } from '@/side-panel/pages/page-layout/utils/getWidgetConditionalAvailabilityUpdate';
 import { Select } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -26,8 +27,6 @@ const StyledContainer = styled.div`
 const StyledText = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
 `;
-
-type WidgetVisibility = 'EVERYONE' | 'CUSTOM_RULE';
 
 type WidgetVisibilitySettingsProps = {
   pageLayoutId: string;
@@ -51,17 +50,22 @@ export const WidgetVisibilitySettings = ({
         : null,
     );
 
-  const widgetVisibility: WidgetVisibility =
+  const widgetVisibility =
     isDefined(defaultFilterGroup) || isDefined(widget.conditionalAvailability)
       ? 'CUSTOM_RULE'
       : 'EVERYONE';
 
   const handleWidgetVisibilityChange = (
-    nextWidgetVisibility: WidgetVisibility,
+    nextWidgetVisibility: 'EVERYONE' | 'CUSTOM_RULE',
   ) => {
     if (nextWidgetVisibility === 'EVERYONE') {
       setDefaultFilterGroup(null);
-      updatePageLayoutWidget(widget.id, { conditionalAvailability: null });
+      updatePageLayoutWidget(
+        widget.id,
+        getWidgetConditionalAvailabilityUpdate({
+          conditionalAvailability: null,
+        }),
+      );
 
       return;
     }
@@ -79,12 +83,15 @@ export const WidgetVisibilitySettings = ({
   const handleFilterSettingsUpdate = (
     filterSettings: ConditionalAvailabilityFilterGroup,
   ) => {
-    updatePageLayoutWidget(widget.id, {
-      conditionalAvailability:
-        convertConditionalAvailabilityFilterOrGroupToNode({
-          filterOrGroup: filterSettings,
-        }),
-    });
+    updatePageLayoutWidget(
+      widget.id,
+      getWidgetConditionalAvailabilityUpdate({
+        conditionalAvailability:
+          convertConditionalAvailabilityFilterOrGroupToNode({
+            filterOrGroup: filterSettings,
+          }),
+      }),
+    );
   };
 
   return (
