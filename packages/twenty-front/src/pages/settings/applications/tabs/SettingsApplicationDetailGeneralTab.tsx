@@ -35,6 +35,7 @@ import { SettingsApplicationFunctionDomainSection } from '~/pages/settings/appli
 import { applicationHasHttpTriggeredFunctions } from '~/pages/settings/applications/utils/applicationHasHttpTriggeredFunctions';
 import { isUpgradableApplicationSourceType } from '@/settings/applications/utils/isUpgradableApplicationSourceType';
 import { useLingui } from '@lingui/react/macro';
+import { type ReactNode } from 'react';
 
 type SettingsApplicationDetailGeneralTabProps = {
   application: Pick<
@@ -52,6 +53,7 @@ type SettingsApplicationDetailGeneralTabProps = {
   displayName: string;
   description?: string;
   coverImageUrl?: string;
+  healthCheckBanner?: ReactNode;
   marketplaceUniversalIdentifier?: string;
   isMarketplaceApplication: boolean;
   hasUpdate: boolean;
@@ -70,6 +72,7 @@ export const SettingsApplicationDetailGeneralTab = ({
   displayName,
   description,
   coverImageUrl,
+  healthCheckBanner,
   marketplaceUniversalIdentifier,
   isMarketplaceApplication,
   hasUpdate,
@@ -203,6 +206,7 @@ export const SettingsApplicationDetailGeneralTab = ({
           actions={isNonEmptyArray(actions) ? actions : undefined}
         />
       </Section.Root>
+      {healthCheckBanner}
       {isNonEmptyArray(configurationLinks) && (
         <SettingsApplicationConfigurationSection
           applicationName={displayName}

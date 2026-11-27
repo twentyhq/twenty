@@ -5,6 +5,7 @@ import { useApplicationOverview } from '@/settings/applications/hooks/useApplica
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
+import { type ReactNode } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconSettings } from 'twenty-ui/icon';
@@ -17,6 +18,7 @@ type SettingsAppPreferencesGeneralTabProps = {
   displayName: string;
   connectionProviders: ApplicationWithPreferences['connectionProviders'];
   settingsMenuItems: ApplicationWithPreferences['settingsMenuItems'];
+  healthCheckBanner?: ReactNode;
 };
 
 export const SettingsAppPreferencesGeneralTab = ({
@@ -24,6 +26,7 @@ export const SettingsAppPreferencesGeneralTab = ({
   displayName,
   connectionProviders,
   settingsMenuItems,
+  healthCheckBanner,
 }: SettingsAppPreferencesGeneralTabProps) => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
@@ -65,6 +68,7 @@ export const SettingsAppPreferencesGeneralTab = ({
           }
         />
       </Section.Root>
+      {healthCheckBanner}
       {isNonEmptyArray(connectionProviders) && (
         <SettingsAppPreferencesConnectionsTab
           applicationId={application.id}
