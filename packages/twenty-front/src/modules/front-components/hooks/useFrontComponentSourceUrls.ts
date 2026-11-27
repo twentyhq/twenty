@@ -49,7 +49,7 @@ export const useFrontComponentSourceUrls = ({
     componentUrl,
     sdkClientUrls,
     sharedDependenciesUrl,
-    usesSharedDependencies: isDefined(frontComponentSharedDependenciesChecksum),
+    hasSharedDependencies: isDefined(frontComponentSharedDependenciesChecksum),
     isSdkClientReady: !usesSdkClient || !sdkClientChecksumsLoading,
   };
 };

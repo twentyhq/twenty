@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { buildAuthorizationHeadersFromAccessToken } from '@/host/component-source/utils/buildAuthorizationHeadersFromAccessToken';
 import { fetchComponentSource } from '@/host/component-source/utils/fetchComponentSource';
 import { fetchSdkClientSources } from '@/host/component-source/utils/fetchSdkClientSources';
-import { resolveToUndefinedOnRejection } from '@/host/component-source/utils/resolveToUndefinedOnRejection';
+import { unwrapSettledPromiseResult } from '@/host/component-source/utils/unwrapSettledPromiseResult';
 import { type FrontComponentSources } from '@/types/FrontComponentSources';
 import { type SdkClientSources } from '@/types/SdkClientSources';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
@@ -18,8 +18,8 @@ type FetchFrontComponentSourcesInput = {
   sharedDependenciesUrl?: string;
   sharedDependenciesSource?: string;
   applicationAccessToken?: string;
-  usesSdkClient?: boolean;
-  usesSharedDependencies?: boolean;
+  shouldPrefetchSdkClientSources?: boolean;
+  shouldPrefetchSharedDependenciesSource?: boolean;
 };
 
 export const fetchFrontComponentSources = async ({
@@ -30,29 +30,27 @@ export const fetchFrontComponentSources = async ({
   sharedDependenciesUrl,
   sharedDependenciesSource: providedSharedDependenciesSource,
   applicationAccessToken,
-  usesSdkClient = false,
-  usesSharedDependencies = false,
+  shouldPrefetchSdkClientSources = false,
+  shouldPrefetchSharedDependenciesSource = false,
 }: FetchFrontComponentSourcesInput): Promise<FrontComponentSources> => {
   const headers = buildAuthorizationHeadersFromAccessToken(
     applicationAccessToken,
   );
 
-  const earlySdkClientSourcesPromise =
-    usesSdkClient &&
+  const prefetchedSdkClientSourcesSettledPromise =
+    shouldPrefetchSdkClientSources &&
     isDefined(sdkClientUrls) &&
     !isDefined(providedSdkClientSources)
-      ? resolveToUndefinedOnRejection(
-          fetchSdkClientSources({ sdkClientUrls, headers }),
-        )
+      ? Promise.allSettled([fetchSdkClientSources({ sdkClientUrls, headers })])
       : undefined;
 
-  const earlySharedDependenciesSourcePromise =
-    usesSharedDependencies &&
+  const prefetchedSharedDependenciesSourceSettledPromise =
+    shouldPrefetchSharedDependenciesSource &&
     isDefined(sharedDependenciesUrl) &&
     !isDefined(providedSharedDependenciesSource)
-      ? resolveToUndefinedOnRejection(
+      ? Promise.allSettled([
           fetchComponentSource({ url: sharedDependenciesUrl, headers }),
-        )
+        ])
       : undefined;
 
   const componentSource =
@@ -71,10 +69,14 @@ export const fetchFrontComponentSources = async ({
       return undefined;
     }
 
-    return (
-      (await earlySdkClientSourcesPromise) ??
-      fetchSdkClientSources({ sdkClientUrls, headers })
-    );
+    if (!isDefined(prefetchedSdkClientSourcesSettledPromise)) {
+      return fetchSdkClientSources({ sdkClientUrls, headers });
+    }
+
+    const [prefetchedSdkClientSourcesSettledResult] =
+      await prefetchedSdkClientSourcesSettledPromise;
+
+    return unwrapSettledPromiseResult(prefetchedSdkClientSourcesSettledResult);
   };
 
   const resolveSharedDependenciesSourceIfImportedByComponentSource =
@@ -90,9 +92,15 @@ export const fetchFrontComponentSources = async ({
         return undefined;
       }
 
-      return (
-        (await earlySharedDependenciesSourcePromise) ??
-        fetchComponentSource({ url: sharedDependenciesUrl, headers })
+      if (!isDefined(prefetchedSharedDependenciesSourceSettledPromise)) {
+        return fetchComponentSource({ url: sharedDependenciesUrl, headers });
+      }
+
+      const [prefetchedSharedDependenciesSourceSettledResult] =
+        await prefetchedSharedDependenciesSourceSettledPromise;
+
+      return unwrapSettledPromiseResult(
+        prefetchedSharedDependenciesSourceSettledResult,
       );
     };
 

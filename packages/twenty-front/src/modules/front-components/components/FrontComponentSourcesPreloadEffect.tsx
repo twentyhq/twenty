@@ -4,6 +4,7 @@ import {
   type SdkClientUrls,
 } from 'twenty-front-component-renderer';
 
+import { logError } from '~/utils/logError';
 import { type FrontComponentSourcesPreload } from '@/front-components/types/FrontComponentSourcesPreload';
 
 type FrontComponentSourcesPreloadEffectProps = {
@@ -11,8 +12,8 @@ type FrontComponentSourcesPreloadEffectProps = {
   sdkClientUrls: SdkClientUrls;
   sharedDependenciesUrl: string;
   applicationAccessToken: string;
-  usesSdkClient: boolean;
-  usesSharedDependencies: boolean;
+  shouldPrefetchSdkClientSources: boolean;
+  shouldPrefetchSharedDependenciesSource: boolean;
   onSourcesPreloadStarted: (
     sourcesPreload: FrontComponentSourcesPreload,
   ) => void;
@@ -23,8 +24,8 @@ export const FrontComponentSourcesPreloadEffect = ({
   sdkClientUrls,
   sharedDependenciesUrl,
   applicationAccessToken,
-  usesSdkClient,
-  usesSharedDependencies,
+  shouldPrefetchSdkClientSources,
+  shouldPrefetchSharedDependenciesSource,
   onSourcesPreloadStarted,
 }: FrontComponentSourcesPreloadEffectProps) => {
   useEffect(() => {
@@ -35,10 +36,12 @@ export const FrontComponentSourcesPreloadEffect = ({
           sdkClientUrls,
           sharedDependenciesUrl,
           applicationAccessToken,
-          usesSdkClient,
-          usesSharedDependencies,
+          shouldPrefetchSdkClientSources,
+          shouldPrefetchSharedDependenciesSource,
         });
-      } catch {
+      } catch (error) {
+        logError(error);
+
         return undefined;
       }
     };
@@ -54,8 +57,8 @@ export const FrontComponentSourcesPreloadEffect = ({
     sdkClientUrls,
     sharedDependenciesUrl,
     applicationAccessToken,
-    usesSdkClient,
-    usesSharedDependencies,
+    shouldPrefetchSdkClientSources,
+    shouldPrefetchSharedDependenciesSource,
     onSourcesPreloadStarted,
   ]);
 

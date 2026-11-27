@@ -10,6 +10,6 @@ export type FrontComponentRendererPrerequisites = {
   componentUrl: string;
   sdkClientUrls: SdkClientUrls;
   sharedDependenciesUrl: string;
-  usesSharedDependencies: boolean;
+  hasSharedDependencies: boolean;
   preloadedSourcesPromise?: Promise<FrontComponentSources | undefined>;
 };

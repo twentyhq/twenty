@@ -54,8 +54,8 @@ type FrontComponentRendererProps = {
   sdkClientUrls?: SdkClientUrls;
   sdkClientSources?: SdkClientSources;
   sharedDependenciesUrl?: string;
-  usesSdkClient?: boolean;
-  usesSharedDependencies?: boolean;
+  shouldPrefetchSdkClientSources?: boolean;
+  shouldPrefetchSharedDependenciesSource?: boolean;
   preloadedSourcesPromise?: Promise<FrontComponentSources | undefined>;
   applicationVariables?: Record<string, string>;
   storageNamespace?: string;
@@ -81,8 +81,8 @@ export const FrontComponentRenderer = ({
   sdkClientUrls,
   sdkClientSources,
   sharedDependenciesUrl,
-  usesSdkClient,
-  usesSharedDependencies,
+  shouldPrefetchSdkClientSources,
+  shouldPrefetchSharedDependenciesSource,
   preloadedSourcesPromise,
   applicationVariables,
   storageNamespace,
@@ -162,8 +162,10 @@ export const FrontComponentRenderer = ({
           sdkClientUrls={sdkClientUrls}
           sdkClientSources={sdkClientSources}
           sharedDependenciesUrl={sharedDependenciesUrl}
-          usesSdkClient={usesSdkClient}
-          usesSharedDependencies={usesSharedDependencies}
+          shouldPrefetchSdkClientSources={shouldPrefetchSdkClientSources}
+          shouldPrefetchSharedDependenciesSource={
+            shouldPrefetchSharedDependenciesSource
+          }
           preloadedSourcesPromise={preloadedSourcesPromise}
           applicationVariables={applicationVariables}
           storageNamespace={storageNamespace}

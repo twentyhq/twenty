@@ -39,8 +39,8 @@ type FrontComponentWorkerEffectProps = {
   sdkClientUrls?: SdkClientUrls;
   sdkClientSources?: SdkClientSources;
   sharedDependenciesUrl?: string;
-  usesSdkClient?: boolean;
-  usesSharedDependencies?: boolean;
+  shouldPrefetchSdkClientSources?: boolean;
+  shouldPrefetchSharedDependenciesSource?: boolean;
   preloadedSourcesPromise?: Promise<FrontComponentSources | undefined>;
   applicationVariables?: Record<string, string>;
   storageNamespace?: string;
@@ -70,8 +70,8 @@ export const FrontComponentWorkerEffect = ({
   sdkClientUrls,
   sdkClientSources: providedSdkClientSources,
   sharedDependenciesUrl,
-  usesSdkClient,
-  usesSharedDependencies,
+  shouldPrefetchSdkClientSources,
+  shouldPrefetchSharedDependenciesSource,
   preloadedSourcesPromise,
   applicationVariables,
   storageNamespace,
@@ -157,8 +157,8 @@ export const FrontComponentWorkerEffect = ({
             sharedDependenciesUrl,
             sharedDependenciesSource: providedSharedDependenciesSource,
             applicationAccessToken,
-            usesSdkClient,
-            usesSharedDependencies,
+            shouldPrefetchSdkClientSources,
+            shouldPrefetchSharedDependenciesSource,
           }));
 
         if (isCancelled) {
@@ -235,8 +235,8 @@ export const FrontComponentWorkerEffect = ({
     functionsBaseUrl,
     sdkClientUrls,
     sharedDependenciesUrl,
-    usesSdkClient,
-    usesSharedDependencies,
+    shouldPrefetchSdkClientSources,
+    shouldPrefetchSharedDependenciesSource,
     preloadedSourcesPromise,
     applicationVariables,
     storageNamespace,

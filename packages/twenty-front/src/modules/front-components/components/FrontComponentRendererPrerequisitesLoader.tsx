@@ -49,7 +49,7 @@ export const FrontComponentRendererPrerequisitesLoader = ({
     componentUrl,
     sdkClientUrls,
     sharedDependenciesUrl,
-    usesSharedDependencies,
+    hasSharedDependencies,
     isSdkClientReady,
   } = useFrontComponentSourceUrls(frontComponentFieldsNeededToStartLoading);
 
@@ -84,8 +84,8 @@ export const FrontComponentRendererPrerequisitesLoader = ({
             applicationAccessToken={
               initialApplicationTokenPair.applicationAccessToken.token
             }
-            usesSdkClient={usesSdkClient}
-            usesSharedDependencies={usesSharedDependencies}
+            shouldPrefetchSdkClientSources={usesSdkClient}
+            shouldPrefetchSharedDependenciesSource={hasSharedDependencies}
             onSourcesPreloadStarted={setSourcesPreload}
           />
         )}
@@ -102,7 +102,7 @@ export const FrontComponentRendererPrerequisitesLoader = ({
             componentUrl,
             sdkClientUrls,
             sharedDependenciesUrl,
-            usesSharedDependencies,
+            hasSharedDependencies,
             preloadedSourcesPromise: doPreloadedSourcesMatchCurrentUrls
               ? sourcesPreload.sourcesPromise
               : undefined,

@@ -54,8 +54,8 @@ describe('fetchFrontComponentSources', () => {
       sdkClientUrls: SDK_CLIENT_URLS,
       sharedDependenciesUrl: SHARED_DEPENDENCIES_URL,
       applicationAccessToken: 'token',
-      usesSdkClient: true,
-      usesSharedDependencies: true,
+      shouldPrefetchSdkClientSources: true,
+      shouldPrefetchSharedDependenciesSource: true,
     });
 
     expect(mockedFetchSdkClientSources).toHaveBeenCalledTimes(1);
@@ -105,7 +105,7 @@ describe('fetchFrontComponentSources', () => {
       fetchFrontComponentSources({
         componentUrl: COMPONENT_URL,
         sdkClientUrls: SDK_CLIENT_URLS,
-        usesSdkClient: true,
+        shouldPrefetchSdkClientSources: true,
       }),
     ).resolves.toEqual({
       componentSource: SOURCE_WITHOUT_IMPORTS,
@@ -114,23 +114,17 @@ describe('fetchFrontComponentSources', () => {
     });
   });
 
-  it('should retry a failed hinted fetch the component source needs', async () => {
+  it('should surface the failure of a hinted fetch the component source needs', async () => {
     mockedFetchComponentSource.mockResolvedValue(SOURCE_IMPORTING_SDK_CLIENT);
-    mockedFetchSdkClientSources
-      .mockRejectedValueOnce(new Error('unreachable'))
-      .mockResolvedValueOnce(SDK_CLIENT_SOURCES);
+    mockedFetchSdkClientSources.mockRejectedValue(new Error('unreachable'));
 
     await expect(
       fetchFrontComponentSources({
         componentUrl: COMPONENT_URL,
         sdkClientUrls: SDK_CLIENT_URLS,
-        usesSdkClient: true,
+        shouldPrefetchSdkClientSources: true,
       }),
-    ).resolves.toEqual({
-      componentSource: SOURCE_IMPORTING_SDK_CLIENT,
-      sdkClientSources: SDK_CLIENT_SOURCES,
-      sharedDependenciesSource: undefined,
-    });
-    expect(mockedFetchSdkClientSources).toHaveBeenCalledTimes(2);
+    ).rejects.toThrow('unreachable');
+    expect(mockedFetchSdkClientSources).toHaveBeenCalledTimes(1);
   });
 });
