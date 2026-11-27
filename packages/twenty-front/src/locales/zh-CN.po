@@ -1073,7 +1073,7 @@ msgstr "{label}，{unreadOpenThreadCount} 条未读"
 #. js-lingui-id: B+e4L5
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 msgid "{limit, plural, one {# item} other {# items}}"
-msgstr ""
+msgstr "{limit, plural, other {# 个项目}}"
 
 #. js-lingui-id: 1DrH/j
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -3635,7 +3635,7 @@ msgstr "只需他们的电子邮件地址即可。"
 #. js-lingui-id: J3EsIX
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 msgid "All items"
-msgstr ""
+msgstr "所有项目"
 
 #. js-lingui-id: 623MHa
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
@@ -9382,7 +9382,7 @@ msgstr "当前订阅状态和明细项"
 #. js-lingui-id: GvB/Ni
 #: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterFieldSelect.tsx
 msgid "Current user"
-msgstr ""
+msgstr "当前用户"
 
 #. js-lingui-id: 6YzXhC
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -9551,7 +9551,7 @@ msgstr "自定义角色"
 #: src/modules/side-panel/pages/page-layout/components/WidgetVisibilitySettingItem.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetVisibilitySettings.tsx
 msgid "Custom rule"
-msgstr ""
+msgstr "自定义规则"
 
 #. js-lingui-id: 2jzCZZ
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
@@ -10858,7 +10858,7 @@ msgstr "开发实例"
 #: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterFieldSelect.tsx
 #: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterFields.tsx
 msgid "Device"
-msgstr ""
+msgstr "设备"
 
 #. js-lingui-id: le4Hch
 #: src/modules/settings/profile/devices/components/SettingsDeviceSessionRowDropdownMenu.tsx
@@ -14614,7 +14614,7 @@ msgstr "完成布局编辑以打开设置"
 #. js-lingui-id: aFsDUw
 #: src/modules/navigation/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton.tsx
 msgid "Finish editing the layout to open this menu"
-msgstr ""
+msgstr "完成布局编辑以打开此菜单"
 
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -17182,7 +17182,7 @@ msgstr "为晚于或等于"
 #. js-lingui-id: RPm4Rj
 #: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperatorLabel.ts
 msgid "Is any of"
-msgstr ""
+msgstr "是以下任一项"
 
 #. js-lingui-id: NgIlDJ
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -17207,7 +17207,7 @@ msgstr "在过去"
 #. js-lingui-id: T9KiSu
 #: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperatorLabel.ts
 msgid "Is none of"
-msgstr ""
+msgstr "不属于以下任一项"
 
 #. js-lingui-id: 5pz6vU
 #: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperatorLabel.ts
@@ -18816,10 +18816,10 @@ msgstr "查找列"
 msgid "loop"
 msgstr "循环"
 
-#. js-lingui-id: UeVuJ/
+#. js-lingui-id: VKHG/4
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
-msgid "Lost your authenticator? Use a backup or recovery code"
-msgstr "丢失身份验证器？使用备用代码或恢复代码"
+msgid "Lost your authenticator?"
+msgstr ""
 
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
@@ -26434,12 +26434,12 @@ msgstr "规则已启用。"
 #. js-lingui-id: N/BlR5
 #: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterOptionsDropdown.tsx
 msgid "Rule group options"
-msgstr ""
+msgstr "规则组选项"
 
 #. js-lingui-id: 9Ggzqm
 #: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterOptionsDropdown.tsx
 msgid "Rule options"
-msgstr ""
+msgstr "规则选项"
 
 #. js-lingui-id: sBTDyi
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -27172,7 +27172,7 @@ msgstr "搜索关系"
 #. js-lingui-id: pzfKRn
 #: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
 msgid "Search roles"
-msgstr ""
+msgstr "搜索角色"
 
 #. js-lingui-id: BlLxpG
 #: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
@@ -27578,7 +27578,7 @@ msgstr "选择日期和时间"
 #. js-lingui-id: cggcog
 #: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
 msgid "Select a device"
-msgstr ""
+msgstr "选择设备"
 
 #. js-lingui-id: 1YV5aa
 #: src/modules/object-core/filters/components/CoreObjectFilterFieldSelect.tsx
@@ -27615,7 +27615,7 @@ msgstr "选择一个已知提供商或创建自定义提供商"
 #. js-lingui-id: E5eC82
 #: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
 msgid "Select a member"
-msgstr ""
+msgstr "选择成员"
 
 #. js-lingui-id: KQtk7u
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInsertionPreview.tsx
@@ -27782,7 +27782,7 @@ msgstr "选择匹配字段"
 #. js-lingui-id: 76TVV2
 #: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
 msgid "Select members"
-msgstr ""
+msgstr "选择成员"
 
 #. js-lingui-id: ezY8Ut
 #: src/modules/ui/input/components/internal/date/components/DateTimePickerHeader.tsx
@@ -27817,7 +27817,7 @@ msgstr "选择记录"
 #. js-lingui-id: 1Ky5Mj
 #: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
 msgid "Select roles"
-msgstr ""
+msgstr "选择角色"
 
 #. js-lingui-id: 9c44h0
 #: src/modules/object-core/components/CoreObjectTable.tsx
@@ -31385,7 +31385,7 @@ msgstr "此角色已分配给这些 {roleTargetDisplayName}。"
 #. js-lingui-id: 0bjsKH
 #: src/modules/side-panel/pages/page-layout/components/WidgetVisibilitySettings.tsx
 msgid "This rule cannot be edited here. Select Everyone to remove it."
-msgstr ""
+msgstr "此规则无法在此处编辑。选择“所有人”以将其删除。"
 
 #. js-lingui-id: 9IqK24
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -32702,7 +32702,7 @@ msgstr "未知文件"
 #. js-lingui-id: rIOkYf
 #: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
 msgid "Unknown member"
-msgstr ""
+msgstr "未知成员"
 
 #. js-lingui-id: num3KD
 #: src/modules/mention/components/MentionRecordChip.tsx
