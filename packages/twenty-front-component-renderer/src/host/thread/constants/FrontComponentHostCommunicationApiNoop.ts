@@ -3,6 +3,7 @@ import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentH
 export const FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP: FrontComponentHostCommunicationApi =
   {
     navigate: async () => {},
+    getObjectMetadata: async () => null,
     requestAccessTokenRefresh: async () => '',
     openSidePanelPage: async () => {},
     openCommandConfirmationModal: async () => {},

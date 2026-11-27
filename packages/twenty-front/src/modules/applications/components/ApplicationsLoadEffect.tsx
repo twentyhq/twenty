@@ -29,7 +29,7 @@ export const ApplicationsLoadEffect = () => {
 
   const isOnAuthOrOnboardingPage = useIsOnAuthOrOnboardingPage();
 
-  const onApplicationOperation = useCallback(() => {
+  const invalidateApplications = useCallback(() => {
     store.set(
       applicationBroadcastEventCountState.atom,
       (eventCount) => eventCount + 1,
@@ -38,7 +38,7 @@ export const ApplicationsLoadEffect = () => {
 
   useListenToMetadataOperationBrowserEvent<FlatApplication>({
     metadataName: 'application',
-    onMetadataOperationBrowserEvent: onApplicationOperation,
+    onMetadataOperationBrowserEvent: invalidateApplications,
   });
 
   const loadApplications = useCallback(async () => {
@@ -117,7 +117,10 @@ export const ApplicationsLoadEffect = () => {
 
   useListenToBrowserEvent({
     eventName: SSE_CLIENT_RECONNECTED_EVENT_NAME,
-    onBrowserEvent: loadApplications,
+    onBrowserEvent: () => {
+      invalidateApplications();
+      void loadApplications();
+    },
   });
 
   return null;

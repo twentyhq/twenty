@@ -14,6 +14,13 @@ import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectM
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 
+jest.mock(
+  '@/front-components/hooks/useGetFrontComponentObjectMetadata',
+  () => ({
+    useGetFrontComponentObjectMetadata: () => jest.fn(),
+  }),
+);
+
 jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
   useObjectMetadataItems: () => ({
     objectMetadataItems: [

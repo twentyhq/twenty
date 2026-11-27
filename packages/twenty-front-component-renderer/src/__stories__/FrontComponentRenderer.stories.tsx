@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { type GetObjectMetadataFunction } from 'twenty-sdk/front-component';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
@@ -161,7 +162,7 @@ export const CachedObjectMetadata: Story = {
     const getObjectMetadata: GetObjectMetadataFunction = async (
       objectNameSingular,
     ) => {
-      if (objectNameSingular !== 'opportunity' || stageLabel === null) {
+      if (objectNameSingular !== 'opportunity' || !isDefined(stageLabel)) {
         return null;
       }
 
@@ -196,7 +197,9 @@ export const CachedObjectMetadata: Story = {
           onError={args.onError}
           frontComponentHostCommunicationApi={{
             ...FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP,
-            ...(stageLabel === null ? {} : { getObjectMetadata }),
+            getObjectMetadata: isDefined(stageLabel)
+              ? getObjectMetadata
+              : undefined,
           }}
         />
       </>
