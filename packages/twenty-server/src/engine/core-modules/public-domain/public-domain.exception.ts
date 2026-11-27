@@ -9,6 +9,7 @@ export enum PublicDomainExceptionCode {
   DOMAIN_ALREADY_REGISTERED_AS_CUSTOM_DOMAIN = 'DOMAIN_ALREADY_REGISTERED_AS_CUSTOM_DOMAIN',
   DOMAIN_USED_BY_INSTANCE = 'DOMAIN_USED_BY_INSTANCE',
   PUBLIC_DOMAIN_NOT_FOUND = 'PUBLIC_DOMAIN_NOT_FOUND',
+  PUBLIC_DOMAIN_NOT_VALIDATED = 'PUBLIC_DOMAIN_NOT_VALIDATED',
   APPLICATION_NOT_FOUND = 'APPLICATION_NOT_FOUND',
 }
 
@@ -24,6 +25,8 @@ const getPublicDomainExceptionUserFriendlyMessage = (
       return msg`This domain is used by Twenty itself and cannot be a public domain.`;
     case PublicDomainExceptionCode.PUBLIC_DOMAIN_NOT_FOUND:
       return msg`Public domain not found.`;
+    case PublicDomainExceptionCode.PUBLIC_DOMAIN_NOT_VALIDATED:
+      return msg`Only a validated custom domain can be primary.`;
     case PublicDomainExceptionCode.APPLICATION_NOT_FOUND:
       return msg`Application not found in this workspace.`;
     default:
