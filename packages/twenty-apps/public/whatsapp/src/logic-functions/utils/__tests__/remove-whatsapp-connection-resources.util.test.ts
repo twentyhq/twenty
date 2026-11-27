@@ -53,6 +53,35 @@ describe('removeWhatsappConnectionResources', () => {
     );
   });
 
+  it('clears the progress and listed chunks of a run started before 0.3', async () => {
+    mocks.kvGet.mockImplementation(async (key: string) => {
+      if (key === 'whatsapp-history-import:connection-id') {
+        return { runId: 'run-1' };
+      }
+
+      return key.startsWith('whatsapp-history-import-planning:')
+        ? { plannedChunkCount: 3, chunkCount: 2 }
+        : null;
+    });
+
+    await removeWhatsappConnectionResources({
+      connectedAccountId: 'connection-id',
+      unipileAccountId: null,
+    });
+
+    expect(mocks.kvDelete.mock.calls.map(([key]) => key)).toEqual(
+      expect.arrayContaining([
+        'whatsapp-history-import-planning:connection-id:run-1',
+        'whatsapp-history-import-progress:connection-id:run-1',
+        'whatsapp-history-import-chats:connection-id:run-1:0',
+        'whatsapp-history-import-chats:connection-id:run-1:1',
+      ]),
+    );
+    expect(mocks.kvDelete).not.toHaveBeenCalledWith(
+      'whatsapp-history-import-chats:connection-id:run-1:2',
+    );
+  });
+
   it('deletes the channel, the sync state, the Unipile account and the routing claim', async () => {
     await removeWhatsappConnectionResources({
       connectedAccountId: 'connection-id',

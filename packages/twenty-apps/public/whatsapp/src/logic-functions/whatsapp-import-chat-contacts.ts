@@ -17,11 +17,9 @@ import { getActiveWhatsappHistoryImportState } from 'src/logic-functions/utils/g
 import { getWhatsappChatCounterparts } from 'src/logic-functions/utils/get-whatsapp-chat-counterparts.util';
 import { getWhatsappSettings } from 'src/logic-functions/utils/get-whatsapp-settings.util';
 import { handleWhatsappHistoryImportChatJobError } from 'src/logic-functions/utils/handle-whatsapp-history-import-chat-job-error.util';
-import {
-  mapWhatsappMessages,
-  resolveWhatsappChatPersons,
-  setWhatsappChatPersonAvatars,
-} from 'src/logic-functions/utils/ingest-whatsapp-messages.util';
+import { mapWhatsappMessages } from 'src/logic-functions/utils/map-whatsapp-messages.util';
+import { resolveWhatsappChatPersons } from 'src/logic-functions/utils/resolve-whatsapp-chat-persons.util';
+import { setWhatsappChatPersonAvatars } from 'src/logic-functions/utils/set-whatsapp-chat-person-avatars.util';
 import { isWhatsappChatSelected } from 'src/logic-functions/utils/is-whatsapp-chat-selected.util';
 import { isWhatsappGroupChat } from 'src/logic-functions/utils/is-whatsapp-group-chat.util';
 import { scheduleWhatsappHistoryImportChatJob } from 'src/logic-functions/utils/schedule-whatsapp-history-import-chat-job.util';

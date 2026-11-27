@@ -16,7 +16,7 @@ import { type WhatsappLegacyImportHistoryJobPayload } from 'src/logic-functions/
 import { finishWhatsappHistoryImportChat } from 'src/logic-functions/utils/finish-whatsapp-history-import-chat.util';
 import { getActiveWhatsappHistoryImportState } from 'src/logic-functions/utils/get-active-whatsapp-history-import-state.util';
 import { handleWhatsappHistoryImportChatJobError } from 'src/logic-functions/utils/handle-whatsapp-history-import-chat-job-error.util';
-import { ingestWhatsappChatMessages } from 'src/logic-functions/utils/ingest-whatsapp-messages.util';
+import { ingestWhatsappChatMessages } from 'src/logic-functions/utils/ingest-whatsapp-chat-messages.util';
 import { scheduleWhatsappHistoryImportChatJob } from 'src/logic-functions/utils/schedule-whatsapp-history-import-chat-job.util';
 import { listUnipileChatMessagesPage } from 'src/unipile/utils/list-unipile-chat-messages-page.util';
 

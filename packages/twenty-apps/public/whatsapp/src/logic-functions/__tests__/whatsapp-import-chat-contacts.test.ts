@@ -1,9 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type * as IngestWhatsappMessagesUtil from 'src/logic-functions/utils/ingest-whatsapp-messages.util';
 import { type WhatsappHistoryImportState } from 'src/types/whatsapp-history-import-state.type';
-
-type IngestWhatsappMessagesModule = typeof IngestWhatsappMessagesUtil;
 import { getWhatsappChatJobIdSegment } from 'src/logic-functions/utils/get-whatsapp-history-import-job-id.util';
 
 const mocks = vi.hoisted(() => ({
@@ -43,12 +40,13 @@ vi.mock('src/unipile/utils/list-unipile-chat-messages-page.util', () => ({
   listUnipileChatMessagesPage: mocks.listUnipileChatMessagesPage,
 }));
 
+vi.mock('src/logic-functions/utils/resolve-whatsapp-chat-persons.util', () => ({
+  resolveWhatsappChatPersons: mocks.resolveWhatsappChatPersons,
+}));
+
 vi.mock(
-  'src/logic-functions/utils/ingest-whatsapp-messages.util',
-  async (importOriginal) => ({
-    mapWhatsappMessages: (await importOriginal<IngestWhatsappMessagesModule>())
-      .mapWhatsappMessages,
-    resolveWhatsappChatPersons: mocks.resolveWhatsappChatPersons,
+  'src/logic-functions/utils/set-whatsapp-chat-person-avatars.util',
+  () => ({
     setWhatsappChatPersonAvatars: mocks.setWhatsappChatPersonAvatars,
   }),
 );

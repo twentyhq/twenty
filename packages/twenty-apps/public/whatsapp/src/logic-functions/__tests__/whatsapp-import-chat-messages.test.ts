@@ -34,7 +34,7 @@ vi.mock('src/unipile/utils/list-unipile-chat-messages-page.util', () => ({
   listUnipileChatMessagesPage: mocks.listUnipileChatMessagesPage,
 }));
 
-vi.mock('src/logic-functions/utils/ingest-whatsapp-messages.util', () => ({
+vi.mock('src/logic-functions/utils/ingest-whatsapp-chat-messages.util', () => ({
   ingestWhatsappChatMessages: mocks.ingestWhatsappChatMessages,
 }));
 
