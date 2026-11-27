@@ -5,13 +5,13 @@ import {
 } from 'test/integration/metadata/suites/application-grant-role/utils/find-application-grant-role.util';
 import { findApplicationRoleIds } from 'test/integration/metadata/suites/application-grant-role/utils/find-application-role-ids.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 
 import { type RemoveTwentyStandardApplicationRoleCommand } from 'src/database/commands/upgrade-version-command/2-66/2-66-workspace-command-1795791151025-remove-twenty-standard-application-role.command';
 import { type ApplicationGrantRoleService } from 'src/engine/core-modules/application/application-grant-role/services/application-grant-role.service';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 jest.setTimeout(120000);
@@ -80,7 +80,7 @@ describe('2-66 workspace command 1795791151025 - RemoveTwentyStandardApplication
 
     const [adminRole] = await globalThis.testDataSource.query(
       'SELECT id FROM core."role" WHERE "universalIdentifier" = $1 AND "workspaceId" = $2',
-      [STANDARD_ROLE.admin.universalIdentifier, SEED_APPLE_WORKSPACE_ID],
+      [ADMIN_ROLE_UNIVERSAL_IDENTIFIER, SEED_APPLE_WORKSPACE_ID],
     );
 
     adminRoleId = adminRole.id;

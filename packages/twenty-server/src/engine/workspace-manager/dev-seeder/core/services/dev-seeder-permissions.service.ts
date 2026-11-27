@@ -1,10 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import {
-  ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
-  PermissionFlagType,
-} from 'twenty-shared/constants';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { DataSource } from 'typeorm';
 
@@ -16,7 +13,6 @@ import { ObjectPermissionService } from 'src/engine/metadata-modules/object-perm
 import { RolePermissionFlagService } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.service';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { WorkspaceCustomApplicationRoleService } from 'src/engine/metadata-modules/role/services/workspace-custom-application-role.service';
 import { ChannelVisibilityRoleWideAccessRevokeService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-role-wide-access-revoke.service';
@@ -45,8 +41,6 @@ export class DevSeederPermissionsService {
     private readonly objectPermissionService: ObjectPermissionService,
     @InjectWorkspaceScopedRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: WorkspaceScopedRepository<ObjectMetadataEntity>,
-    @InjectWorkspaceScopedRepository(RoleEntity)
-    private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
     private readonly fieldPermissionService: FieldPermissionService,
     private readonly roleTargetService: RoleTargetService,
     private readonly rolePermissionFlagService: RolePermissionFlagService,
@@ -65,21 +59,17 @@ export class DevSeederPermissionsService {
     workspaceCustomFlatApplication: FlatApplication;
     light?: boolean;
   }) {
-    const adminRole = await this.roleRepository.findOne(workspaceId, {
-      where: {
-        universalIdentifier: ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
-      },
-    });
-
-    if (!adminRole) {
-      throw new Error(
-        'Required roles not found. Make sure the permission sync has run.',
+    const adminRoleId =
+      await this.workspaceCustomApplicationRoleService.findOrCreateAdminRoleOrThrow(
+        {
+          workspaceId,
+          workspaceCustomFlatApplication,
+        },
       );
-    }
 
     await this.roleTargetService.create({
       createRoleTargetInput: {
-        roleId: adminRole.id,
+        roleId: adminRoleId,
         targetId: API_KEY_DATA_SEED_IDS.ID_1,
         targetMetadataForeignKey: 'apiKeyId',
         applicationId: twentyStandardFlatApplication.id,
@@ -166,7 +156,7 @@ export class DevSeederPermissionsService {
     await this.roleAssignmentWriteService.assignRoleToUserWorkspaces({
       workspaceId,
       userWorkspaceIds: [adminUserWorkspaceId],
-      roleId: adminRole.id,
+      roleId: adminRoleId,
     });
 
     const memberRole = await this.initMinimalPermissionsAndActivateWorkspace({

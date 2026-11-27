@@ -64,21 +64,6 @@ export class WorkspaceManagerService {
       workspaceId,
     });
 
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspaceId,
-        },
-      );
-
-    const adminRoleId =
-      await this.workspaceCustomApplicationRoleService.findOrCreateAdminRoleOrThrow(
-        {
-          workspaceId,
-          workspaceCustomFlatApplication,
-        },
-      );
-
     await this.twentyStandardApplicationService.synchronizeTwentyStandardApplicationOrThrow(
       {
         workspaceId,
@@ -95,6 +80,13 @@ export class WorkspaceManagerService {
       `Metadata creation took ${dataSourceMetadataCreationEnd - dataSourceMetadataCreationStart}ms`,
     );
 
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     await this.workspaceCustomApplicationRoleService.findOrCreateGrantedRoleOrThrow(
       {
         workspaceId,
@@ -105,7 +97,6 @@ export class WorkspaceManagerService {
     await this.setupDefaultRoles({
       workspaceId,
       userId,
-      adminRoleId,
       workspaceCustomFlatApplication,
     });
   }
@@ -113,14 +104,20 @@ export class WorkspaceManagerService {
   private async setupDefaultRoles({
     userId,
     workspaceId,
-    adminRoleId,
     workspaceCustomFlatApplication,
   }: {
     workspaceId: string;
     userId: string;
-    adminRoleId: string;
     workspaceCustomFlatApplication: FlatApplication;
   }): Promise<void> {
+    const adminRoleId =
+      await this.workspaceCustomApplicationRoleService.findOrCreateAdminRoleOrThrow(
+        {
+          workspaceId,
+          workspaceCustomFlatApplication,
+        },
+      );
+
     const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
       where: { workspaceId, userId },
     });

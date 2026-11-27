@@ -54,9 +54,9 @@ const ADMIN_ROLE_TABLES = [
   },
 ] as const;
 
-@RegisteredWorkspaceCommand('2.65.0', 1795789135076)
+@RegisteredWorkspaceCommand('2.66.0', 1795795170237)
 @Command({
-  name: 'upgrade:2-65:move-admin-role-to-workspace-custom-application',
+  name: 'upgrade:2-66:move-admin-role-to-workspace-custom-application',
   description:
     'Give the Admin role, and every permission twenty-standard owns on it, to the workspace custom application',
 })
