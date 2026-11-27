@@ -14,14 +14,17 @@ import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { type ConnectionProviderConnectedAccountService } from 'src/engine/core-modules/application/connection-provider/connection-provider-connected-account.service';
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 
 const APPLICATION_IDENTIFIER = v4();
 const ROLE_IDENTIFIER = v4();
 const PROVIDER_IDENTIFIER = v4();
+const SINGLE_PROVIDER_IDENTIFIER = v4();
 const IDENTIFY_ACCOUNT_IDENTIFIER = v4();
 const ON_CONNECT_IDENTIFIER = v4();
 
@@ -32,6 +35,7 @@ const IDENTIFY_ACCOUNT_SOURCE = `export const handler = ({ accessToken }) => {
 
 describe('app connection api-key flow', () => {
   let provider: ConnectionProviderEntity;
+  let singleConnectionProvider: ConnectionProviderEntity;
   let markerServer: MarkerServer;
   let onConnectExecutionsUrl: string;
 
@@ -60,16 +64,18 @@ describe('app connection api-key flow', () => {
     apiKey,
     reconnectingConnectedAccountId,
     token,
+    providerName = provider.name,
   }: {
     apiKey: string;
     reconnectingConnectedAccountId?: string;
     token?: string;
+    providerName?: string;
   }) => {
     const response = await makeMetadataApiRequest(
       connectApplicationWithApiKeyQueryFactory({
         input: {
           applicationId: provider.applicationId,
-          providerName: provider.name,
+          providerName,
           apiKey,
           reconnectingConnectedAccountId,
         },
@@ -151,6 +157,16 @@ describe('app connection api-key flow', () => {
                 universalIdentifier: ON_CONNECT_IDENTIFIER,
               },
             },
+            {
+              universalIdentifier: SINGLE_PROVIDER_IDENTIFIER,
+              name: 'single-key-provider',
+              displayName: 'Single key provider',
+              type: 'api-key',
+              allowMultipleConnections: false,
+              identifyAccountLogicFunction: {
+                universalIdentifier: IDENTIFY_ACCOUNT_IDENTIFIER,
+              },
+            },
           ],
         },
       }),
@@ -161,6 +177,10 @@ describe('app connection api-key flow', () => {
     [provider] = await globalThis.testDataSource.query(
       'SELECT * FROM core."connectionProvider" WHERE "universalIdentifier" = $1',
       [PROVIDER_IDENTIFIER],
+    );
+    [singleConnectionProvider] = await globalThis.testDataSource.query(
+      'SELECT * FROM core."connectionProvider" WHERE "universalIdentifier" = $1',
+      [SINGLE_PROVIDER_IDENTIFIER],
     );
   }, 120000);
 
@@ -244,5 +264,81 @@ describe('app connection api-key flow', () => {
       handle: 'Company A (valid-key-2)',
     });
     expect(decryptAccessToken(accounts[0].accessToken)).toBe('valid-key-2');
+  });
+
+  describe('when the provider allows a single connection', () => {
+    const readSingleProviderAccounts = (): Promise<ConnectedAccountEntity[]> =>
+      globalThis.testDataSource.query(
+        'SELECT * FROM core."connectedAccount" WHERE "connectionProviderId" = $1',
+        [singleConnectionProvider.id],
+      );
+
+    it('refuses a second connection', async () => {
+      await connectWithApiKey({
+        apiKey: 'valid-key-1',
+        providerName: singleConnectionProvider.name,
+      });
+
+      const response = await connectWithApiKey({
+        apiKey: 'valid-key-2',
+        providerName: singleConnectionProvider.name,
+      });
+
+      expect(response.body.errors?.[0]?.extensions?.code).toBe(
+        'BAD_USER_INPUT',
+      );
+      expect(await readSingleProviderAccounts()).toHaveLength(1);
+    });
+
+    it('creates only one connection from concurrent requests', async () => {
+      const [userWorkspace] = await globalThis.testDataSource.query(
+        'SELECT id, "userId" FROM core."userWorkspace" WHERE id = $1',
+        [USER_WORKSPACE_DATA_SEED_IDS.JANE],
+      );
+      const connectedAccountService =
+        getAppProviderByClassName<ConnectionProviderConnectedAccountService>(
+          'ConnectionProviderConnectedAccountService',
+        );
+
+      const results = await Promise.allSettled(
+        Array.from({ length: 5 }, (_, index) =>
+          connectedAccountService.persist({
+            provider: singleConnectionProvider,
+            credentials: undefined,
+            handle: `concurrent-${index}`,
+            identifiedAccount: null,
+            workspaceId: SEED_APPLE_WORKSPACE_ID,
+            userId: userWorkspace.userId,
+            userWorkspaceId: userWorkspace.id,
+            scope: 'WORKSPACE',
+            reconnectingConnectedAccountId: null,
+          }),
+        ),
+      );
+
+      expect(
+        results.filter((result) => result.status === 'fulfilled'),
+      ).toHaveLength(1);
+      expect(await readSingleProviderAccounts()).toHaveLength(1);
+    });
+
+    it('still reconnects the existing connection', async () => {
+      await connectWithApiKey({
+        apiKey: 'valid-key-1',
+        providerName: singleConnectionProvider.name,
+      });
+      const [connection] = await readSingleProviderAccounts();
+
+      const response = await connectWithApiKey({
+        apiKey: 'valid-key-2',
+        providerName: singleConnectionProvider.name,
+        reconnectingConnectedAccountId: connection.id,
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(await readSingleProviderAccounts()).toMatchObject([
+        { id: connection.id, handle: 'Company A (valid-key-2)' },
+      ]);
+    });
   });
 });

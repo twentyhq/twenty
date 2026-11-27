@@ -13,6 +13,7 @@ import { ConnectionProviderException } from 'src/engine/core-modules/application
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
 import { extractEmailFromIdTokenClaims } from 'src/engine/core-modules/application/connection-provider/utils/extract-email-from-id-token-claims.util';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import {
@@ -45,6 +46,7 @@ export class ConnectionProviderConnectedAccountService {
     private readonly userRepository: Repository<UserEntity>,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly billingSubscriptionUpdateService: BillingSubscriptionUpdateService,
+    private readonly cacheLockService: CacheLockService,
   ) {}
 
   async assertCallerCanConnectOrThrow({
@@ -241,37 +243,46 @@ export class ConnectionProviderConnectedAccountService {
       return connectedAccount;
     }
 
-    await this.assertCanAddConnectionOrThrow({
-      provider,
-      workspaceId,
-      userWorkspaceId,
-      scope,
-      reconnectingConnectedAccountId,
-    });
+    const createConnectedAccount = async () => {
+      const existingCount = await this.connectedAccountRepository.count({
+        where: { connectionProviderId: provider.id, workspaceId },
+      });
 
-    const existingCount = await this.connectedAccountRepository.count({
-      where: { connectionProviderId: provider.id, workspaceId },
-    });
+      const created = this.connectedAccountRepository.create({
+        ...sharedFields,
+        handle: handle ?? (await this.resolveHandle({ idToken: null, userId })),
+        name: `${provider.displayName} #${existingCount + 1}`,
+        scope,
+        provider: ConnectedAccountProvider.APP,
+        workspaceId,
+        applicationId: provider.applicationId,
+        connectionProviderId: provider.id,
+        userWorkspaceId,
+      });
 
-    const name = `${provider.displayName} #${existingCount + 1}`;
+      return this.chargeThenPersist({
+        workspaceId,
+        provider,
+        persist: () => this.connectedAccountRepository.save(created),
+      });
+    };
 
-    const created = this.connectedAccountRepository.create({
-      ...sharedFields,
-      handle: handle ?? (await this.resolveHandle({ idToken: null, userId })),
-      name,
-      scope,
-      provider: ConnectedAccountProvider.APP,
-      workspaceId,
-      applicationId: provider.applicationId,
-      connectionProviderId: provider.id,
-      userWorkspaceId,
-    });
+    const singleConnectionLockKey = `app-single-connection:${workspaceId}:${provider.id}${scope === 'USER' ? `:${userWorkspaceId}` : ''}`;
 
-    const connectedAccount = await this.chargeThenPersist({
-      workspaceId,
-      provider,
-      persist: () => this.connectedAccountRepository.save(created),
-    });
+    // The lock makes the existence check and the insert atomic across concurrent flows.
+    const connectedAccount = provider.allowMultipleConnections
+      ? await createConnectedAccount()
+      : await this.cacheLockService.withLock(async () => {
+          await this.assertCanAddConnectionOrThrow({
+            provider,
+            workspaceId,
+            userWorkspaceId,
+            scope,
+            reconnectingConnectedAccountId,
+          });
+
+          return createConnectedAccount();
+        }, singleConnectionLockKey);
 
     this.emitConnectionChanged(connectedAccount);
 
