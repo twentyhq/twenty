@@ -8,14 +8,17 @@ import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { RecordReadCustomPermissionHandler } from 'src/engine/permissions/record-read-custom-permissions/decorators/record-read-custom-permission-handler.decorator';
-import { type RecordReadCustomPermissionHandlerService } from 'src/engine/permissions/record-read-custom-permissions/types/record-read-custom-permission-handler-service.type';
+import {
+  type RecordReadCustomPermissionEventsInput,
+  type RecordReadCustomPermissionHandlerService,
+  type RecordReadCustomPermissionRecordsInput,
+} from 'src/engine/permissions/record-read-custom-permissions/types/record-read-custom-permission-handler-service.type';
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
-import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildIsTimelineActivityRecordReadable } from 'src/engine/permissions/record-read-custom-permissions/handlers/timeline-activity/utils/build-is-timeline-activity-record-readable.util';
@@ -41,9 +44,7 @@ export class TimelineActivityReadCustomPermissionHandlerService implements Recor
     recordReadRestrictions,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
-  }: Parameters<
-    RecordReadCustomPermissionHandlerService['restrictRecords']
-  >[0]): Promise<void> {
+  }: RecordReadCustomPermissionRecordsInput): Promise<void> {
     const timelineActivities = records.filter(
       (timelineActivity) => 'properties' in timelineActivity,
     );
@@ -90,13 +91,7 @@ export class TimelineActivityReadCustomPermissionHandlerService implements Recor
     recordReadRestrictions,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
-  }: {
-    events: TEvent[];
-    permissionsPrincipals: PermissionsPrincipalsWithRolesContext;
-    recordReadRestrictions: RecordReadRestrictions;
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-  }): Promise<TEvent[]> {
+  }: RecordReadCustomPermissionEventsInput<TEvent>): Promise<TEvent[]> {
     const timelineActivitySnapshots = events.flatMap(({ properties }) =>
       [
         'before' in properties ? properties.before : undefined,

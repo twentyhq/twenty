@@ -47,14 +47,10 @@ const getObjectByTargetColumnName = (
   return objectByTargetColumnName;
 };
 
-export type TimelineActivityRecordReference = {
+export type IsTimelineActivityRecordReadable = (recordReference: {
   objectMetadataId: string;
   recordId: string;
-};
-
-export type IsTimelineActivityRecordReadable = (
-  recordReference: TimelineActivityRecordReference,
-) => boolean;
+}) => boolean;
 
 type TimelineActivitySubject = {
   flatObjectMetadata: Pick<FlatObjectMetadata, 'id' | 'fieldIds'>;

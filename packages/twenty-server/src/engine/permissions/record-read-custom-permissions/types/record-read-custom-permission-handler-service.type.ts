@@ -8,20 +8,30 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 
+export type RecordReadCustomPermissionRecordsInput = {
+  records: ObjectRecord[];
+  authContext: WorkspaceAuthContext;
+  permissionsPrincipals: PermissionsPrincipalsWithRolesContext | undefined;
+  recordReadRestrictions: RecordReadRestrictions;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+};
+
+export type RecordReadCustomPermissionEventsInput<
+  TEvent extends ObjectRecordEvent,
+> = {
+  events: TEvent[];
+  permissionsPrincipals: PermissionsPrincipalsWithRolesContext;
+  recordReadRestrictions: RecordReadRestrictions;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+};
+
 export type RecordReadCustomPermissionHandlerService = {
-  restrictRecords: (args: {
-    records: ObjectRecord[];
-    authContext: WorkspaceAuthContext;
-    permissionsPrincipals: PermissionsPrincipalsWithRolesContext | undefined;
-    recordReadRestrictions: RecordReadRestrictions;
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-  }) => Promise<void>;
-  restrictEvents?: <TEvent extends ObjectRecordEvent>(args: {
-    events: TEvent[];
-    permissionsPrincipals: PermissionsPrincipalsWithRolesContext;
-    recordReadRestrictions: RecordReadRestrictions;
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-  }) => Promise<TEvent[]>;
+  restrictRecords: (
+    input: RecordReadCustomPermissionRecordsInput,
+  ) => Promise<void>;
+  restrictEvents?: <TEvent extends ObjectRecordEvent>(
+    input: RecordReadCustomPermissionEventsInput<TEvent>,
+  ) => Promise<TEvent[]>;
 };

@@ -3,23 +3,20 @@ import { DiscoveryService } from '@nestjs/core';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
-import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { RECORD_READ_CUSTOM_PERMISSION_HANDLER_METADATA_KEY } from 'src/engine/permissions/record-read-custom-permissions/constants/record-read-custom-permission-handler-metadata-key.constant';
 import { RECORD_READ_CUSTOM_PERMISSION_OBJECT_NAME_SINGULARS } from 'src/engine/permissions/record-read-custom-permissions/constants/record-read-custom-permission-object-name-singulars.constant';
-import { type RecordReadCustomPermissionHandlerService } from 'src/engine/permissions/record-read-custom-permissions/types/record-read-custom-permission-handler-service.type';
-import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
+import {
+  type RecordReadCustomPermissionEventsInput,
+  type RecordReadCustomPermissionHandlerService,
+  type RecordReadCustomPermissionRecordsInput,
+} from 'src/engine/permissions/record-read-custom-permissions/types/record-read-custom-permission-handler-service.type';
 
 // TODO(@charlesBochet): replace with row-level security once it can express channel visibility
 @Injectable()
@@ -67,14 +64,8 @@ export class RecordReadCustomPermissionsService implements OnModuleInit {
   public async restrictRecords({
     objectNameSingular,
     ...recordRestrictionInput
-  }: {
+  }: RecordReadCustomPermissionRecordsInput & {
     objectNameSingular: string;
-    records: ObjectRecord[];
-    authContext: WorkspaceAuthContext;
-    permissionsPrincipals: PermissionsPrincipalsWithRolesContext | undefined;
-    recordReadRestrictions: RecordReadRestrictions;
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }): Promise<void> {
     if (
       !RECORD_READ_CUSTOM_PERMISSION_OBJECT_NAME_SINGULARS.has(
@@ -93,13 +84,8 @@ export class RecordReadCustomPermissionsService implements OnModuleInit {
   public async restrictEvents<TEvent extends ObjectRecordEvent>({
     objectNameSingular,
     ...eventRestrictionInput
-  }: {
+  }: RecordReadCustomPermissionEventsInput<TEvent> & {
     objectNameSingular: string;
-    events: TEvent[];
-    permissionsPrincipals: PermissionsPrincipalsWithRolesContext;
-    recordReadRestrictions: RecordReadRestrictions;
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }): Promise<TEvent[]> {
     if (
       !RECORD_READ_CUSTOM_PERMISSION_OBJECT_NAME_SINGULARS.has(
