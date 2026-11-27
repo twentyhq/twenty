@@ -26,12 +26,7 @@ export const collectSettingsSearchRoutes = ({
       parentGuards: guards,
     });
 
-    if (
-      !isDefined(metadata) ||
-      metadata === false ||
-      !isDefined(path) ||
-      !isSettingsPathValue(path)
-    ) {
+    if (!metadata || !isDefined(path) || !isSettingsPathValue(path)) {
       return childRoutes;
     }
 
