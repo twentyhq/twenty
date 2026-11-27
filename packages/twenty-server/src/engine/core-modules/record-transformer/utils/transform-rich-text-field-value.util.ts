@@ -12,7 +12,6 @@ export const transformRichTextFieldValue = (richTextFieldValue: unknown) => {
     return transformRichTextValue(richTextFieldValue);
   }
 
-  // A value listing only files leaves the stored body untouched.
   const isBodyProvided = RICH_TEXT_BODY_SUB_FIELD_NAMES.some(
     (subFieldName) => richTextFieldValue[subFieldName] !== undefined,
   );
