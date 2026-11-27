@@ -26,7 +26,14 @@ import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
 import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
 import { type UnipileUser } from 'src/unipile/types/unipile-user.type';
 
-const resolvePersonIdByHandle = async ({
+export type LinkedinChatPersons = {
+  counterparts: UnipileUser[];
+  personIdByHandle: Map<string, string>;
+  matchedPersonCount: number;
+  createdPersonCount: number;
+};
+
+export const resolveLinkedinChatPersons = async ({
   settings,
   counterparts,
   resolveCounterpart,
@@ -36,17 +43,9 @@ const resolvePersonIdByHandle = async ({
   settings: LinkedinSettings;
   counterparts: UnipileUser[];
   resolveCounterpart: LinkedinCounterpartResolver;
-  hasUserSentMessage: boolean;
+  hasUserSentMessage: () => Promise<boolean>;
   isGroupChat: boolean;
-}): Promise<
-  | {
-      counterparts: UnipileUser[];
-      personIdByHandle: Map<string, string>;
-      matchedPersonCount: number;
-      createdPersonCount: number;
-    }
-  | undefined
-> => {
+}): Promise<LinkedinChatPersons | undefined> => {
   const isContactRequired =
     settings.importPolicy === 'CONTACTS_ONLY' ||
     (isGroupChat && settings.importPolicy !== 'SELECTED');
@@ -83,9 +82,12 @@ const resolvePersonIdByHandle = async ({
   let matchedPersonCount = personIdByHandle.size;
 
   if (
+    unmatchedCounterparts.length === 0 ||
     !isLinkedinContactCreationAllowed({
       policy: settings.contactAutoCreationPolicy,
-      hasUserSentMessage,
+      hasUserSentMessage:
+        settings.contactAutoCreationPolicy === 'SENT' &&
+        (await hasUserSentMessage()),
     })
   ) {
     return {
@@ -151,65 +153,52 @@ const resolvePersonIdByHandle = async ({
   };
 };
 
-export const ingestLinkedinMessages = async ({
+export const setLinkedinChatPersonAvatars = ({
+  counterparts,
+  personIdByHandle,
+  deadlineAtMs,
+}: {
+  counterparts: UnipileUser[];
+  personIdByHandle: Map<string, string>;
+  deadlineAtMs: number;
+}): Promise<void> =>
+  setMissingLinkedinPersonAvatars({
+    avatars: counterparts.flatMap((counterpart) => {
+      const personId = personIdByHandle.get(
+        buildLinkedinProfileHandle(counterpart),
+      );
+
+      return isDefined(personId) &&
+        isNonEmptyString(counterpart.public_picture_url)
+        ? [{ personId, pictureUrl: counterpart.public_picture_url }]
+        : [];
+    }),
+    deadlineAtMs,
+  });
+
+export const isIngestableLinkedinMessage = (message: UnipileMessage): boolean =>
+  !message.is_event && !message.is_deleted;
+
+export const ingestLinkedinChatMessages = async ({
   unipileAccountId,
   attachmentDeadlineAtMs,
   channel,
-  settings,
   chat,
   counterparts,
-  resolveCounterpart,
+  personIdByHandle,
   messages,
 }: {
   unipileAccountId: string;
   attachmentDeadlineAtMs: number;
   channel: Pick<AppMessageChannel, 'id' | 'handle'>;
-  settings: LinkedinSettings;
   chat: UnipileChat;
   counterparts: UnipileUser[];
-  resolveCounterpart: LinkedinCounterpartResolver;
+  personIdByHandle: Map<string, string>;
   messages: UnipileMessage[];
-}): Promise<LinkedinIngestResult> => {
-  const isGroupChat = isLinkedinGroupChat(chat);
-
-  const emptyResult = {
-    ingestedMessageCount: 0,
-    matchedPersonCount: 0,
-    createdPersonCount: 0,
-    importedAttachmentCount: 0,
-  };
-
-  if (!isLinkedinChatSelected({ settings, chatId: chat.id })) {
-    return { ...emptyResult, skippedReason: 'NOT_SELECTED' };
-  }
-
-  const ingestableMessages = messages.filter(
-    (message) => !message.is_event && !message.is_deleted,
-  );
-
-  if (ingestableMessages.length === 0) {
-    return { ...emptyResult, skippedReason: 'NO_MESSAGES' };
-  }
-
-  const resolvedPersons = await resolvePersonIdByHandle({
-    settings,
-    counterparts,
-    resolveCounterpart,
-    hasUserSentMessage: ingestableMessages.some((message) => message.is_sender),
-    isGroupChat,
-  });
-
-  if (!isDefined(resolvedPersons)) {
-    return { ...emptyResult, skippedReason: 'NO_CONTACT' };
-  }
-
-  const {
-    counterparts: resolvedCounterparts,
-    personIdByHandle,
-    matchedPersonCount,
-    createdPersonCount,
-  } = resolvedPersons;
-
+}): Promise<
+  Pick<LinkedinIngestResult, 'ingestedMessageCount' | 'importedAttachmentCount'>
+> => {
+  const ingestableMessages = messages.filter(isIngestableLinkedinMessage);
   const subject = buildLinkedinChatSubject(chat);
   const ingestMessagesInput = ingestableMessages
     .map((message) =>
@@ -218,12 +207,12 @@ export const ingestLinkedinMessages = async ({
           ...message,
           sender: message.is_sender
             ? message.sender
-            : (resolvedCounterparts.find(
+            : (counterparts.find(
                 (counterpart) => counterpart.id === message.sender_id,
               ) ?? message.sender),
         },
         channelHandle: channel.handle,
-        counterparts: resolvedCounterparts,
+        counterparts,
       }),
     )
     .filter(isDefined)
@@ -283,24 +272,80 @@ export const ingestLinkedinMessages = async ({
     },
   });
 
-  await setMissingLinkedinPersonAvatars({
-    avatars: resolvedCounterparts.flatMap((counterpart) => {
-      const personId = personIdByHandle.get(
-        buildLinkedinProfileHandle(counterpart),
-      );
+  return {
+    ingestedMessageCount: ingestMessagesInput.length,
+    importedAttachmentCount,
+  };
+};
 
-      return isDefined(personId) &&
-        isNonEmptyString(counterpart.public_picture_url)
-        ? [{ personId, pictureUrl: counterpart.public_picture_url }]
-        : [];
-    }),
+export const ingestLinkedinMessages = async ({
+  unipileAccountId,
+  attachmentDeadlineAtMs,
+  channel,
+  settings,
+  chat,
+  counterparts,
+  resolveCounterpart,
+  messages,
+}: {
+  unipileAccountId: string;
+  attachmentDeadlineAtMs: number;
+  channel: Pick<AppMessageChannel, 'id' | 'handle'>;
+  settings: LinkedinSettings;
+  chat: UnipileChat;
+  counterparts: UnipileUser[];
+  resolveCounterpart: LinkedinCounterpartResolver;
+  messages: UnipileMessage[];
+}): Promise<LinkedinIngestResult> => {
+  const emptyResult = {
+    ingestedMessageCount: 0,
+    matchedPersonCount: 0,
+    createdPersonCount: 0,
+    importedAttachmentCount: 0,
+  };
+
+  if (!isLinkedinChatSelected({ settings, chatId: chat.id })) {
+    return { ...emptyResult, skippedReason: 'NOT_SELECTED' };
+  }
+
+  const ingestableMessages = messages.filter(isIngestableLinkedinMessage);
+
+  if (ingestableMessages.length === 0) {
+    return { ...emptyResult, skippedReason: 'NO_MESSAGES' };
+  }
+
+  const chatPersons = await resolveLinkedinChatPersons({
+    settings,
+    counterparts,
+    resolveCounterpart,
+    hasUserSentMessage: async () =>
+      ingestableMessages.some((message) => message.is_sender),
+    isGroupChat: isLinkedinGroupChat(chat),
+  });
+
+  if (!isDefined(chatPersons)) {
+    return { ...emptyResult, skippedReason: 'NO_CONTACT' };
+  }
+
+  const ingestResult = await ingestLinkedinChatMessages({
+    unipileAccountId,
+    attachmentDeadlineAtMs,
+    channel,
+    chat,
+    counterparts: chatPersons.counterparts,
+    personIdByHandle: chatPersons.personIdByHandle,
+    messages: ingestableMessages,
+  });
+
+  await setLinkedinChatPersonAvatars({
+    counterparts: chatPersons.counterparts,
+    personIdByHandle: chatPersons.personIdByHandle,
     deadlineAtMs: attachmentDeadlineAtMs,
   });
 
   return {
-    ingestedMessageCount: ingestMessagesInput.length,
-    matchedPersonCount,
-    createdPersonCount,
-    importedAttachmentCount,
+    ...ingestResult,
+    matchedPersonCount: chatPersons.matchedPersonCount,
+    createdPersonCount: chatPersons.createdPersonCount,
   };
 };

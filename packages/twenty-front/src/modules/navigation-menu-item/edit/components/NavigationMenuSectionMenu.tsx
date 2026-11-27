@@ -19,7 +19,13 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 type NavigationMenuSectionMenuProps = {
   section: Pick<
     NavigationMenuItem,
-    'id' | 'name' | 'icon' | 'parentId' | 'type' | 'builtInSectionKey'
+    | 'id'
+    | 'name'
+    | 'icon'
+    | 'parentId'
+    | 'type'
+    | 'builtInSectionKey'
+    | 'visibleItemLimit'
   >;
 };
 

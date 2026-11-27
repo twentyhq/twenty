@@ -2,10 +2,16 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { CLI_NODE_VERSION_RANGE } from '@/constants/cli-node-version-range.constant';
 import { startCli } from '@/start-cli';
+import { initializeSystemCertificateTrust } from '@/transport/initialize-system-certificate-trust';
+
+vi.mock('@/transport/initialize-system-certificate-trust', () => ({
+  initializeSystemCertificateTrust: vi.fn(),
+}));
 
 describe('startCli', () => {
   afterEach(() => {
     process.exitCode = undefined;
+    vi.clearAllMocks();
     vi.restoreAllMocks();
   });
 
@@ -17,7 +23,11 @@ describe('startCli', () => {
       await startCli({
         args: ['version'],
         nodeVersion,
-        loadCli: async () => ({ runCli }),
+        loadCli: async () => {
+          expect(initializeSystemCertificateTrust).toHaveBeenCalledOnce();
+
+          return { runCli };
+        },
       });
 
       expect(runCli).toHaveBeenCalledTimes(1);
@@ -39,6 +49,7 @@ describe('startCli', () => {
       );
       expect(process.exitCode).toBe(1);
       expect(loadCli).not.toHaveBeenCalled();
+      expect(initializeSystemCertificateTrust).not.toHaveBeenCalled();
       expect(runCli).not.toHaveBeenCalled();
     },
   );
