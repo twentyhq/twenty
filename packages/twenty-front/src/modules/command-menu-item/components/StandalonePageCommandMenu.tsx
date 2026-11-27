@@ -28,7 +28,15 @@ import {
   EngineComponentKey,
 } from '~/generated-metadata/graphql';
 
-export const StandalonePageCommandMenu = () => {
+type StandalonePageCommandMenuProps = {
+  pageType?: ContextStorePageType;
+  isEditable?: boolean;
+};
+
+export const StandalonePageCommandMenu = ({
+  pageType = ContextStorePageType.Standalone,
+  isEditable = true,
+}: StandalonePageCommandMenuProps) => {
   const isLayoutCustomizationAllowedOnCurrentPage =
     useIsLayoutCustomizationAllowedOnCurrentPage();
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
@@ -48,7 +56,7 @@ export const StandalonePageCommandMenu = () => {
     );
 
     return {
-      pageType: ContextStorePageType.Standalone,
+      pageType,
       isInSidePanel: false,
       isDashboardPageLayoutInEditMode: false,
       isLayoutCustomizationModeEnabled,
@@ -70,6 +78,7 @@ export const StandalonePageCommandMenu = () => {
       currentView: null,
     };
   }, [
+    pageType,
     currentWorkspace?.featureFlags,
     permissionFlagMap,
     currentUser?.canImpersonate,
@@ -125,7 +134,7 @@ export const StandalonePageCommandMenu = () => {
       }}
     >
       <PinnedCommandMenuItemButtons />
-      <CommandMenuItemEditButton />
+      {isEditable && <CommandMenuItemEditButton />}
     </CommandMenuContext.Provider>
   );
 };

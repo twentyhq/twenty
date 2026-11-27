@@ -1,4 +1,4 @@
-export type WhatsappImportHistoryJobPayload = {
+export type WhatsappLegacyImportHistoryJobPayload = {
   connectedAccountId: string;
   runId: string;
   chunkIndex: number;
