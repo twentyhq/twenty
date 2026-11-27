@@ -18,7 +18,7 @@ export const getRoleNotEditableErrors = ({
   isRecordPermissionsChange = false,
 }: {
   flatRole: UniversalFlatRole;
-  buildOptions: WorkspaceMigrationBuilderOptions &
+  buildOptions: Pick<WorkspaceMigrationBuilderOptions, 'isSystemBuild' | 'applicationUniversalIdentifier'> &
     Partial<
       Pick<
         WorkspaceMigrationValidationBuildOptions,

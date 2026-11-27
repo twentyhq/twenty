@@ -15,7 +15,7 @@ export const validateRoleBelongsToCallerApplication = ({
   isRecordPermissionsChange = false,
 }: {
   referencedRole: UniversalFlatRole;
-  buildOptions: WorkspaceMigrationBuilderOptions &
+  buildOptions: Pick<WorkspaceMigrationBuilderOptions, 'applicationUniversalIdentifier'> &
     Partial<
       Pick<
         WorkspaceMigrationValidationBuildOptions,
