@@ -106,6 +106,32 @@ const renderPageChangeEffect = () => {
   );
 };
 
+const renderSettingsPage = async ({
+  isCustomizableSidebarEnabled,
+}: {
+  isCustomizableSidebarEnabled: boolean;
+}) => {
+  renderPageChangeEffect();
+
+  act(() => {
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      featureFlags: [
+        {
+          key: FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+          value: isCustomizableSidebarEnabled,
+        },
+      ],
+    });
+  });
+  act(() => navigateMainPage?.('/settings/profile'));
+  await waitFor(() => {
+    expect(jotaiStore.get(focusStackState.atom).at(-1)?.focusId).toBe(
+      PageFocusId.Settings,
+    );
+  });
+};
+
 const openSidePanelWith = (
   sidePanelNavigationStack: SidePanelNavigationStackItem[],
 ) => {
@@ -340,25 +366,7 @@ describe('PageChangeEffect', () => {
   ])(
     'should open the command menu with Cmd+K on settings only with the customizable sidebar (enabled: $isCustomizableSidebarEnabled)',
     async ({ isCustomizableSidebarEnabled, isSidePanelOpened }) => {
-      renderPageChangeEffect();
-
-      act(() => {
-        jotaiStore.set(currentWorkspaceState.atom, {
-          ...mockCurrentWorkspace,
-          featureFlags: [
-            {
-              key: FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
-              value: isCustomizableSidebarEnabled,
-            },
-          ],
-        });
-      });
-      act(() => navigateMainPage?.('/settings/profile'));
-      await waitFor(() => {
-        expect(jotaiStore.get(focusStackState.atom).at(-1)?.focusId).toBe(
-          PageFocusId.Settings,
-        );
-      });
+      await renderSettingsPage({ isCustomizableSidebarEnabled });
 
       await userEvent.keyboard('{Meta>}k{/Meta}');
 
@@ -369,4 +377,46 @@ describe('PageChangeEffect', () => {
       });
     },
   );
+
+  it.each([
+    { key: '/', page: SidePanelPages.SearchRecords },
+    { key: '@', page: SidePanelPages.AskAI },
+  ])(
+    'should open $page with $key on settings with the customizable sidebar',
+    async ({ key, page }) => {
+      await renderSettingsPage({ isCustomizableSidebarEnabled: true });
+
+      await userEvent.keyboard(key);
+
+      await waitFor(() => {
+        expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(true);
+      });
+      expect(
+        jotaiStore.get(sidePanelNavigationStackState.atom).at(-1)?.page,
+      ).toBe(page);
+    },
+  );
+
+  it('should not open the side panel with / or @ on settings without the customizable sidebar', async () => {
+    await renderSettingsPage({ isCustomizableSidebarEnabled: false });
+
+    await userEvent.keyboard('/@');
+
+    expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
+  });
+
+  it('should type / and @ into a settings field instead of opening the side panel', async () => {
+    await renderSettingsPage({ isCustomizableSidebarEnabled: true });
+
+    const input = document.createElement('input');
+    document.body.appendChild(input);
+
+    await userEvent.click(input);
+    await userEvent.keyboard('jane@acme.com/path');
+
+    expect(input).toHaveValue('jane@acme.com/path');
+    expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
+
+    input.remove();
+  });
 });
