@@ -9,6 +9,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 
 // Runs on every record of a result, nested relations included, so restricted fields cannot leak through a relation
@@ -37,6 +38,7 @@ export class CommonRecordVisibilityService {
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     authContext,
+    permissionsPrincipals,
     recordReadRestrictions,
   }: {
     records: ObjectRecord[];
@@ -45,6 +47,7 @@ export class CommonRecordVisibilityService {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     authContext: WorkspaceAuthContext;
+    permissionsPrincipals: PermissionsPrincipalsWithRolesContext | undefined;
     recordReadRestrictions: RecordReadRestrictions;
   }): Promise<void> {
     if (this.handlersByObjectNameSingular.size === 0 || records.length === 0) {
@@ -69,6 +72,7 @@ export class CommonRecordVisibilityService {
         ?.applyVisibilityRestrictions({
           records: collectedRecords,
           authContext,
+          permissionsPrincipals,
           recordReadRestrictions,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,

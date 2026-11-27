@@ -92,6 +92,7 @@ const filter = ({
     objectMetadata: invoice,
     recordsPermissions,
     unreadableFieldsOnMatchingRecords,
+    isTimelineActivityRecordReadable: () => true,
     metadataMaps: {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,

@@ -126,6 +126,7 @@ const omit = ({
     recordsPermissions: buildRecordsPermissions(unreadableFields),
     recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
     unreadableFieldsOnMatchingRecords: [],
+    isTimelineActivityRecordReadable: () => true,
     metadataMaps: {
       flatFieldMetadataMaps,
       flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),

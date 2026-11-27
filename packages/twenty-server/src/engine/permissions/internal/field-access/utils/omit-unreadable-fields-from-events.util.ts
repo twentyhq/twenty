@@ -7,6 +7,7 @@ import { omitUnreadableFieldsFromEvent } from 'src/engine/permissions/internal/f
 import { buildRecordReadRestrictions } from 'src/engine/permissions/internal/role/utils/build-record-read-restrictions.util';
 import { type UnreadableFieldsOnMatchingRecords } from 'src/engine/permissions/internal/field-access/types/unreadable-fields-on-matching-records.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
+import { type IsTimelineActivityRecordReadable } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity.util';
 
 export const omitUnreadableFieldsFromEvents = <
   TEvent extends ObjectRecordEvent,
@@ -16,12 +17,14 @@ export const omitUnreadableFieldsFromEvents = <
   recordsPermissions,
   metadataMaps,
   unreadableFieldsOnMatchingRecords,
+  isTimelineActivityRecordReadable,
 }: {
   events: TEvent[];
   objectMetadata: FlatObjectMetadata;
   recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
   metadataMaps: PermissionsMetadataMaps;
   unreadableFieldsOnMatchingRecords: UnreadableFieldsOnMatchingRecords[];
+  isTimelineActivityRecordReadable: IsTimelineActivityRecordReadable;
 }): TEvent[] => {
   const recordReadRestrictions = buildRecordReadRestrictions({
     recordsPermissions,
@@ -36,6 +39,7 @@ export const omitUnreadableFieldsFromEvents = <
         recordReadRestrictions,
         metadataMaps,
         unreadableFieldsOnMatchingRecords,
+        isTimelineActivityRecordReadable,
       }),
     )
     .filter((event) => !isUpdateOfHiddenFieldsOnly(event));

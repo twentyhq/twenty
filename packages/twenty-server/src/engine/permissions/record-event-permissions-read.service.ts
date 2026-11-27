@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 import groupBy from 'lodash.groupby';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
@@ -24,7 +24,11 @@ import { PrincipalPermissionsReadService } from 'src/engine/permissions/principa
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { buildRecordReadRestrictions } from 'src/engine/permissions/internal/role/utils/build-record-read-restrictions.util';
+import { buildIsTimelineActivityRecordReadable } from 'src/modules/timeline/utils/build-is-timeline-activity-record-readable.util';
+import { type IsTimelineActivityRecordReadable } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity.util';
 
 type EventBatchAccessLoaders = {
   loadMetadataMaps: () => Promise<PermissionsMetadataMaps>;
@@ -82,8 +86,20 @@ export class RecordEventPermissionsReadService {
     const readableEvents = events.filter((event) =>
       readableRecordIds.has(event.recordId),
     );
+    const recordsPermissions = getPermissionsPrincipalsRecordsPermissions({
+      principals,
+      metadataMaps,
+    });
 
     return omitUnreadableFieldsFromEvents({
+      isTimelineActivityRecordReadable:
+        await this.buildIsTimelineActivityRecordReadable({
+          principals,
+          eventBatch,
+          events: readableEvents,
+          recordsPermissions,
+          metadataMaps,
+        }),
       unreadableFieldsOnMatchingRecords:
         await resolveUnreadableFieldsOnMatchingRecords({
           principals,
@@ -98,11 +114,46 @@ export class RecordEventPermissionsReadService {
         }),
       events: readableEvents,
       objectMetadata: eventBatch.objectMetadata,
-      recordsPermissions: getPermissionsPrincipalsRecordsPermissions({
-        principals,
-        metadataMaps,
-      }),
+      recordsPermissions,
       metadataMaps,
+    });
+  }
+
+  private async buildIsTimelineActivityRecordReadable({
+    principals,
+    eventBatch,
+    events,
+    recordsPermissions,
+    metadataMaps,
+  }: {
+    principals: PermissionsPrincipalsWithRolesContext;
+    eventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
+    events: ObjectRecordEvent[];
+    recordsPermissions: RoleRecordsPermissions;
+    metadataMaps: PermissionsMetadataMaps;
+  }): Promise<IsTimelineActivityRecordReadable> {
+    if (eventBatch.objectMetadata.nameSingular !== 'timelineActivity') {
+      return () => false;
+    }
+
+    return buildIsTimelineActivityRecordReadable({
+      timelineActivities: events.flatMap(({ properties }) =>
+        [
+          'before' in properties ? properties.before : undefined,
+          'after' in properties ? properties.after : undefined,
+        ].filter(isPlainObject),
+      ),
+      recordReadRestrictions: buildRecordReadRestrictions({
+        recordsPermissions,
+      }),
+      flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
+      filterReadableRecordIds: ({ objectMetadataId, recordIds }) =>
+        this.recordPermissionsReadService.filterGrantedRecordIds({
+          principals,
+          objectMetadataId,
+          operationType: 'read',
+          recordIds,
+        }),
     });
   }
 

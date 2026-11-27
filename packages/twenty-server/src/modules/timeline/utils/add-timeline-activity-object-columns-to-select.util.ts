@@ -37,7 +37,10 @@ const resolveTimelineActivityObjectColumnNames = ({
       return [];
     }
 
-    if (flatFieldMetadata.name === 'linkedObjectMetadataId') {
+    if (
+      flatFieldMetadata.name === 'linkedObjectMetadataId' ||
+      flatFieldMetadata.name === 'linkedRecordId'
+    ) {
       return [flatFieldMetadata.name];
     }
 

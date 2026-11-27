@@ -11,6 +11,7 @@ import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-r
 import { filterFieldNamesInEventProperties } from 'src/engine/permissions/utils/filter-field-names-in-event-properties.util';
 import { getFieldNamesInEventProperties } from 'src/engine/permissions/utils/get-field-names-in-event-properties.util';
 import { omitRestrictedFieldsFromTimelineActivityEvent } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity-event.util';
+import { type IsTimelineActivityRecordReadable } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity.util';
 
 const omitFieldNamesFromEvent = <TEvent extends ObjectRecordEvent>({
   event,
@@ -44,6 +45,7 @@ export const omitUnreadableFieldsFromEvent = <
   recordReadRestrictions,
   metadataMaps,
   unreadableFieldsOnMatchingRecords,
+  isTimelineActivityRecordReadable,
 }: {
   event: TEvent;
   objectMetadata: FlatObjectMetadata;
@@ -51,6 +53,7 @@ export const omitUnreadableFieldsFromEvent = <
   recordReadRestrictions: RecordReadRestrictions;
   metadataMaps: PermissionsMetadataMaps;
   unreadableFieldsOnMatchingRecords: UnreadableFieldsOnMatchingRecords[];
+  isTimelineActivityRecordReadable: IsTimelineActivityRecordReadable;
 }): TEvent => {
   const { properties } = event;
   const unreadableFieldNames = new Set(
@@ -91,6 +94,7 @@ export const omitUnreadableFieldsFromEvent = <
   return omitRestrictedFieldsFromTimelineActivityEvent({
     event: eventWithoutUnreadableFields,
     recordReadRestrictions,
+    isRecordReadable: isTimelineActivityRecordReadable,
     flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
     flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
   });

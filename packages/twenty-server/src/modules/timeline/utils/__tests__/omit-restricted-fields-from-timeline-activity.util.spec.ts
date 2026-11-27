@@ -101,6 +101,7 @@ const DIFF = {
 
 type TimelineActivityFixture = {
   linkedObjectMetadataId?: string | null;
+  linkedRecordId?: string | null;
   targetPersonId?: string | null;
   properties: Record<string, unknown>;
 };
@@ -108,14 +109,17 @@ type TimelineActivityFixture = {
 const omitRestrictedFields = ({
   timelineActivity,
   recordsPermissions = PERSON_JOB_TITLE_DENIED,
+  unreadableRecordIds = [],
 }: {
   timelineActivity: TimelineActivityFixture;
   recordsPermissions?: Pick<RoleRecordsPermissions, 'objects'>;
+  unreadableRecordIds?: string[];
 }) =>
   omitRestrictedFieldsFromTimelineActivity({
     properties: timelineActivity.properties,
     timelineActivity,
     recordReadRestrictions: buildRecordReadRestrictions({ recordsPermissions }),
+    isRecordReadable: ({ recordId }) => !unreadableRecordIds.includes(recordId),
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   });
@@ -138,6 +142,7 @@ describe('omitRestrictedFieldsFromTimelineActivity', () => {
       omitRestrictedFields({
         timelineActivity: {
           linkedObjectMetadataId: NOTE_OBJECT.id,
+          linkedRecordId: 'note-id',
           targetPersonId: 'person-id',
           properties: DIFF,
         },
@@ -150,6 +155,7 @@ describe('omitRestrictedFieldsFromTimelineActivity', () => {
       omitRestrictedFields({
         timelineActivity: {
           linkedObjectMetadataId: NOTE_OBJECT.id,
+          linkedRecordId: 'note-id',
           targetPersonId: 'person-id',
           properties: DIFF,
         },
@@ -180,6 +186,45 @@ describe('omitRestrictedFieldsFromTimelineActivity', () => {
               canReadAllRecords: false,
             }),
           },
+        },
+      }),
+    ).toEqual({ diff: {} });
+  });
+
+  it('should keep no field of a target record the role cannot read', () => {
+    expect(
+      omitRestrictedFields({
+        timelineActivity: {
+          linkedObjectMetadataId: null,
+          targetPersonId: 'person-id',
+          properties: DIFF,
+        },
+        unreadableRecordIds: ['person-id'],
+      }),
+    ).toEqual({ diff: {} });
+  });
+
+  it('should keep no field of a linked record the role cannot read', () => {
+    expect(
+      omitRestrictedFields({
+        timelineActivity: {
+          linkedObjectMetadataId: NOTE_OBJECT.id,
+          linkedRecordId: 'note-id',
+          targetPersonId: 'person-id',
+          properties: DIFF,
+        },
+        unreadableRecordIds: ['note-id'],
+      }),
+    ).toEqual({ diff: {} });
+  });
+
+  it('should keep no field when the linked record column was not selected', () => {
+    expect(
+      omitRestrictedFields({
+        timelineActivity: {
+          linkedObjectMetadataId: NOTE_OBJECT.id,
+          targetPersonId: 'person-id',
+          properties: DIFF,
         },
       }),
     ).toEqual({ diff: {} });
@@ -238,6 +283,7 @@ describe('omitRestrictedFieldsFromTimelineActivityEvent', () => {
         recordReadRestrictions: buildRecordReadRestrictions({
           recordsPermissions: PERSON_JOB_TITLE_DENIED,
         }),
+        isRecordReadable: () => true,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       }).properties,
