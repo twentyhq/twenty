@@ -4,6 +4,7 @@ import { useOpenAiChatThread } from '@/ai-chat/hooks/useOpenAiChatThread';
 import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/composer/states/aiChatComposerNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { aiChatComposerShouldFocusFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldFocusFamilyState';
+import { inboxRecordRouteObjectNamesSelector } from '@/ai-chat/states/selectors/inboxRecordRouteObjectNamesSelector';
 import { isAiModePath } from '~/utils/isAiModePath';
 
 type UseSwitchToNewAiChatParams = {
@@ -21,7 +22,11 @@ export const useSwitchToNewAiChat = ({
   }: { inboxChannelId?: string | null } = {}) => {
     const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
     const isShownInPage =
-      shouldOpenInFullPage || isAiModePath(window.location.pathname);
+      shouldOpenInFullPage ||
+      isAiModePath(
+        window.location.pathname,
+        store.get(inboxRecordRouteObjectNamesSelector.atom),
+      );
 
     store.set(
       aiChatComposerNewThreadRecipientsFamilyState.atomFamily(

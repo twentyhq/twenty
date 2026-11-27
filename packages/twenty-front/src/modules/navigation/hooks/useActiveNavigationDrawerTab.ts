@@ -9,11 +9,15 @@ import {
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { inboxRecordRouteObjectNamesSelector } from '@/ai-chat/states/selectors/inboxRecordRouteObjectNamesSelector';
 import { isAiModePath } from '~/utils/isAiModePath';
 
 // Settings, AI chat and inbox pages decide their mode; elsewhere the stored tab wins so chat history stays listed.
 export const useActiveNavigationDrawerTab = (): NavigationDrawerActiveTab => {
   const { pathname } = useLocation();
+  const inboxRecordRouteObjectNames = useAtomStateValue(
+    inboxRecordRouteObjectNamesSelector,
+  );
   const isSettingsDrawer = useIsSettingsDrawer();
   const navigationDrawerActiveTab = useAtomStateValue(
     navigationDrawerActiveTabState,
@@ -31,7 +35,7 @@ export const useActiveNavigationDrawerTab = (): NavigationDrawerActiveTab => {
   }
 
   if (
-    isAiModePath(pathname) ||
+    isAiModePath(pathname, inboxRecordRouteObjectNames) ||
     navigationDrawerActiveTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY
   ) {
     return NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY;

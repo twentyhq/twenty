@@ -25,6 +25,7 @@ import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/compone
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type AiChatChannel } from '@/ai-chat/threads/types/AiChatChannel';
+import { inboxRecordRouteObjectNamesSelector } from '@/ai-chat/states/selectors/inboxRecordRouteObjectNamesSelector';
 import { isInboxPath } from '~/utils/isInboxPath';
 
 const StyledIconPickerTrigger = styled.div`
@@ -50,6 +51,9 @@ export const NavigationDrawerInboxChannelItem = ({
 }: NavigationDrawerInboxChannelItemProps) => {
   const { t } = useLingui();
   const location = useLocation();
+  const inboxRecordRouteObjectNames = useAtomStateValue(
+    inboxRecordRouteObjectNamesSelector,
+  );
   const instanceId = useId();
   const dropdownId = `ai-chat-channel-actions-${instanceId}`;
   const iconPickerDropdownId = `ai-chat-channel-icon-${instanceId}`;
@@ -146,7 +150,7 @@ export const NavigationDrawerInboxChannelItem = ({
         icon={icon}
         channelView={inboxSelectedChannelView}
         isActive={
-          isInboxPath(location.pathname) &&
+          isInboxPath(location.pathname, inboxRecordRouteObjectNames) &&
           !isInboxShowingDirectMessage &&
           inboxSelectedChannelView?.channelId === channel.id
         }

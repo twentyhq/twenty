@@ -8,6 +8,7 @@ import { useLoadInboxThreadList } from '@/inbox/hooks/useLoadInboxThreadList';
 import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelectedThreadListSourceState';
 import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
+import { inboxRecordRouteObjectNamesSelector } from '@/ai-chat/states/selectors/inboxRecordRouteObjectNamesSelector';
 import { isInboxPath } from '~/utils/isInboxPath';
 
 export const useRefreshShownInboxThreadList = () => {
@@ -24,7 +25,13 @@ export const useRefreshShownInboxThreadList = () => {
       ),
     );
 
-    if (!isRecentThreadListLoaded || !isInboxPath(pathname)) {
+    if (
+      !isRecentThreadListLoaded ||
+      !isInboxPath(
+        pathname,
+        store.get(inboxRecordRouteObjectNamesSelector.atom),
+      )
+    ) {
       return;
     }
 

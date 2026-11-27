@@ -42,6 +42,8 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { isNavigationDrawerTabShown } from '@/navigation/utils/isNavigationDrawerTabShown';
+import { inboxRecordRouteObjectNamesSelector } from '@/ai-chat/states/selectors/inboxRecordRouteObjectNamesSelector';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isInboxPath } from '~/utils/isInboxPath';
 
 type MobileNavigationBarItemName =
@@ -67,6 +69,9 @@ export const useMobileNavigationBarItems = (): {
   const { t } = useLingui();
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const inboxRecordRouteObjectNames = useAtomStateValue(
+    inboxRecordRouteObjectNamesSelector,
+  );
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
   const { switchToNewAiChat } = useSwitchToNewAiChatInInboxChannel();
@@ -147,7 +152,7 @@ export const useMobileNavigationBarItems = (): {
     navigate(AppPath.Home, { replace: isSettingsDrawer });
   };
 
-  const isOnInboxPage = isInboxPath(pathname);
+  const isOnInboxPage = isInboxPath(pathname, inboxRecordRouteObjectNames);
   const inboxAttention: InboxChatAttention | null =
     unreadOpenThreadCount > 0 && !isOnInboxPage ? 'unread' : null;
 

@@ -6,6 +6,7 @@ import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { isWorkspaceSetupChatActiveState } from '@/ai-chat/states/isWorkspaceSetupChatActiveState';
 import { getAiChatPageRoute } from '@/ai-chat/utils/getAiChatPageRoute';
+import { inboxRecordRouteObjectNamesSelector } from '@/ai-chat/states/selectors/inboxRecordRouteObjectNamesSelector';
 import { getAiChatPageThreadId } from '@/ai-chat/utils/getAiChatPageThreadId';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { hasOpenedWorkspaceSetupChatSidePanelState } from '@/onboarding/states/hasOpenedWorkspaceSetupChatSidePanelState';
@@ -56,6 +57,9 @@ export const useOpenWorkspaceSetupChatInSidePanel = () => {
         getAiChatPageThreadId({
           pathname,
           newAiChatThreadId: store.get(newAiChatThreadIdState.atom),
+          inboxRecordRouteObjectNames: store.get(
+            inboxRecordRouteObjectNamesSelector.atom,
+          ),
         }),
       );
 

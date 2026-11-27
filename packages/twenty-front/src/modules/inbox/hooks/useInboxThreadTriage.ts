@@ -12,6 +12,7 @@ import {
   FeatureFlagKey,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
+import { inboxRecordRouteObjectNamesSelector } from '@/ai-chat/states/selectors/inboxRecordRouteObjectNamesSelector';
 import { isInboxPath } from '~/utils/isInboxPath';
 
 export const useInboxThreadTriage = ({
@@ -29,10 +30,13 @@ export const useInboxThreadTriage = ({
     aiChatThreadParticipantsAreLoadedSelector,
   );
   const location = useLocation();
+  const inboxRecordRouteObjectNames = useAtomStateValue(
+    inboxRecordRouteObjectNamesSelector,
+  );
   const inboxSelectedChannelView = useAtomStateValue(
     inboxSelectedChannelViewSelector,
   );
-  const channelId = isInboxPath(location.pathname)
+  const channelId = isInboxPath(location.pathname, inboxRecordRouteObjectNames)
     ? (inboxSelectedChannelView?.channelId ?? null)
     : (channelIdOutsideInbox ?? null);
   const { [threadId]: inboxStatus } = useAtomFamilySelectorValue(

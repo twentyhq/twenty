@@ -1,15 +1,17 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { AppPath } from 'twenty-shared/types';
-import { getAppPath } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
+import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai-chat/constants/AiChatNewThreadPathSegment';
 import { getAiChatPageRoute } from '@/ai-chat/utils/getAiChatPageRoute';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
+import { inboxRecordRouteObjectNamesSelector } from '@/ai-chat/states/selectors/inboxRecordRouteObjectNamesSelector';
+import { matchInboxPath } from '@/ai-chat/utils/matchInboxPath';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getCurrentHistoryEntryState } from '~/utils/getCurrentHistoryEntryState';
-import { isInboxPath } from '~/utils/isInboxPath';
-import { isAiModePath } from '~/utils/isAiModePath';
-import { isMatchingPathname } from '~/utils/isMatchingPathname';
+import { isAiChatPath } from '~/utils/isAiChatPath';
 
 export const useProjectAiChatThreadToUrl = () => {
   const navigateApp = useNavigateApp();
@@ -18,19 +20,61 @@ export const useProjectAiChatThreadToUrl = () => {
   const projectAiChatThreadToUrl = useCallback(
     (threadId: string) => {
       const pathname = window.location.pathname;
-      const isOnInboxPage = isInboxPath(pathname);
-      const isInboxClosed = isMatchingPathname(
-        pathname,
-        getAppPath(AppPath.AiChatInbox, { threadId: null }),
+      const inboxRecordRouteObjectNames = store.get(
+        inboxRecordRouteObjectNamesSelector.atom,
       );
+      const inboxPathMatch = matchInboxPath({
+        pathname,
+        inboxRecordRouteObjectNames,
+      });
+      const isNewChat = threadId === store.get(newAiChatThreadIdState.atom);
 
-      if (!isAiModePath(pathname)) {
+      if (isDefined(inboxPathMatch)) {
+        const inboxThreadId = isNewChat
+          ? AI_CHAT_NEW_THREAD_PATH_SEGMENT
+          : threadId;
+        const options = {
+          replace: isDefined(inboxPathMatch.threadId),
+          state: getCurrentHistoryEntryState(),
+        };
+
+        if (
+          !isDefined(inboxRecordRouteObjectNames) ||
+          !inboxPathMatch.isRecordRoute
+        ) {
+          navigateApp(
+            AppPath.AiChatInbox,
+            { threadId: inboxThreadId },
+            undefined,
+            options,
+          );
+
+          return;
+        }
+
+        const viewId = new URLSearchParams(window.location.search).get(
+          'viewId',
+        );
+
+        navigateApp(
+          AppPath.RecordShowPage,
+          {
+            objectNameSingular: inboxRecordRouteObjectNames.nameSingular,
+            objectRecordId: inboxThreadId,
+          },
+          isNonEmptyString(viewId) ? { viewId } : undefined,
+          options,
+        );
+
         return;
       }
 
-      const isNewChat = threadId === store.get(newAiChatThreadIdState.atom);
+      if (!isAiChatPath(pathname)) {
+        return;
+      }
+
       const aiChatPageRoute = getAiChatPageRoute({
-        isInbox: isOnInboxPage,
+        isInbox: false,
         threadId: isNewChat ? null : threadId,
       });
 
@@ -38,7 +82,7 @@ export const useProjectAiChatThreadToUrl = () => {
         aiChatPageRoute.appPath,
         { threadId: aiChatPageRoute.threadId },
         undefined,
-        { replace: !isInboxClosed, state: getCurrentHistoryEntryState() },
+        { replace: true, state: getCurrentHistoryEntryState() },
       );
     },
     [navigateApp, store],

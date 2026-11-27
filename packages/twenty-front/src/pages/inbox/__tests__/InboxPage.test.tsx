@@ -86,6 +86,19 @@ jest.mock(
   }),
 );
 
+const inboxRecordRouteObjectNamesAtom = atom(null);
+
+jest.mock(
+  '@/ai-chat/states/selectors/inboxRecordRouteObjectNamesSelector',
+  () => ({
+    inboxRecordRouteObjectNamesSelector: {
+      get atom() {
+        return inboxRecordRouteObjectNamesAtom;
+      },
+    },
+  }),
+);
+
 jest.mock('@/inbox/components/InboxThreadList', () => ({
   InboxThreadList: ({
     threads,

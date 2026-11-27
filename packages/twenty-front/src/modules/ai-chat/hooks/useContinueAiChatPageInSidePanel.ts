@@ -6,6 +6,7 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { aiChatThreadReplyIsSendingFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyIsSendingFamilyState';
 import { isWorkspaceSetupChatActiveState } from '@/ai-chat/states/isWorkspaceSetupChatActiveState';
+import { inboxRecordRouteObjectNamesSelector } from '@/ai-chat/states/selectors/inboxRecordRouteObjectNamesSelector';
 import { getAiChatPageSidePanelContinuation } from '@/ai-chat/utils/getAiChatPageSidePanelContinuation';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 
@@ -28,6 +29,9 @@ export const useContinueAiChatPageInSidePanel = () => {
         location,
         isMobile,
         newAiChatThreadId,
+        inboxRecordRouteObjectNames: store.get(
+          inboxRecordRouteObjectNamesSelector.atom,
+        ),
         isNewAiChatThreadReplySending: store.get(
           aiChatThreadReplyIsSendingFamilyState.atomFamily({
             threadId: newAiChatThreadId,

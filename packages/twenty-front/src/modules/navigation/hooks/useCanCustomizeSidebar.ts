@@ -3,6 +3,8 @@ import { useIsMobile } from 'twenty-ui/utilities';
 
 import { useIsLayoutCustomizationAllowedOnCurrentPage } from '@/layout-customization/hooks/useIsLayoutCustomizationAllowedOnCurrentPage';
 import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
+import { inboxRecordRouteObjectNamesSelector } from '@/ai-chat/states/selectors/inboxRecordRouteObjectNamesSelector';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isSidebarCustomizationAllowedOnPage } from '@/navigation/utils/isSidebarCustomizationAllowedOnPage';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -14,6 +16,9 @@ import {
 export const useCanCustomizeSidebar = () => {
   const isMobile = useIsMobile();
   const { pathname } = useLocation();
+  const inboxRecordRouteObjectNames = useAtomStateValue(
+    inboxRecordRouteObjectNamesSelector,
+  );
   const isCustomizableSidebarEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
   );
@@ -30,6 +35,7 @@ export const useCanCustomizeSidebar = () => {
       pathname,
       activeNavigationDrawerTab,
       isLayoutCustomizationAllowedOnCurrentPage,
+      inboxRecordRouteObjectNames,
     })
   );
 };

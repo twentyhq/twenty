@@ -15,6 +15,7 @@ import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelected
 import { isInboxOpenThreadPresetFilter } from '@/inbox/utils/isInboxOpenThreadPresetFilter';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { inboxRecordRouteObjectNamesSelector } from '@/ai-chat/states/selectors/inboxRecordRouteObjectNamesSelector';
 import { isInboxPath } from '~/utils/isInboxPath';
 import { NavigationMenuTabFirstItemOpenEffect } from '@/navigation-menu-item/display/effect-components/NavigationMenuTabFirstItemOpenEffect';
 
@@ -31,6 +32,9 @@ export const NavigationDrawerInboxTriageItem = ({
 }: NavigationDrawerInboxTriageItemProps) => {
   const { t } = useLingui();
   const location = useLocation();
+  const inboxRecordRouteObjectNames = useAtomStateValue(
+    inboxRecordRouteObjectNamesSelector,
+  );
   const inboxSelectedThreadListSource = useAtomStateValue(
     inboxSelectedThreadListSourceState,
   );
@@ -53,7 +57,10 @@ export const NavigationDrawerInboxTriageItem = ({
         label={t(INBOX_THREAD_PRESET_FILTER_LABELS[presetFilter])}
         isUnread={isUnread}
         Icon={INBOX_THREAD_PRESET_FILTER_ICONS[presetFilter]}
-        active={isInboxPath(location.pathname) && isCurrentFilter}
+        active={
+          isInboxPath(location.pathname, inboxRecordRouteObjectNames) &&
+          isCurrentFilter
+        }
         onClick={() => openInboxPresetFilter(presetFilter)}
         triggerEvent="CLICK"
         rightOptions={

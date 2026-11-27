@@ -14,6 +14,7 @@ import { isAiChatPickerRequestCurrent } from '@/side-panel/pages/search-ai-chats
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { inboxRecordRouteObjectNamesSelector } from '@/ai-chat/states/selectors/inboxRecordRouteObjectNamesSelector';
 import { isAiModePath } from '~/utils/isAiModePath';
 import { logError } from '~/utils/logError';
 
@@ -71,7 +72,12 @@ export const useOpenAiChatFromPicker = () => {
 
       handleThreadClick(thread);
 
-      if (isAiModePath(pathname)) {
+      if (
+        isAiModePath(
+          pathname,
+          store.get(inboxRecordRouteObjectNamesSelector.atom),
+        )
+      ) {
         void closeSidePanelMenu();
       }
     } catch (error) {
