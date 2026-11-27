@@ -78,6 +78,8 @@ export const fromConnectionProviderManifestToUniversalFlatConnectionProvider =
       type: connectionProviderManifest.type,
       scope:
         connectionProviderManifest.scope ?? DEFAULT_CONNECTION_PROVIDER_SCOPE,
+      allowMultipleConnections:
+        connectionProviderManifest.allowMultipleConnections ?? true,
       oauthConfig,
       customConfig: toStoredCustomConfig(normalizedManifest),
       oauthDiscoveryConfig:

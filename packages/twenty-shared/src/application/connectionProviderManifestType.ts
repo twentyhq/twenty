@@ -9,6 +9,8 @@ type ConnectionProviderManifestBase = SyncableEntityOptions & {
   displayName: string;
   logo?: string;
   scope?: ConnectionProviderScope;
+  // Defaults to true. When false, each user (or the workspace, for WORKSPACE scope) can hold at most one connection.
+  allowMultipleConnections?: boolean;
   identifyAccountLogicFunctionUniversalIdentifier?: string;
   onConnectLogicFunctionUniversalIdentifier?: string;
   onDisconnectLogicFunctionUniversalIdentifier?: string;

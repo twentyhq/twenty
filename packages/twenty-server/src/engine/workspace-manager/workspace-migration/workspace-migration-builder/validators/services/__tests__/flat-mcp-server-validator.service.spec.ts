@@ -33,6 +33,7 @@ const buildProvider = (
   logo: null,
   type: 'oauth',
   scope: 'WORKSPACE',
+  allowMultipleConnections: true,
   oauthConfig: null,
   customConfig: null,
   oauthDiscoveryConfig: null,

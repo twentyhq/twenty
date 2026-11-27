@@ -37,6 +37,7 @@ export const buildMcpServerSignInFlatConnectionProvider = ({
     logo: null,
     type: 'oauth-discovery',
     scope,
+    allowMultipleConnections: true,
     oauthConfig: null,
     customConfig: null,
     oauthDiscoveryConfig: { resourceUrl: mcpServer.url },

@@ -74,6 +74,43 @@ export class ConnectionProviderConnectedAccountService {
     });
   }
 
+  async assertCanAddConnectionOrThrow({
+    provider,
+    workspaceId,
+    userWorkspaceId,
+    scope,
+    reconnectingConnectedAccountId,
+  }: {
+    provider: Pick<ConnectionProviderEntity, 'id' | 'allowMultipleConnections'>;
+    workspaceId: string;
+    userWorkspaceId: string;
+    scope: ConnectedAccountScope;
+    reconnectingConnectedAccountId: string | null;
+  }): Promise<void> {
+    if (
+      provider.allowMultipleConnections ||
+      isDefined(reconnectingConnectedAccountId)
+    ) {
+      return;
+    }
+
+    const hasExistingConnection = await this.connectedAccountRepository.exists({
+      where: {
+        connectionProviderId: provider.id,
+        workspaceId,
+        scope,
+        ...(scope === 'USER' && { userWorkspaceId }),
+      },
+    });
+
+    if (hasExistingConnection) {
+      throw new ConnectionProviderException(
+        `Connection provider ${provider.id} allows a single connection and one already exists`,
+        ConnectionProviderExceptionCode.MULTIPLE_CONNECTIONS_NOT_ALLOWED,
+      );
+    }
+  }
+
   async resolveHandle({
     idToken,
     userId,
@@ -114,7 +151,7 @@ export class ConnectionProviderConnectedAccountService {
   }: {
     provider: Pick<
       ConnectionProviderEntity,
-      'id' | 'displayName' | 'applicationId'
+      'id' | 'displayName' | 'applicationId' | 'allowMultipleConnections'
     >;
     credentials: ConnectedAccountCredentials | undefined;
     handle: string | undefined;
@@ -203,6 +240,14 @@ export class ConnectionProviderConnectedAccountService {
 
       return connectedAccount;
     }
+
+    await this.assertCanAddConnectionOrThrow({
+      provider,
+      workspaceId,
+      userWorkspaceId,
+      scope,
+      reconnectingConnectedAccountId,
+    });
 
     const existingCount = await this.connectedAccountRepository.count({
       where: { connectionProviderId: provider.id, workspaceId },

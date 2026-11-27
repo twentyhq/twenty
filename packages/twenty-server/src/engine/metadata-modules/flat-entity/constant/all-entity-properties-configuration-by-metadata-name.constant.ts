@@ -2279,6 +2279,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    allowMultipleConnections: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     oauthConfig: {
       toCompare: true,
       toStringify: true,

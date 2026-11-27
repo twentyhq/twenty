@@ -42,6 +42,9 @@ export class ApplicationConnectionProviderDTO {
   @Field(() => ConnectionProviderScopeEnum)
   scope: ConnectionProviderScope;
 
+  @Field()
+  allowMultipleConnections: boolean;
+
   logo: string | null;
 
   @Field(() => ApplicationConnectionProviderOAuthConfigDTO, { nullable: true })

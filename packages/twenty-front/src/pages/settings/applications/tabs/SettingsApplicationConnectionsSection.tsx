@@ -119,13 +119,15 @@ export const SettingsApplicationConnectionsSection = ({
                 </SettingsApplicationConnectionTableRows>
               </Table>
             )}
-            {canStartAuthorization && (
-              <SettingsApplicationAddConnectionButton
-                applicationId={applicationId}
-                connectionProviderName={provider.name}
-                connectionProviderType={provider.type}
-              />
-            )}
+            {canStartAuthorization &&
+              (provider.allowMultipleConnections ||
+                providerConnections.length === 0) && (
+                <SettingsApplicationAddConnectionButton
+                  applicationId={applicationId}
+                  connectionProviderName={provider.name}
+                  connectionProviderType={provider.type}
+                />
+              )}
           </SettingsApplicationConnectionProviderSection>
         );
       })}

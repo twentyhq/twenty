@@ -45,6 +45,7 @@ export const mockedMcpServerSignInConnectionProvider: ApplicationConnectionProvi
     name: 'mcp-server-linear-sign-in',
     displayName: 'Linear',
     scope: ConnectionProviderScope.USER,
+    allowMultipleConnections: true,
     logoUrl: null,
     oauth: null,
   };

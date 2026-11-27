@@ -98,6 +98,7 @@ const FATHOM_CONNECTION_PROVIDER = {
   name: 'fathom',
   displayName: 'Fathom',
   scope: 'USER',
+  allowMultipleConnections: true,
   logoUrl: null,
   oauth: {
     __typename: 'ApplicationConnectionProviderOAuthConfig',

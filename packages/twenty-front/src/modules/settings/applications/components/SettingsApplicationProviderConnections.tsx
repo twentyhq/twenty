@@ -9,7 +9,7 @@ type SettingsApplicationProviderConnectionsProps = {
   applicationId: string;
   connectionProvider: Pick<
     ApplicationWithPreferences['connectionProviders'][number],
-    'name' | 'type' | 'logoUrl'
+    'name' | 'type' | 'logoUrl' | 'allowMultipleConnections'
   >;
   connections: ConnectedAccount[];
   canStartAuthorization: boolean;
@@ -39,14 +39,16 @@ export const SettingsApplicationProviderConnections = ({
           isLoading={isLoading}
           reconnectRedirectLocation={redirectLocation}
         />
-        {canStartAuthorization && (
-          <SettingsApplicationAddConnectionButton
-            applicationId={applicationId}
-            connectionProviderName={connectionProvider.name}
-            connectionProviderType={connectionProvider.type}
-            redirectLocation={redirectLocation}
-          />
-        )}
+        {canStartAuthorization &&
+          (connectionProvider.allowMultipleConnections ||
+            !isNonEmptyArray(connections)) && (
+            <SettingsApplicationAddConnectionButton
+              applicationId={applicationId}
+              connectionProviderName={connectionProvider.name}
+              connectionProviderType={connectionProvider.type}
+              redirectLocation={redirectLocation}
+            />
+          )}
       </>
     );
   }

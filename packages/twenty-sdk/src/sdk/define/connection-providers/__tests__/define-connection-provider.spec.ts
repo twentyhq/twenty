@@ -99,6 +99,28 @@ describe('defineConnectionProvider', () => {
     );
   });
 
+  it('accepts allowMultipleConnections', () => {
+    const result = defineConnectionProvider({
+      ...baseValidConfig,
+      allowMultipleConnections: false,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.config.allowMultipleConnections).toBe(false);
+  });
+
+  it('rejects a non-boolean allowMultipleConnections', () => {
+    const result = defineConnectionProvider({
+      ...baseValidConfig,
+      allowMultipleConnections: 'no' as never,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Connection provider allowMultipleConnections must be a boolean',
+    );
+  });
+
   const lifecycleHookKeys = [
     'identifyAccountLogicFunction',
     'onConnectLogicFunction',

@@ -17,6 +17,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ADD_ALLOW_MULTIPLE_CONNECTIONS_TO_CONNECTION_PROVIDER_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-66/add-allow-multiple-connections-to-connection-provider-upgrade-command-name.constant';
 import { ADD_OAUTH_DISCOVERY_TO_CONNECTION_PROVIDER_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-59/add-oauth-discovery-to-connection-provider-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
@@ -61,6 +62,13 @@ export class ConnectionProviderEntity
       '2.49.0_AddConnectionProviderScopeFastInstanceCommand_1792162723868',
   })
   scope: ConnectionProviderScope;
+
+  @Column({ nullable: false, type: 'boolean', default: true })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_ALLOW_MULTIPLE_CONNECTIONS_TO_CONNECTION_PROVIDER_UPGRADE_COMMAND_NAME,
+  })
+  allowMultipleConnections: boolean;
 
   @Column({ nullable: true, type: 'jsonb' })
   oauthConfig: StoredOAuthConnectionProviderConfig | null;

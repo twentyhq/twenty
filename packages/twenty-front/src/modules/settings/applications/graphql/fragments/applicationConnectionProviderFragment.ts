@@ -8,6 +8,7 @@ export const APPLICATION_CONNECTION_PROVIDER_FRAGMENT = gql`
     name
     displayName
     scope
+    allowMultipleConnections
     logoUrl
     oauth {
       scopes
