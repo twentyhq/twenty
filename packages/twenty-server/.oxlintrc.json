@@ -99,6 +99,7 @@
     "twenty/upgrade-command-filename": "error",
     "twenty/no-runtime-import-from-upgrade-command": "error",
     "twenty/no-data-mutation-in-fast-instance-command": "error",
+    "twenty/no-unscoped-catalog-query": "error",
     "twenty/no-icu-escaping-apostrophe": "error",
     "twenty/no-miscased-acronym-in-identifier": "error",
     "twenty/no-miscased-acronym-in-message": "error",

@@ -93,6 +93,10 @@ import {
   RULE_NAME as moduleImportDirectionName,
 } from './rules/module-import-direction';
 import {
+  rule as noUnscopedCatalogQuery,
+  RULE_NAME as noUnscopedCatalogQueryName,
+} from './rules/no-unscoped-catalog-query';
+import {
   rule as noWindowOpen,
   RULE_NAME as noWindowOpenName,
 } from './rules/no-window-open';
@@ -148,6 +152,7 @@ export default definePlugin({
     [noStateUserefName]: noStateUseref,
     [noStorybookA11yDisableName]: noStorybookA11yDisable,
     [noTwentyUiOverrideName]: noTwentyUiOverride,
+    [noUnscopedCatalogQueryName]: noUnscopedCatalogQuery,
     [moduleImportDirectionName]: moduleImportDirection,
     [noWindowOpenName]: noWindowOpen,
     [preferWorkspaceScopedRepositoryName]: preferWorkspaceScopedRepository,
