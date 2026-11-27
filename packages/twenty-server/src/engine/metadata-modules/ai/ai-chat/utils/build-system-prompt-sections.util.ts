@@ -102,7 +102,7 @@ export const buildSystemPromptSections = ({
       content: CHAT_SYSTEM_PROMPTS.MULTIPLE_PARTICIPANTS(userWorkspaceId),
     },
     isDefined(threadMembers) &&
-      threadMembers.totalCount > 1 && {
+      threadMembers.length > 1 && {
         title: 'Thread Members',
         content: buildThreadMembersSection(threadMembers),
       },

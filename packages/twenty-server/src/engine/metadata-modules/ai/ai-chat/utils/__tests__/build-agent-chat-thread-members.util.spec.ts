@@ -4,22 +4,21 @@ const workspaceMemberById = {
   felix: { name: { firstName: 'Félix', lastName: '' }, userEmail: null },
   etienne: {
     name: { firstName: 'Etienne', lastName: 'Jouan' },
-    userEmail: 'etienne@example.com',
+    userEmail: null,
   },
   ada: { name: { firstName: '', lastName: '' }, userEmail: 'ada@example.com' },
-  nameless: { name: { firstName: '', lastName: '' }, userEmail: null },
 };
 
 describe('buildAgentChatThreadMembers', () => {
-  it('lists the current sender first, then the owner and the participants in join order, once each', () => {
+  it('lists the current sender first, then the owner and writers once each, skipping deleted members', () => {
     expect(
       buildAgentChatThreadMembers({
         thread: {
           workspaceMemberId: 'etienne',
           directMessageFirstWorkspaceMemberId: null,
           directMessageSecondWorkspaceMemberId: null,
+          writerWorkspaceMemberIds: ['ada', 'deleted', 'felix'],
         },
-        participantWorkspaceMemberIds: ['etienne', 'ada', 'felix'],
         workspaceMemberById,
         currentWorkspaceMemberId: 'felix',
       }),
@@ -38,33 +37,18 @@ describe('buildAgentChatThreadMembers', () => {
     ]);
   });
 
-  it('includes both members of a direct message even without participant rows', () => {
+  it('includes both members of a direct message', () => {
     expect(
       buildAgentChatThreadMembers({
         thread: {
           workspaceMemberId: null,
           directMessageFirstWorkspaceMemberId: 'etienne',
           directMessageSecondWorkspaceMemberId: 'felix',
+          writerWorkspaceMemberIds: null,
         },
-        participantWorkspaceMemberIds: [],
         workspaceMemberById,
         currentWorkspaceMemberId: 'felix',
       }).map(({ workspaceMemberId }) => workspaceMemberId),
     ).toEqual(['felix', 'etienne']);
-  });
-
-  it('leaves out deleted members and members with neither a name nor an email', () => {
-    expect(
-      buildAgentChatThreadMembers({
-        thread: {
-          workspaceMemberId: 'etienne',
-          directMessageFirstWorkspaceMemberId: null,
-          directMessageSecondWorkspaceMemberId: null,
-        },
-        participantWorkspaceMemberIds: ['deleted', 'nameless'],
-        workspaceMemberById,
-        currentWorkspaceMemberId: 'etienne',
-      }).map(({ workspaceMemberId }) => workspaceMemberId),
-    ).toEqual(['etienne']);
   });
 });

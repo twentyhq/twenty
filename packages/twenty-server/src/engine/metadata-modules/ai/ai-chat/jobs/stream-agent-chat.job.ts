@@ -5,7 +5,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type CodeExecutionData } from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import {
+  assertUnreachable,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { type MessageQueueJobContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
@@ -20,15 +24,17 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
+import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
+import { AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
-import { AgentChatThreadMemberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-member.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AgentChatReplyExecutionPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-execution-policy.service';
 import { AgentTurnStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
 import { type AgentChatTurnOutcome } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-turn-outcome.type';
 import { type AgentChatStreamClaim } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
+import { findAgentChatReplyMentionedWorkspaceMemberIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-reply-mentioned-workspace-member-ids.util';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -70,7 +76,7 @@ export class StreamAgentChatJob {
     private readonly turnRecorderService: AgentTurnRecorderService,
     private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly threadMemberService: AgentChatThreadMemberService,
+    private readonly inboxDeliveryService: AgentChatInboxDeliveryService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -321,17 +327,32 @@ export class StreamAgentChatJob {
           workspaceId: data.workspaceId,
         });
 
-        if (isAiChatInboxEnabled) {
-          await this.threadMemberService.deliverReplyMentions({
-            workspaceId: data.workspaceId,
+        const mentionedWorkspaceMemberIds =
+          findAgentChatReplyMentionedWorkspaceMemberIds({
+            replyParts: streamed.replyParts,
             thread: finish.threadBefore,
             senderWorkspaceMemberId:
               authorizedConversation.authContext.workspaceMemberId,
-            messageId: streamed.assistantMessageId,
-            replyText: streamed.replyParts
-              .flatMap((part) => (part.type === 'text' ? [part.text] : []))
-              .join('\n'),
           });
+
+        if (
+          isAiChatInboxEnabled &&
+          isNonEmptyArray(mentionedWorkspaceMemberIds)
+        ) {
+          await this.inboxDeliveryService
+            .deliverThreadToMemberInboxes({
+              workspaceId: data.workspaceId,
+              threadId: data.threadId,
+              workspaceMemberId:
+                authorizedConversation.authContext.workspaceMemberId,
+              workspaceMemberIds: mentionedWorkspaceMemberIds,
+              reason: AgentChatInboxDeliveryReason.MENTION,
+            })
+            .catch((error: unknown) =>
+              this.logger.warn(
+                `Could not deliver the mentions of reply ${streamed.assistantMessageId}: ${formatErrorWithCause(error)}`,
+              ),
+            );
         }
       }
     }

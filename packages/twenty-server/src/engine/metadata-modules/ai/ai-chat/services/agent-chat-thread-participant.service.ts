@@ -532,28 +532,6 @@ export class AgentChatThreadParticipantService {
     return memberCount;
   }
 
-  async findWorkspaceMemberIds({
-    workspaceId,
-    threadId,
-  }: {
-    workspaceId: string;
-    threadId: string;
-  }): Promise<string[]> {
-    const rows = await this.threadRepository.query(
-      workspaceId,
-      ({ manager, table }) =>
-        manager.query<{ workspaceMemberId: string }[]>(
-          `SELECT "workspaceMemberId"
-           FROM ${table('agentChatThreadParticipant')}
-           WHERE "threadId" = $1 AND "deletedAt" IS NULL
-           ORDER BY "createdAt" ASC, "id" ASC`,
-          [threadId],
-        ),
-    );
-
-    return rows.map(({ workspaceMemberId }) => workspaceMemberId);
-  }
-
   // Over the chats the member can open and follows, the way the inbox lists
   // them
   async findOpenThreadsSummary({

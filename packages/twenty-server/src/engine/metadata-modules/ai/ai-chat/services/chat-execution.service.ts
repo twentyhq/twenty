@@ -38,7 +38,6 @@ import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai
 import { AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-workspace-setup-stream-function-id.constant';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentChatMessageReactionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-message-reaction.service';
-import { AgentChatThreadMemberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-member.service';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
 import { createListThreadMembersTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/list-thread-members.tool';
 import { createReactToMessageTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/react-to-message.tool';
@@ -47,6 +46,7 @@ import { type AgentChatThreadMember } from 'src/engine/metadata-modules/ai/ai-ch
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
 import { type AgentChatAuthorizedConversation } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-authorized-conversation.type';
 import { type UploadedFileReference } from 'src/engine/metadata-modules/ai/ai-chat/types/uploaded-file-reference.type';
+import { buildAgentChatThreadMembers } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-members.util';
 import { buildFullSystemPrompt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-full-system-prompt.util';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
 import { collectReferencedSkillIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-referenced-skill-ids.util';
@@ -70,6 +70,7 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type ChatExecutionOptions = {
   workspace: WorkspaceEntity;
@@ -112,8 +113,6 @@ type ChatExecutionProfile = {
   isWorkspaceSetupKickoffTurn: boolean;
   canAttachConversationToRecords: boolean;
   hasFileTools: boolean;
-  canMentionThreadMembers: boolean;
-  canListThreadMembers: boolean;
 };
 
 @Injectable()
@@ -130,7 +129,7 @@ export class ChatExecutionService {
     private readonly agentChatMessageReactionService: AgentChatMessageReactionService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly agentTurnService: AgentTurnService,
-    private readonly threadMemberService: AgentChatThreadMemberService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async streamChat({
@@ -193,24 +192,24 @@ export class ChatExecutionService {
       resolveExecutionContext,
     };
 
-    const findThreadMembers = () =>
-      this.threadMemberService.findMembers({
-        workspaceId: workspace.id,
-        thread,
-        currentWorkspaceMemberId: authContext.workspaceMemberId,
-      });
-    const [executionProfile, threadMembers] = await Promise.all([
-      this.buildExecutionProfile({
-        thread,
-        workspace,
-        userWorkspaceId,
-        messages,
-        browsingContext,
-        toolContext,
-        findThreadMembers,
-      }),
-      findThreadMembers(),
-    ]);
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatWorkspaceMemberMaps',
+      ]);
+    const threadMembers = buildAgentChatThreadMembers({
+      thread,
+      workspaceMemberById: flatWorkspaceMemberMaps.byId,
+      currentWorkspaceMemberId: authContext.workspaceMemberId,
+    });
+    const executionProfile = await this.buildExecutionProfile({
+      thread,
+      workspace,
+      userWorkspaceId,
+      messages,
+      browsingContext,
+      toolContext,
+      threadMembers,
+    });
     const { isWorkspaceSetupThread } = executionProfile.toolset;
     const { isWorkspaceSetupKickoffTurn } = executionProfile;
 
@@ -282,15 +281,7 @@ export class ChatExecutionService {
             workspaceInstructions:
               workspace.aiAdditionalInstructions ?? undefined,
             userContext,
-            threadMembers: {
-              members: threadMembers.slice(
-                0,
-                AGENT_CHAT_THREAD_MEMBERS_PROMPT_LIMIT,
-              ),
-              totalCount: threadMembers.length,
-              canMentionMembers: executionProfile.canMentionThreadMembers,
-              canListMembers: executionProfile.canListThreadMembers,
-            },
+            threadMembers,
             userWorkspaceId,
             workspaceId: workspace.id,
             isWorkspaceSetupThread,
@@ -344,7 +335,7 @@ export class ChatExecutionService {
     messages,
     browsingContext,
     toolContext,
-    findThreadMembers,
+    threadMembers,
   }: {
     thread: Pick<AgentChatThreadWorkspaceEntity, 'id' | 'conversationType'>;
     workspace: Pick<WorkspaceEntity, 'id' | 'aiChatAssistantProfile'>;
@@ -352,7 +343,7 @@ export class ChatExecutionService {
     messages: ExtendedUIMessage[];
     browsingContext: BrowsingContextType | null;
     toolContext: ToolContext;
-    findThreadMembers: () => Promise<AgentChatThreadMember[]>;
+    threadMembers: AgentChatThreadMember[];
   }): Promise<ChatExecutionProfile> {
     const workspaceId = workspace.id;
     const isAiChatInboxEnabled = await this.featureFlagService.isFeatureEnabled(
@@ -381,8 +372,6 @@ export class ChatExecutionService {
         isWorkspaceSetupKickoffTurn: false,
         canAttachConversationToRecords: false,
         hasFileTools: false,
-        canMentionThreadMembers: false,
-        canListThreadMembers: false,
       };
     }
 
@@ -436,12 +425,10 @@ export class ChatExecutionService {
                 }),
               }
             : {}),
-          ...(isAiChatInboxEnabled
+          ...(threadMembers.length > AGENT_CHAT_THREAD_MEMBERS_PROMPT_LIMIT
             ? {
-                [LIST_THREAD_MEMBERS_TOOL_NAME]: createListThreadMembersTool({
-                  findMembers: findThreadMembers,
-                  canMentionMembers: true,
-                }),
+                [LIST_THREAD_MEMBERS_TOOL_NAME]:
+                  createListThreadMembersTool(threadMembers),
               }
             : {}),
         },
@@ -457,8 +444,6 @@ export class ChatExecutionService {
       isWorkspaceSetupKickoffTurn,
       canAttachConversationToRecords,
       hasFileTools: true,
-      canMentionThreadMembers: isAiChatInboxEnabled,
-      canListThreadMembers: isAiChatInboxEnabled,
     };
   }
 
