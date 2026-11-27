@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type DoctorCheck } from '@/doctor/types/doctor-check.type';
 import { CliError } from '@/output/cli-error';
 import { type CliErrorCode } from '@/output/types/cli-error-code.type';
+import { CERTIFICATE_ERROR_MESSAGES } from '@/transport/constants/certificate-error-messages.constant';
 
 const FAILURE_MESSAGES: Partial<
   Record<CliErrorCode, { message: string; hint: string }>
@@ -58,17 +59,7 @@ const NETWORK_FAILURE_MESSAGES: Partial<Record<string, string>> = {
   ENETUNREACH: 'The network containing the metadata endpoint is unreachable.',
   ETIMEDOUT: 'The connection to the metadata endpoint timed out.',
   UND_ERR_CONNECT_TIMEOUT: 'The connection to the metadata endpoint timed out.',
-  CERT_HAS_EXPIRED: 'The metadata endpoint TLS certificate has expired.',
-  ERR_TLS_CERT_ALTNAME_INVALID:
-    'The metadata endpoint TLS certificate does not match its hostname.',
-  DEPTH_ZERO_SELF_SIGNED_CERT:
-    'The metadata endpoint uses an untrusted self-signed TLS certificate.',
-  SELF_SIGNED_CERT_IN_CHAIN:
-    'The metadata endpoint TLS certificate chain contains an untrusted self-signed certificate.',
-  UNABLE_TO_VERIFY_LEAF_SIGNATURE:
-    'The metadata endpoint TLS certificate chain could not be verified.',
-  UNABLE_TO_GET_ISSUER_CERT_LOCALLY:
-    'The metadata endpoint TLS certificate issuer is not trusted locally.',
+  ...CERTIFICATE_ERROR_MESSAGES,
 };
 
 export const getMetadataDoctorFailure = (error: unknown): DoctorCheck => {
@@ -94,7 +85,9 @@ export const getMetadataDoctorFailure = (error: unknown): DoctorCheck => {
     message: networkMessage ?? description.message,
     hint:
       error instanceof CliError &&
-      code === 'AUTH_REQUIRED' &&
+      (code === 'AUTH_REQUIRED' ||
+        (isString(networkCode) &&
+          Object.hasOwn(CERTIFICATE_ERROR_MESSAGES, networkCode))) &&
       isDefined(error.hint)
         ? error.hint
         : description.hint,
