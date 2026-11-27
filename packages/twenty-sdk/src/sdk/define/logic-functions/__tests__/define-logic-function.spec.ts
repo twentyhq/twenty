@@ -502,6 +502,8 @@ describe('defineLogicFunction', () => {
       keepWarm: 'yes',
     });
 
-    expect(result.errors).toContain('Logic function keepWarm must be a boolean');
+    expect(result.errors).toContain(
+      'Logic function keepWarm must be a boolean',
+    );
   });
 });
