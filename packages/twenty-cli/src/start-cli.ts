@@ -1,5 +1,6 @@
 import { checkNodeRequirement } from '@/app/project/check-node-requirement';
 import { CLI_NODE_VERSION_RANGE } from '@/constants/cli-node-version-range.constant';
+import { initializeSystemCertificateTrust } from '@/transport/initialize-system-certificate-trust';
 
 type CliModule = { runCli: (args: string[]) => Promise<void> };
 
@@ -26,6 +27,8 @@ export const startCli = async ({
 
     return;
   }
+
+  initializeSystemCertificateTrust();
 
   const cli = await loadCli();
 
