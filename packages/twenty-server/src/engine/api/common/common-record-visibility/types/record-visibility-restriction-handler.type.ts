@@ -1,3 +1,4 @@
+import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { type ObjectRecord } from 'twenty-shared/types';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -16,4 +17,11 @@ export type RecordVisibilityRestrictionHandler = {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }) => Promise<void>;
+  applyEventVisibilityRestrictions?: <TEvent extends ObjectRecordEvent>(args: {
+    events: TEvent[];
+    permissionsPrincipals: PermissionsPrincipalsWithRolesContext;
+    recordReadRestrictions: RecordReadRestrictions;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  }) => Promise<TEvent[]>;
 };

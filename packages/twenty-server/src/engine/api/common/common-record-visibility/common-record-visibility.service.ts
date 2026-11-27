@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { type ObjectRecord } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
 import { type CommonSelection } from 'src/engine/api/common/types/common-selection.type';
@@ -78,5 +80,30 @@ export class CommonRecordVisibilityService {
           flatFieldMetadataMaps,
         });
     }
+  }
+
+  public async applyEventVisibilityRestrictions<
+    TEvent extends ObjectRecordEvent,
+  >({
+    objectNameSingular,
+    ...args
+  }: {
+    objectNameSingular: string;
+    events: TEvent[];
+    permissionsPrincipals: PermissionsPrincipalsWithRolesContext;
+    recordReadRestrictions: RecordReadRestrictions;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  }): Promise<TEvent[]> {
+    const handler = this.handlersByObjectNameSingular.get(objectNameSingular);
+
+    if (
+      !isDefined(handler?.applyEventVisibilityRestrictions) ||
+      args.events.length === 0
+    ) {
+      return args.events;
+    }
+
+    return handler.applyEventVisibilityRestrictions(args);
   }
 }

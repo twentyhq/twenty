@@ -9,7 +9,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
-import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { omitUnreadableFieldsFromEvent } from 'src/engine/permissions/internal/field-access/utils/omit-unreadable-fields-from-event.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
@@ -124,9 +123,7 @@ const omit = ({
       nameSingular: 'company',
     }),
     recordsPermissions: buildRecordsPermissions(unreadableFields),
-    recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
     unreadableFieldsOnMatchingRecords: [],
-    isTimelineActivityRecordReadable: () => true,
     metadataMaps: {
       flatFieldMetadataMaps,
       flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
