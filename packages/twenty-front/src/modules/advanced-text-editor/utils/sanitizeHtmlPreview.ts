@@ -1,6 +1,7 @@
 import DOMPurify, { type Config } from 'dompurify';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
-const LINK_TAG_NAMES = ['A', 'AREA'];
+const LINK_TAG_NAMES = ['a', 'area'];
 
 // The preview renders inside the app's own document, so page-wide styles and forms stay out.
 const HTML_PREVIEW_SANITIZE_CONFIG: Config = {
@@ -19,9 +20,9 @@ const HTML_PREVIEW_SANITIZE_CONFIG: Config = {
 const htmlPreviewPurifier = DOMPurify();
 
 htmlPreviewPurifier.addHook('afterSanitizeAttributes', (node) => {
-  if (LINK_TAG_NAMES.includes(node.tagName) && node.hasAttribute('href')) {
+  if (LINK_TAG_NAMES.includes(node.localName) && node.hasAttribute('href')) {
     node.setAttribute('target', '_blank');
-    node.setAttribute('rel', 'noopener noreferrer');
+    node.setAttribute('rel', doNotTranslate('noopener noreferrer'));
   }
 });
 
