@@ -77,8 +77,7 @@ const isRouteAvailable = ({
   route: SettingsSearchRoute;
   availability: SettingsSearchAvailability;
 }) =>
-  (availability.isBillingEnabled ||
-    metadata.isHiddenWhenBillingDisabled !== true) &&
+  (availability.isBillingEnabled || !metadata.isHiddenWhenBillingDisabled) &&
   guards.every(({ settingsPermission, requiredFeatureFlag }) =>
     isSettingsRouteAccessible({
       hasPermission: availability.permissionFlagMap[settingsPermission],
