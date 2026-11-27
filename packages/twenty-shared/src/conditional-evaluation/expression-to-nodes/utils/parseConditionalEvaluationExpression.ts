@@ -2,7 +2,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Expression } from 'expr-eval-fork';
 
-import { type ConditionalAvailabilityMetadataName } from '@/conditional-evaluation/common/types/ConditionalAvailabilityMetadataName';
+import { type ConditionalEvaluationMetadataName } from '@/conditional-evaluation/common/types/ConditionalEvaluationMetadataName';
 import { CONDITIONAL_EVALUATION_EXPRESSION_MAX_LENGTH } from '@/conditional-evaluation/expression-to-nodes/constants/ConditionalEvaluationExpressionMaxLength';
 import { type ConditionalEvaluationParseResult } from '@/conditional-evaluation/expression-to-nodes/types/ConditionalEvaluationParseResult';
 import { conditionalEvaluationStrictParser } from '@/conditional-evaluation/expression-to-nodes/utils/conditionalEvaluationStrictParser';
@@ -29,7 +29,7 @@ export const parseConditionalEvaluationExpression = ({
   metadataName,
 }: {
   expression: string | null | undefined;
-  metadataName: ConditionalAvailabilityMetadataName;
+  metadataName: ConditionalEvaluationMetadataName;
 }): ConditionalEvaluationParseResult => {
   if (!isNonEmptyString(expression) || expression.trim() === '') {
     return { isValid: true, node: null };
