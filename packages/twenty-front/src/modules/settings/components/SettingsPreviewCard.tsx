@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { StyledFormCardTitle } from '@/settings/data-model/fields/components/StyledFormCardTitle';
+import { StyledFormCardTitle } from '@/settings/components/StyledFormCardTitle';
 
 type SettingsPreviewCardProps = {
   preview: ReactNode;
