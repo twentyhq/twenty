@@ -14,8 +14,7 @@ import { validateFieldPermissionUnreadableNestedSource } from 'src/engine/worksp
 import { validateFieldPermissionGrantsNoDisabledAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util';
 import { getMarketplaceApplicationRoleRestrictionErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util';
 import { isFieldPermissionRestrictionAdded } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-field-permission-restriction-added.util';
-import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
-import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
+import { getRoleRecordPermissionsTargetErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-record-permissions-target-errors.util';
 import { isSameRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-same-row-level-permission-predicate-group.util';
 
 @Injectable()
@@ -77,14 +76,10 @@ export class FlatFieldPermissionValidatorService {
       });
     } else {
       validationResult.errors.push(
-        ...validateRoleBelongsToCallerApplication({
-          referencedRole,
+        ...getRoleRecordPermissionsTargetErrors({
+          flatRole: referencedRole,
           buildOptions,
         }),
-      );
-
-      validationResult.errors.push(
-        ...getRoleNotEditableErrors({ flatRole: referencedRole, buildOptions }),
       );
     }
 
@@ -230,14 +225,10 @@ export class FlatFieldPermissionValidatorService {
       });
     } else {
       validationResult.errors.push(
-        ...validateRoleBelongsToCallerApplication({
-          referencedRole,
+        ...getRoleRecordPermissionsTargetErrors({
+          flatRole: referencedRole,
           buildOptions,
         }),
-      );
-
-      validationResult.errors.push(
-        ...getRoleNotEditableErrors({ flatRole: referencedRole, buildOptions }),
       );
     }
 
@@ -363,9 +354,10 @@ export class FlatFieldPermissionValidatorService {
 
       if (isDefined(referencedRole)) {
         validationResult.errors.push(
-          ...getRoleNotEditableErrors({
+          ...getRoleRecordPermissionsTargetErrors({
             flatRole: referencedRole,
             buildOptions,
+            shouldCheckRoleApplication: false,
           }),
         );
       }

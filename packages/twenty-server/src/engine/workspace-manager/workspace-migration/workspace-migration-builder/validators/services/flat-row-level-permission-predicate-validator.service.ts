@@ -39,7 +39,7 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { getMarketplaceApplicationRoleRestrictionErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util';
-import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
+import { getRoleRecordPermissionsTargetErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-record-permissions-target-errors.util';
 
 const WORKSPACE_MEMBER_RELATION_FILTER_FIELD_TYPES: FieldMetadataType[] = [
   FieldMetadataType.SELECT,
@@ -234,7 +234,11 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       });
     } else {
       validationResult.errors.push(
-        ...getRoleNotEditableErrors({ flatRole: role, buildOptions }),
+        ...getRoleRecordPermissionsTargetErrors({
+          flatRole: role,
+          buildOptions,
+          shouldCheckRoleApplication: false,
+        }),
       );
     }
 
@@ -506,7 +510,11 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       });
     } else {
       validationResult.errors.push(
-        ...getRoleNotEditableErrors({ flatRole: role, buildOptions }),
+        ...getRoleRecordPermissionsTargetErrors({
+          flatRole: role,
+          buildOptions,
+          shouldCheckRoleApplication: false,
+        }),
       );
     }
 

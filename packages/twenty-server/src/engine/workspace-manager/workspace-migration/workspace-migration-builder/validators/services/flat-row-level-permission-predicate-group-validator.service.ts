@@ -14,7 +14,7 @@ import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/wor
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { getNestedPredicateGroupOperationErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util';
 import { getMarketplaceApplicationRoleRestrictionErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util';
-import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
+import { getRoleRecordPermissionsTargetErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-record-permissions-target-errors.util';
 
 @Injectable()
 export class FlatRowLevelPermissionPredicateGroupValidatorService {
@@ -98,7 +98,11 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
       });
     } else {
       validationResult.errors.push(
-        ...getRoleNotEditableErrors({ flatRole: role, buildOptions }),
+        ...getRoleRecordPermissionsTargetErrors({
+          flatRole: role,
+          buildOptions,
+          shouldCheckRoleApplication: false,
+        }),
       );
     }
 
@@ -276,7 +280,11 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
       });
     } else {
       validationResult.errors.push(
-        ...getRoleNotEditableErrors({ flatRole: role, buildOptions }),
+        ...getRoleRecordPermissionsTargetErrors({
+          flatRole: role,
+          buildOptions,
+          shouldCheckRoleApplication: false,
+        }),
       );
     }
 

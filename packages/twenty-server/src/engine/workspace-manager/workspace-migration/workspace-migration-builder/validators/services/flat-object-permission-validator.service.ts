@@ -11,8 +11,7 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { validateObjectPermissionGrantsNoDisabledAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util';
-import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
-import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
+import { getRoleRecordPermissionsTargetErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-record-permissions-target-errors.util';
 
 @Injectable()
 export class FlatObjectPermissionValidatorService {
@@ -66,14 +65,10 @@ export class FlatObjectPermissionValidatorService {
       });
     } else {
       validationResult.errors.push(
-        ...validateRoleBelongsToCallerApplication({
-          referencedRole,
+        ...getRoleRecordPermissionsTargetErrors({
+          flatRole: referencedRole,
           buildOptions,
         }),
-      );
-
-      validationResult.errors.push(
-        ...getRoleNotEditableErrors({ flatRole: referencedRole, buildOptions }),
       );
     }
 
@@ -180,14 +175,10 @@ export class FlatObjectPermissionValidatorService {
       });
     } else {
       validationResult.errors.push(
-        ...validateRoleBelongsToCallerApplication({
-          referencedRole,
+        ...getRoleRecordPermissionsTargetErrors({
+          flatRole: referencedRole,
           buildOptions,
         }),
-      );
-
-      validationResult.errors.push(
-        ...getRoleNotEditableErrors({ flatRole: referencedRole, buildOptions }),
       );
     }
 
@@ -284,9 +275,10 @@ export class FlatObjectPermissionValidatorService {
 
       if (isDefined(referencedRole)) {
         validationResult.errors.push(
-          ...getRoleNotEditableErrors({
+          ...getRoleRecordPermissionsTargetErrors({
             flatRole: referencedRole,
             buildOptions,
+            shouldCheckRoleApplication: false,
           }),
         );
       }

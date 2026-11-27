@@ -94,6 +94,7 @@ export { RESERVED_SUBDOMAINS } from './ReservedSubdomains';
 export { RICH_TEXT_BLOCKNOTE_DEPRECATION_REASON } from './RichTextBlocknoteDeprecationReason';
 export { SESSION_COOKIE_OPT_IN_HEADER_NAME } from './SessionCookieOptInHeaderName';
 export { STANDARD_OBJECT_RECORDS_UNDER_OBJECT_RECORDS_PERMISSIONS } from './StandardObjectRecordsUnderObjectRecordsPermissions';
+export { STANDARD_ROLE } from './StandardRole';
 export { SUBDOMAIN_PATTERN } from './SubdomainPattern';
 export { SystemPermissionFlag } from './SystemPermissionFlag';
 export { TAB_PRESENCE_HEARTBEAT_INTERVAL_MS } from './TabPresenceHeartbeatIntervalMs';

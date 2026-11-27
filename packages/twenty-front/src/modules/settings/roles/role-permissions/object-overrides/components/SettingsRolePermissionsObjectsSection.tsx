@@ -28,11 +28,13 @@ const StyledTableRows = styled.div`
 type SettingsRolePermissionsObjectsSectionProps = {
   roleId: string;
   isEditable: boolean;
+  areRoleWideDefaultsEditable?: boolean;
 };
 
 export const SettingsRolePermissionsObjectsSection = ({
   roleId,
   isEditable,
+  areRoleWideDefaultsEditable = isEditable,
 }: SettingsRolePermissionsObjectsSectionProps) => {
   const { t } = useLingui();
 
@@ -66,7 +68,7 @@ export const SettingsRolePermissionsObjectsSection = ({
       />
       <SettingsRolePermissionsAllObjectsCard
         roleId={roleId}
-        isEditable={isEditable}
+        isEditable={areRoleWideDefaultsEditable}
       />
       <StyledOverridesTable>
         <Table>
