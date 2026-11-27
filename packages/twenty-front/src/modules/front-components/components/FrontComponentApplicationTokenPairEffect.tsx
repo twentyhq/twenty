@@ -1,40 +1,59 @@
 import { useEffect } from 'react';
 
+import { convertUnknownToError } from '@/error-handler/utils/convertUnknownToError';
 import { useFrontComponentApplicationTokenPair } from '@/front-components/hooks/useFrontComponentApplicationTokenPair';
-import { type FrontComponentApplicationTokenPair } from '@/front-components/types/FrontComponentApplicationTokenPair';
+import { frontComponentApplicationTokenPairLoadErrorComponentState } from '@/front-components/states/frontComponentApplicationTokenPairLoadErrorComponentState';
+import { frontComponentInitialApplicationAccessTokenComponentState } from '@/front-components/states/frontComponentInitialApplicationAccessTokenComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 type FrontComponentApplicationTokenPairEffectProps = {
   applicationId: string;
-  onApplicationTokenPairLoaded: (
-    applicationTokenPair: FrontComponentApplicationTokenPair,
-  ) => void;
-  onApplicationTokenPairLoadFailed: (error: Error) => void;
 };
 
 export const FrontComponentApplicationTokenPairEffect = ({
   applicationId,
-  onApplicationTokenPairLoaded,
-  onApplicationTokenPairLoadFailed,
 }: FrontComponentApplicationTokenPairEffectProps) => {
   const { loadFrontComponentApplicationTokenPair } =
     useFrontComponentApplicationTokenPair();
 
+  const setFrontComponentInitialApplicationAccessToken =
+    useSetAtomComponentState(
+      frontComponentInitialApplicationAccessTokenComponentState,
+    );
+  const setFrontComponentApplicationTokenPairLoadError =
+    useSetAtomComponentState(
+      frontComponentApplicationTokenPairLoadErrorComponentState,
+    );
+
   useEffect(() => {
     let isCancelled = false;
 
-    loadFrontComponentApplicationTokenPair(applicationId)
-      .then((applicationTokenPair) => {
-        if (!isCancelled) {
-          onApplicationTokenPairLoaded(applicationTokenPair);
+    const loadInitialApplicationAccessToken = async () => {
+      try {
+        const applicationTokenPair =
+          await loadFrontComponentApplicationTokenPair(applicationId);
+
+        if (isCancelled) {
+          return;
         }
-      })
-      .catch((error: unknown) => {
-        if (!isCancelled) {
-          onApplicationTokenPairLoadFailed(
-            error instanceof Error ? error : new Error(String(error)),
-          );
+
+        setFrontComponentInitialApplicationAccessToken(
+          (currentApplicationAccessToken) =>
+            currentApplicationAccessToken ??
+            applicationTokenPair.applicationAccessToken.token,
+        );
+      } catch (error) {
+        if (isCancelled) {
+          return;
         }
-      });
+
+        setFrontComponentApplicationTokenPairLoadError(
+          convertUnknownToError(error),
+        );
+      }
+    };
+
+    loadInitialApplicationAccessToken();
 
     return () => {
       isCancelled = true;
@@ -42,8 +61,8 @@ export const FrontComponentApplicationTokenPairEffect = ({
   }, [
     applicationId,
     loadFrontComponentApplicationTokenPair,
-    onApplicationTokenPairLoaded,
-    onApplicationTokenPairLoadFailed,
+    setFrontComponentInitialApplicationAccessToken,
+    setFrontComponentApplicationTokenPairLoadError,
   ]);
 
   return null;

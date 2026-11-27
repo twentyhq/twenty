@@ -23,6 +23,7 @@ import { FrontComponentUpdateHostCommunicationApiEffect } from '@/host/effect-co
 import { FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP } from '@/host/thread/constants/FrontComponentHostCommunicationApiNoop';
 import { type FrontComponentMediaSessionHost } from '@/host/media/types/FrontComponentMediaSessionHost';
 import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentHostCommunicationApi';
+import { type FrontComponentSources } from '@/types/FrontComponentSources';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { type SdkClientSources } from '@/types/SdkClientSources';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
@@ -53,6 +54,9 @@ type FrontComponentRendererProps = {
   sdkClientUrls?: SdkClientUrls;
   sdkClientSources?: SdkClientSources;
   sharedDependenciesUrl?: string;
+  shouldPrefetchSdkClientSources?: boolean;
+  shouldPrefetchSharedDependenciesSource?: boolean;
+  preloadedSourcesPromise?: Promise<FrontComponentSources | undefined>;
   applicationVariables?: Record<string, string>;
   storageNamespace?: string;
   executionContext: FrontComponentExecutionContext;
@@ -77,6 +81,9 @@ export const FrontComponentRenderer = ({
   sdkClientUrls,
   sdkClientSources,
   sharedDependenciesUrl,
+  shouldPrefetchSdkClientSources,
+  shouldPrefetchSharedDependenciesSource,
+  preloadedSourcesPromise,
   applicationVariables,
   storageNamespace,
   executionContext,
@@ -155,6 +162,11 @@ export const FrontComponentRenderer = ({
           sdkClientUrls={sdkClientUrls}
           sdkClientSources={sdkClientSources}
           sharedDependenciesUrl={sharedDependenciesUrl}
+          shouldPrefetchSdkClientSources={shouldPrefetchSdkClientSources}
+          shouldPrefetchSharedDependenciesSource={
+            shouldPrefetchSharedDependenciesSource
+          }
+          preloadedSourcesPromise={preloadedSourcesPromise}
           applicationVariables={applicationVariables}
           storageNamespace={storageNamespace}
           initialExecutionContext={initialExecutionContext}

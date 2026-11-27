@@ -1,15 +1,10 @@
+import { LazyFrontComponentRenderer } from '@/front-components/components/LazyFrontComponentRenderer';
 import { styled } from '@linaria/react';
-import { type ReactNode, Suspense, lazy } from 'react';
+import { type ReactNode, Suspense } from 'react';
 import { type FrontComponentToolCall } from 'twenty-sdk/front-component';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { FrontComponentSkeletonLoader } from '@/front-components/components/FrontComponentSkeletonLoader';
-
-const FrontComponentRenderer = lazy(() =>
-  import('@/front-components/components/FrontComponentRenderer').then(
-    (module) => ({ default: module.FrontComponentRenderer }),
-  ),
-);
 
 const StyledContainer = styled.div`
   background: ${themeCssVariables.background.secondary};
@@ -35,7 +30,8 @@ export const AiChatToolFrontComponent = ({
 }: AiChatToolFrontComponentProps) => (
   <StyledContainer>
     <Suspense fallback={<FrontComponentSkeletonLoader />}>
-      <FrontComponentRenderer
+      <LazyFrontComponentRenderer
+        hostInstanceId={`ai-chat-tool-call-${toolCall.toolCallId}`}
         frontComponentId={frontComponentId}
         toolCall={toolCall}
         onToolCallArgumentsChange={onToolCallArgumentsChange}

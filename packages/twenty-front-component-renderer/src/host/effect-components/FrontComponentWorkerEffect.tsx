@@ -15,20 +15,17 @@ import { createImageLoadingHost } from '@/host/image-loading/utils/createImageLo
 import { createHostFetchEnforcingPolicy } from '@/host/fetch/utils/createHostFetchEnforcingPolicy';
 import { type GeometryTracker } from '@/host/geometry/types/GeometryTracker';
 import { type FrontComponentMediaSessionHost } from '@/host/media/types/FrontComponentMediaSessionHost';
-import { fetchComponentSource } from '@/host/component-source/utils/fetchComponentSource';
-import { fetchSdkClientSources } from '@/host/component-source/utils/fetchSdkClientSources';
+import { fetchFrontComponentSources } from '@/host/component-source/utils/fetchFrontComponentSources';
 import { buildFrontComponentStorageSnapshots } from '@/host/storage/utils/buildFrontComponentStorageSnapshots';
 import { FRONT_COMPONENT_SANDBOX_DOCUMENT } from '@/remote/sandbox/generated/frontComponentSandboxDocument';
 import { createFrontComponentSandboxIframe } from '@/remote/sandbox/utils/createFrontComponentSandboxIframe';
 import { createFrontComponentSandboxMessageHandler } from '@/remote/sandbox/utils/createFrontComponentSandboxMessageHandler';
 import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 
+import { type FrontComponentSources } from '@/types/FrontComponentSources';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { type SdkClientSources } from '@/types/SdkClientSources';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
-import { buildAuthorizationHeadersFromAccessToken } from '@/host/component-source/utils/buildAuthorizationHeadersFromAccessToken';
-import { containsSdkClientImportSpecifier } from '@/utils/module-imports/containsSdkClientImportSpecifier';
-import { containsSharedDependenciesImportSpecifier } from '@/utils/module-imports/containsSharedDependenciesImportSpecifier';
 
 type FrontComponentWorkerEffectProps = {
   componentUrl: string;
@@ -42,6 +39,9 @@ type FrontComponentWorkerEffectProps = {
   sdkClientUrls?: SdkClientUrls;
   sdkClientSources?: SdkClientSources;
   sharedDependenciesUrl?: string;
+  shouldPrefetchSdkClientSources?: boolean;
+  shouldPrefetchSharedDependenciesSource?: boolean;
+  preloadedSourcesPromise?: Promise<FrontComponentSources | undefined>;
   applicationVariables?: Record<string, string>;
   storageNamespace?: string;
   initialExecutionContext: FrontComponentExecutionContext;
@@ -70,6 +70,9 @@ export const FrontComponentWorkerEffect = ({
   sdkClientUrls,
   sdkClientSources: providedSdkClientSources,
   sharedDependenciesUrl,
+  shouldPrefetchSdkClientSources,
+  shouldPrefetchSharedDependenciesSource,
+  preloadedSourcesPromise,
   applicationVariables,
   storageNamespace,
   initialExecutionContext,
@@ -144,50 +147,19 @@ export const FrontComponentWorkerEffect = ({
 
     const resolveComponentSourceAndRender = async () => {
       try {
-        const authorizationHeaders = buildAuthorizationHeadersFromAccessToken(
-          applicationAccessToken,
-        );
-
-        const componentSource =
-          providedComponentSource ??
-          (await fetchComponentSource({
-            url: componentUrl,
-            headers: authorizationHeaders,
+        const { componentSource, sdkClientSources, sharedDependenciesSource } =
+          (await preloadedSourcesPromise) ??
+          (await fetchFrontComponentSources({
+            componentUrl,
+            componentSource: providedComponentSource,
+            sdkClientUrls,
+            sdkClientSources: providedSdkClientSources,
+            sharedDependenciesUrl,
+            sharedDependenciesSource: providedSharedDependenciesSource,
+            applicationAccessToken,
+            shouldPrefetchSdkClientSources,
+            shouldPrefetchSharedDependenciesSource,
           }));
-
-        if (isCancelled) {
-          return;
-        }
-
-        const resolveSharedDependenciesSource = () => {
-          if (isDefined(providedSharedDependenciesSource)) {
-            return providedSharedDependenciesSource;
-          }
-
-          if (
-            !isDefined(sharedDependenciesUrl) ||
-            !containsSharedDependenciesImportSpecifier(componentSource)
-          ) {
-            return undefined;
-          }
-
-          return fetchComponentSource({
-            url: sharedDependenciesUrl,
-            headers: authorizationHeaders,
-          });
-        };
-
-        const [sdkClientSources, sharedDependenciesSource] = await Promise.all([
-          providedSdkClientSources ??
-            (isDefined(sdkClientUrls) &&
-            containsSdkClientImportSpecifier(componentSource)
-              ? fetchSdkClientSources({
-                  sdkClientUrls,
-                  headers: authorizationHeaders,
-                })
-              : undefined),
-          resolveSharedDependenciesSource(),
-        ]);
 
         if (isCancelled) {
           return;
@@ -263,6 +235,9 @@ export const FrontComponentWorkerEffect = ({
     functionsBaseUrl,
     sdkClientUrls,
     sharedDependenciesUrl,
+    shouldPrefetchSdkClientSources,
+    shouldPrefetchSharedDependenciesSource,
+    preloadedSourcesPromise,
     applicationVariables,
     storageNamespace,
     initialExecutionContext,

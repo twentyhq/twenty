@@ -1,4 +1,5 @@
 export { fetchComponentSource } from '@/host/component-source/utils/fetchComponentSource';
+export { fetchFrontComponentSources } from '@/host/component-source/utils/fetchFrontComponentSources';
 export { FrontComponentSourceRenderer } from '@/host/components/FrontComponentSourceRenderer';
 export { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
 export { FRONT_COMPONENT_HOST_UI_CLASS_NAME } from '@/constants/FrontComponentHostUiClassName';
@@ -162,6 +163,7 @@ export type { ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
 export type { ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
 export type { GeometryUpdateBatch } from '@/types/GeometryUpdateBatch';
 export type { HostToWorkerRenderContext } from '@/types/HostToWorkerRenderContext';
+export type { FrontComponentSources } from '@/types/FrontComponentSources';
 export type { SdkClientUrls } from '@/types/SdkClientUrls';
 export type { PropertySchema } from '@/types/PropertySchema';
 export type { WorkerExports } from '@/types/WorkerExports';

@@ -1,8 +1,9 @@
 import { styled } from '@linaria/react';
-import { Suspense, lazy, useContext, useRef } from 'react';
+import { Suspense, useContext, useRef } from 'react';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { LazyFrontComponentRenderer } from '@/front-components/components/LazyFrontComponentRenderer';
 import { FrontComponentSkeletonLoader } from '@/front-components/components/FrontComponentSkeletonLoader';
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { PageLayoutWidgetViewportContext } from '@/page-layout/contexts/PageLayoutWidgetViewportContext';
@@ -27,12 +28,6 @@ const StyledContainer = styled.div<{
   pointer-events: ${({ isInEditMode }) => (isInEditMode ? 'none' : 'auto')};
   width: 100%;
 `;
-
-const FrontComponentRenderer = lazy(() =>
-  import('@/front-components/components/FrontComponentRenderer').then(
-    (module) => ({ default: module.FrontComponentRenderer }),
-  ),
-);
 
 type FrontComponentWidgetRendererProps = {
   widget: PageLayoutWidget;
@@ -82,7 +77,8 @@ export const FrontComponentWidgetRenderer = ({
         />
       )}
       <Suspense fallback={loadingFallback}>
-        <FrontComponentRenderer
+        <LazyFrontComponentRenderer
+          hostInstanceId={`front-component-widget-${widget.id}`}
           frontComponentId={frontComponentId}
           selectedRecordIds={selectedRecordIds}
           objectNameSingular={targetRecordIdentifier?.targetObjectNameSingular}
