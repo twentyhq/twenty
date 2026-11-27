@@ -102,10 +102,12 @@ const buildThinkingStepsDisplay = ({
   </JotaiProvider>
 );
 
-const renderThinkingStepsDisplay = (
-  props: ThinkingStepsDisplayTestProps,
+const renderThinkingStepsDisplay = ({
   store = createStore(),
-) => {
+  ...props
+}: ThinkingStepsDisplayTestProps & {
+  store?: ReturnType<typeof createStore>;
+}) => {
   const renderResult = render(buildThinkingStepsDisplay({ store, ...props }));
 
   return {
@@ -302,11 +304,11 @@ describe('ThinkingStepsDisplay', () => {
       isLastMessageStreaming: false,
       parts: [createToolPart()],
     };
-    const { unmount } = renderThinkingStepsDisplay(props, store);
+    const { unmount } = renderThinkingStepsDisplay({ ...props, store });
 
     await userEvent.click(screen.getByRole('button', { name: /1 step/i }));
     unmount();
-    renderThinkingStepsDisplay(props, store);
+    renderThinkingStepsDisplay({ ...props, store });
 
     expect(screen.getByRole('button', { name: /1 step/i })).toHaveAttribute(
       'aria-expanded',
