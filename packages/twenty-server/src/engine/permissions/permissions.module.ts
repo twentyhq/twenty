@@ -18,7 +18,6 @@ import { SettingPermissionsService } from 'src/engine/permissions/setting-permis
 import { UserWorkspacePermissionsReadService } from 'src/engine/permissions/user-workspace-permissions-read.service';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-import { RelatedRecordPathReadModule } from 'src/engine/permissions/internal/related-record-path/related-record-path-read.module';
 import { RecordPermissionRepositoryModule } from 'src/engine/permissions/internal/record-permission-repository/record-permission-repository.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -36,7 +35,6 @@ import { PermissionsMetricsModule } from 'src/engine/permissions/internal/metric
     TypeOrmModule.forFeature([RoleTargetEntity]),
     WorkspaceCacheModule,
     RecordPermissionRepositoryModule,
-    RelatedRecordPathReadModule,
   ],
   providers: [
     AccessGroupPropagationProgressReadService,

@@ -14,7 +14,6 @@ import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
-import { ViewVisibility } from 'twenty-shared/types';
 
 type ArrangedViewSort = {
   viewSortId: string;
@@ -28,11 +27,11 @@ type TestContext = {
 };
 
 const arrangeViewSort = async ({
-  visibility = ViewVisibility.WORKSPACE,
+  isPrivate = false,
   token,
   prepare = async () => ({}),
 }: {
-  visibility?: ViewVisibility;
+  isPrivate?: boolean;
   token?: string;
   prepare?: (
     arrangedViewSort: ArrangedViewSort,
@@ -40,7 +39,7 @@ const arrangeViewSort = async ({
 } = {}): Promise<ArrangedViewSort> => {
   const { viewId, childIdByChildName } = await createViewWithChildren({
     name: `View Sort read ${randomUUID().slice(0, 8)}`,
-    visibility,
+    isPrivate,
     token,
   });
   const arrangedViewSort = {
@@ -106,7 +105,7 @@ const failingViewSortReadTestCases: EachTestingContext<TestContext>[] = [
     context: {
       arrange: () =>
         arrangeViewSort({
-          visibility: ViewVisibility.UNLISTED,
+          isPrivate: true,
           token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
           prepare: async () => ({ token: APPLE_JONY_MEMBER_ACCESS_TOKEN }),
         }),

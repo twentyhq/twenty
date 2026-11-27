@@ -1,0 +1,1 @@
+export const CALL_RECORDING_SUMMARY_ACTION_ITEMS_HEADING = '## Action Items';

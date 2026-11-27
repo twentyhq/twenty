@@ -11,13 +11,17 @@ import {
   type ValidationRuleExpressionHighlightKind,
 } from '@/validation-rules/types/ValidationRuleExpressionHighlight';
 
-const FUNCTION_NAMES = Object.keys(VALIDATION_RULE_FUNCTIONS);
+const VALIDATION_RULE_FUNCTION_NAMES = Object.keys(VALIDATION_RULE_FUNCTIONS);
 const KEYWORD_NAMES = VALIDATION_RULE_KEYWORDS.map(({ name }) => name);
 const OPERATOR_CHARACTERS = '=!<>+-*/%?:|&';
 
-const getHighlightKind = (
-  token: ValidationRuleExpressionToken,
-): ValidationRuleExpressionHighlightKind | null => {
+const getHighlightKind = ({
+  token,
+  functionNames,
+}: {
+  token: Pick<ValidationRuleExpressionToken, 'type' | 'text'>;
+  functionNames: string[];
+}): ValidationRuleExpressionHighlightKind | null => {
   switch (token.type) {
     case 'string':
     case 'unclosedString':
@@ -25,7 +29,7 @@ const getHighlightKind = (
     case 'number':
       return 'number';
     case 'path':
-      if (FUNCTION_NAMES.includes(token.text)) {
+      if (functionNames.includes(token.text)) {
         return 'function';
       }
 
@@ -37,11 +41,15 @@ const getHighlightKind = (
   }
 };
 
-export const computeValidationRuleExpressionHighlights = (
-  expression: string,
-): ValidationRuleExpressionHighlight[] =>
+export const computeValidationRuleExpressionHighlights = ({
+  expression,
+  functionNames = VALIDATION_RULE_FUNCTION_NAMES,
+}: {
+  expression: string;
+  functionNames?: string[];
+}): ValidationRuleExpressionHighlight[] =>
   tokenizeValidationRuleExpression(expression).flatMap((token) => {
-    const kind = getHighlightKind(token);
+    const kind = getHighlightKind({ token, functionNames });
 
     return isDefined(kind)
       ? [{ kind, start: token.start, end: token.end }]

@@ -13,18 +13,17 @@ import { StyledChatComposerBox } from '@/chat/components/StyledChatComposerBox';
 import { AiChatInlineBanner } from '@/ai-chat/components/AiChatInlineBanner';
 import { AiChatEmptyState } from '@/ai-chat/composer/components/AiChatEmptyState';
 import { AiChatParticipantMentionBar } from '@/ai-chat/composer/components/AiChatParticipantMentionBar';
+import { AiChatQueuedMessages } from '@/ai-chat/composer/components/AiChatQueuedMessages';
 import { AiChatPendingAskGate } from '@/ai-chat/tool-calls/components/AiChatPendingAskGate';
 import { AiChatWorkspaceCreditsExhaustedBanner } from '@/ai-chat/usage/components/AiChatWorkspaceCreditsExhaustedBanner';
 import { AiChatUsageLimitReachedBanner } from '@/ai-chat/usage/components/AiChatUsageLimitReachedBanner';
 import { AiChatUserCreditsExhaustedBanner } from '@/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner';
 import { AiChatStandaloneError } from '@/ai-chat/composer/components/AiChatStandaloneError';
 import { AiChatComposerAttachmentPreviews } from '@/ai-chat/composer/components/AiChatComposerAttachmentPreviews';
-import { AiChatAddMenu } from '@/ai-chat/composer/components/AiChatAddMenu';
-import { AiChatDictationButton } from '@/ai-chat/dictation/components/AiChatDictationButton';
+import { AiChatComposerLeftActions } from '@/ai-chat/composer/components/AiChatComposerLeftActions';
 import { AiChatDictationEffect } from '@/ai-chat/dictation/components/AiChatDictationEffect';
 import { AiChatDictationHint } from '@/ai-chat/dictation/components/AiChatDictationHint';
 import { AiChatComposerActionsRow } from '@/ai-chat/components/AiChatComposerActionsRow';
-import { AiChatContextUsageButton } from '@/ai-chat/usage/components/AiChatContextUsageButton';
 import { AiChatSendMessageButton } from '@/ai-chat/composer/components/AiChatSendMessageButton';
 import { useSendAiChatComposerMessage } from '@/ai-chat/composer/hooks/useSendAiChatComposerMessage';
 import { useAiChatEditor } from '@/ai-chat/composer/hooks/useAiChatEditor';
@@ -72,6 +71,12 @@ const StyledInputArea = styled(StyledAiChatContentContainer)<{
 const StyledInputBox = styled(StyledChatComposerBox)<{ isMobile: boolean }>`
   min-height: ${({ isMobile }) =>
     isMobile ? 'auto' : themeCssVariables.spacing[20]};
+`;
+
+const StyledComposerStack = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 `;
 
 const StyledEditorWrapper = styled.div<{ isMobile: boolean }>`
@@ -165,6 +170,7 @@ const EditableAiChatEditorSection = () => {
   const composer = (
     <StyledInputBox isMobile={isMobile}>
       <AiChatComposerQuote />
+      <AiChatComposerAttachmentPreviews />
       <StyledEditorWrapper isMobile={isMobile}>
         <EditorContent editor={editor} />
       </StyledEditorWrapper>
@@ -173,13 +179,10 @@ const EditableAiChatEditorSection = () => {
       )}
       <AiChatComposerActionsRow
         leftActions={
-          !isDirectMessage && (
-            <>
-              <AiChatAddMenu editor={editor} />
-              <AiChatDictationButton />
-              <AiChatContextUsageButton />
-            </>
-          )
+          <AiChatComposerLeftActions
+            editor={editor}
+            isDirectMessage={isDirectMessage}
+          />
         }
         modelTierDropdownId="ai-chat-model-tier-dropdown"
         isModelPickerHidden={isDirectMessage}
@@ -218,7 +221,6 @@ const EditableAiChatEditorSection = () => {
         hasPageContentInset={hasPageContentInset}
       >
         {isComposerCentered && <AiChatEmptyState isCentered />}
-        {!isDirectMessage && <AiChatComposerAttachmentPreviews />}
         {hasNoEnabledModels && !isDirectMessage && (
           <AiChatInlineBanner>{t`No AI provider is configured on this instance.`}</AiChatInlineBanner>
         )}
@@ -230,7 +232,10 @@ const EditableAiChatEditorSection = () => {
         )}
         {!isDirectMessage && <AiChatUserCreditsExhaustedBanner />}
         {!isDirectMessage && <AiChatParticipantMentionBar editor={editor} />}
-        <AiChatPendingAskGate>{composer}</AiChatPendingAskGate>
+        <StyledComposerStack>
+          <AiChatQueuedMessages />
+          <AiChatPendingAskGate>{composer}</AiChatPendingAskGate>
+        </StyledComposerStack>
       </StyledInputArea>
       <StyledComposerBottomSpacer
         className={isComposerCentered ? 'is-centered' : undefined}

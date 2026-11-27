@@ -1,6 +1,6 @@
 {
   "name": "@twentyhq/telegram",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Connect Telegram accounts to Twenty workspace members so they can use Twenty from Telegram.",
   "author": "Twenty",
   "license": "MIT",
@@ -30,7 +30,8 @@
     "test:watch": "vitest --config vitest.unit.config.ts"
   },
   "dependencies": {
-    "@sniptt/guards": "^0.2.0"
+    "@sniptt/guards": "^0.2.0",
+    "react-qr-code": "^2.0.18"
   },
   "devDependencies": {
     "@emotion/react": "^11.14.0",

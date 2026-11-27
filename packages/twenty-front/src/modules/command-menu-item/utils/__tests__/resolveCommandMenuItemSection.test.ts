@@ -104,6 +104,28 @@ describe('resolveCommandMenuItemSection', () => {
     ).toBe('CREATE_RECORD');
   });
 
+  it('splits the AI commands from the record search', () => {
+    for (const engineComponentKey of [
+      EngineComponentKey.ASK_AI,
+      EngineComponentKey.VIEW_PREVIOUS_AI_CHATS,
+      EngineComponentKey.NEW_AI_CHAT,
+    ]) {
+      expect(
+        resolveCommandMenuItemSection({
+          engineComponentKey,
+          availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+        }),
+      ).toBe('ASK_AI');
+    }
+
+    expect(
+      resolveCommandMenuItemSection({
+        engineComponentKey: EngineComponentKey.SEARCH_RECORDS,
+        availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+      }),
+    ).toBe('SEARCH');
+  });
+
   it('still places a deprecated key from a workspace that has not migrated', () => {
     expect(
       resolveCommandMenuItemSection({

@@ -1,14 +1,21 @@
 import {
+  type FieldMetadataFormula,
   type FieldMetadataType,
   RelationType,
   type ValidationRuleFieldDescriptor,
 } from 'twenty-shared/types';
-import { isDefined, isFormulaFieldMetadata } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isQueryTimeFormulaFieldMetadata,
+} from 'twenty-shared/utils';
 
 type FormulaFieldDescriptorSource = {
   name: string;
   type: FieldMetadataType;
   universalIdentifier: string;
+  formula: Partial<
+    Pick<FieldMetadataFormula, 'expression' | 'evaluation'>
+  > | null;
 };
 
 type FormulaFieldDescriptorSourceReader<
@@ -30,7 +37,7 @@ const toScalarFieldDescriptor = ({
   universalIdentifier,
 });
 
-// A formula reads stored values only, so formula fields are left out on both sides of a lookup
+// A formula reads stored values only, so query-time formulas are left out on both sides of a relation
 export const buildFormulaFieldDescriptors = <
   TFlatFieldMetadata extends FormulaFieldDescriptorSource,
 >({
@@ -41,7 +48,7 @@ export const buildFormulaFieldDescriptors = <
   flatFieldMetadatas: TFlatFieldMetadata[];
 } & FormulaFieldDescriptorSourceReader<TFlatFieldMetadata>): ValidationRuleFieldDescriptor[] => {
   const isStored = (flatFieldMetadata: TFlatFieldMetadata) =>
-    !isFormulaFieldMetadata({ settings: getSettings(flatFieldMetadata) });
+    !isQueryTimeFormulaFieldMetadata(flatFieldMetadata);
 
   return flatFieldMetadatas.filter(isStored).map((flatFieldMetadata) => {
     const settings = getSettings(flatFieldMetadata);
@@ -50,11 +57,10 @@ export const buildFormulaFieldDescriptors = <
         ? settings.relationType
         : undefined;
 
-    if (relationType === RelationType.ONE_TO_MANY) {
-      return { ...toScalarFieldDescriptor(flatFieldMetadata), relationType };
-    }
-
-    if (relationType !== RelationType.MANY_TO_ONE) {
+    if (
+      relationType !== RelationType.MANY_TO_ONE &&
+      relationType !== RelationType.ONE_TO_MANY
+    ) {
       return toScalarFieldDescriptor(flatFieldMetadata);
     }
 

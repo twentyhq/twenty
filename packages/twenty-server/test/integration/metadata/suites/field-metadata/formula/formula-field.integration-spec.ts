@@ -35,10 +35,10 @@ const createFormulaField = ({
       type,
       objectMetadataId,
       isLabelSyncedWithName: false,
-      settings: { formula: { expression } },
+      formula: { expression },
       ...(isUnique ? { isUnique } : {}),
     },
-    gqlFields: 'id settings',
+    gqlFields: 'id formula',
   });
 
 describe('Formula fields', () => {
@@ -268,10 +268,10 @@ describe('Formula fields', () => {
           type,
           objectMetadataId: gadgetObjectMetadataId,
           isLabelSyncedWithName: false,
-          settings: { formula: { expression } },
+          formula: { expression },
           ...(type === FieldMetadataType.SELECT ? { options } : {}),
         },
-        gqlFields: 'id settings',
+        gqlFields: 'id formula',
       });
     }
 
@@ -295,7 +295,7 @@ describe('Formula fields', () => {
       type: FieldMetadataType.CURRENCY,
       objectMetadataId: gadgetObjectMetadataId,
       isLabelSyncedWithName: false,
-      settings: { formula },
+      formula,
     });
 
     await createOneFieldMetadata({
@@ -307,7 +307,7 @@ describe('Formula fields', () => {
           currencyCodeExpression: 'if(quantity > 100, "EUR", "USD")',
         },
       }),
-      gqlFields: 'id settings',
+      gqlFields: 'id formula',
     });
     await createOneFieldMetadata({
       expectToFail: false,
@@ -613,33 +613,6 @@ describe('Formula fields', () => {
     ]);
   });
 
-  it('should return the computed formula of a destroyed record', async () => {
-    const createResponse = await makeGraphqlApiRequest({
-      query: gql`
-        mutation {
-          createFormulaGadget(data: { name: "Doomed", price: 2, quantity: 3 }) {
-            id
-          }
-        }
-      `,
-    });
-    const destroyResponse = await makeGraphqlApiRequest({
-      query: gql`
-        mutation DestroyFormulaGadget($id: UUID!) {
-          destroyFormulaGadget(id: $id) {
-            total
-          }
-        }
-      `,
-      variables: { id: createResponse.body.data.createFormulaGadget.id },
-    });
-
-    expect(destroyResponse.body.errors).toBeUndefined();
-    expect(destroyResponse.body.data.destroyFormulaGadget).toEqual({
-      total: 6,
-    });
-  });
-
   it.each([
     {
       reason: 'an unknown field',
@@ -654,10 +627,24 @@ describe('Formula fields', () => {
       message: 'Invalid formula: Unknown field "total"',
     },
     {
-      reason: 'a rollup over a to-many relation',
+      reason: 'a to-many relation read outside an aggregate',
       type: FieldMetadataType.NUMBER,
       expression: 'arrayLength(noteTargets)',
-      message: 'Invalid formula: "noteTargets" is not a to-one relation',
+      message:
+        'Invalid formula: "noteTargets" has many records: read it inside count(), sum(), avg(), min() or max()',
+    },
+    {
+      reason: 'now in a formula that aggregates related records',
+      type: FieldMetadataType.NUMBER,
+      expression: 'count(noteTargets) + datePart(now, "DAY")',
+      message:
+        'Invalid formula: A formula that aggregates related records is stored, so it cannot read "now"',
+    },
+    {
+      reason: 'a sum of values that are not numbers',
+      type: FieldMetadataType.NUMBER,
+      expression: 'sum(noteTargets.id)',
+      message: 'Invalid formula: sum() needs a number, but got text',
     },
     {
       reason: 'a value of another type than the field',
@@ -726,17 +713,20 @@ describe('Formula fields', () => {
         `SELECT "universalIdentifier" FROM core."fieldMetadata" WHERE "id" = $1`,
         [priceFieldMetadataId],
       );
-    const [{ settings }] = await global.testDataSource.query(
-      `SELECT "settings" FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND "name" = 'total'`,
+    const [{ formula }] = await global.testDataSource.query(
+      `SELECT "formula" FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND "name" = 'total'`,
       [gadgetObjectMetadataId],
     );
 
-    expect(settings.formula).toMatchObject({
-      expression: 'unitPrice * quantity',
-      bindings: {
-        unitPrice: priceUniversalIdentifier,
-        quantity: expect.any(String),
+    expect(formula.expression).toBeUndefined();
+    expect(formula.tree).toMatchObject({
+      type: 'ARITHMETIC',
+      operator: 'MULTIPLY',
+      left: {
+        type: 'FIELD',
+        fieldUniversalIdentifier: priceUniversalIdentifier,
       },
+      right: { type: 'FIELD', fieldUniversalIdentifier: expect.any(String) },
     });
   });
 
@@ -760,5 +750,48 @@ describe('Formula fields', () => {
       ).slice(1, -1),
     );
     expect(await findGadget('total')).toEqual({ total: 125 });
+  });
+  it('should keep a formula when only its settings change, and remove it on null', async () => {
+    const {
+      data: {
+        createOneField: { id: doubleQuantityFieldMetadataId },
+      },
+    } = await createFormulaField({
+      objectMetadataId: gadgetObjectMetadataId,
+      name: 'doubleQuantity',
+      type: FieldMetadataType.NUMBER,
+      expression: 'quantity * 2',
+    });
+
+    const updateField = (updatePayload: Record<string, unknown>) =>
+      updateOneFieldMetadata({
+        expectToFail: false,
+        input: { idToUpdate: doubleQuantityFieldMetadataId, updatePayload },
+        gqlFields: 'id settings formula',
+      });
+
+    const {
+      data: { updateOneField: fieldWithNewSettings },
+    } = await updateField({ settings: { decimals: 1 } });
+
+    expect(fieldWithNewSettings).toMatchObject({
+      settings: { decimals: 1 },
+      formula: {
+        tree: {
+          type: 'ARITHMETIC',
+          operator: 'MULTIPLY',
+          right: { type: 'LITERAL', value: 2 },
+        },
+      },
+    });
+
+    const {
+      data: { updateOneField: fieldWithoutFormula },
+    } = await updateField({ formula: null });
+
+    expect(fieldWithoutFormula).toMatchObject({
+      settings: { decimals: 1 },
+      formula: null,
+    });
   });
 });

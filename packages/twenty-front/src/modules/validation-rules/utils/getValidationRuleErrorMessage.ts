@@ -1,4 +1,5 @@
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type ValidationRuleErrorCode,
@@ -59,6 +60,20 @@ export const getValidationRuleErrorMessage = ({
       return t`"${path}" reads a relation, but previous values only cover this record's own fields`;
     case 'PREVIOUS_VALUE_IN_FORMULA':
       return t`"${path}" reads a previous value, which a formula cannot use`;
+    case 'AGGREGATE_NOT_ALLOWED':
+      return t`${functionName}() reads related records, which only a formula can do`;
+    case 'INVALID_AGGREGATE_ARGUMENT':
+      return isNonEmptyString(relationFieldName)
+        ? t`The condition of ${functionName}() cannot read "${relationFieldName}"`
+        : t`${functionName}() needs a relation, for example count(tasks) or sum(deals.amount)`;
+    case 'NESTED_AGGREGATE':
+      return t`${functionName}() cannot contain another aggregate`;
+    case 'NOT_SUPPORTED_IN_STORED_FORMULA':
+      return t`A formula that aggregates related records is stored, so it cannot read "${path}". Aggregate in this field and read it from another formula.`;
+    case 'UPDATED_AT_IN_STORED_FORMULA':
+      return t`A stored formula cannot read "${path}"`;
+    case 'TO_MANY_RELATION_OUTSIDE_AGGREGATE':
+      return t`"${fieldName}" has many records: read it inside count(), sum(), avg(), min() or max()`;
     case 'COMPOSITE_FIELD_WITHOUT_PART':
       return t`"${path}" has several parts: read one of them, such as ${path}.${subfieldName}`;
     case 'NON_BOOLEAN_RESULT':

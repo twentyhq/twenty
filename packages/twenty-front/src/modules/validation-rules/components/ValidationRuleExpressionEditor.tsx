@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
 import { type JSONContent } from '@tiptap/core';
 import Document from '@tiptap/extension-document';
@@ -27,6 +28,7 @@ import { type ValidationRuleEditorField } from '@/validation-rules/types/Validat
 import { type ValidationRuleFieldNodeAttributes } from '@/validation-rules/types/ValidationRuleFieldNodeAttributes';
 import { type ValidationRuleHelperContext } from '@/validation-rules/types/ValidationRuleHelperContext';
 import { type ValidationRuleHelperItem } from '@/validation-rules/types/ValidationRuleHelperItem';
+import { type ValidationRuleSyntaxDefinition } from '@/validation-rules/types/ValidationRuleSyntaxDefinition';
 import { buildValidationRuleEditorParagraphContent } from '@/validation-rules/utils/buildValidationRuleEditorParagraphContent';
 import { computeValidationRuleEditorSegments } from '@/validation-rules/utils/computeValidationRuleEditorSegments';
 import { computeValidationRuleHelperContext } from '@/validation-rules/utils/computeValidationRuleHelperContext';
@@ -111,6 +113,10 @@ type ValidationRuleExpressionEditorProps = {
   editorFields: ValidationRuleEditorField[];
   onChange: (expression: string) => void;
   compileExpression?: typeof compileValidationRuleExpression;
+  functionDefinitions?: ValidationRuleSyntaxDefinition[];
+  keywordDefinitions?: ValidationRuleSyntaxDefinition[];
+  shouldShowValidationRuleGuidance?: boolean;
+  hint?: string;
   ariaLabel?: string;
 };
 
@@ -120,6 +126,10 @@ export const ValidationRuleExpressionEditor = ({
   editorFields,
   onChange,
   compileExpression = compileValidationRuleExpression,
+  functionDefinitions,
+  keywordDefinitions,
+  shouldShowValidationRuleGuidance = true,
+  hint,
   ariaLabel,
 }: ValidationRuleExpressionEditorProps) => {
   const { t } = useLingui();
@@ -128,8 +138,9 @@ export const ValidationRuleExpressionEditor = ({
     useState<ValidationRuleHelperContext>(() =>
       computeValidationRuleHelperContext({
         textBeforeCursor: '',
-        isCursorAfterField: false,
         fields: editorFields,
+        functionDefinitions,
+        keywordDefinitions,
       }),
     );
   const [highlightedIndex, setHighlightedIndex] = useState(0);
@@ -154,6 +165,8 @@ export const ValidationRuleExpressionEditor = ({
       computeValidationRuleHelperContextAtCursor({
         editor,
         fields: editorFields,
+        functionDefinitions,
+        keywordDefinitions,
       }),
     );
     setHighlightedIndex(0);
@@ -188,7 +201,10 @@ export const ValidationRuleExpressionEditor = ({
         placeholder: t`Type a field name or a function`,
       }),
       ValidationRuleFieldNode,
-      ValidationRuleExpressionExtension.configure({ getFieldNodeAttributes }),
+      ValidationRuleExpressionExtension.configure({
+        getFieldNodeAttributes,
+        functionNames: functionDefinitions?.map(({ name }) => name),
+      }),
     ],
     content: initialContent,
     onUpdate: ({ editor: updatedEditor }) => {
@@ -222,6 +238,8 @@ export const ValidationRuleExpressionEditor = ({
       replaceFromOffset: computeValidationRuleHelperContextAtCursor({
         editor,
         fields: editorFields,
+        functionDefinitions,
+        keywordDefinitions,
       }).replaceFromOffset,
       getFieldNodeAttributes,
     });
@@ -283,6 +301,9 @@ export const ValidationRuleExpressionEditor = ({
               {errorMessage}
             </Field.Error>
           )}
+          {!isDefined(errorMessage) && isNonEmptyString(hint) && (
+            <Field.Description>{hint}</Field.Description>
+          )}
         </Field.Root>
       </Card.Content>
       <SettingsValidationRuleHelperPanel
@@ -290,6 +311,7 @@ export const ValidationRuleExpressionEditor = ({
         highlightedIndex={highlightedIndex}
         isFocused={isHelperFocused}
         editorFields={editorFields}
+        shouldShowValidationRuleGuidance={shouldShowValidationRuleGuidance}
         onHighlight={setHighlightedIndex}
         onSelect={insertHelperItem}
       />

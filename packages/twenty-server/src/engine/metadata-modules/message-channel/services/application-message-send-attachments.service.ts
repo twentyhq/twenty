@@ -2,11 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type SendAppMessageAttachment } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Like } from 'typeorm';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FilesFieldService } from 'src/engine/core-modules/file/files-field/services/files-field.service';
@@ -31,7 +30,6 @@ export class ApplicationMessageSendAttachmentsService {
   );
 
   constructor(
-    private readonly featureFlagService: FeatureFlagService,
     private readonly fileUrlService: FileUrlService,
     private readonly filesFieldService: FilesFieldService,
     @InjectWorkspaceScopedRepository(FileEntity)
@@ -48,19 +46,6 @@ export class ApplicationMessageSendAttachmentsService {
   }): Promise<SendAppMessageAttachment[]> {
     if (!isNonEmptyArray(attachments)) {
       return [];
-    }
-
-    const isMessageAttachmentEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
-        workspaceId,
-      );
-
-    if (!isMessageAttachmentEnabled) {
-      throw new MessageChannelException(
-        'Message attachments are not enabled on this workspace',
-        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
-      );
     }
 
     const attachmentIds = attachments.map(({ id }) => id);

@@ -1,19 +1,25 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { TEAMS_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/features/chat/logic-functions/constants/teams-assistant-agent-budget-seconds';
 import {
   TEAMS_ASSISTANT_INITIAL_STATUS,
   TEAMS_ASSISTANT_STATUS_STEPS,
 } from 'src/features/chat/logic-functions/constants/teams-assistant-status-steps';
-import { TEAMS_ASSISTANT_STREAM_HANDOFF_STEP } from 'src/features/chat/logic-functions/constants/teams-assistant-stream-handoff-step';
 import { startTeamsAssistantStatus } from 'src/features/chat/logic-functions/utils/start-teams-assistant-status';
 
-const { sendActivityMock, startStreamMock, updateMock, finishMock } =
-  vi.hoisted(() => ({
-    sendActivityMock: vi.fn(),
-    startStreamMock: vi.fn(),
-    updateMock: vi.fn(),
-    finishMock: vi.fn(),
-  }));
+const {
+  sendActivityMock,
+  startStreamMock,
+  startPlaceholderMock,
+  updateMock,
+  finishMock,
+} = vi.hoisted(() => ({
+  sendActivityMock: vi.fn(),
+  startStreamMock: vi.fn(),
+  startPlaceholderMock: vi.fn(),
+  updateMock: vi.fn(),
+  finishMock: vi.fn(),
+}));
 
 vi.mock(
   'src/features/chat/logic-functions/utils/get-teams-connector-access-token-or-throw',
@@ -29,6 +35,11 @@ vi.mock('src/features/chat/logic-functions/utils/send-teams-activity', () => ({
 vi.mock(
   'src/features/chat/logic-functions/utils/start-teams-assistant-stream',
   () => ({ startTeamsAssistantStream: startStreamMock }),
+);
+
+vi.mock(
+  'src/features/chat/logic-functions/utils/start-teams-assistant-placeholder',
+  () => ({ startTeamsAssistantPlaceholder: startPlaceholderMock }),
 );
 
 const CONVERSATION = {
@@ -158,27 +169,30 @@ describe('startTeamsAssistantStatus', () => {
     );
   });
 
-  it('should close the stream before the Teams time limit and send a late answer as a plain message', async () => {
+  it('should keep the stream open for the whole agent budget and deliver a late answer in it', async () => {
     const status = await startTeamsAssistantStatus(PERSONAL);
 
     await vi.advanceTimersByTimeAsync(
-      TEAMS_ASSISTANT_STREAM_HANDOFF_STEP.afterSeconds * 1000,
+      TEAMS_ASSISTANT_AGENT_BUDGET_SECONDS * 1000,
     );
 
-    expect(updateMock).toHaveBeenCalledTimes(
-      TEAMS_ASSISTANT_STATUS_STEPS.length,
+    expect(updateMock.mock.calls.map(([text]) => text)).toEqual(
+      TEAMS_ASSISTANT_STATUS_STEPS.map((step) => step.text),
     );
-    expect(finishMock).toHaveBeenCalledExactlyOnceWith(
-      TEAMS_ASSISTANT_STREAM_HANDOFF_STEP.text,
-    );
+    expect(finishMock).not.toHaveBeenCalled();
 
     await status.finish('Acme has 3 open deals.');
 
-    expect(finishMock).toHaveBeenCalledTimes(1);
-    expect(sentMessageTexts()).toEqual(['Acme has 3 open deals.']);
+    expect(finishMock).toHaveBeenCalledExactlyOnceWith(
+      'Acme has 3 open deals.',
+    );
+    expect(sendActivityMock).not.toHaveBeenCalled();
   });
 
-  it('should only reply at the end outside personal chats', async () => {
+  it('should hand other conversations to the placeholder writer', async () => {
+    const placeholderFinishMock = vi.fn();
+    startPlaceholderMock.mockResolvedValue({ finish: placeholderFinishMock });
+
     const status = await startTeamsAssistantStatus({
       ...CONVERSATION,
       conversationType: 'groupChat',
@@ -188,6 +202,9 @@ describe('startTeamsAssistantStatus', () => {
     await status.finish('Acme has 3 open deals.');
 
     expect(startStreamMock).not.toHaveBeenCalled();
-    expect(sentMessageTexts()).toEqual(['Acme has 3 open deals.']);
+    expect(startPlaceholderMock).toHaveBeenCalledExactlyOnceWith(CONVERSATION);
+    expect(placeholderFinishMock).toHaveBeenCalledExactlyOnceWith(
+      'Acme has 3 open deals.',
+    );
   });
 });

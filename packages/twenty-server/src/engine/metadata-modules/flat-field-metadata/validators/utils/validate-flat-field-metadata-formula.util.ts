@@ -1,12 +1,17 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
+import isEqual from 'lodash.isequal';
+import { type FieldMetadataFormula, RelationType } from 'twenty-shared/types';
 import {
   compileFormulaExpression,
-  getFieldMetadataFormulaCurrencyCodeExpression,
-  getFieldMetadataFormulaExpression,
+  getFieldMetadataFormulaEvaluation,
+  getFieldMetadataFormulaTree,
   isDefined,
+  isFormulaFieldMetadata,
   isFormulaFieldMetadataType,
+  parseExpressionNode,
+  printFieldMetadataFormula,
 } from 'twenty-shared/utils';
+import { printExpressionNode } from 'twenty-shared/expression';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
@@ -17,9 +22,10 @@ import {
 } from 'src/engine/metadata-modules/formula-field/utils/build-formula-field-descriptors-from-universal-flat-entity-maps.util';
 import { buildFormulaSqlReferenceResolverFromDescriptors } from 'src/engine/metadata-modules/formula-field/utils/build-formula-sql-reference-resolver-from-descriptors.util';
 import { compileFormulaFieldToSql } from 'src/engine/metadata-modules/formula-field/utils/compile-formula-field-to-sql.util';
-import { isFieldMetadataFormulaUnchanged } from 'src/engine/metadata-modules/formula-field/utils/is-field-metadata-formula-unchanged.util';
+import { doesFormulaFieldReadItself } from 'src/engine/metadata-modules/formula-field/utils/does-formula-field-read-itself.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
+import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 type FormulaSourceUniversalFlatFieldMetadataMaps = {
   byUniversalIdentifier: Partial<
@@ -27,17 +33,51 @@ type FormulaSourceUniversalFlatFieldMetadataMaps = {
   >;
 };
 
+const toCanonicalFormulaText = (expression?: string) => {
+  if (!isDefined(expression)) {
+    return undefined;
+  }
+
+  const parsing = parseExpressionNode(expression);
+
+  return parsing.isValid
+    ? printExpressionNode({ node: parsing.node })
+    : expression;
+};
+
+const toCanonicalFormulaTexts = ({
+  expression,
+  currencyCodeExpression,
+}: {
+  expression?: string;
+  currencyCodeExpression?: string;
+}) => ({
+  expression: toCanonicalFormulaText(expression),
+  currencyCodeExpression: toCanonicalFormulaText(currencyCodeExpression),
+});
+
+const buildMissingExpressionErrors = (
+  formula: FieldMetadataFormula,
+): FlatFieldMetadataValidationError[] => [
+  {
+    code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+    message: 'Formula must have a non-empty expression',
+    userFriendlyMessage: msg`A formula needs an expression`,
+    value: formula,
+  },
+];
+
 export const validateFlatFieldMetadataFormula = ({
   flatFieldMetadataToValidate: {
     name,
     type,
     universalIdentifier,
-    universalSettings,
+    formula,
     objectMetadataUniversalIdentifier,
     isUnique,
     isSearchable,
   },
-  existingUniversalSettings,
+  existingFormula,
   universalFlatObjectMetadataMaps,
   universalFlatFieldMetadataMaps,
   pendingUniversalFlatFieldMetadataMaps,
@@ -48,12 +88,12 @@ export const validateFlatFieldMetadataFormula = ({
     | 'name'
     | 'type'
     | 'universalIdentifier'
-    | 'universalSettings'
+    | 'formula'
     | 'objectMetadataUniversalIdentifier'
     | 'isUnique'
     | 'isSearchable'
   >;
-  existingUniversalSettings?: UniversalFlatFieldMetadata['universalSettings'];
+  existingFormula?: UniversalFlatFieldMetadata['formula'];
   universalFlatObjectMetadataMaps: {
     byUniversalIdentifier: Partial<
       Record<
@@ -70,11 +110,7 @@ export const validateFlatFieldMetadataFormula = ({
   pendingUniversalFlatFieldMetadataMaps?: FormulaSourceUniversalFlatFieldMetadataMaps;
   isFormulaFieldEnabled: boolean;
 }): FlatFieldMetadataValidationError[] => {
-  if (
-    !isDefined(universalSettings) ||
-    !('formula' in universalSettings) ||
-    !isDefined(universalSettings.formula)
-  ) {
+  if (!isDefined(formula)) {
     return [];
   }
 
@@ -89,36 +125,23 @@ export const validateFlatFieldMetadataFormula = ({
     ];
   }
 
-  const expression = getFieldMetadataFormulaExpression({
-    settings: universalSettings,
-  });
-
-  if (!isDefined(expression)) {
-    return [
-      {
-        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message: 'Formula must have a non-empty expression',
-        userFriendlyMessage: msg`A formula needs an expression`,
-        value: universalSettings.formula,
-      },
-    ];
-  }
-
-  // An existing formula stays editable when the flag is turned off
   if (
-    !isFormulaFieldEnabled &&
-    !isFieldMetadataFormulaUnchanged({
-      settings: universalSettings,
-      existingSettings: existingUniversalSettings,
-    })
+    isDefined(formula?.tree) &&
+    !isDefined(getFieldMetadataFormulaTree({ formula }))
   ) {
     return [
       {
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message: 'Formula fields are not enabled for this workspace',
-        userFriendlyMessage: msg`Formula fields are not enabled for this workspace`,
+        message:
+          'Invalid formula: its tree is not an expression tree, write the formula as text instead',
+        userFriendlyMessage: msg`Invalid formula: write it as text`,
+        value: formula,
       },
     ];
+  }
+
+  if (!isFormulaFieldMetadata({ formula })) {
+    return buildMissingExpressionErrors(formula);
   }
 
   const universalFlatObjectMetadata =
@@ -167,19 +190,35 @@ export const validateFlatFieldMetadataFormula = ({
       pendingUniversalFlatFieldMetadataMaps?.byUniversalIdentifier ?? {},
     ).filter(isDefined),
   }).filter((formulaFieldDescriptor) => formulaFieldDescriptor.name !== name);
-  const currencyCodeExpression = getFieldMetadataFormulaCurrencyCodeExpression({
-    settings: universalSettings,
+  const { expression, currencyCodeExpression } = printFieldMetadataFormula({
+    formula,
+    fields,
   });
 
+  if (!isDefined(expression)) {
+    return buildMissingExpressionErrors(formula);
+  }
+
+  // An existing formula stays editable when the flag is turned off; storing it as a tree or respacing it is no edit
   if (
-    type === FieldMetadataType.CURRENCY &&
-    !isDefined(currencyCodeExpression)
+    !isFormulaFieldEnabled &&
+    !isEqual(
+      toCanonicalFormulaTexts({ expression, currencyCodeExpression }),
+      toCanonicalFormulaTexts(
+        printFieldMetadataFormula({
+          formula: existingFormula,
+          fields,
+        }),
+      ),
+    )
   ) {
-    errors.push({
-      code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      message: 'A currency formula needs a currency code expression',
-      userFriendlyMessage: msg`A currency formula needs a currency code`,
-    });
+    return [
+      {
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: 'Formula fields are not enabled for this workspace',
+        userFriendlyMessage: msg`Formula fields are not enabled for this workspace`,
+      },
+    ];
   }
 
   const toInvalidFormulaError = ({
@@ -200,6 +239,7 @@ export const validateFlatFieldMetadataFormula = ({
       const compilation = compileFormulaExpression({
         expression: formulaExpression,
         fields,
+        evaluation: getFieldMetadataFormulaEvaluation({ formula }),
       });
 
       return compilation.isValid
@@ -224,6 +264,23 @@ export const validateFlatFieldMetadataFormula = ({
     resolveReference: buildFormulaSqlReferenceResolverFromDescriptors({
       fields,
     }),
+    // Only the types are checked here, so any table stands for the related records
+    resolveAggregationSource: (relationFieldName) => {
+      const isToManyRelation = fields.some(
+        (field) =>
+          field.name === relationFieldName &&
+          field.relationType === RelationType.ONE_TO_MANY,
+      );
+
+      if (!isToManyRelation) {
+        return undefined;
+      }
+
+      return {
+        tableSql: escapeIdentifier(relationFieldName),
+        joinColumnName: 'id',
+      };
+    },
   });
 
   if (!sqlCompilation.isValid) {
@@ -232,6 +289,32 @@ export const validateFlatFieldMetadataFormula = ({
         errorMessage: sqlCompilation.errorMessage,
         value: expression,
       }),
+    ];
+  }
+
+  if (
+    doesFormulaFieldReadItself({
+      universalIdentifier,
+      formula,
+      findFormula: (fieldUniversalIdentifier) =>
+        (
+          pendingUniversalFlatFieldMetadataMaps?.byUniversalIdentifier[
+            fieldUniversalIdentifier
+          ] ??
+          universalFlatFieldMetadataMaps.byUniversalIdentifier[
+            fieldUniversalIdentifier
+          ]
+        )?.formula,
+    })
+  ) {
+    return [
+      {
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message:
+          'A formula cannot read its own value, directly or through other formulas',
+        userFriendlyMessage: msg`A formula cannot read its own value, directly or through other formulas`,
+        value: expression,
+      },
     ];
   }
 

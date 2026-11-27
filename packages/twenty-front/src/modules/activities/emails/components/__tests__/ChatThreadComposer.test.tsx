@@ -115,7 +115,6 @@ describe('ChatThreadComposer', () => {
           channelName="LinkedIn"
           recipientName="Ada"
           isDisconnected={false}
-          canAttachFiles
           onSendMessage={mockSendAppChannelMessage}
           onMessageSent={onMessageSent}
         />
@@ -128,7 +127,12 @@ describe('ChatThreadComposer', () => {
 
     await userEvent.upload(fileInput, deck);
 
-    expect(screen.getByText('deck.pdf')).toBeInTheDocument();
+    expect(
+      screen
+        .getByText('deck.pdf')
+        .compareDocumentPosition(screen.getByRole('textbox')) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
 
     await userEvent.click(screen.getByRole('button', { name: 'Send' }));
     await userEvent.click(await screen.findByRole('button', { name: 'Retry' }));
@@ -151,7 +155,6 @@ describe('ChatThreadComposer', () => {
           channelName="LinkedIn"
           recipientName="Ada"
           isDisconnected={false}
-          canAttachFiles
           onSendMessage={mockSendAppChannelMessage}
           onMessageSent={jest.fn()}
         />
@@ -182,7 +185,6 @@ describe('ChatThreadComposer', () => {
           channelName="LinkedIn"
           recipientName="Ada"
           isDisconnected={false}
-          canAttachFiles
           onSendMessage={mockSendAppChannelMessage}
           onMessageSent={jest.fn()}
         />

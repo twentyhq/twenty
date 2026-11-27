@@ -33,7 +33,7 @@ import {
 import {
   IconApps,
   IconDeviceFloppy,
-  IconSettings,
+  IconInfoCircle,
   IconVariable,
 } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
@@ -204,7 +204,7 @@ export const SettingsApplicationDetails = () => {
     });
 
   const tabs: SingleTabProps[] = [
-    { id: SETTINGS_GENERAL_TAB_ID, title: t`General`, Icon: IconSettings },
+    { id: SETTINGS_GENERAL_TAB_ID, title: t`Overview`, Icon: IconInfoCircle },
     ...(hasVariablesTab
       ? [
           {
@@ -229,6 +229,20 @@ export const SettingsApplicationDetails = () => {
     APPLICATION_DETAIL_ID,
     tabs.map((tab) => tab.id),
   );
+
+  const configurationLinks = tabs
+    .filter((tab) => tab.id !== SETTINGS_GENERAL_TAB_ID)
+    .map((tab) => ({
+      id: tab.id,
+      title: tab.title,
+      Icon: tab.Icon,
+      to: getSettingsPath(
+        SettingsPath.ApplicationDetail,
+        { applicationId },
+        undefined,
+        tab.id,
+      ),
+    }));
 
   const configurationTabId = getApplicationConfigurationTabId({
     hasVariablesTab,
@@ -289,6 +303,7 @@ export const SettingsApplicationDetails = () => {
             isMarketplaceApplication={isMarketplaceApplication}
             hasUpdate={hasUpdate}
             latestAvailableVersion={latestAvailableVersion ?? undefined}
+            configurationLinks={configurationLinks}
             onUpgrade={handleUpgrade}
             isUpgrading={isUpgrading}
             upgradeProgress={upgradeProgress}

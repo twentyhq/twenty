@@ -4,10 +4,11 @@ import { VALIDATION_RULE_EXPRESSION_MAX_LENGTH } from '@/constants/ValidationRul
 import { type ValidationRuleBindings } from '@/types/ValidationRuleBindings';
 import { type ValidationRuleCompilationResult } from '@/types/ValidationRuleCompilationResult';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
+import { toExpressionNodeParseResult } from '@/expression/utils/internal/toExpressionNodeParseResult';
+import { findExpressionAggregationError } from '@/utils/expression/findExpressionAggregationError';
 import { getExpressionArgumentCountError } from '@/utils/expression/getExpressionArgumentCountError';
 import { getExpressionSyntaxError } from '@/utils/expression/getExpressionSyntaxError';
 import { isDefined } from '@/utils/validation/isDefined';
-import { hasValidationRuleBracketAccess } from '@/utils/validation-rule/hasValidationRuleBracketAccess';
 import { parseValidationRuleExpression } from '@/utils/validation-rule/parseValidationRuleExpression';
 import { resolveValidationRuleIdentifierPath } from '@/utils/validation-rule/resolveValidationRuleIdentifierPath';
 import { tokenizeValidationRuleExpression } from '@/utils/validation-rule/tokenizeValidationRuleExpression';
@@ -15,9 +16,11 @@ import { tokenizeValidationRuleExpression } from '@/utils/validation-rule/tokeni
 export const compileExpression = ({
   expression,
   fields,
+  shouldAllowAggregates = false,
 }: {
   expression: string;
   fields: ValidationRuleFieldDescriptor[];
+  shouldAllowAggregates?: boolean;
 }): ValidationRuleCompilationResult => {
   if (expression.trim().length === 0) {
     return {
@@ -47,13 +50,13 @@ export const compileExpression = ({
     };
   }
 
-  if (hasValidationRuleBracketAccess(parsedExpression.tokens)) {
-    return {
-      isValid: false,
-      errorMessage: 'Bracket access is not supported, use dot access instead',
-      errorCode: 'BRACKET_ACCESS',
-    };
+  const parseResult = toExpressionNodeParseResult(parsedExpression.tokens);
+
+  if (!parseResult.isValid) {
+    return parseResult;
   }
+
+  const { node } = parseResult;
 
   const meaningfulTokens = tokenizeValidationRuleExpression(expression).filter(
     (token) => token.type !== 'whitespace',
@@ -77,9 +80,7 @@ export const compileExpression = ({
     };
   }
 
-  const argumentCountError = getExpressionArgumentCountError(
-    parsedExpression.tokens,
-  );
+  const argumentCountError = getExpressionArgumentCountError(node);
 
   if (isDefined(argumentCountError)) {
     return {
@@ -92,9 +93,13 @@ export const compileExpression = ({
   const identifierPaths = parsedExpression.variables({ withMembers: true });
 
   let bindings: ValidationRuleBindings = {};
+  const toManyRelationNameByPath = new Map<string, string>();
 
   for (const path of identifierPaths) {
-    const resolution = resolveValidationRuleIdentifierPath({ path, fields });
+    const resolution = resolveValidationRuleIdentifierPath({
+      path,
+      fields,
+    });
 
     if (!resolution.isResolved) {
       return {
@@ -106,6 +111,20 @@ export const compileExpression = ({
     }
 
     bindings = { ...bindings, ...resolution.bindings };
+
+    if (isDefined(resolution.toManyRelationName)) {
+      toManyRelationNameByPath.set(path, resolution.toManyRelationName);
+    }
+  }
+
+  const aggregationError = findExpressionAggregationError({
+    node,
+    toManyRelationNameByPath,
+    shouldAllowAggregates,
+  });
+
+  if (isDefined(aggregationError)) {
+    return { isValid: false, ...aggregationError };
   }
 
   return { isValid: true, bindings };

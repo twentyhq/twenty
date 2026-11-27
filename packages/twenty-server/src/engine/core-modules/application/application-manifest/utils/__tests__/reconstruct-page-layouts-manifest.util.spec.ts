@@ -4,7 +4,7 @@ import {
   type PageLayoutWidgetManifest,
   TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
 } from 'twenty-shared/application';
-import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
+import { buildDeviceConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
 import {
   AggregateOperations,
   FieldMetadataType,
@@ -148,6 +148,7 @@ const allPetsView: FlatView = {
   kanbanAggregateOperationFieldMetadataId: null,
   calendarFieldMetadataId: null,
   calendarEndFieldMetadataId: null,
+  listPinnedFieldMetadataId: null,
   mainGroupByFieldMetadataId: null,
   overrides: null,
   viewFieldIds: [],
@@ -949,7 +950,7 @@ describe('reconstructPageLayoutsManifest', () => {
             ),
             pageLayoutTabUniversalIdentifier: OVERVIEW_TAB_UID,
             conditionalAvailability:
-              buildDeviceConditionalAvailability('MOBILE'),
+              buildDeviceConditionalEvaluationNode('MOBILE'),
           }),
           buildFlatPageLayoutWidget({
             pageLayoutWidgetManifest: {

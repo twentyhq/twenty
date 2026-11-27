@@ -41,6 +41,7 @@ export type WorkspaceTableShape = {
   columnNames: string[];
   relationShapeByFieldName: Record<string, WorkspaceRelationShape>;
   hasDeletedAtColumn: boolean;
+  permissionStorageColumnNames?: string[];
   computedColumnShapes?: WorkspaceComputedColumnShape[];
   computedLookupShapes?: WorkspaceComputedLookupShape[];
 };

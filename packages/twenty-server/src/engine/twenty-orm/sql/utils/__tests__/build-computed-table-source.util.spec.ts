@@ -130,6 +130,25 @@ describe('buildComputedTableSource', () => {
     );
   });
 
+  it('should select the permission storage columns of a table that has them', () => {
+    expect(
+      buildComputedTableSource({
+        tableShape: {
+          ...GADGET_TABLE_SHAPE,
+          permissionStorageColumnNames: ['_accessGroupIds', '_isPrivate'],
+        },
+        getTableShape: () => SUPPLIER_TABLE_SHAPE,
+        recordReadRestrictions: {
+          unreadableFieldMetadataIds: new Set(),
+          unreadableObjectMetadataIds: new Set(),
+        },
+        permissions: undefined,
+      }),
+    ).toBe(
+      `(SELECT ${STORED_COLUMNS}, "record"."_accessGroupIds", "record"."_isPrivate", ${TOTAL}, ${SUPPLIER_LABEL} ${FROM} ${LOOKUP_JOIN})`,
+    );
+  });
+
   it('should only reach the related records the caller can read', () => {
     expect(
       build({

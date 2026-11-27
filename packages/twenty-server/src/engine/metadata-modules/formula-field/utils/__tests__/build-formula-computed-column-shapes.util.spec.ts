@@ -12,7 +12,6 @@ const buildGadgetShapes = () =>
     flatObjectMetadataMaps: FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
     flatFieldMetadataMaps: FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK,
     schemaName: 'workspace',
-    tableName: 'gadget',
   });
 
 describe('buildFormulaComputedColumnShapes', () => {
@@ -82,14 +81,13 @@ describe('buildFormulaComputedColumnShapes', () => {
     });
   });
 
-  it('should not let a formula read another formula', () => {
+  it('should leave stored formulas to their column and not let a formula read a query-time formula', () => {
     const { computedColumnShapes, computedLookupShapes } =
       buildFormulaComputedColumnShapes({
         flatObjectMetadata: FORMULA_SUPPLIER_FLAT_OBJECT_METADATA_MOCK,
         flatObjectMetadataMaps: FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
         flatFieldMetadataMaps: FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK,
         schemaName: 'workspace',
-        tableName: 'supplier',
       });
 
     expect(computedLookupShapes).toEqual([]);

@@ -4,7 +4,8 @@ export const TABLE_Z_INDEX = {
   headerRow: 10,
   cell: {
     default: 3,
-    sticky: 8,
+    sticky: 7,
+    stickyWithPortal: 8,
     editMode: 30,
   },
   headerColumns: {

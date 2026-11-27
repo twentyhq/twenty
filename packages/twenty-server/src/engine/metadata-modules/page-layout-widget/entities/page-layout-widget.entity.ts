@@ -1,6 +1,6 @@
 import { ObjectType } from '@nestjs/graphql';
 
-import { type ConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
+import { type ConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
 import {
   type GridPosition,
   PageLayoutWidgetConditionalDisplay,
@@ -38,7 +38,7 @@ export type PageLayoutWidgetOverrides = {
   position?: PageLayoutWidgetPosition | null;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
   conditionalAvailabilityExpression?: string | null;
-  conditionalAvailability?: ConditionalAvailabilityNode | null;
+  conditionalAvailability?: ConditionalEvaluationNode | null;
   pageLayoutTabId?: SerializedRelation;
 };
 
@@ -104,7 +104,7 @@ export class PageLayoutWidgetEntity<
       ADD_CONDITIONAL_AVAILABILITY_TO_PAGE_LAYOUT_WIDGET_UPGRADE_COMMAND_NAME,
   })
   @Column({ type: 'jsonb', nullable: true })
-  conditionalAvailability: JsonbProperty<ConditionalAvailabilityNode | null>;
+  conditionalAvailability: JsonbProperty<ConditionalEvaluationNode | null>;
 
   @Column({ type: 'jsonb', nullable: false })
   gridPosition: WasRemovedInUpgrade<JsonbProperty<GridPosition>>;

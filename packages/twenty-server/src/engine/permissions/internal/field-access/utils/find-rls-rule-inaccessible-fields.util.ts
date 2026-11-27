@@ -20,10 +20,7 @@ export const findRlsRuleInaccessibleFields = ({
   principals: PermissionsPrincipalsWithRolesContext;
   metadataMaps: Pick<
     PermissionsMetadataMaps,
-    | 'rolesPermissions'
-    | 'flatObjectMetadataMaps'
-    | 'flatFieldMetadataMaps'
-    | 'featureFlagsMap'
+    'rolesPermissions' | 'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
   >;
   objectMetadataId: string;
   inaccessibleFieldsKey: 'unreadableFields' | 'uneditableFields';

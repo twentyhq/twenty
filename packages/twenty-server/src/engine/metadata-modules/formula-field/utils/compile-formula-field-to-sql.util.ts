@@ -10,6 +10,7 @@ import { FormulaSqlCompilationException } from 'src/engine/metadata-modules/form
 import { type FormulaSqlValue } from 'src/engine/metadata-modules/formula-field/types/formula-sql-value.type';
 import {
   compileFormulaExpressionToSqlOrThrow,
+  type FormulaSqlAggregationSourceResolver,
   type FormulaSqlReferenceResolver,
 } from 'src/engine/metadata-modules/formula-field/utils/compile-formula-expression-to-sql.util';
 import {
@@ -118,18 +119,21 @@ export const compileFormulaFieldToSql = ({
   currencyCodeExpression,
   selectEnumSqlType,
   resolveReference,
+  resolveAggregationSource,
 }: {
   fieldMetadataType: FormulaFieldMetadataType;
   expression: string;
   currencyCodeExpression?: string;
   selectEnumSqlType: string;
   resolveReference: FormulaSqlReferenceResolver;
+  resolveAggregationSource?: FormulaSqlAggregationSourceResolver;
 }): FormulaFieldSqlCompilationResult => {
   try {
     const columnExpression = coerceToColumnExpression({
       value: compileFormulaExpressionToSqlOrThrow({
         expression,
         resolveReference,
+        resolveAggregationSource,
       }),
       fieldMetadataType,
       selectEnumSqlType,
@@ -148,6 +152,7 @@ export const compileFormulaFieldToSql = ({
     const currencyCode = compileFormulaExpressionToSqlOrThrow({
       expression: currencyCodeExpression,
       resolveReference,
+      resolveAggregationSource,
     });
 
     if (currencyCode.type !== 'text') {

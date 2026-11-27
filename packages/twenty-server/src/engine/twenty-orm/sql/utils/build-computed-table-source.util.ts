@@ -136,9 +136,13 @@ export const buildComputedTableSource = ({
   const computedColumnNames = new Set(
     computedColumnShapes.map(({ columnName }) => columnName),
   );
-  const storedColumns = tableShape.columnNames
-    .filter((columnName) => !computedColumnNames.has(columnName))
-    .map((columnName) => quoteColumn(COMPUTED_COLUMN_RECORD_ALIAS, columnName));
+  // The outer statement's permission predicates read these columns through the wrapper
+  const storedColumns = [
+    ...tableShape.columnNames.filter(
+      (columnName) => !computedColumnNames.has(columnName),
+    ),
+    ...(tableShape.permissionStorageColumnNames ?? []),
+  ].map((columnName) => quoteColumn(COMPUTED_COLUMN_RECORD_ALIAS, columnName));
   const joinedLookupAliases = new Set(
     computedColumns.flatMap(({ lookupAliases }) => lookupAliases),
   );

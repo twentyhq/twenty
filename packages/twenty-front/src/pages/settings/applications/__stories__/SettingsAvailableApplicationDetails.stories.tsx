@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 
 import {
   PageDecorator,
@@ -150,10 +150,13 @@ export const SubscriptionAppAsksForBillingConsentOnInstall: Story = {
 
     const body = within(canvasElement.ownerDocument.body);
 
-    await waitFor(() =>
-      expect(
-        body.getByText('Bill your workspace $7.00 / month per account'),
-      ).toBeVisible(),
+    const price = await body.findByText('$7.00 / month', undefined, {
+      timeout: 3000,
+    });
+
+    expect(price).toBeVisible();
+    expect(price.parentElement).toHaveTextContent(
+      'Bill your workspace $7.00 / month per account',
     );
     expect(
       body.getByText('Let members connect their own accounts'),

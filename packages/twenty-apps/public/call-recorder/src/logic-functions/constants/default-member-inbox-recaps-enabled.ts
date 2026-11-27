@@ -1,0 +1,1 @@
+export const DEFAULT_MEMBER_INBOX_RECAPS_ENABLED = false;

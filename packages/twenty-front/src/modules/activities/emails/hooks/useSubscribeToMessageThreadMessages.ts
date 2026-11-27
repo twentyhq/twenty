@@ -5,10 +5,8 @@ import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/ty
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useSubscribeToMessageThreadMessages = ({
   messageThreadId,
@@ -25,9 +23,6 @@ export const useSubscribeToMessageThreadMessages = ({
   const { objectMetadataItem: attachmentMetadataItem } = useObjectMetadataItem({
     objectNameSingular: StandardObjectNameSingular.Attachment,
   });
-  const isMessageAttachmentEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
-  );
   const loadedMessageCount = loadedMessageIds.length;
   const loadedMessageIdsKey = loadedMessageIds.join(',');
 
@@ -95,8 +90,7 @@ export const useSubscribeToMessageThreadMessages = ({
     operationTypes: ['create-one', 'create-many'],
   });
 
-  const isListeningToAttachments =
-    isMessageAttachmentEnabled && loadedMessageCount > 0;
+  const isListeningToAttachments = loadedMessageCount > 0;
 
   useListenToEventsForQuery({
     queryId: attachmentsQueryId,

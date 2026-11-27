@@ -135,7 +135,7 @@ describe('connecting a Telegram account', () => {
     kvHolder.kv = kvFake.kv;
     clientHolder.client = coreFake.client;
     telegramCalls = stubTelegramApi({
-      getMe: { id: 1, username: 'TwentyBot' },
+      results: { getMe: { id: 1, username: 'TwentyBot' } },
     });
   });
 
@@ -159,7 +159,7 @@ describe('connecting a Telegram account', () => {
       params: {
         url: `${SERVER_ROUTES_URL}/${TELEGRAM_UPDATES_RESOLVER_UNIVERSAL_IDENTIFIER}`,
         secret_token: WEBHOOK_SECRET,
-        allowed_updates: ['message', 'my_chat_member'],
+        allowed_updates: ['message', 'my_chat_member', 'callback_query'],
       },
     });
   });
@@ -173,10 +173,10 @@ describe('connecting a Telegram account', () => {
   });
 
   it('links the account to the member who started the connection', async () => {
-    const { token } = await startLink();
+    const { startCommand } = await startLink();
 
     const { resolved, handled } = await deliver(
-      buildMessageUpdate(`/start ${token}`),
+      buildMessageUpdate(startCommand),
     );
 
     expect(resolved).toMatchObject({
@@ -195,17 +195,6 @@ describe('connecting a Telegram account', () => {
       },
     ]);
     expect(sentTexts()).toEqual([TELEGRAM_CONNECTED_TEXT]);
-  });
-
-  it('routes later messages of a linked account to its workspace', async () => {
-    const { token } = await startLink();
-
-    await deliver(buildMessageUpdate(`/start ${token}`));
-
-    const { resolved, handled } = await deliver(buildMessageUpdate('hello'));
-
-    expect(resolved).toMatchObject({ workspaceId: 'workspace-1' });
-    expect(handled).toEqual({ outcome: 'CONNECTED' });
   });
 
   it('accepts a link only once', async () => {
@@ -350,6 +339,46 @@ describe('connecting a Telegram account', () => {
         { headers: { 'content-type': 'application/json' } },
       ),
     );
+  });
+
+  it('answers a rating tapped by an account no workspace claims', async () => {
+    const { resolved } = await deliver({
+      callback_query: {
+        id: 'callback-1',
+        from: TELEGRAM_USER,
+        data: 'feedback:POSITIVE:request-1',
+      },
+    });
+
+    expect(resolved).toEqual(
+      new Response(
+        {
+          method: 'answerCallbackQuery',
+          callback_query_id: 'callback-1',
+          text: TELEGRAM_NOT_CONNECTED_TEXT,
+        },
+        { headers: { 'content-type': 'application/json' } },
+      ),
+    );
+    expect(telegramCalls).toEqual([]);
+  });
+
+  it('answers a tap on a button it does not know, without a notice', async () => {
+    const { resolved } = await deliver({
+      callback_query: {
+        id: 'callback-1',
+        from: TELEGRAM_USER,
+        data: 'other:POSITIVE:request-1',
+      },
+    });
+
+    expect(resolved).toEqual(
+      new Response(
+        { method: 'answerCallbackQuery', callback_query_id: 'callback-1' },
+        { headers: { 'content-type': 'application/json' } },
+      ),
+    );
+    expect(telegramCalls).toEqual([]);
   });
 
   it('removes the link without replying when the user blocks the bot', async () => {

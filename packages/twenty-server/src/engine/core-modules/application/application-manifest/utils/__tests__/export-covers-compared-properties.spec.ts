@@ -37,7 +37,6 @@ import {
   ViewPresetFilter,
   ViewSortDirection,
   ViewType,
-  ViewVisibility,
   WidgetType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -183,7 +182,6 @@ const VIEW_MANIFEST: ViewManifest = {
   icon: 'IconLayoutKanban',
   position: 3,
   isCompact: true,
-  visibility: ViewVisibility.UNLISTED,
   openRecordIn: ViewOpenRecordIn.RECORD_PAGE,
   mainGroupByFieldMetadataUniversalIdentifier: FIELD_UID,
   shouldHideEmptyGroups: true,
@@ -196,6 +194,7 @@ const VIEW_MANIFEST: ViewManifest = {
   calendarLayout: ViewCalendarLayout.WEEK,
   calendarFieldMetadataUniversalIdentifier: FIELD_UID,
   calendarEndFieldMetadataUniversalIdentifier: FIELD_UID,
+  listPinnedFieldMetadataUniversalIdentifier: FIELD_UID,
 };
 
 const VIEW_CHILD_CONVERSION_CONTEXT = {
@@ -253,6 +252,7 @@ const NAVIGATION_MENU_ITEM_MANIFEST: Required<
   link: 'https://example.com/pets',
   nativePageKey: 'workflows',
   builtInSectionKey: 'favorites',
+  visibleItemLimit: 10,
   parentUniversalIdentifier: '88888888-8888-4888-8888-888888888888',
   viewUniversalIdentifier: VIEW_UID,
   targetObjectUniversalIdentifier: OBJECT_UID,
@@ -264,13 +264,7 @@ const PAGE_LAYOUT_KIND_GAPS = {
     'page layouts, tabs and widgets are never soft-deleted; the column is scheduled for removal',
 };
 
-const VIEW_KIND_GAPS = {
-  deletedAt:
-    'views and their children are never soft-deleted; the column is scheduled for removal',
-};
-
 const NESTED_VIEW_CHILD_GAPS = {
-  ...VIEW_KIND_GAPS,
   viewUniversalIdentifier:
     'a nested child is written under its view; the standalone view field converter emits it',
 };
@@ -516,6 +510,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
     metadataName: 'fieldMetadata',
     emittedProperties: Object.keys(
       fromFlatFieldMetadataToFieldManifest({
+        formulaFields: [],
         flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
         flatFieldMetadata: getFlatFieldMetadataMock({
           universalIdentifier: FIELD_UID,
@@ -575,13 +570,9 @@ const EXPORTED_KINDS: ExportedKind[] = [
         },
       }),
     ),
-    renamedProperties: { isPrivate: 'visibility' },
-    workspaceLocalProperties: [
-      'isActive',
-      'universalOverrides',
-      'createdByUserWorkspaceId',
-    ],
-    knownGaps: VIEW_KIND_GAPS,
+    renamedProperties: {},
+    workspaceLocalProperties: ['isActive', 'universalOverrides', 'isPrivate'],
+    knownGaps: {},
   },
   {
     metadataName: 'viewField',
@@ -595,7 +586,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
     ),
     renamedProperties: { universalRelationScope: 'relationScope' },
     workspaceLocalProperties: ['isActive', 'universalOverrides'],
-    knownGaps: VIEW_KIND_GAPS,
+    knownGaps: {},
   },
   {
     metadataName: 'viewFilter',
@@ -949,7 +940,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
       exportWorkflowManifestOrThrow(WORKFLOW_MANIFEST),
     ),
     renamedProperties: { versionDefinitionHash: 'version' },
-    workspaceLocalProperties: ['isPrivate', 'createdByUserWorkspaceId'],
+    workspaceLocalProperties: ['isPrivate'],
     knownGaps: {
       isSystem: 'system workflows are reported as excluded',
       lastPublishedCoreWorkflowVersionId:
@@ -960,11 +951,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
     metadataName: 'agent',
     emittedProperties: Object.keys(EXPORTED_AGENT_MANIFEST),
     renamedProperties: {},
-    workspaceLocalProperties: [
-      ...WORKSPACE_LOCAL_PROPERTIES,
-      'isPrivate',
-      'createdByUserWorkspaceId',
-    ],
+    workspaceLocalProperties: [...WORKSPACE_LOCAL_PROPERTIES, 'isPrivate'],
     knownGaps: {
       modelConfiguration:
         'no manifest slot; an agent with one is reported as unsupported',

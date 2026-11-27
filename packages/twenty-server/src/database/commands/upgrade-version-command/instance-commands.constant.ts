@@ -342,6 +342,17 @@ import { AddInboxViewTypeFastInstanceCommand } from 'src/database/commands/upgra
 import { AddUserWorkspaceDefaultAvatarFileIdSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-slow-1795536145181-add-user-workspace-default-avatar-file-id';
 import { DropLegacyWorkflowVersionIdColumnsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795538016002-drop-legacy-workflow-version-id-columns';
 import { AddStripeCustomerEmailToBillingCustomerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795601185766-add-stripe-customer-email-to-billing-customer';
+import { RelaxViewVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795618787744-relax-view-visibility';
+import { RenameAgentChatChannelTablesToInboxChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795688525750-rename-agent-chat-channel-tables-to-inbox-channel';
+import { AddFieldMetadataFormulaColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795701090644-add-field-metadata-formula-column';
+import { MoveFieldMetadataFormulaOutOfSettingsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795701107918-move-field-metadata-formula-out-of-settings';
+import { DropViewVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795709923763-drop-view-visibility';
+import { AddListPinnedFieldMetadataIdToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795713501522-add-list-pinned-field-metadata-id-to-view';
+import { RelaxViewDeletedAtSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795715543417-relax-view-deleted-at';
+import { AddValidationRuleTreeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795719490855-add-validation-rule-tree';
+import { PurgeExpiredRefreshTokensSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795731384123-purge-expired-refresh-tokens';
+import { AddNavigationMenuItemVisibleItemLimitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795772817031-add-navigation-menu-item-visible-item-limit';
+import { BackfillRecentChatsSectionVisibleItemLimitSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795772818031-backfill-recent-chats-section-visible-item-limit';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -686,4 +697,15 @@ export const INSTANCE_COMMANDS = [
   AddUserWorkspaceDefaultAvatarFileIdSlowInstanceCommand,
   DropLegacyWorkflowVersionIdColumnsFastInstanceCommand,
   AddStripeCustomerEmailToBillingCustomerFastInstanceCommand,
+  RelaxViewVisibilityFastInstanceCommand,
+  RenameAgentChatChannelTablesToInboxChannelFastInstanceCommand,
+  AddFieldMetadataFormulaColumnFastInstanceCommand,
+  MoveFieldMetadataFormulaOutOfSettingsSlowInstanceCommand,
+  DropViewVisibilityFastInstanceCommand,
+  AddListPinnedFieldMetadataIdToViewFastInstanceCommand,
+  RelaxViewDeletedAtSlowInstanceCommand,
+  AddValidationRuleTreeFastInstanceCommand,
+  PurgeExpiredRefreshTokensSlowInstanceCommand,
+  AddNavigationMenuItemVisibleItemLimitFastInstanceCommand,
+  BackfillRecentChatsSectionVisibleItemLimitSlowInstanceCommand,
 ];

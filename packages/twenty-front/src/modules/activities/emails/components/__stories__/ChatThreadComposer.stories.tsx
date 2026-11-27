@@ -43,14 +43,10 @@ export const Default: Story = {
     await expect(
       await canvas.findByRole('button', { name: 'Send' }),
     ).toBeDisabled();
-    await expect(
-      canvas.queryByRole('button', { name: 'Attach files' }),
-    ).not.toBeInTheDocument();
   },
 };
 
 export const Attachments: Story = {
-  args: { canAttachFiles: true },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -106,7 +102,7 @@ export const SendingFailed: Story = {
 };
 
 export const Disconnected: Story = {
-  args: { isDisconnected: true, canAttachFiles: true },
+  args: { isDisconnected: true },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

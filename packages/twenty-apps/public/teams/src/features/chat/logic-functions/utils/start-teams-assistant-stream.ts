@@ -1,6 +1,7 @@
 import { type TeamsActivity } from 'src/features/chat/logic-functions/types/teams-activity.type';
 import { type TeamsAssistantStatusWriter } from 'src/features/chat/logic-functions/types/teams-assistant-status-writer.type';
 import { buildTeamsActivityPath } from 'src/features/chat/logic-functions/utils/build-teams-activity-path';
+import { buildTeamsMessageActivity } from 'src/features/chat/logic-functions/utils/build-teams-message-activity';
 import { getTeamsConnectorAccessTokenOrThrow } from 'src/features/chat/logic-functions/utils/get-teams-connector-access-token-or-throw';
 import { requestTeamsConnector } from 'src/features/chat/logic-functions/utils/request-teams-connector';
 import { sendTeamsActivity } from 'src/features/chat/logic-functions/utils/send-teams-activity';
@@ -72,11 +73,10 @@ export const startTeamsAssistantStream = async ({
       streamClosing.abort();
 
       return sendStreamActivity({
-        activity: {
-          type: 'message',
+        activity: buildTeamsMessageActivity({
           text,
           entities: [{ type: 'streaminfo', streamId, streamType: 'final' }],
-        },
+        }),
       });
     },
   };

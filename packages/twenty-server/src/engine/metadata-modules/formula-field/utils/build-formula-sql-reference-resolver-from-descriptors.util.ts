@@ -1,9 +1,13 @@
-import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
+import {
+  RelationType,
+  type ValidationRuleFieldDescriptor,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FormulaSqlColumn } from 'src/engine/metadata-modules/formula-field/types/formula-sql-column.type';
 import { buildFormulaSqlColumnValue } from 'src/engine/metadata-modules/formula-field/utils/build-formula-sql-column-value.util';
 import { buildFormulaSqlColumnsByPath } from 'src/engine/metadata-modules/formula-field/utils/build-formula-sql-columns-by-path.util';
+import { getFormulaSqlAggregateAlias } from 'src/engine/metadata-modules/formula-field/utils/get-formula-sql-aggregate-alias.util';
 import { type FormulaSqlReferenceResolver } from 'src/engine/metadata-modules/formula-field/utils/compile-formula-expression-to-sql.util';
 import { COMPUTED_COLUMN_RECORD_ALIAS } from 'src/engine/twenty-orm/table-shape/constants/computed-column-record-alias.constant';
 
@@ -67,7 +71,11 @@ export const buildFormulaSqlReferenceResolverFromDescriptors = ({
       return undefined;
     }
 
-    const lookupAlias = getLookupAlias(relationFieldName);
+    // A to-many path is read inside an aggregate, whose subquery names the related records
+    const lookupAlias =
+      relationField.relationType === RelationType.ONE_TO_MANY
+        ? getFormulaSqlAggregateAlias(relationFieldName)
+        : getLookupAlias(relationFieldName);
 
     onFieldRead?.({
       alias: COMPUTED_COLUMN_RECORD_ALIAS,

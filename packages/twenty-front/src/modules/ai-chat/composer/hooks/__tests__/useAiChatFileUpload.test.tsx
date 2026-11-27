@@ -53,7 +53,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 describe('useAiChatFileUpload', () => {
-  it('uploads after leaving a DM and aborts files removed from the selection', async () => {
+  it('uploads in a DM and aborts files removed from the selection', async () => {
     const directMessageAtom = recordStoreFamilyState.atomFamily(
       DIRECT_MESSAGE_THREAD_ID,
     );
@@ -76,7 +76,7 @@ describe('useAiChatFileUpload', () => {
       act(() => {
         upload = result.current.uploadFiles({
           files: [file],
-          threadId: NEW_THREAD_ID,
+          threadId: DIRECT_MESSAGE_THREAD_ID,
         });
       });
 
@@ -85,7 +85,7 @@ describe('useAiChatFileUpload', () => {
       await act(async () => {
         jotaiStore.set(
           aiChatComposerUploadingFilesFamilyState.atomFamily({
-            threadId: NEW_THREAD_ID,
+            threadId: DIRECT_MESSAGE_THREAD_ID,
           }),
           [],
         );

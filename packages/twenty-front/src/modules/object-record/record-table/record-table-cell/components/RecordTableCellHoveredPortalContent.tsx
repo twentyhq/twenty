@@ -8,6 +8,8 @@ import { RecordTableCellFieldDisplay } from '@/object-record/record-table/record
 import { RecordTableCellEditButton } from '@/object-record/record-table/record-table-cell/components/RecordTableCellEditButton';
 import { RecordTableCellEditMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellEditMode';
 import { RecordTableCellFieldInput } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldInput';
+import { useRecordTableCellOutlinePortal } from '@/object-record/record-table/record-table-cell/hooks/useRecordTableCellOutlinePortal';
+import { getRecordTableCellHoveredOutlineColor } from '@/object-record/record-table/record-table-cell/utils/getRecordTableCellHoveredOutlineColor';
 
 import { isRecordTableRowActiveByRecordIdComponentFamilySelector } from '@/object-record/record-table/states/selectors/isRecordTableRowActiveByRecordIdComponentFamilySelector';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
@@ -21,6 +23,8 @@ import { useIsMobile } from 'twenty-ui/utilities';
 const StyledRecordTableCellHoveredPortalContent = styled.div<{
   showInteractiveStyle: boolean;
   isRecordTableRowActive: boolean;
+  outlineColor: string;
+  isTopEdgeCoveredByHeader: boolean;
 }>`
   align-items: center;
   background: ${themeCssVariables.background.transparent.secondary};
@@ -30,6 +34,8 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
       : themeCssVariables.background.primary};
   border-radius: ${({ showInteractiveStyle }) =>
     showInteractiveStyle ? themeCssVariables.border.radius.sm : 'none'};
+  box-shadow: ${({ isTopEdgeCoveredByHeader, outlineColor }) =>
+    isTopEdgeCoveredByHeader ? `inset 0 1px 0 0 ${outlineColor}` : 'none'};
   box-sizing: border-box;
   cursor: ${({ showInteractiveStyle }) =>
     showInteractiveStyle ? 'pointer' : 'default'};
@@ -37,13 +43,7 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
 
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
-  outline: ${({ showInteractiveStyle, isRecordTableRowActive }) =>
-    isRecordTableRowActive
-      ? 'none'
-      : showInteractiveStyle
-        ? `1px solid ${themeCssVariables.font.color.extraLight}`
-        : `1px solid ${themeCssVariables.border.color.medium}`};
-  outline-offset: -1px;
+  outline: 1px solid ${({ outlineColor }) => outlineColor};
 
   user-select: none;
 `;
@@ -75,10 +75,21 @@ export const RecordTableCellHoveredPortalContent = () => {
     recordId,
   );
 
+  const { isTopEdgeCoveredByHeader } = useRecordTableCellOutlinePortal(
+    recordTableHoverPosition,
+  );
+
+  const outlineColor = getRecordTableCellHoveredOutlineColor({
+    isRecordTableRowActive,
+    showInteractiveStyle,
+  });
+
   return (
     <StyledRecordTableCellHoveredPortalContent
       showInteractiveStyle={showInteractiveStyle}
       isRecordTableRowActive={isRecordTableRowActive}
+      outlineColor={outlineColor}
+      isTopEdgeCoveredByHeader={isTopEdgeCoveredByHeader}
     >
       <FieldFocusStaticFocusedProvider>
         {isFieldInputOnly ? (

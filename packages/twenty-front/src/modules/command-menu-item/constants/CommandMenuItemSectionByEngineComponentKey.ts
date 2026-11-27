@@ -73,10 +73,11 @@ export const COMMAND_MENU_ITEM_SECTION_BY_ENGINE_COMPONENT_KEY = {
   [EngineComponentKey.IMPORT_RECORDS]: 'THIS_OBJECT',
   [EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT]: 'THIS_OBJECT',
 
-  [EngineComponentKey.ASK_AI]: 'ASK_AND_FIND',
-  [EngineComponentKey.SEARCH_RECORDS]: 'ASK_AND_FIND',
-  [EngineComponentKey.VIEW_PREVIOUS_AI_CHATS]: 'ASK_AND_FIND',
-  [EngineComponentKey.NEW_AI_CHAT]: 'ASK_AND_FIND',
+  [EngineComponentKey.ASK_AI]: 'ASK_AI',
+  [EngineComponentKey.VIEW_PREVIOUS_AI_CHATS]: 'ASK_AI',
+  [EngineComponentKey.NEW_AI_CHAT]: 'ASK_AI',
+
+  [EngineComponentKey.SEARCH_RECORDS]: 'SEARCH',
 
   [EngineComponentKey.NAVIGATION]: 'GO_TO',
   [EngineComponentKey.NAVIGATE_TO_NEXT_RECORD]: 'GO_TO',

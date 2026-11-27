@@ -11,10 +11,7 @@ import { findViewOwnership } from 'test/integration/metadata/suites/view/utils/f
 import { findViews } from 'test/integration/metadata/suites/view/utils/find-views.util';
 import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import {
-  ViewFilterGroupLogicalOperator,
-  ViewVisibility,
-} from 'twenty-shared/types';
+import { ViewFilterGroupLogicalOperator } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -77,7 +74,7 @@ describe('unlisted view read visibility (integration)', () => {
       objectNameSingular: 'company',
       input: {
         name: 'Guest private companies read',
-        visibility: ViewVisibility.UNLISTED,
+        isPrivate: true,
       },
       token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
     });
@@ -86,7 +83,7 @@ describe('unlisted view read visibility (integration)', () => {
       objectNameSingular: 'company',
       input: {
         name: 'Ownerless companies read',
-        visibility: ViewVisibility.WORKSPACE,
+        isPrivate: false,
       },
       token: API_KEY_ACCESS_TOKEN,
     });

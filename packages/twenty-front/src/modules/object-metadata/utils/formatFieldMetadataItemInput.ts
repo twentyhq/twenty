@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined, isFormulaFieldMetadata } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
@@ -21,33 +21,26 @@ export const formatFieldMetadataItemInput = (
   > & {
     formula?: string;
     formulaCurrencyCode?: string;
-    existingSettings?: FieldMetadataItem['settings'];
   },
 ) => {
   const formulaExpression = input.formula?.trim();
   const formulaCurrencyCodeExpression = input.formulaCurrencyCode?.trim();
-  // Some field type forms leave settings out, yet clearing their formula must keep the rest
-  const settings = input.settings ?? input.existingSettings;
 
-  const formatSettings = () => {
+  const formatFormula = () => {
     if (!isDefined(formulaExpression)) {
-      return input.settings;
+      return undefined;
     }
 
     if (!isNonEmptyString(formulaExpression)) {
-      return isFormulaFieldMetadata({ settings })
-        ? { ...settings, formula: null }
-        : input.settings;
+      return null;
     }
 
-    const formula = isNonEmptyString(formulaCurrencyCodeExpression)
+    return isNonEmptyString(formulaCurrencyCodeExpression)
       ? {
           expression: formulaExpression,
           currencyCodeExpression: formulaCurrencyCodeExpression,
         }
       : { expression: formulaExpression };
-
-    return { ...settings, formula };
   };
 
   return {
@@ -57,7 +50,8 @@ export const formatFieldMetadataItemInput = (
     label: input.label?.trim(),
     name: input.name?.trim(),
     options: input.options,
-    settings: formatSettings(),
+    settings: input.settings,
+    formula: formatFormula(),
     isLabelSyncedWithName: input.isLabelSyncedWithName,
     isUnique: input.isUnique,
   };

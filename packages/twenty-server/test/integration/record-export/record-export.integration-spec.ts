@@ -43,6 +43,7 @@ import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/
 import { updateOneRole } from 'test/integration/metadata/suites/role/utils/update-one-role.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { FileFolder, OrderByDirection } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -438,6 +439,7 @@ describe('record export lifecycle (integration)', () => {
       value: companies[0].name,
       ruleGrants: { canReadRecords: true },
     });
+    await waitForAllJobsToFinish();
     const ready = await exportToCompletion(input, requester.token);
     expect(await authorization(ready)).toMatchObject({
       apiKeyId: requester.id,
@@ -1263,7 +1265,6 @@ describe('record export lifecycle (integration)', () => {
           workspaceId: requester.workspace.id,
           userWorkspaceId: requester.userWorkspaceId,
           authProvider: AuthProviderEnum.Password,
-          origin: 'renewal_bridge',
         });
         sessionTokens.add(sessionToken);
         return sessionToken;

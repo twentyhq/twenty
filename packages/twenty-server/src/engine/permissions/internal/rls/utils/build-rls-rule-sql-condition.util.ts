@@ -9,7 +9,6 @@ import {
   buildRecordFilterForRule,
   type RlsRule,
 } from 'src/engine/permissions/internal/rls/utils/build-rls-record-filter.util';
-import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-rls-relation-hop-enabled.util';
 import { renderRlsRecordFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-rls-record-filter-to-sql.util';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 
@@ -32,7 +31,6 @@ export const buildRlsRuleSQLCondition = ({
     flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
     flatFieldMetadataOptionMaps: metadataMaps.flatFieldMetadataOptionMaps,
     flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
-    isRelationHopEnabled: isRlsRelationHopEnabled(metadataMaps.featureFlagsMap),
   });
 
   if (!isDefined(recordFilter)) {

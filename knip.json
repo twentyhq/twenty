@@ -109,7 +109,7 @@
       "ignoreDependencies": ["@lingui/swc-plugin"]
     },
     "packages/twenty-sdk": {
-      "ignoreDependencies": ["preact", "twenty-ui"]
+      "ignoreDependencies": ["preact"]
     },
     "packages/twenty-website": {
       "entry": ["lingui.config.ts", "wyw-in-js.config.cjs"],

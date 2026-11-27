@@ -56,6 +56,7 @@ type ValidateBuildAndRunWorkspaceMigrationFromRecordArgs = {
   isSystemBuild?: boolean;
   applicationUniversalIdentifier: string;
   applicationDefaultRoleUniversalIdentifier?: string;
+  isMarketplaceApplication?: boolean;
   idByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
   authContext?: WorkspaceAuthContext;
   dryRun?: boolean;
@@ -75,6 +76,7 @@ type ComputeAndRunWorkspaceMigrationFromResolvedOperationsArgs = {
   isSystemBuild: boolean;
   applicationUniversalIdentifier: string;
   applicationDefaultRoleUniversalIdentifier?: string;
+  isMarketplaceApplication?: boolean;
   providedIdByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
   authContext?: WorkspaceAuthContext;
   dryRun?: boolean;
@@ -334,6 +336,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     isSystemBuild = false,
     applicationUniversalIdentifier,
     applicationDefaultRoleUniversalIdentifier,
+    isMarketplaceApplication,
     idByUniversalIdentifierByMetadataName,
     authContext,
     dryRun,
@@ -394,6 +397,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         isSystemBuild,
         applicationUniversalIdentifier,
         applicationDefaultRoleUniversalIdentifier,
+        isMarketplaceApplication,
         providedIdByUniversalIdentifierByMetadataName:
           idByUniversalIdentifierByMetadataName,
         authContext,
@@ -417,6 +421,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     isSystemBuild,
     applicationUniversalIdentifier,
     applicationDefaultRoleUniversalIdentifier,
+    isMarketplaceApplication,
     providedIdByUniversalIdentifierByMetadataName,
     authContext,
     dryRun,
@@ -468,6 +473,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         inferDeletionFromMissingEntities,
         applicationUniversalIdentifier,
         applicationDefaultRoleUniversalIdentifier,
+        isMarketplaceApplication,
         authContext,
       },
       fromToAllFlatEntityMaps,

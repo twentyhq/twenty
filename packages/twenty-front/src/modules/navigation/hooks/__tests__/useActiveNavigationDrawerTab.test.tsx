@@ -1,3 +1,4 @@
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import {
@@ -9,16 +10,28 @@ import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+
+jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: jest.fn(),
+}));
+
 const renderActiveNavigationDrawerMode = ({
   pathname,
   activeTab = NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
+  isLayoutCustomizationModeEnabled = false,
 }: {
   pathname: string;
   activeTab?: NavigationDrawerActiveTab;
+  isLayoutCustomizationModeEnabled?: boolean;
 }) => {
   const store = createStore();
 
   store.set(navigationDrawerActiveTabState.atom, activeTab);
+  store.set(
+    isLayoutCustomizationModeEnabledState.atom,
+    isLayoutCustomizationModeEnabled,
+  );
 
   return renderHook(() => useActiveNavigationDrawerTab(), {
     wrapper: ({ children }: { children: ReactNode }) => (
@@ -30,6 +43,10 @@ const renderActiveNavigationDrawerMode = ({
 };
 
 describe('useActiveNavigationDrawerTab', () => {
+  beforeEach(() => {
+    jest.mocked(useIsFeatureEnabled).mockReturnValue(false);
+  });
+
   it('is the settings mode on a settings page', () => {
     const { result } = renderActiveNavigationDrawerMode({
       pathname: '/settings/profile',
@@ -59,6 +76,46 @@ describe('useActiveNavigationDrawerTab', () => {
     const { result } = renderActiveNavigationDrawerMode({
       pathname: '/objects/people',
       activeTab: NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+    });
+
+    expect(result.current).toBe(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
+  });
+
+  it('keeps the navigation menu mode on the inbox page while customizing', () => {
+    jest.mocked(useIsFeatureEnabled).mockReturnValue(true);
+
+    const { result } = renderActiveNavigationDrawerMode({
+      pathname: '/inbox',
+      isLayoutCustomizationModeEnabled: true,
+    });
+
+    expect(result.current).toBe(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
+  });
+
+  it('is the navigation menu mode on the AI chat and inbox pages with the customizable sidebar enabled', () => {
+    jest.mocked(useIsFeatureEnabled).mockReturnValue(true);
+
+    expect(
+      renderActiveNavigationDrawerMode({ pathname: '/inbox' }).result.current,
+    ).toBe(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
+    expect(
+      renderActiveNavigationDrawerMode({
+        pathname: '/chat/20202020-0687-4c41-b707-ed1bfca972a7',
+      }).result.current,
+    ).toBe(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
+    expect(
+      renderActiveNavigationDrawerMode({
+        pathname: '/objects/people',
+        activeTab: NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+      }).result.current,
+    ).toBe(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
+  });
+
+  it('keeps the chat history while customizing with the customizable sidebar disabled', () => {
+    const { result } = renderActiveNavigationDrawerMode({
+      pathname: '/objects/people',
+      activeTab: NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+      isLayoutCustomizationModeEnabled: true,
     });
 
     expect(result.current).toBe(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);

@@ -429,6 +429,7 @@ export {
   IconRowInsertBottom,
   IconRowInsertTop,
   IconSearch,
+  IconSearchOff,
   IconSend,
   IconServer,
   IconServer2,

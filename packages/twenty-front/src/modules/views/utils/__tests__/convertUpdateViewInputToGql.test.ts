@@ -14,6 +14,15 @@ describe('convertUpdateViewInputToGql', () => {
     expect(convertUpdateViewInputToGql({})).toEqual({ id: undefined });
   });
 
+  it('includes a null list pinned field so it can be cleared', () => {
+    expect(
+      convertUpdateViewInputToGql({ listPinnedFieldMetadataId: null }),
+    ).toEqual({
+      listPinnedFieldMetadataId: null,
+      id: undefined,
+    });
+  });
+
   it('forwards the group load limit', () => {
     expect(convertUpdateViewInputToGql({ groupLoadLimit: 50 })).toEqual({
       groupLoadLimit: 50,

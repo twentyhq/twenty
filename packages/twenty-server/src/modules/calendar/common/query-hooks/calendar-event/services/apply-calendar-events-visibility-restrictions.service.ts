@@ -17,7 +17,6 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { isChannelVisibilityEnforcedByIndividualRole } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-enforced-by-individual-role.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 
 const RESTRICTED_CALENDAR_EVENT_FIELD_NAMES = ['title', 'description'];
@@ -31,7 +30,6 @@ export class ApplyCalendarEventsVisibilityRestrictionsService
     private readonly commonRecordVisibilityService: CommonRecordVisibilityService,
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
-    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   onModuleInit() {
@@ -48,17 +46,7 @@ export class ApplyCalendarEventsVisibilityRestrictionsService
     records: ObjectRecord[];
     authContext: WorkspaceAuthContext;
   }): Promise<void> {
-    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
-      authContext.workspace.id,
-      ['featureFlagsMap'],
-    );
-
-    if (
-      isChannelVisibilityEnforcedByIndividualRole({
-        featureFlagsMap,
-        authContext,
-      })
-    ) {
+    if (isChannelVisibilityEnforcedByIndividualRole(authContext)) {
       return;
     }
 

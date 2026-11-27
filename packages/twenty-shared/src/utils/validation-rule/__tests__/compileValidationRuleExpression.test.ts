@@ -80,6 +80,13 @@ describe('compileValidationRuleExpression', () => {
     });
   });
 
+  it('should accept a property read on any expression, as rules did before trees', () => {
+    expect(compile('(coalesce(amount, "")).currencyCode == "EUR"')).toEqual({
+      isValid: true,
+      bindings: { amount: 'opportunity-amount' },
+    });
+  });
+
   it('should accept now as a value', () => {
     expect(compile('isDefined(now)')).toEqual({ isValid: true, bindings: {} });
   });
@@ -309,5 +316,13 @@ describe('compileValidationRuleExpression with previous values', () => {
       errorCode: 'UNKNOWN_FIELD',
       errorParams: { fieldName: 'closeDate' },
     });
+  });
+  it('should reject an aggregate, which only a formula can compute', () => {
+    expect(
+      compileValidationRuleExpression({
+        expression: 'sum(amount.amountMicros) > 0',
+        fields: OPPORTUNITY_FIELDS,
+      }),
+    ).toMatchObject({ isValid: false, errorCode: 'AGGREGATE_NOT_ALLOWED' });
   });
 });

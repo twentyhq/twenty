@@ -3,7 +3,6 @@ import { Logger } from '@nestjs/common';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
 
-import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { type FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { type FilesFieldService } from 'src/engine/core-modules/file/files-field/services/files-field.service';
@@ -18,7 +17,6 @@ const ATTACHMENTS = [
 ];
 
 describe('ApplicationMessageSendAttachmentsService', () => {
-  const isFeatureEnabled = jest.fn();
   const signFileByIdUrl = jest.fn();
   const copyFileIntoFilesField = jest.fn();
   const deleteFilesFieldFile = jest.fn();
@@ -26,7 +24,6 @@ describe('ApplicationMessageSendAttachmentsService', () => {
   const executeInWorkspaceContext = jest.fn();
 
   const service = new ApplicationMessageSendAttachmentsService(
-    { isFeatureEnabled } as unknown as FeatureFlagService,
     { signFileByIdUrl } as unknown as FileUrlService,
     {
       copyFileIntoFilesField,
@@ -38,7 +35,6 @@ describe('ApplicationMessageSendAttachmentsService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    isFeatureEnabled.mockResolvedValue(true);
     signFileByIdUrl.mockImplementation(
       async ({ fileId }: { fileId: string }) =>
         `https://twenty.example/file/email-attachment/${fileId}?token=signed`,
@@ -81,27 +77,13 @@ describe('ApplicationMessageSendAttachmentsService', () => {
       });
     });
 
-    it('should send nothing without checking the feature flag when there are no attachments', async () => {
+    it('should send nothing when there are no attachments', async () => {
       await expect(
         service.buildAttachmentsToSendOrThrow({
           attachments: [],
           workspaceId: 'workspace-1',
         }),
       ).resolves.toEqual([]);
-
-      expect(isFeatureEnabled).not.toHaveBeenCalled();
-    });
-
-    it('should refuse attachments when message attachments are disabled', async () => {
-      isFeatureEnabled.mockResolvedValue(false);
-
-      await expect(
-        service.buildAttachmentsToSendOrThrow({
-          attachments: ATTACHMENTS,
-          workspaceId: 'workspace-1',
-        }),
-      ).rejects.toThrow(MessageChannelException);
-      expect(findFiles).not.toHaveBeenCalled();
     });
 
     it('should refuse a file that is not a completed email attachment upload', async () => {

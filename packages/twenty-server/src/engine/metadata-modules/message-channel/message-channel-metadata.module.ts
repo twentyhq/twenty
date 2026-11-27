@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileEmailAttachmentModule } from 'src/engine/core-modules/file/file-email-attachment/file-email-attachment.module';
@@ -38,7 +37,6 @@ import { ChannelVisibilityModule } from 'src/engine/permissions/channel-visibili
 @Module({
   imports: [
     ChannelVisibilityModule,
-    FeatureFlagModule,
     TypeOrmModule.forFeature([
       MessageChannelEntity,
       MessageFolderEntity,
