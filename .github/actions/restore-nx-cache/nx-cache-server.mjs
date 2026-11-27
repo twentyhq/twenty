@@ -23,7 +23,7 @@ const recordUsage = ({ usage, hash }) => {
   try {
     appendFileSync(usageLog, `${usage} ${hash}\n`);
   } catch (error) {
-    console.error(`Could not record Nx cache ${usage} for ${hash}`, error);
+    console.error('Could not record Nx cache usage', usage, hash, error);
   }
 };
 
