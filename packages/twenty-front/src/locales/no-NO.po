@@ -15252,7 +15252,6 @@ msgstr "Får bare denne posten: Rollen deres har ikke tilgang til {objectLabelPl
 #: src/modules/getting-started/components/GettingStartedOpenedSection.tsx
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 #: src/pages/getting-started/GettingStartedPage.tsx
 #: src/pages/getting-started/GettingStartedPage.tsx
 msgid "Getting started"
@@ -28494,11 +28493,6 @@ msgstr "Vis på"
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Show only rows with errors"
 msgstr "Vis bare rader med feil"
-
-#. js-lingui-id: 9u2I/P
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
-msgstr "Vis Kom i gang-siden og sidefeltkortet, og åpne den ved landing under prøveperioden."
 
 #. js-lingui-id: fTPKt5
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
