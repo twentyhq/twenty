@@ -9,7 +9,8 @@ import { replaceObjectViewsInViewMetadataSlice } from '@/metadata-store/utils/re
 import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 import { FindManyViewsDocument } from '~/generated-metadata/graphql';
 
 type ObjectViewsLoadInFlight = {
@@ -50,8 +51,9 @@ export const useLoadObjectViews = () => {
           })
           .then((result) => {
             if (!isDefined(result.data)) {
-              throw new Error(
-                `Failed to load views of object ${objectMetadataId}`,
+              throw new CustomError(
+                doNotTranslate('Failed to load object views'),
+                'OBJECT_VIEWS_LOAD_FAILED',
               );
             }
 

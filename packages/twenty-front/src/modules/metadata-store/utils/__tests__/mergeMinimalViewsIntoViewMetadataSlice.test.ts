@@ -36,10 +36,18 @@ describe('mergeMinimalViewsIntoViewMetadataSlice', () => {
       throw new Error('Expected mocked views on two objects');
     }
 
+    const renamedLoadedObjectMinimalView = toMinimalView({
+      flatView: loadedObjectView,
+      name: 'Renamed',
+    });
+    const notLoadedObjectMinimalView = toMinimalView({
+      flatView: notLoadedObjectView,
+    });
+
     const result = mergeMinimalViewsIntoViewMetadataSlice({
       minimalViews: [
-        toMinimalView({ flatView: loadedObjectView, name: 'Renamed' }),
-        toMinimalView({ flatView: notLoadedObjectView }),
+        renamedLoadedObjectMinimalView,
+        notLoadedObjectMinimalView,
       ],
       currentSlice,
       loadedViewHashByObjectMetadataId: {
@@ -48,8 +56,8 @@ describe('mergeMinimalViewsIntoViewMetadataSlice', () => {
     });
 
     expect(result.views).toEqual([
-      { ...loadedObjectView, name: 'Renamed' },
-      toMinimalView({ flatView: notLoadedObjectView }),
+      { ...loadedObjectView, ...renamedLoadedObjectMinimalView },
+      notLoadedObjectMinimalView,
     ]);
     expect(
       result.viewFields.every(
