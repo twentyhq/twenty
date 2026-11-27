@@ -1,4 +1,4 @@
-import { MCP_EXECUTE_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-execute-tool-annotations.const';
+import { MCP_EXECUTE_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-execute-tool-annotations.constant';
 import { type McpToolAnnotations } from 'src/engine/api/mcp/types/mcp-tool-annotations.type';
 
 // Directory reviews (ChatGPT) hold overwrite and delete tools not flagged destructive, even when undoable

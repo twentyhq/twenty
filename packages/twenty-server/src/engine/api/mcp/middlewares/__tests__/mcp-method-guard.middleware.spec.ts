@@ -1,6 +1,6 @@
 import { type Request, type Response } from 'express';
 
-import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
+import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.constant';
 import { McpMethodGuardMiddleware } from 'src/engine/api/mcp/middlewares/mcp-method-guard.middleware';
 
 describe('McpMethodGuardMiddleware', () => {
