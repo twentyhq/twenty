@@ -58,10 +58,6 @@ export class RecordReadCustomPermissionsService implements OnModuleInit {
     }
   }
 
-  public findObjectNameSingulars(): ReadonlySet<string> {
-    return RECORD_READ_CUSTOM_PERMISSION_OBJECT_NAME_SINGULARS;
-  }
-
   public async restrictRecords({
     objectNameSingular,
     ...recordRestrictionInput

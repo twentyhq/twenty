@@ -4,6 +4,7 @@ import { collectRecordsByObjectNameSingular } from 'src/engine/api/common/common
 import { type CommonSelection } from 'src/engine/api/common/types/common-selection.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RecordReadCustomPermissionRecordsInput } from 'src/engine/permissions/record-read-custom-permissions/types/record-read-custom-permission-handler-service.type';
+import { RECORD_READ_CUSTOM_PERMISSION_OBJECT_NAME_SINGULARS } from 'src/engine/permissions/record-read-custom-permissions/constants/record-read-custom-permission-object-name-singulars.constant';
 import { RecordReadCustomPermissionsService } from 'src/engine/permissions/record-read-custom-permissions/record-read-custom-permissions.service';
 
 // Runs on every record of a result, nested relations included, so restricted fields cannot leak through a relation
@@ -20,16 +21,12 @@ export class CommonRecordReadCustomPermissionsService {
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     authContext,
-    permissionsPrincipals,
     recordReadRestrictions,
   }: RecordReadCustomPermissionRecordsInput & {
     flatObjectMetadata: FlatObjectMetadata;
     selection: CommonSelection;
   }): Promise<void> {
-    const objectNameSingulars =
-      this.recordReadCustomPermissionsService.findObjectNameSingulars();
-
-    if (objectNameSingulars.size === 0 || records.length === 0) {
+    if (records.length === 0) {
       return;
     }
 
@@ -39,7 +36,7 @@ export class CommonRecordReadCustomPermissionsService {
       selection,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      objectNameSingulars,
+      objectNameSingulars: RECORD_READ_CUSTOM_PERMISSION_OBJECT_NAME_SINGULARS,
     });
 
     for (const [
@@ -50,7 +47,6 @@ export class CommonRecordReadCustomPermissionsService {
         objectNameSingular,
         records: collectedRecords,
         authContext,
-        permissionsPrincipals,
         recordReadRestrictions,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,

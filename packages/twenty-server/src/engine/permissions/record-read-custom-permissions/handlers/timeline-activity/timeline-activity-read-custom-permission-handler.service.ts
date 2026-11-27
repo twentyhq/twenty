@@ -18,6 +18,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
+import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -33,6 +34,7 @@ import {
 @RecordReadCustomPermissionHandler('timelineActivity')
 export class TimelineActivityReadCustomPermissionHandlerService implements RecordReadCustomPermissionHandlerService {
   constructor(
+    private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
     private readonly recordPermissionsReadService: RecordPermissionsReadService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
@@ -40,7 +42,6 @@ export class TimelineActivityReadCustomPermissionHandlerService implements Recor
   public async restrictRecords({
     records,
     authContext,
-    permissionsPrincipals,
     recordReadRestrictions,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
@@ -68,7 +69,10 @@ export class TimelineActivityReadCustomPermissionHandlerService implements Recor
       ? () => true
       : await this.buildIsRecordReadable({
           timelineActivities: [...subjectColumnsByTimelineActivityId.values()],
-          permissionsPrincipals,
+          permissionsPrincipals:
+            await this.principalPermissionsReadService.resolvePermissionsPrincipals(
+              { authContext },
+            ),
           flatObjectMetadataMaps,
         });
 

@@ -11,7 +11,6 @@ import { type RecordReadRestrictions } from 'src/engine/permissions/types/record
 export type RecordReadCustomPermissionRecordsInput = {
   records: ObjectRecord[];
   authContext: WorkspaceAuthContext;
-  permissionsPrincipals: PermissionsPrincipalsWithRolesContext | undefined;
   recordReadRestrictions: RecordReadRestrictions;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
