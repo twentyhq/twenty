@@ -881,6 +881,7 @@ const createSettingsRouteElements = ({
             key={legacyAccountsPath}
             path={legacyAccountsPath}
             element={<SettingsLegacyAccountsRedirect />}
+            handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
           />
         ),
       )}
@@ -1022,29 +1023,17 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.Partner}
         element={<SettingsPartner />}
-        handle={buildSettingsSearchRouteHandle({
-          settingsSearch: { title: msg`Partner`, section: WORKSPACE_SECTION },
-        })}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
       />
       <Route
         path={SettingsPath.Subdomain}
         element={<SettingsSubdomainPage />}
-        handle={buildSettingsSearchRouteHandle({
-          settingsSearch: {
-            title: msg`Subdomain`,
-            parentPath: SettingsPath.General,
-          },
-        })}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
       />
       <Route
         path={SettingsPath.CustomDomain}
         element={<SettingsCustomDomainPage />}
-        handle={buildSettingsSearchRouteHandle({
-          settingsSearch: {
-            title: msg`Custom Domain`,
-            parentPath: SettingsPath.General,
-          },
-        })}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
       />
       <Route
         path={SettingsPath.ApplicationPublicDomainNew}
@@ -1057,13 +1046,7 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.LegalDpa}
         element={<SettingsLegalDpa />}
-        handle={buildSettingsSearchRouteHandle({
-          settingsSearch: {
-            title: msg`Data Processing Agreement`,
-            section: WORKSPACE_SECTION,
-            keywords: [msg`Legal`],
-          },
-        })}
+        handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
       />
       <Route
         path={SettingsPath.LegalDpaNew}
@@ -1279,7 +1262,10 @@ const createSettingsRouteElements = ({
     >
       <Route
         path={SettingsPath.Roles}
-        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
+        handle={buildSettingsSearchRouteHandle({
+          handle: MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE,
+          settingsSearch: false,
+        })}
         element={
           <Navigate
             to={`/settings/${SettingsPath.WorkspaceMembersPage}#roles`}
@@ -1318,6 +1304,7 @@ const createSettingsRouteElements = ({
           key={suffix}
           path={`${LEGACY_DEVELOPERS_SETTINGS_PATH_PREFIX}${suffix}`}
           element={<LegacySettingsPathRedirect to={to} />}
+          handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
         />
       ))}
       <Route
@@ -1479,6 +1466,7 @@ const createSettingsRouteElements = ({
     <Route
       path="security"
       element={<Navigate to={getSettingsPath(SettingsPath.Security)} replace />}
+      handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
     />
 
     <Route
@@ -1511,6 +1499,7 @@ const createSettingsRouteElements = ({
         />
         <Route
           path={SettingsPath.Enterprise}
+          handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
           element={
             <Navigate
               to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
@@ -1521,32 +1510,17 @@ const createSettingsRouteElements = ({
         <Route
           path={SettingsPath.AdminPanelInferredVersion}
           element={<SettingsAdminInferredVersion />}
-          handle={buildSettingsSearchRouteHandle({
-            settingsSearch: {
-              title: msg`Inferred version`,
-              parentPath: SettingsPath.AdminPanel,
-            },
-          })}
+          handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
         />
         <Route
           path={SettingsPath.AdminPanelInstanceStatus}
           element={<SettingsAdminInstanceStatus />}
-          handle={buildSettingsSearchRouteHandle({
-            settingsSearch: {
-              title: msg`Instance status`,
-              parentPath: SettingsPath.AdminPanel,
-            },
-          })}
+          handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
         />
         <Route
           path={SettingsPath.AdminPanelWorkspacesStatus}
           element={<SettingsAdminWorkspacesStatus />}
-          handle={buildSettingsSearchRouteHandle({
-            settingsSearch: {
-              title: msg`Workspaces status`,
-              parentPath: SettingsPath.AdminPanel,
-            },
-          })}
+          handle={EXCLUDED_FROM_SETTINGS_SEARCH_ROUTE_HANDLE}
         />
         <Route
           path={SettingsPath.AdminPanelIndicatorHealthStatus}
