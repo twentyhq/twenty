@@ -94,7 +94,11 @@ const resolveObjectRecordsAccess = ({
   >;
   roleDefinition: RoleDefinitionForRecordsPermissions;
 }): ObjectRecordsAccess => {
-  const { isPermissionFlagGranted, objectPermissions } = roleDefinition;
+  const {
+    isPermissionFlagGranted,
+    objectPermissions,
+    areSystemObjectsReadableByDefault = false,
+  } = roleDefinition;
 
   if (
     WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.includes(universalIdentifier)
@@ -127,7 +131,7 @@ const resolveObjectRecordsAccess = ({
     canRead:
       objectPermissionOverride?.canReadObjectRecords ??
       (roleDefinition.canReadAllObjectRecords ||
-        (isSystem && roleDefinition.areSystemObjectsReadableByDefault === true)),
+        (isSystem && areSystemObjectsReadableByDefault)),
     canUpdate:
       objectPermissionOverride?.canUpdateObjectRecords ??
       roleDefinition.canUpdateAllObjectRecords,
