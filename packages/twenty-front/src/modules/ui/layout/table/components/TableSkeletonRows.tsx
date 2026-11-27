@@ -1,5 +1,6 @@
 import { css } from '@linaria/core';
 import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -16,7 +17,7 @@ type TableSkeletonRowsProps = {
   rowCount?: number;
 };
 
-// columnCount can stay below the grid's column count so trailing icon columns get no bar
+// mirrors RecordTableCellLoading; columnCount below the grid's column count leaves trailing icon columns empty
 export const TableSkeletonRows = ({
   gridTemplateColumns,
   columnCount,
@@ -29,6 +30,8 @@ export const TableSkeletonRows = ({
           <TableCell key={columnIndex}>
             <SkeletonLine
               height={SKELETON_HEIGHT_SIZES.s}
+              borderRadius={themeCssVariables.border.radius.sm}
+              animated={false}
               containerClassName={skeletonLineContainerClassName}
             />
           </TableCell>
