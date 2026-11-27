@@ -10,6 +10,7 @@ import {
   AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
   AGENT_CHAT_ASSISTANT_NAME,
   AgentChatThreadConversationType,
+  type ExtendedUIMessage,
 } from 'twenty-shared/ai';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 
@@ -92,6 +93,14 @@ const DRAFT_MENTIONING_COMPANY =
     label: 'Acme',
   });
 
+const BRIEF_ATTACHMENT = {
+  type: 'file' as const,
+  fileId: 'file-id',
+  filename: 'brief.pdf',
+  mediaType: 'application/pdf',
+  url: 'https://example.com/brief.pdf',
+};
+
 type SendChatMessageOutcome = 'sent' | 'replying' | 'failed';
 
 const buildSendChatMessageMock = (
@@ -120,6 +129,41 @@ const buildSendChatMessageMock = (
           },
         },
       }),
+});
+
+const PENDING_APPROVAL_PROPOSAL = {
+  toolName: 'update_record',
+  toolLabel: 'Update Record',
+  summary: 'Rename SAS',
+  arguments: { name: 'SAS Group' },
+  template: 'generic' as const,
+};
+
+const buildPendingApprovalMessage = ({
+  messageId,
+  toolCallId,
+}: {
+  messageId: string;
+  toolCallId: string;
+}): ExtendedUIMessage => ({
+  id: messageId,
+  role: 'assistant',
+  parts: [
+    {
+      type: 'tool-propose_tool_call',
+      toolCallId,
+      state: 'output-available',
+      input: {
+        toolName: PENDING_APPROVAL_PROPOSAL.toolName,
+        arguments: PENDING_APPROVAL_PROPOSAL.arguments,
+        summary: PENDING_APPROVAL_PROPOSAL.summary,
+      },
+      output: {
+        success: true,
+        result: { status: 'pending', proposal: PENDING_APPROVAL_PROPOSAL },
+      },
+    },
+  ],
 });
 
 const OPEN_DIRECT_MESSAGE_MOCK: MockedResponse = {
@@ -813,7 +857,77 @@ describe('useSendAiChatMessage', () => {
     expect(readPersistedDrafts()[DIRECT_MESSAGE_THREAD_ID]).toContain('Hello');
   });
 
-  it('keeps a new chat to one person as a draft while it has attachments', async () => {
+  it('sends attachments in a direct message', async () => {
+    const result = renderAiChat({
+      persistedDrafts: {
+        [DIRECT_MESSAGE_THREAD_ID]:
+          serializePlainTextAsAdvancedTextEditorDocument('See attached'),
+      },
+      sendChatMessageOutcomes: ['sent'],
+      isAiChatInboxEnabled: true,
+      isDirectMessage: true,
+    });
+    const attachmentsAtom = aiChatComposerAttachmentsFamilyState.atomFamily({
+      threadId: DIRECT_MESSAGE_THREAD_ID,
+    });
+
+    jotaiStore.set(attachmentsAtom, [BRIEF_ATTACHMENT]);
+
+    await send(result);
+
+    expect(sentMessageVariables).toHaveBeenCalledWith(
+      expect.objectContaining({
+        threadId: DIRECT_MESSAGE_THREAD_ID,
+        fileAttachments: [{ id: 'file-id', filename: 'brief.pdf' }],
+      }),
+    );
+    expect(jotaiStore.get(attachmentsAtom)).toEqual([]);
+  });
+
+  it('sends the attachments of a new chat to one person in the direct message it opens, leaving files staged there', async () => {
+    const result = renderAiChat({
+      persistedDrafts: {
+        [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
+      },
+      sendChatMessageOutcomes: ['sent'],
+      isAiChatInboxEnabled: true,
+      isDirectMessageIdentityEnabled: true,
+      newThreadRecipients: {
+        channelId: null,
+        isAssistantParticipant: false,
+        recipientWorkspaceMemberIds: [RECIPIENT_ID],
+      },
+    });
+    const newChatAttachmentsAtom =
+      aiChatComposerAttachmentsFamilyState.atomFamily({ threadId: THREAD_ID });
+    const directMessageAttachmentsAtom =
+      aiChatComposerAttachmentsFamilyState.atomFamily({
+        threadId: DIRECT_MESSAGE_THREAD_ID,
+      });
+    const stagedAttachment = {
+      ...BRIEF_ATTACHMENT,
+      fileId: 'staged-file-id',
+      filename: 'staged.pdf',
+    };
+
+    jotaiStore.set(newChatAttachmentsAtom, [BRIEF_ATTACHMENT]);
+    jotaiStore.set(directMessageAttachmentsAtom, [stagedAttachment]);
+
+    await send(result);
+
+    expect(sentMessageVariables).toHaveBeenCalledWith(
+      expect.objectContaining({
+        threadId: DIRECT_MESSAGE_THREAD_ID,
+        fileAttachments: [{ id: 'file-id', filename: 'brief.pdf' }],
+      }),
+    );
+    expect(jotaiStore.get(newChatAttachmentsAtom)).toEqual([]);
+    expect(jotaiStore.get(directMessageAttachmentsAtom)).toEqual([
+      stagedAttachment,
+    ]);
+  });
+
+  it('keeps a new chat to one person as a draft while its attachments upload', async () => {
     const draft = serializePlainTextAsAdvancedTextEditorDocument('Hello');
     const result = renderAiChat({
       persistedDrafts: { [THREAD_ID]: draft },
@@ -827,26 +941,16 @@ describe('useSendAiChatMessage', () => {
       },
     });
     const mutate = jest.spyOn(result.current.apolloClient, 'mutate');
+    const uploadingFilesAtom =
+      aiChatComposerUploadingFilesFamilyState.atomFamily({
+        threadId: THREAD_ID,
+      });
 
-    jotaiStore.set(
-      aiChatComposerAttachmentsFamilyState.atomFamily({ threadId: THREAD_ID }),
-      [
-        {
-          type: 'file',
-          fileId: 'file-id',
-          filename: 'brief.pdf',
-          mediaType: 'application/pdf',
-          url: 'https://example.com/brief.pdf',
-        },
-      ],
-    );
+    jotaiStore.set(uploadingFilesAtom, [new File(['brief'], 'brief.pdf')]);
 
     await send(result);
 
-    jotaiStore.set(
-      aiChatComposerAttachmentsFamilyState.atomFamily({ threadId: THREAD_ID }),
-      [],
-    );
+    jotaiStore.set(uploadingFilesAtom, []);
 
     expect(mutate).not.toHaveBeenCalled();
     expect(readPersistedDrafts()).toEqual({ [THREAD_ID]: draft });
@@ -1177,6 +1281,90 @@ describe('useSendAiChatMessage', () => {
     });
 
     expect(sentMessageVariables).toHaveBeenCalledTimes(2);
+  });
+
+  it.each([
+    {
+      name: 'cancels a pending approval once the message starts a reply',
+      outcome: 'replying' as const,
+      status: 'skipped',
+    },
+    {
+      name: 'keeps a pending approval when the message is not for the assistant',
+      outcome: 'sent' as const,
+      status: 'pending',
+    },
+  ])('$name', async ({ outcome, status }) => {
+    const result = renderAiChat({
+      persistedDrafts: {
+        [EXISTING_THREAD_ID]:
+          serializePlainTextAsAdvancedTextEditorDocument('Never mind'),
+      },
+      sendChatMessageOutcomes: [outcome],
+      currentThreadId: EXISTING_THREAD_ID,
+    });
+    const messagesAtom = aiChatThreadDisplayedMessagesFamilyState.atomFamily({
+      threadId: EXISTING_THREAD_ID,
+    });
+
+    act(() => {
+      jotaiStore.set(messagesAtom, [
+        buildPendingApprovalMessage({
+          messageId: 'assistant-message',
+          toolCallId: 'approval-call',
+        }),
+      ]);
+    });
+
+    await send(result);
+
+    expect(jotaiStore.get(messagesAtom)[0].parts[0]).toMatchObject({
+      output: { result: { status, proposal: PENDING_APPROVAL_PROPOSAL } },
+    });
+  });
+
+  it('keeps an approval the reply proposes while the message is still sending', async () => {
+    const result = renderAiChat({
+      persistedDrafts: {
+        [EXISTING_THREAD_ID]:
+          serializePlainTextAsAdvancedTextEditorDocument('Never mind'),
+      },
+      sendChatMessageOutcomes: ['replying'],
+      currentThreadId: EXISTING_THREAD_ID,
+    });
+    const messagesAtom = aiChatThreadDisplayedMessagesFamilyState.atomFamily({
+      threadId: EXISTING_THREAD_ID,
+    });
+
+    act(() => {
+      jotaiStore.set(messagesAtom, [
+        buildPendingApprovalMessage({
+          messageId: 'assistant-message',
+          toolCallId: 'approval-call',
+        }),
+      ]);
+    });
+    sentMessageVariables.mockImplementationOnce(() =>
+      jotaiStore.set(messagesAtom, (messages) => [
+        ...messages,
+        buildPendingApprovalMessage({
+          messageId: 'reply-message',
+          toolCallId: 'reply-approval-call',
+        }),
+      ]),
+    );
+
+    await send(result);
+
+    const messages = jotaiStore.get(messagesAtom);
+
+    expect(messages[0].parts[0]).toMatchObject({
+      output: { result: { status: 'skipped' } },
+    });
+    expect(messages.at(-1)?.parts[0]).toMatchObject({
+      toolCallId: 'reply-approval-call',
+      output: { result: { status: 'pending' } },
+    });
   });
 
   it('files a new chat into the channel it was started in, then forgets that channel', async () => {

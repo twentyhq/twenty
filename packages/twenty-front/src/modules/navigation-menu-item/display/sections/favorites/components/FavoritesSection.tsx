@@ -9,6 +9,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
 import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections';
+import { FAVORITES_NAVIGATION_SECTION_ID } from '@/navigation-menu-item/display/sections/favorites/constants/FavoritesNavigationSectionId';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemDragContext';
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
@@ -24,7 +25,6 @@ import { NavigationMenuItemSection } from '@/navigation-menu-item/display/sectio
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { doNotTranslate } from 'twenty-shared/i18n';
 
 const StyledList = styled.div`
   display: flex;
@@ -51,10 +51,10 @@ export const FavoritesSection = () => {
   const { t } = useLingui();
 
   const { toggleNavigationSection, openNavigationSection } =
-    useNavigationSection(doNotTranslate('Favorites'));
+    useNavigationSection(FAVORITES_NAVIGATION_SECTION_ID);
   const isNavigationSectionOpen = useAtomFamilyStateValue(
     isNavigationSectionOpenFamilyState,
-    doNotTranslate('Favorites'),
+    FAVORITES_NAVIGATION_SECTION_ID,
   );
 
   const allTopLevelItems = useMemo(

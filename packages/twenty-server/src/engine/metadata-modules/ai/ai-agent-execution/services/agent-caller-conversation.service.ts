@@ -148,7 +148,7 @@ export class AgentCallerConversationService {
   }: {
     workspaceId: string;
     sender: AgentInboxSender;
-    message: Omit<SendInboxMessageInput, 'toolCall'>;
+    message: Omit<SendInboxMessageInput, 'toolCall' | 'toolCalls'>;
     // where the message goes when its recipient cannot join the conversation its key names
     fallbackThreadKey: string;
     awaitedToolCall?: AgentCallerAwaitedToolCall;
@@ -314,10 +314,17 @@ export class AgentCallerConversationService {
       );
     }
 
+    const { result, ...pendingOutput } = buildProposeToolCallPendingOutput(
+      resolution.proposal,
+    );
+
     return {
       toolName: PROPOSE_TOOL_CALL_TOOL_NAME,
       input,
-      output: buildProposeToolCallPendingOutput(resolution.proposal),
+      output: {
+        ...pendingOutput,
+        result: { ...result, isPostedByWorkflow: true },
+      },
     };
   }
 }

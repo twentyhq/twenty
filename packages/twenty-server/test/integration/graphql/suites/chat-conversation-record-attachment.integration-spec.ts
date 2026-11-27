@@ -56,7 +56,7 @@ describe('Attaching a conversation to a record from a chat turn', () => {
     message = await chat.addMessage({
       workspaceId,
       threadId,
-      userWorkspaceId,
+      workspaceMemberId,
       uiMessage: {
         role: AgentMessageRole.USER,
         parts: [{ type: 'text', text: 'Prepare the renewal call' }],

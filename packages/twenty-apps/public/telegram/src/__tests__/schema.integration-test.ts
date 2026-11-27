@@ -16,6 +16,8 @@ describe('App installation', () => {
         'telegram-updates-resolver',
         'telegram-update-handler',
         'telegram-late-answer',
+        'telegram-health-check',
+        'telegram-post-install',
         'telegram-start-user-link',
         'telegram-remove-user-link',
         'telegram-uninstall',

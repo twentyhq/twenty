@@ -8,6 +8,7 @@ import {
 } from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { ToolCategory } from 'twenty-shared/ai';
+import { WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL } from 'src/engine/core-modules/application/constants/workspace-custom-application-role.constant';
 
 const ROLE_TOOL_NAMES = [
   'list_roles',
@@ -146,16 +147,16 @@ describe('MCP role tools (integration)', () => {
   });
 
   it('should refuse row-level rules on a non-editable role', async () => {
-    const adminRole = (await listRolesThroughMcp()).find(
-      ({ label }) => label === 'Admin',
+    const nonEditableRole = (await listRolesThroughMcp()).find(
+      ({ label }) => label === WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL,
     );
 
-    jestExpectToBeDefined(adminRole);
+    jestExpectToBeDefined(nonEditableRole);
 
     const refused = await executeToolThroughMcp({
       toolName: 'upsert_row_level_permission_rules',
       toolArguments: {
-        roleId: adminRole.id,
+        roleId: nonEditableRole.id,
         objectMetadataId: await findObjectMetadataIdByName('company'),
         rules: [{ predicateGroups: [{ logicalOperator: 'AND' }] }],
       },
@@ -176,7 +177,7 @@ describe('MCP role tools (integration)', () => {
     });
 
     expect(
-      rolesWithRules.result?.roles.find(({ id }) => id === adminRole.id)
+      rolesWithRules.result?.roles.find(({ id }) => id === nonEditableRole.id)
         ?.rowLevelPermissionPredicateGroups,
     ).toEqual([]);
   });

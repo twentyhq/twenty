@@ -73,25 +73,13 @@ describe('seeded workflow pending input', () => {
         }),
         update: jest.fn().mockResolvedValue(1),
       };
-      const writer = new AgentConversationWriterService(
-        {
-          run: async ({
-            work,
-          }: {
-            work: (scope: AgentHistoryTransactionScope) => Promise<unknown>;
-          }) => work(scope as never),
-        } as never,
-        {
-          getOrRecompute: jest.fn().mockResolvedValue({
-            flatWorkspaceMemberMaps: {
-              idByUserWorkspaceId: {
-                [timUserWorkspaceId]: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
-                [philUserWorkspaceId]: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
-              },
-            },
-          }),
-        } as never,
-      );
+      const writer = new AgentConversationWriterService({
+        run: async ({
+          work,
+        }: {
+          work: (scope: AgentHistoryTransactionScope) => Promise<unknown>;
+        }) => work(scope as never),
+      } as never);
       const conversationService = new AgentRunConversationService(
         {} as never,
         writer,
@@ -118,7 +106,6 @@ describe('seeded workflow pending input', () => {
         } as never,
         { insert: jest.fn() } as never,
         { insert: jest.fn() } as never,
-        userAuthContextService as never,
       );
 
       await seeder.seed({ workspaceId, applicationId: 'application-id' });

@@ -213,9 +213,7 @@ export const NavigationMenuItemFolderDnd = ({
       onEdit={favoritesEdit.startEditing}
       onDelete={favoritesEdit.handleFolderDelete}
     />
-  ) : (
-    <NavigationMenuItemFolderChevron isOpen={isOpen} />
-  );
+  ) : undefined;
 
   const header = (
     <NavigationDrawerItem
@@ -229,6 +227,20 @@ export const NavigationMenuItemFolderDnd = ({
         isWorkspace && isFolderEditHighlighted && !isExpanded
       }
       onClick={handleHeaderClick}
+      aria-expanded={shouldUseEditModeClick ? undefined : isOpen}
+      trailingIcon={
+        shouldUseEditModeClick ? (
+          <NavigationMenuItemFolderChevronButton
+            isOpen={isOpen}
+            onClick={(event) => {
+              event.stopPropagation();
+              handleToggle();
+            }}
+          />
+        ) : (
+          <NavigationMenuItemFolderChevron isOpen={isOpen} />
+        )
+      }
       rightOptions={shouldUseEditModeClick ? undefined : headerRightOptions}
       className="navigation-drawer-item"
       isRightOptionsDropdownOpen={
@@ -325,21 +337,7 @@ export const NavigationMenuItemFolderDnd = ({
       >
         <NavigationMenuItemFolderLayout
           header={
-            <NavigationMenuItemEditable
-              item={item}
-              rightOptions={
-                shouldUseEditModeClick &&
-                isExpanded && (
-                  <NavigationMenuItemFolderChevronButton
-                    isOpen={isOpen}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      handleToggle();
-                    }}
-                  />
-                )
-              }
-            >
+            <NavigationMenuItemEditable item={item}>
               {wrappedHeader}
             </NavigationMenuItemEditable>
           }

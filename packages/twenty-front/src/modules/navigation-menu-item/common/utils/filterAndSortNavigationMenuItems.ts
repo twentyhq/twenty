@@ -1,6 +1,10 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type View } from '@/views/types/View';
 import {
+  INBOX_OBJECT_NAMES_BY_LEGACY_NAME,
+  LEGACY_INBOX_OBJECT_NAMES_BY_LEGACY_NAME,
+} from 'twenty-shared/ai';
+import {
   StandardObjectNameSingular,
   NavigationMenuItemType,
 } from 'twenty-shared/types';
@@ -21,7 +25,9 @@ export const filterAndSortNavigationMenuItems = (
 
   // Chat favorites are listed in the chat menu instead
   const hiddenRecordObjectNames: string[] = [
-    StandardObjectNameSingular.AgentChatThread,
+    // TODO(@bosiraphael): remove the legacy name with IS_INBOX_OBJECT_NAMING_ENABLED
+    LEGACY_INBOX_OBJECT_NAMES_BY_LEGACY_NAME.agentChatThread,
+    INBOX_OBJECT_NAMES_BY_LEGACY_NAME.agentChatThread,
     StandardObjectNameSingular.Workflow,
   ];
 

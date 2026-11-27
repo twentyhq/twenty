@@ -115,6 +115,7 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       nativePageKey: createNavigationMenuItemInput.nativePageKey ?? null,
       builtInSectionKey:
         createNavigationMenuItemInput.builtInSectionKey ?? null,
+      visibleItemLimit: createNavigationMenuItemInput.visibleItemLimit ?? null,
       icon: createNavigationMenuItemInput.icon ?? null,
       color: createNavigationMenuItemInput.color ?? null,
       position,

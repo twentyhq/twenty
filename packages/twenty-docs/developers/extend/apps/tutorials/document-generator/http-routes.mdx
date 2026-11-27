@@ -133,6 +133,11 @@ sanitized) and drops it into a clean, printable page that shows just the templat
 content — the same look as the PDF and the in-app preview.
 [See the helper](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/render-document.ts).
 
+The page is served with a sandbox policy unless it comes from a custom domain of
+your application: it can run scripts and follow links, but cannot use cookies or
+storage. A static page like this one is not affected. See
+[where route pages run](/developers/extend/apps/logic/logic-functions#where-route-pages-run).
+
 ## Try it
 
 With a template and a Person in your workspace, call the route (grab a token from

@@ -5,6 +5,7 @@ import {
   StandardObjectNameSingular,
 } from 'twenty-shared/types';
 
+import { inboxNamesByLegacyNameSelector } from '@/ai-chat/states/selectors/inboxNamesByLegacyNameSelector';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
@@ -40,6 +41,9 @@ jest.mock(
   }),
 );
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue');
+jest.mock('@/ai-chat/states/selectors/inboxNamesByLegacyNameSelector', () => ({
+  inboxNamesByLegacyNameSelector: {},
+}));
 jest.mock('@/auth/states/currentWorkspaceState', () => ({
   currentWorkspaceState: {},
 }));
@@ -133,6 +137,10 @@ const renderWorkflowCommands = ({
   jest.mocked(useAtomStateValue).mockImplementation((state) => {
     if (state === commandMenuItemsSelector) {
       return COMMANDS;
+    }
+
+    if (state === inboxNamesByLegacyNameSelector) {
+      return { agentChatThread: 'agentChatThread' };
     }
 
     return state === currentWorkspaceState ? CURRENT_WORKSPACE : null;

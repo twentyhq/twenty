@@ -46,7 +46,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestResolver {
           @Query()
-          @UseGuards(AccessPolicyGuard({ authPrincipals: { userSession: { standard: true, impersonated: false, playground: true, workspaceAgnostic: false }, apiKey: false, oauthClient: { withUser: true, withoutUser: false }, application: { withUser: true, withoutUser: false } }, requiredPermissionFlags: [], requiredFeatureFlags: [FeatureFlagKey.IS_GETTING_STARTED_ENABLED] }))
+          @UseGuards(AccessPolicyGuard({ authPrincipals: { userSession: { standard: true, impersonated: false, playground: true, workspaceAgnostic: false }, apiKey: false, oauthClient: { withUser: true, withoutUser: false }, application: { withUser: true, withoutUser: false } }, requiredPermissionFlags: [], requiredFeatureFlags: [FeatureFlagKey.IS_MCP_SERVERS_ENABLED] }))
           testQuery() {}
         }
       `,

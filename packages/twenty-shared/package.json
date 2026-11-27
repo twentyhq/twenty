@@ -120,6 +120,14 @@
       },
       "require": "./dist/database-events/index.cjs"
     },
+    "./expression": {
+      "types": "./dist/expression/index.d.ts",
+      "import": {
+        "development": "./dist/dev/expression/index.mjs",
+        "default": "./dist/expression/index.mjs"
+      },
+      "require": "./dist/expression/index.cjs"
+    },
     "./front-component-build": {
       "types": "./dist/front-component-build/index.d.ts",
       "import": {
@@ -241,6 +249,7 @@
     "conditional-evaluation",
     "constants",
     "database-events",
+    "expression",
     "front-component-build",
     "i18n",
     "logic-function",
@@ -275,6 +284,9 @@
       ],
       "database-events": [
         "dist/database-events/index.d.ts"
+      ],
+      "expression": [
+        "dist/expression/index.d.ts"
       ],
       "front-component-build": [
         "dist/front-component-build/index.d.ts"

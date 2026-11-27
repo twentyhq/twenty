@@ -1110,7 +1110,7 @@ describe('core workflow visibility (e2e)', () => {
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         threadId,
         agentId: null,
-        senderUserWorkspaceId: null,
+        senderWorkspaceMemberId: null,
         senderApplicationId: null,
         messages: [{ role: 'user', content: 'Summarize the lead' }],
         createdBy: await conversationService.findTurnCreatedBy({

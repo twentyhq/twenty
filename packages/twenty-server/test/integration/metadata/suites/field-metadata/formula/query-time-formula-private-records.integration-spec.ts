@@ -1,14 +1,13 @@
 import { randomUUID } from 'node:crypto';
 
-import { parse } from 'graphql';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { setRecordPrivate } from 'test/integration/metadata/suites/private-record/utils/set-record-private.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
 
@@ -16,9 +15,6 @@ const OBJECT_NAME = 'privateFormulaRecord';
 const OBJECT_PLURAL = 'privateFormulaRecords';
 const PUBLIC_RECORD_ID = randomUUID();
 const PRIVATE_RECORD_ID = randomUUID();
-const SET_PRIVATE = parse(
-  `mutation SetPrivate($target: RecordTargetInput!, $isPrivate: Boolean!) { setRecordPrivate(target: $target, isPrivate: $isPrivate) { isPrivate } }`,
-);
 
 describe('Query-time formula on an object with private records', () => {
   let objectMetadataId: string;
@@ -69,7 +65,7 @@ describe('Query-time formula on an object with private records', () => {
         type: FieldMetadataType.NUMBER,
         objectMetadataId,
         isLabelSyncedWithName: false,
-        settings: { formula: { expression: '1' } },
+        formula: { expression: '1' },
       },
     });
 
@@ -85,12 +81,10 @@ describe('Query-time formula on an object with private records', () => {
       expect(created.body.errors).toBeUndefined();
     }
 
-    const privateRecord = await makeMetadataApiRequest({
-      query: SET_PRIVATE,
-      variables: {
-        target: { objectMetadataId, recordId: PRIVATE_RECORD_ID },
-        isPrivate: true,
-      },
+    const privateRecord = await setRecordPrivate({
+      objectMetadataId,
+      recordId: PRIVATE_RECORD_ID,
+      isPrivate: true,
     });
 
     expect(privateRecord.body.errors).toBeUndefined();

@@ -813,7 +813,7 @@ export default defineFrontComponent({
 
 Componenta se montează imediat ce agentul a terminat transmiterea în flux a argumentelor sale, astfel încât gestionează întregul apel, nu doar rezultatul. `toolCall.status` trece prin `input-available`, stările de aprobare atunci când instrumentul are nevoie de aprobare, apoi prin `output-available`, `output-denied` sau `output-error`; `input` este ceea ce a propus agentul, iar `output` este ceea ce a returnat handlerul dvs. Afișați fiecare stare care vă interesează, deoarece rândul de pași nu mai este disponibil pentru a le acoperi.
 
-Când agentul propune un apel care așteaptă aprobarea unei persoane, cardul de aprobare afișează aceeași componentă în locul argumentelor JSON brute. Cardul își păstrează antetul, **Respinge**, **Aprobă** și feedbackul. Cât timp `toolCall.status` este `approval-requested`, `input` conține argumentele pe care le va trimite **Aprobă**, iar componenta le poate modifica folosind `setToolCallArguments`:
+Când agentul propune un apel care așteaptă aprobarea unei persoane, cardul de aprobare afișează aceeași componentă în locul argumentelor JSON brute. Cardul își păstrează antetul, **Respinge** și **Aprobă**. Cât timp `toolCall.status` este `approval-requested`, `input` conține argumentele pe care le va trimite **Aprobă**, iar componenta le poate modifica folosind `setToolCallArguments`:
 
 ```tsx
 import { setToolCallArguments, useToolCall } from 'twenty-sdk/front-component';
