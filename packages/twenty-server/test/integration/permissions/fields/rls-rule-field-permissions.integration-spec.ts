@@ -604,7 +604,9 @@ describe('field permissions on an RLS rule (integration)', () => {
     };
     const setShareResponse = await makeMetadataApiRequest(
       setRecordShareOperationFactory({
-        ...share,
+        objectMetadataId: share.objectMetadataId,
+        recordId: share.recordId,
+        principal: { workspaceMemberId: share.workspaceMemberId },
         accessLevel: RecordShareAccessLevel.READ,
       }),
     );
