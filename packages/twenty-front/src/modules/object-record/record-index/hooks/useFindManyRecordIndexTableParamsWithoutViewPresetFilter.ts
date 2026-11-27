@@ -9,6 +9,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { useCurrentRecordGroupDefinition } from '@/object-record/record-group/hooks/useCurrentRecordGroupDefinition';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
 import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
+import { recordIndexFallbackOrderByComponentState } from '@/object-record/record-index/states/recordIndexFallbackOrderByComponentState';
 import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -46,6 +47,11 @@ export const useFindManyRecordIndexTableParamsWithoutViewPresetFilter = ({
 
   const currentRecordSorts = useAtomComponentStateValue(
     currentRecordSortsComponentState,
+    instanceId,
+  );
+
+  const recordIndexFallbackOrderBy = useAtomComponentStateValue(
+    recordIndexFallbackOrderByComponentState,
     instanceId,
   );
 
@@ -88,11 +94,16 @@ export const useFindManyRecordIndexTableParamsWithoutViewPresetFilter = ({
       filterValue: anyFieldFilterValue,
     });
 
-  const orderBy = turnSortsIntoOrderBy(
+  const sortsOrderBy = turnSortsIntoOrderBy(
     objectMetadataItem,
     currentRecordSorts,
     objectMetadataItems,
   );
+
+  const orderBy =
+    currentRecordSorts.length > 0
+      ? sortsOrderBy
+      : [...recordIndexFallbackOrderBy, ...sortsOrderBy];
 
   const combinedFilter = combineFilters([
     currentFilters,
