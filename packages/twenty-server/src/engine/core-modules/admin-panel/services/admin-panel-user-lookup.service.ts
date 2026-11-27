@@ -5,7 +5,6 @@ import { msg } from '@lingui/core/macro';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 
 import { type UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.dto';
 import {
@@ -20,6 +19,7 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/role/constants/admin-role-universal-identifier.constant';
 import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';

@@ -10,10 +10,7 @@ import {
 } from 'test/integration/metadata/suites/application/utils/setup-application-with-variable.util';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
-import {
-  ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
-  SystemPermissionFlag,
-} from 'twenty-shared/constants';
+import { SystemPermissionFlag } from 'twenty-shared/constants';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
@@ -22,6 +19,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
 import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/role/constants/admin-role-universal-identifier.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 type WorkspaceAccessSettings = {

@@ -15,10 +15,10 @@ import {
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
-import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 
 import { type BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/role/constants/admin-role-universal-identifier.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 jest.setTimeout(120000);

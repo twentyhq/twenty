@@ -4,9 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
-import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/role/constants/admin-role-universal-identifier.constant';
 import {
   PermissionsException,
   PermissionsExceptionCode,

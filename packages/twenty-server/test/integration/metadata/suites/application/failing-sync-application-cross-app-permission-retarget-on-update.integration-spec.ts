@@ -1,7 +1,4 @@
-import {
-  ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
-  SystemPermissionFlag,
-} from 'twenty-shared/constants';
+import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
@@ -9,6 +6,8 @@ import { buildBaseManifest } from 'test/integration/metadata/suites/application/
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/role/constants/admin-role-universal-identifier.constant';
 
 const TEST_APP_ID = 'a1b2c3d4-0020-4000-a000-000000000010';
 const TEST_ROLE_ID = 'a1b2c3d4-0020-4000-a000-000000000011';

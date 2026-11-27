@@ -4,7 +4,8 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
+
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/role/constants/admin-role-universal-identifier.constant';
 
 const TEST_APP_ID = 'a1b2c3d4-0001-4000-a000-000000000001';
 const TEST_ROLE_ID = 'a1b2c3d4-0002-4000-a000-000000000002';

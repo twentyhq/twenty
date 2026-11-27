@@ -1,8 +1,8 @@
-import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/role/constants/admin-role-universal-identifier.constant';
 
 export const buildWorkspaceCustomApplicationAdminFlatRole = ({
   workspaceId,

@@ -1,10 +1,10 @@
 import { type FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/role/constants/admin-role-universal-identifier.constant';
 import { CHANNEL_WRITE_ACCESS_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-write-access-object-universal-identifiers.constant';
 import { type TemporaryChannelWriteAccess } from 'src/engine/permissions/channel-visibility/types/temporary-channel-write-access.type';
 import { isAdminChannelWriteAccessRestored } from 'src/engine/permissions/channel-visibility/utils/is-admin-channel-write-access-restored.util';

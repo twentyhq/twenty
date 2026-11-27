@@ -5,7 +5,8 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
-import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
+
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/role/constants/admin-role-universal-identifier.constant';
 
 const TEST_APP_ID = 'a1b2c3d4-0030-4000-a000-000000000001';
 const TEST_ROLE_ID = 'a1b2c3d4-0030-4000-a000-000000000002';

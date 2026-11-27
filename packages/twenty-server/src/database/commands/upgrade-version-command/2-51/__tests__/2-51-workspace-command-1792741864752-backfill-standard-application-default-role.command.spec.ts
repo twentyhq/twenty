@@ -1,9 +1,9 @@
 import { Test } from '@nestjs/testing';
-import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { BackfillStandardApplicationDefaultRoleCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-workspace-command-1792741864752-backfill-standard-application-default-role.command';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/role/constants/admin-role-universal-identifier.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
