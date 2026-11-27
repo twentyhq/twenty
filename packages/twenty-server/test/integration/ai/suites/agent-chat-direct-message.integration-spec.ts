@@ -3,13 +3,16 @@ import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.
 import { randomUUID } from 'node:crypto';
 
 import gql from 'graphql-tag';
+import { configureChatParticipationModels } from 'test/integration/ai/utils/configure-chat-participation-models.util';
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { sendChatParticipationMessage } from 'test/integration/graphql/utils/send-chat-participation-message.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { FileFolder } from 'twenty-shared/types';
 
+import { type CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
@@ -484,6 +487,69 @@ describe('Private text direct messages', () => {
         );
       }
     } finally {
+      await fileRepository.delete({ id: fileId });
+    }
+  });
+
+  it('shows Ada an attachment she cannot read as a placeholder, without file tool instructions', async () => {
+    const models = configureChatParticipationModels();
+    const isCodeInterpreterEnabled = jest
+      .spyOn(
+        getAppProviderByClassName<CodeInterpreterService>(
+          'CodeInterpreterService',
+        ),
+        'isEnabled',
+      )
+      .mockReturnValue(true);
+    const threadId = await openDirectMessage();
+    const fileId = randomUUID();
+    const filename = 'pipeline.csv';
+    const fileRepository = getCoreRepository<FileEntity>(FileEntity);
+
+    await fileRepository.insert({
+      id: fileId,
+      workspaceId: context.workspaceId,
+      path: `${FileFolder.AgentChat}/${fileId}/${filename}`,
+      size: 0,
+      mimeType: 'text/csv',
+      status: FILE_STATUS.UPLOADED,
+    });
+
+    try {
+      const sent = await sendChatParticipationMessage({
+        threadId,
+        text: 'Can you summarize this?',
+        isAssistantMentioned: true,
+        attachments: [{ id: fileId, filename }],
+      });
+
+      expect(sent.body.errors).toBeUndefined();
+      expect(sent.body.data.sendChatMessage.streamId).toEqual(
+        expect.any(String),
+      );
+
+      await waitForAllJobsToFinish();
+
+      const prompts = models.languageModelCalls.map(({ prompt }) =>
+        JSON.stringify(prompt),
+      );
+
+      expect(
+        prompts.some((prompt) =>
+          prompt.includes(`${filename} (type: text/csv)`),
+        ),
+      ).toBe(true);
+      for (const prompt of prompts) {
+        expect(prompt).not.toContain(
+          'Use the code_interpreter tool to analyze these files',
+        );
+        expect(prompt).not.toContain(
+          'The user has uploaded the following files',
+        );
+      }
+    } finally {
+      isCodeInterpreterEnabled.mockRestore();
+      models.restore();
       await fileRepository.delete({ id: fileId });
     }
   });
