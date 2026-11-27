@@ -23,6 +23,7 @@ import { getCommandMenuItemSectionPreview } from '@/command-menu-item/utils/getC
 import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
 import { groupCommandMenuItemsBySection } from '@/command-menu-item/utils/groupCommandMenuItemsBySection';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { useContextStoreObjectMetadataItem } from '@/context-store/hooks/useContextStoreObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectsCommands } from '@/object-core/commands/components/CoreObjectsCommands';
 import { useCoreObjectsCommands } from '@/object-core/commands/hooks/useCoreObjectsCommands';
@@ -199,6 +200,9 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const isSettingsPage =
     commandMenuContextApi.pageType === ContextStorePageType.Settings;
 
+  const { objectMetadataItem: contextStoreObjectMetadataItem } =
+    useContextStoreObjectMetadataItem();
+
   const settingsSearchResults = useSettingsSearchResults({
     search: isInlineRecordSearchActive ? trimmedSidePanelSearch : '',
     excludedPaths: commandMenuItemsBySection.GO_TO.flatMap((item) =>
@@ -206,6 +210,10 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
         ? [item.payload.path]
         : [],
     ),
+    boostedObjectNamePlural:
+      commandMenuContextApi.pageType === ContextStorePageType.Index
+        ? contextStoreObjectMetadataItem?.namePlural
+        : undefined,
   });
 
   const settingsSearchItemIds = settingsSearchResults.map(({ id }) => id);

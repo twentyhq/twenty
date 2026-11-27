@@ -1,6 +1,6 @@
 import { type SettingsSearchDestination } from '@/settings/search/types/SettingsSearchDestination';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { getEditDistance } from 'twenty-shared/workflow';
 import { normalizeSearchText } from 'twenty-ui/utilities';
 
@@ -99,9 +99,11 @@ const getDestinationScore = ({
 export const searchSettingsDestinations = ({
   destinations,
   search,
+  boostedObjectNamePlural,
 }: {
   destinations: SettingsSearchDestination[];
   search: string;
+  boostedObjectNamePlural?: string;
 }): SettingsSearchDestination[] => {
   const searchWords = splitIntoWords([search]);
 
@@ -113,11 +115,15 @@ export const searchSettingsDestinations = ({
     .map((destination) => ({
       destination,
       score: getDestinationScore({ destination, searchWords }),
+      isBoosted:
+        isDefined(boostedObjectNamePlural) &&
+        destination.objectNamePlural === boostedObjectNamePlural,
     }))
     .filter(({ score }) => score > 0)
     .sort(
       (first, second) =>
         second.score - first.score ||
+        Number(second.isBoosted) - Number(first.isBoosted) ||
         first.destination.breadcrumbs.length -
           second.destination.breadcrumbs.length,
     )

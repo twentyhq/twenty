@@ -4,4 +4,5 @@ export type SettingsSearchDestination = {
   title: string;
   breadcrumbs: string[];
   keywords: string[];
+  objectNamePlural?: string;
 };

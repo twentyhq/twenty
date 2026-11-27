@@ -93,4 +93,45 @@ describe('searchSettingsDestinations', () => {
   it('requires every word to match', () => {
     expect(search('billing people')).toEqual([]);
   });
+
+  it("boosts the current object's settings", () => {
+    const translations = DESTINATIONS.filter(
+      ({ title }) => title === 'Translations',
+    ).map((destination) => ({
+      ...destination,
+      objectNamePlural: destination.breadcrumbs.at(-1)?.toLowerCase(),
+    }));
+
+    const searchTranslations = (boostedObjectNamePlural?: string) =>
+      searchSettingsDestinations({
+        destinations: translations,
+        search: 'translations',
+        boostedObjectNamePlural,
+      }).map(({ objectNamePlural }) => objectNamePlural);
+
+    expect(searchTranslations()).toEqual(['people', 'companies']);
+    expect(searchTranslations('companies')).toEqual(['companies', 'people']);
+  });
+
+  it('never ranks a boosted breadcrumb match above a better title match', () => {
+    expect(
+      searchSettingsDestinations({
+        destinations: [
+          {
+            ...createDestination({
+              title: 'Companies',
+              breadcrumbs: ['Workspace', 'Data model'],
+            }),
+            objectNamePlural: 'companies',
+          },
+          createDestination({
+            title: 'Data model',
+            breadcrumbs: ['Workspace'],
+          }),
+        ],
+        search: 'data model',
+        boostedObjectNamePlural: 'companies',
+      }).map(({ title }) => title),
+    ).toEqual(['Data model', 'Companies']);
+  });
 });

@@ -151,6 +151,7 @@ describe('getSettingsSearchDestinations', () => {
           title: 'Pets',
           breadcrumbs: ['Workspace', 'Data model'],
           keywords: ['Pet'],
+          objectNamePlural: 'pets',
         },
         {
           id: 'settings-search-/settings/objects/people/object-translations',
@@ -158,6 +159,7 @@ describe('getSettingsSearchDestinations', () => {
           title: 'Translations',
           breadcrumbs: ['Workspace', 'Data model', 'People'],
           keywords: ['Edit translations'],
+          objectNamePlural: 'people',
         },
       ]),
     );

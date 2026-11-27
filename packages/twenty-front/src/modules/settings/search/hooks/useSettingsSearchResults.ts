@@ -14,9 +14,11 @@ const MAX_SETTINGS_SEARCH_RESULTS = 6;
 export const useSettingsSearchResults = ({
   search,
   excludedPaths,
+  boostedObjectNamePlural,
 }: {
   search: string;
   excludedPaths: string[];
+  boostedObjectNamePlural?: string;
 }) => {
   const { i18n } = useLingui();
   const routeObjects = useWorkspaceRouteObjects();
@@ -54,5 +56,6 @@ export const useSettingsSearchResults = ({
       (destination) => !excludedPaths.includes(destination.path),
     ),
     search,
+    boostedObjectNamePlural,
   }).slice(0, MAX_SETTINGS_SEARCH_RESULTS);
 };
