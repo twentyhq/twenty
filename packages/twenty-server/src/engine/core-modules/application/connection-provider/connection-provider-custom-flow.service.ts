@@ -118,7 +118,7 @@ export class ConnectionProviderCustomFlowService {
       return { ...callbackResult, connectedAccountId: null };
     }
 
-    const { externalAccountId, handle, accessToken } =
+    const { externalAccountId, handle, name, accessToken } =
       connectedAccountFromCallback;
 
     const { connectedAccount, isRepeatReport } =
@@ -155,7 +155,7 @@ export class ConnectionProviderCustomFlowService {
               ? { accessToken, refreshToken: null, scopes: null }
               : undefined,
             handle,
-            identifiedAccount: { externalAccountId },
+            identifiedAccount: { externalAccountId, name },
             workspaceId: statePayload.workspaceId,
             userId: statePayload.userId,
             userWorkspaceId: statePayload.userWorkspaceId,

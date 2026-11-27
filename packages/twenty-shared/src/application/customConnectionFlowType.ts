@@ -21,6 +21,8 @@ export type ConnectionCallbackPayload = {
 export type ConnectedAccountFromCallback = {
   externalAccountId: string;
   handle?: string;
+  // Display name given to the connected account when it is created.
+  name?: string;
   accessToken?: string;
 };
 

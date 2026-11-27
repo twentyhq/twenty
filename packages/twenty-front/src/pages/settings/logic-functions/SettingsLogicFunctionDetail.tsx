@@ -1,3 +1,4 @@
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { useLogicFunctionForm } from '@/logic-functions/hooks/useLogicFunctionForm';
@@ -149,62 +150,63 @@ export const SettingsLogicFunctionDetail = () => {
     },
   ];
 
+  if (loading || applicationLoading) {
+    return <SettingsSkeletonLoader />;
+  }
+
   return (
-    !loading &&
-    !applicationLoading && (
-      <SettingsPageLayout
-        pageTitle={formValues.name}
-        title={
-          <SettingsLogicFunctionLabelContainer
-            value={formValues.name}
-            onChange={onChange('name')}
+    <SettingsPageLayout
+      pageTitle={formValues.name}
+      title={
+        <SettingsLogicFunctionLabelContainer
+          value={formValues.name}
+          onChange={onChange('name')}
+          readonly={isReadonly}
+        />
+      }
+      links={breadcrumbLinks}
+      secondaryBar={
+        <SettingsTabBar
+          aria-label={t`Function details`}
+          tabs={tabs}
+          componentInstanceId={instanceId}
+        />
+      }
+    >
+      <SettingsPageContainer>
+        {isEditorTab && (
+          <SettingsLogicFunctionCodeEditorTab
+            files={files}
+            handleExecute={handleTestFunction}
+            onChange={onChange('sourceHandlerCode')}
+            isTesting={isExecuting}
+            applicationVariableKeys={applicationVariableKeys}
+          />
+        )}
+        {isTriggersTab && (
+          <SettingsLogicFunctionTriggersTab
+            formValues={formValues}
+            onChange={onChange}
+            readonly={isReadonly}
+            applicationName={applicationName}
+          />
+        )}
+        {isSettingsTab && (
+          <SettingsLogicFunctionSettingsTab
+            formValues={formValues}
+            onChange={onChange}
             readonly={isReadonly}
           />
-        }
-        links={breadcrumbLinks}
-        secondaryBar={
-          <SettingsTabBar
-            aria-label={t`Function details`}
-            tabs={tabs}
-            componentInstanceId={instanceId}
+        )}
+        {isTestTab && (
+          <SettingsLogicFunctionTestTab
+            handleExecute={executeLogicFunction}
+            logicFunctionId={logicFunctionId}
+            formValues={formValues}
+            isTesting={isExecuting}
           />
-        }
-      >
-        <SettingsPageContainer>
-          {isEditorTab && (
-            <SettingsLogicFunctionCodeEditorTab
-              files={files}
-              handleExecute={handleTestFunction}
-              onChange={onChange('sourceHandlerCode')}
-              isTesting={isExecuting}
-              applicationVariableKeys={applicationVariableKeys}
-            />
-          )}
-          {isTriggersTab && (
-            <SettingsLogicFunctionTriggersTab
-              formValues={formValues}
-              onChange={onChange}
-              readonly={isReadonly}
-              applicationName={applicationName}
-            />
-          )}
-          {isSettingsTab && (
-            <SettingsLogicFunctionSettingsTab
-              formValues={formValues}
-              onChange={onChange}
-              readonly={isReadonly}
-            />
-          )}
-          {isTestTab && (
-            <SettingsLogicFunctionTestTab
-              handleExecute={executeLogicFunction}
-              logicFunctionId={logicFunctionId}
-              formValues={formValues}
-              isTesting={isExecuting}
-            />
-          )}
-        </SettingsPageContainer>
-      </SettingsPageLayout>
-    )
+        )}
+      </SettingsPageContainer>
+    </SettingsPageLayout>
   );
 };
