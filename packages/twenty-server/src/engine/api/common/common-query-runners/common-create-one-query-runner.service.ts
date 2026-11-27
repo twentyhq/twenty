@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
+
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -57,6 +59,9 @@ export class CommonCreateOneQueryRunnerService extends CommonRecordQueryRunnerSe
       throw new PermissionsException(
         'Record was created but the caller cannot read it',
         PermissionsExceptionCode.PERMISSION_DENIED,
+        {
+          userFriendlyMessage: msg`The record was created, but you do not have permission to see it.`,
+        },
       );
     }
 
