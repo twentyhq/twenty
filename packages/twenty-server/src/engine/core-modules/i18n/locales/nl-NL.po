@@ -1423,6 +1423,21 @@ msgstr "Er is een fout opgetreden met gegevens voor twee-factor-authenticatie."
 msgid "An error occurred."
 msgstr "Er is een fout opgetreden."
 
+#. js-lingui-id: tu7jLy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "An event property references an object that does not exist"
+msgstr ""
+
+#. js-lingui-id: o/4JpS
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "An event with this name already exists for this application"
+msgstr ""
+
+#. js-lingui-id: pb8I0K
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "An event with this name already exists for this application."
+msgstr ""
+
 #. js-lingui-id: CKXJCD
 #: src/engine/core-modules/record-export/__tests__/record-export-exception-filter.spec.ts
 #: src/engine/core-modules/record-export/services/record-export-query.service.ts
@@ -5512,6 +5527,31 @@ msgctxt "fieldMetadata.label"
 msgid "Event ID"
 msgstr "Evenement-ID"
 
+#. js-lingui-id: zccZhJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event label is required"
+msgstr ""
+
+#. js-lingui-id: WZZzB6
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event name is required"
+msgstr ""
+
+#. js-lingui-id: ElR3MZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event not found"
+msgstr ""
+
+#. js-lingui-id: ed1R08
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "Event not found."
+msgstr ""
+
 #. js-lingui-id: irEsRo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -5523,6 +5563,11 @@ msgstr "Evenementdeelnemers"
 msgctxt "fieldMetadata.label"
 msgid "Event Participants"
 msgstr "Evenementdeelnemers"
+
+#. js-lingui-id: h6h6j+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event property \"{propertyName}\" references object \"{objectUniversalIdentifier}\", which was not found"
+msgstr ""
 
 #. js-lingui-id: lr7Nsq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5544,6 +5589,11 @@ msgstr "Gebeurtenisdoel"
 msgctxt "fieldMetadata.label"
 msgid "Event type"
 msgstr "Gebeurtenistype"
+
+#. js-lingui-id: zIUq08
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event with name {name} already exists for this application"
+msgstr ""
 
 #. js-lingui-id: NZy2VR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -7365,6 +7415,16 @@ msgstr "Ongeldige e-mailadressen: {invalidEmailList}"
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Invalid email or domain."
 msgstr "Ongeldig e-mailadres of domein."
+
+#. js-lingui-id: q96eTT
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Invalid event definition"
+msgstr ""
+
+#. js-lingui-id: VAifIo
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "Invalid event definition."
+msgstr ""
 
 #. js-lingui-id: 8knMLv
 #: src/engine/core-modules/event-logs/emit/event-log-emitter.exception.ts
@@ -11052,6 +11112,11 @@ msgctxt "fieldMetadata.label"
 msgid "Parts"
 msgstr "Onderdelen"
 
+#. js-lingui-id: x5aPy7
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "Pass either the event name or its universal identifier."
+msgstr ""
+
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Password is too weak."
@@ -14582,6 +14647,11 @@ msgstr "Het domein komt niet overeen met je e-maildomein."
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "The email content is invalid."
 msgstr "De e-mailinhoud is ongeldig."
+
+#. js-lingui-id: JmTVCB
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "The event properties do not match its definition."
+msgstr ""
 
 #. js-lingui-id: hY1mx5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts

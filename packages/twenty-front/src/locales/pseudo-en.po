@@ -12912,6 +12912,11 @@ msgstr ""
 msgid "Evaluation"
 msgstr ""
 
+#. js-lingui-id: acLjIx
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "event"
+msgstr ""
+
 #. js-lingui-id: 0pC/y6
 #: src/modules/log-console/constants/LogConsoleSecurityEventColumn.tsx
 #: src/modules/log-console/constants/LogConsoleSecurityFilterFields.tsx
