@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { PublicDomainDTO } from 'src/engine/core-modules/public-domain/dtos/public-domain.dto';
@@ -24,6 +25,7 @@ export class PublicDomainService {
   constructor(
     private readonly dnsManagerService: DnsManagerService,
     private readonly domainServerConfigService: DomainServerConfigService,
+    private readonly applicationService: ApplicationService,
     @InjectWorkspaceScopedRepository(PublicDomainEntity)
     private readonly publicDomainRepository: WorkspaceScopedRepository<PublicDomainEntity>,
     // Hostname-to-workspace resolution at request-routing time, before workspace context exists.
@@ -132,6 +134,45 @@ export class PublicDomainService {
 
       throw error;
     }
+
+    return publicDomain;
+  }
+
+  async setApplicationPrimaryPublicDomain({
+    workspace,
+    applicationId,
+    publicDomainId,
+  }: {
+    workspace: WorkspaceEntity;
+    applicationId: string;
+    publicDomainId: string;
+  }): Promise<PublicDomainDTO> {
+    const publicDomain = await this.publicDomainRepository.findOne(
+      workspace.id,
+      { where: { id: publicDomainId, applicationId } },
+    );
+
+    if (!isDefined(publicDomain)) {
+      throw new PublicDomainException(
+        'Public domain not found for this application',
+        PublicDomainExceptionCode.PUBLIC_DOMAIN_NOT_FOUND,
+      );
+    }
+
+    if (
+      this.domainServerConfigService.isPublicDomainValidationEnforced() &&
+      !publicDomain.isValidated
+    ) {
+      throw new PublicDomainException(
+        'Public domain is not validated',
+        PublicDomainExceptionCode.PUBLIC_DOMAIN_NOT_VALIDATED,
+      );
+    }
+
+    await this.applicationService.update(applicationId, {
+      workspaceId: workspace.id,
+      primaryPublicDomainId: publicDomain.id,
+    });
 
     return publicDomain;
   }

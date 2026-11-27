@@ -555,6 +555,7 @@ type Application {
   defaultRoleId: String @deprecated(reason: "Use requestedRoleId instead")
   description: String
   frontComponents: [FrontComponent!]!
+  functionsBaseUrl: String
   grantRoleId: UUID
   grantedIframeMediaPermissions: [IframeMediaPermission!]!
   healthCheckLogicFunctionId: UUID
@@ -3805,6 +3806,7 @@ type Mutation {
   sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
   sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
   setAppKeyValue(input: SetAppKeyValueInput!): AppKeyValue!
+  setApplicationPrimaryPublicDomain(applicationId: String!, publicDomainId: String!): PublicDomain!
   setBillingPartnerCode(partnerCode: String!): BillingPartnerCode!
   setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
   setRecordPrivate(isPrivate: Boolean!, target: RecordTargetInput!): RecordSharingDTO!

@@ -15,6 +15,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { CreatePublicDomainInput } from 'src/engine/core-modules/public-domain/dtos/create-public-domain.input';
 import { PublicDomainDTO } from 'src/engine/core-modules/public-domain/dtos/public-domain.dto';
 import { PublicDomainInput } from 'src/engine/core-modules/public-domain/dtos/public-domain.input';
+import { SetApplicationPrimaryPublicDomainInput } from 'src/engine/core-modules/public-domain/dtos/set-application-primary-public-domain.input';
 import { PublicDomainExceptionFilter } from 'src/engine/core-modules/public-domain/public-domain-exception-filter';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import {
@@ -102,6 +103,27 @@ export class PublicDomainResolver {
       domain,
       workspace: currentWorkspace,
       applicationId,
+    });
+  }
+
+  @Mutation(() => PublicDomainDTO)
+  @UseGuards(
+    AccessPolicyGuard(PUBLIC_DOMAIN_WRITE_ACCESS_POLICY),
+    ApplicationTargetGuard,
+  )
+  async setApplicationPrimaryPublicDomain(
+    @ApplicationTargetArgs<SetApplicationPrimaryPublicDomainInput>({
+      kind: 'applicationId',
+      idKey: 'applicationId',
+      requireApplicationRegistrationOwnership: false,
+    })
+    { applicationId, publicDomainId }: SetApplicationPrimaryPublicDomainInput,
+    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
+  ): Promise<PublicDomainDTO> {
+    return this.publicDomainService.setApplicationPrimaryPublicDomain({
+      workspace: currentWorkspace,
+      applicationId,
+      publicDomainId,
     });
   }
 

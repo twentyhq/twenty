@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { PublicDomainService } from 'src/engine/core-modules/public-domain/public-domain.service';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { PublicDomainResolver } from 'src/engine/core-modules/public-domain/public-domain.resolver';
@@ -18,6 +19,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
 @Module({
   imports: [
     ApplicationLookupModule,
+    ApplicationModule,
     ApplicationRegistrationLookupModule,
     TypeOrmModule.forFeature([
       PublicDomainEntity,

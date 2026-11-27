@@ -23,6 +23,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { buildApplicationLogoUrl } from 'src/engine/core-modules/application/utils/build-application-logo-url.util';
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { SdkClientChecksumsDTO } from 'src/engine/core-modules/sdk-client/dtos/sdk-client-checksums.dto';
 import { buildServedSdkClientCoreChecksum } from 'src/engine/core-modules/sdk-client/utils/build-served-sdk-client-core-checksum.util';
@@ -72,6 +73,7 @@ export class ApplicationResolver {
     private readonly applicationContentService: ApplicationContentService,
     private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
     private readonly domainServerConfigService: DomainServerConfigService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {}
 
   @Query(() => SdkClientChecksumsDTO, { nullable: true })
@@ -123,6 +125,32 @@ export class ApplicationResolver {
     return this.applicationStopService.isApplicationStopped(
       applicationUniversalIdentifier,
     );
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
+  async functionsBaseUrl(
+    @Parent() application: ApplicationDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<string | null> {
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatApplicationMaps',
+      ]);
+
+    const flatApplication = flatApplicationMaps.byId[application.id];
+
+    if (!isDefined(flatApplication)) {
+      return null;
+    }
+
+    const functionsBaseUrl =
+      await this.workspaceDomainsService.buildApplicationFunctionsBaseUrl({
+        workspace,
+        flatApplication,
+      });
+
+    return functionsBaseUrl ?? null;
   }
 
   @ResolveField(() => String, { nullable: true })

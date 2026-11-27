@@ -595,6 +595,7 @@ export type Application = {
   defaultRoleId?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   frontComponents: Array<FrontComponent>;
+  functionsBaseUrl?: Maybe<Scalars['String']['output']>;
   grantRoleId?: Maybe<Scalars['UUID']['output']>;
   grantedIframeMediaPermissions: Array<IframeMediaPermission>;
   healthCheckLogicFunctionId?: Maybe<Scalars['UUID']['output']>;
@@ -3992,6 +3993,7 @@ export type Mutation = {
   sendMessageCampaign: SendMessageCampaignOutputDto;
   sendMessageCampaignTest: SendEmailViaDomainOutput;
   setAppKeyValue: AppKeyValue;
+  setApplicationPrimaryPublicDomain: PublicDomain;
   setBillingPartnerCode: BillingPartnerCode;
   setEnterpriseKey: EnterpriseLicenseInfoDto;
   setRecordPrivate: RecordSharingDto;
@@ -5121,6 +5123,12 @@ export type MutationSendMessageCampaignTestArgs = {
 
 export type MutationSetAppKeyValueArgs = {
   input: SetAppKeyValueInput;
+};
+
+
+export type MutationSetApplicationPrimaryPublicDomainArgs = {
+  applicationId: Scalars['String']['input'];
+  publicDomainId: Scalars['String']['input'];
 };
 
 

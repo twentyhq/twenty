@@ -203,7 +203,9 @@ A sandboxed page keeps scripts, forms, popups, modals and downloads, but runs wi
 | The workspace functions domain (`https://<workspace>.withtwenty.com` on Twenty Cloud) | All | Yes |
 | A validated custom domain of your application | All | No |
 
-A custom domain belongs to one application. Register it in **Settings → Applications → your application → Custom Domain**, add the DNS records shown there and wait until it is validated. From then on, `TWENTY_FUNCTIONS_URL` points at it (the oldest validated one when there are several), so links built with `RestApiClient` or `resolveUrl` use that domain.
+A custom domain belongs to one application. Register it in **Settings → Applications → your application → Custom Domain**, add the DNS records shown there and wait until it is validated. From then on, `TWENTY_FUNCTIONS_URL` points at it, so links built with `RestApiClient` or `resolveUrl` use that domain.
+
+An application can have several custom domains, and all of them serve its routes. `TWENTY_FUNCTIONS_URL` uses the one marked **Primary**: pick it with **Set as primary** in the domain's menu. Until you pick one, the oldest validated domain is used.
 
 <Note>
   Custom domains are validated through Cloudflare. On an instance without
