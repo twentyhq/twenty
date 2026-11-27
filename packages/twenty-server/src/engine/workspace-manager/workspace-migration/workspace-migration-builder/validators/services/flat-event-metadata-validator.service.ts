@@ -7,7 +7,7 @@ import {
   getEventSchemaRecordProperties,
 } from 'twenty-shared/application';
 import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { EventMetadataExceptionCode } from 'src/engine/metadata-modules/event-metadata/event-metadata.exception';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -64,7 +64,7 @@ const validateEventMetadataDefinition = ({
     });
   }
 
-  if (definitionErrors.length > 0) {
+  if (isNonEmptyArray(definitionErrors)) {
     return errors;
   }
 
