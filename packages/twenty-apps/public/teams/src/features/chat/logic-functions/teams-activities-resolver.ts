@@ -75,16 +75,16 @@ export const teamsActivitiesResolverHandler = async (
     scope: 'SERVER',
   });
 
-  if (!isNonEmptyString(workspaceId)) {
-    if (!isFeedbackInvoke) {
-      await sendTeamsAssistantNotice({
-        payload: { activity, serviceUrl, tenantId },
-        kind: 'not-connected',
-        text: TEAMS_ASSISTANT_NOT_CONNECTED_TEXT,
-        ttlMs: TEAMS_ASSISTANT_NOTICE_TTL_MS,
-      });
-    }
+  if (!isNonEmptyString(workspaceId) && !isFeedbackInvoke) {
+    await sendTeamsAssistantNotice({
+      payload: { activity, serviceUrl, tenantId },
+      kind: 'not-connected',
+      text: TEAMS_ASSISTANT_NOT_CONNECTED_TEXT,
+      ttlMs: TEAMS_ASSISTANT_NOTICE_TTL_MS,
+    });
+  }
 
+  if (!isNonEmptyString(workspaceId)) {
     return new Response({
       ok: true,
       skipped: 'No workspace claims this Teams tenant',

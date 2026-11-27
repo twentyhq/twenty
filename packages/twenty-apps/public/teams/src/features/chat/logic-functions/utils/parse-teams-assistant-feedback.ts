@@ -30,8 +30,9 @@ const parseFeedbackText = (feedback: string | undefined): string => {
     return isNonEmptyString(parsedFeedback?.feedbackText)
       ? parsedFeedback.feedbackText.trim()
       : '';
-  } catch (error) {
-    console.warn('[teams] could not read the feedback comment', error);
+  } catch {
+    // The parse error quotes the comment, so it stays out of the logs.
+    console.warn('[teams] could not read the feedback comment');
 
     return '';
   }

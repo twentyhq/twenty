@@ -1,8 +1,8 @@
-import { TEAMS_ASSISTANT_ANSWER_MARKERS } from 'src/features/chat/logic-functions/constants/teams-assistant-answer-markers';
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { TEAMS_ASSISTANT_ANSWER_MARKERS } from 'src/features/chat/logic-functions/constants/teams-assistant-answer-markers';
 import { TEAMS_ASSISTANT_REQUEST_STATUS } from 'src/features/chat/logic-functions/constants/teams-assistant-request-status';
 import { TEAMS_ASSISTANT_UNMATCHED_REQUEST_NAME } from 'src/features/chat/logic-functions/constants/teams-assistant-unmatched-request-name';
 import { TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-unmatched-sender-text';

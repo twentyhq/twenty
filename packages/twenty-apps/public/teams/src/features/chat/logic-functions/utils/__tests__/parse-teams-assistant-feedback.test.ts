@@ -27,7 +27,9 @@ describe('parseTeamsAssistantFeedback', () => {
       feedbackRating: 'POSITIVE',
       feedbackText: '',
     });
-    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy).toHaveBeenCalledExactlyOnceWith(
+      '[teams] could not read the feedback comment',
+    );
   });
 
   it.each([
