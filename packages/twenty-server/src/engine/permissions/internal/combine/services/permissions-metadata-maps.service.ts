@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { buildTemporaryChannelWriteAccess } from 'src/engine/permissions/channel-visibility/utils/build-temporary-channel-write-access.util';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
 import { type WorkspaceCacheDataMap } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
@@ -39,6 +40,7 @@ export class PermissionsMetadataMapsService {
       featureFlagsMap,
       rolesPermissions,
       flatRelatedRecordPathMaps,
+      flatRoleMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMapsOrm',
@@ -46,6 +48,7 @@ export class PermissionsMetadataMapsService {
       'featureFlagsMap',
       'rolesPermissions',
       'flatRelatedRecordPathMaps',
+      'flatRoleMaps',
     ]);
 
     const metadataMaps: PermissionsMetadataMaps = {
@@ -55,6 +58,11 @@ export class PermissionsMetadataMapsService {
       featureFlagsMap,
       rolesPermissions,
       flatRelatedRecordPathMaps,
+      temporaryChannelWriteAccess: buildTemporaryChannelWriteAccess({
+        featureFlagsMap,
+        flatRoleMaps,
+        flatObjectMetadataMaps,
+      }),
     };
 
     const [flatWorkspaceMemberMaps, rlsWorkspaceMemberRelationValueMaps] =

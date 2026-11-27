@@ -15,12 +15,16 @@ import { restrictRecordsPermissionsToDisabledActions } from 'src/engine/permissi
 import { toLimitingRoleRecordsPermissions } from 'src/engine/permissions/internal/role/utils/to-limiting-role-records-permissions.util';
 import { restrictRecordsPermissionsToRuntimeLimitingRole } from 'src/engine/permissions/internal/role/utils/restrict-records-permissions-to-runtime-limiting-role.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
+import { type TemporaryChannelWriteAccess } from 'src/engine/permissions/channel-visibility/types/temporary-channel-write-access.type';
+import { findTemporaryChannelWriteAccessRoleIds } from 'src/engine/permissions/channel-visibility/utils/find-temporary-channel-write-access-role-ids.util';
+import { restoreChannelWriteAccess } from 'src/engine/permissions/channel-visibility/utils/restore-channel-write-access.util';
 
 export const computePrincipalsRecordsPermissions = ({
   principals,
   rolesPermissions,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
+  temporaryChannelWriteAccess,
 }: {
   principals: Pick<
     PermissionsPrincipalsWithRolesContext,
@@ -32,10 +36,39 @@ export const computePrincipalsRecordsPermissions = ({
   rolesPermissions: Record<string, RoleRecordsPermissions>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  temporaryChannelWriteAccess?: TemporaryChannelWriteAccess;
 }): RoleRecordsPermissions => {
   const actingApplication = getPermissionsPrincipalsActingApplication({
     principals,
   });
+
+  const temporaryChannelWriteAccessRoleIds = isDefined(
+    temporaryChannelWriteAccess,
+  )
+    ? findTemporaryChannelWriteAccessRoleIds({
+        mainPrincipal: principals.mainPrincipal,
+        temporaryChannelWriteAccess,
+      })
+    : [];
+
+  const findMainRoleRecordsPermissions = (
+    roleId: string,
+  ): RoleRecordsPermissions | undefined => {
+    const roleRecordsPermissions = rolesPermissions[roleId];
+    const writeAccess =
+      temporaryChannelWriteAccess?.writeAccessByRoleId[roleId];
+
+    return isDefined(roleRecordsPermissions) &&
+      isDefined(temporaryChannelWriteAccess) &&
+      isDefined(writeAccess) &&
+      temporaryChannelWriteAccessRoleIds.includes(roleId)
+      ? restoreChannelWriteAccess({
+          recordsPermissions: roleRecordsPermissions,
+          objectMetadataIds: temporaryChannelWriteAccess.objectMetadataIds,
+          writeAccess,
+        })
+      : roleRecordsPermissions;
+  };
 
   const restrictToDisabledActions = ({
     roleId,
@@ -44,7 +77,9 @@ export const computePrincipalsRecordsPermissions = ({
     roleId: string;
     isLimitingRole: boolean;
   }) => {
-    const roleRecordsPermissions = rolesPermissions[roleId];
+    const roleRecordsPermissions = isLimitingRole
+      ? rolesPermissions[roleId]
+      : findMainRoleRecordsPermissions(roleId);
 
     if (!isDefined(roleRecordsPermissions)) {
       return undefined;

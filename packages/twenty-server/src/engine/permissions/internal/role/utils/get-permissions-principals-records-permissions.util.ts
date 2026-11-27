@@ -12,7 +12,10 @@ export const getPermissionsPrincipalsRecordsPermissions = ({
   principals: PermissionsPrincipalsWithRolesContext;
   metadataMaps: Pick<
     PermissionsMetadataMaps,
-    'rolesPermissions' | 'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
+    | 'rolesPermissions'
+    | 'flatObjectMetadataMaps'
+    | 'flatFieldMetadataMaps'
+    | 'temporaryChannelWriteAccess'
   >;
 }): RoleRecordsPermissions =>
   computePrincipalsRecordsPermissions({
@@ -20,4 +23,5 @@ export const getPermissionsPrincipalsRecordsPermissions = ({
     rolesPermissions: metadataMaps.rolesPermissions,
     flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
     flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+    temporaryChannelWriteAccess: metadataMaps.temporaryChannelWriteAccess,
   });
