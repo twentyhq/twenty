@@ -16075,11 +16075,6 @@ msgstr "Ushbu foydalanuvchi ish maydoni a’zosi sifatida allaqachon qo‘shilga
 msgid "This user is not a member of the workspace."
 msgstr "Bu foydalanuvchi ish maydonining a’zosi emas."
 
-#. js-lingui-id: BFSoo/
-#: src/engine/metadata-modules/validation-rule/validation-rule.service.ts
-msgid "This validation rule is being upgraded. Try again in a few minutes."
-msgstr "Ushbu tekshirish qoidasi yangilanmoqda. Bir necha daqiqadan keyin yana urinib ko‘ring."
-
 #. js-lingui-id: LtsBYU
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "This variable can only be set via environment."

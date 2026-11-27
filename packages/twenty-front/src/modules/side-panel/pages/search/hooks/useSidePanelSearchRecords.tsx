@@ -52,12 +52,13 @@ export const useSidePanelSearchRecords = ({
   const isSearchSkipped =
     shouldSkip || hasNoSearchableObject || isSkippedEmptySearch;
 
-  const { loading, searchRecords, error } = useObjectRecordSearchRecords({
-    objectNameSingulars: includedObjectNameSingulars,
-    searchInput: deferredSidePanelSearch,
-    limit,
-    skip: isSearchSkipped,
-  });
+  const { loading, searchRecords, hasNextPage, error } =
+    useObjectRecordSearchRecords({
+      objectNameSingulars: includedObjectNameSingulars,
+      searchInput: deferredSidePanelSearch,
+      limit,
+      skip: isSearchSkipped,
+    });
 
   const [hasSearchSettledSinceLastSkip, setHasSearchSettledSinceLastSkip] =
     useState(false);
@@ -99,6 +100,7 @@ export const useSidePanelSearchRecords = ({
 
   return {
     error,
+    hasNextPage,
     loading,
     isWaitingForDebouncedSearch,
     noResults: !searchResultItems.length,

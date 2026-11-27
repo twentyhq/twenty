@@ -17,9 +17,12 @@ jest.mock('@/object-record/hooks/useObjectRecordSearchRecords', () => ({
 describe('navigation record search empty state', () => {
   beforeEach(() => {
     jest.useFakeTimers();
-    jest
-      .mocked(useObjectRecordSearchRecords)
-      .mockReturnValue({ loading: false, searchRecords: [], error: undefined });
+    jest.mocked(useObjectRecordSearchRecords).mockReturnValue({
+      loading: false,
+      searchRecords: [],
+      hasNextPage: false,
+      error: undefined,
+    });
   });
   afterEach(() => jest.useRealTimers());
 
@@ -56,6 +59,7 @@ describe('navigation record search duplicates', () => {
     };
     jest.mocked(useObjectRecordSearchRecords).mockReturnValue({
       loading: false,
+      hasNextPage: false,
       searchRecords: [
         {
           ...record,

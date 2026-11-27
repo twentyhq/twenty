@@ -49,12 +49,12 @@ describe('getCommandMenuItemSectionPreview', () => {
         section: 'GO_TO',
         sectionHeading: 'Go to',
         commandMenuItems: [
-          { label: 'GO TO Experience Settings' },
+          { label: 'GO TO Experience' },
           { label: 'go to apps preferences' },
         ],
         objectMetadataItems: OBJECT_METADATA_ITEMS,
       }),
-    ).toBe('Experience Settings, apps preferences');
+    ).toBe('Experience, apps preferences');
   });
 
   it('keeps a label equal to the heading alone whole', () => {

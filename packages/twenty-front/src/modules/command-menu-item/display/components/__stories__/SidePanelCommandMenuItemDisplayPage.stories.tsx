@@ -827,3 +827,40 @@ export const AppActionsHiddenInLayoutPreview: Story = {
     expect(canvas.queryByText('Collapse sidebar')).not.toBeInTheDocument();
   },
 };
+
+export const SettingsGoToCommandsWithSettingsSubtitle: Story = {
+  decorators: [
+    createDecorator({
+      commandMenuItems: [
+        createCommandMenuItem({
+          id: 'story-go-to-settings',
+          label: 'Go to Settings',
+          icon: 'IconSettings',
+          engineComponentKey: EngineComponentKey.NAVIGATION,
+          payload: {
+            __typename: 'PathCommandMenuItemPayload',
+            path: '/settings/profile',
+          },
+        }),
+        createCommandMenuItem({
+          id: 'story-go-to-settings-experience',
+          label: 'Go to Experience',
+          icon: 'IconColorSwatch',
+          engineComponentKey: EngineComponentKey.NAVIGATION,
+          payload: {
+            __typename: 'PathCommandMenuItemPayload',
+            path: '/settings/experience',
+          },
+        }),
+      ],
+      sidePanelSearch: 'go to',
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Go to Experience')).toBeVisible();
+    expect(canvas.getByText('Go to Settings')).toBeVisible();
+    expect(canvas.getAllByText('Settings')).toHaveLength(1);
+  },
+};

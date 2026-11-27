@@ -7,6 +7,9 @@ export class AuthTokenPair {
   @Field(() => AuthToken)
   accessOrWorkspaceAgnosticToken: AuthToken;
 
-  @Field(() => AuthToken)
-  refreshToken: AuthToken;
+  @Field(() => AuthToken, {
+    nullable: true,
+    deprecationReason: 'Always null. Will be removed.',
+  })
+  refreshToken?: AuthToken;
 }

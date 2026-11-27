@@ -10,6 +10,7 @@ import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { renewApplicationToken } from 'test/integration/metadata/suites/application/utils/renew-application-token.util';
 import { renewToken } from 'test/integration/graphql/utils/renew-token.util';
+import { seedLegacyRefreshToken } from 'test/integration/graphql/utils/seed-legacy-refresh-token.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 
@@ -17,7 +18,6 @@ import { type AccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/a
 import { type ApplicationRefreshTokenJwtPayload } from 'src/engine/core-modules/auth/types/application-refresh-token-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { type LoginTokenJwtPayload } from 'src/engine/core-modules/auth/types/login-token-jwt-payload.type';
-import { type RefreshTokenJwtPayload } from 'src/engine/core-modules/auth/types/refresh-token-jwt-payload.type';
 import { type WorkspaceAgnosticTokenJwtPayload } from 'src/engine/core-modules/auth/types/workspace-agnostic-token-jwt-payload.type';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
@@ -37,7 +37,6 @@ const buildAccessTokenPayload = (payload: AccessTokenJwtPayload) => ({
 describe('JWT Legacy HS256 no-kid fallback (integration)', () => {
   let sharedAccessToken: string;
   let sharedAccessPayload: AccessTokenJwtPayload;
-  let sharedRefreshPayload: RefreshTokenJwtPayload;
   let sharedLoginPayload: LoginTokenJwtPayload;
   let sharedWorkspaceAgnosticPayload: WorkspaceAgnosticTokenJwtPayload;
   let sharedSubdomainUrl: string;
@@ -86,9 +85,6 @@ describe('JWT Legacy HS256 no-kid fallback (integration)', () => {
     sharedAccessPayload = jwt.decode(
       sharedAccessToken,
     ) as AccessTokenJwtPayload;
-    sharedRefreshPayload = jwt.decode(
-      tokensData.getAuthTokensFromLoginToken.tokens.refreshToken.token,
-    ) as RefreshTokenJwtPayload;
   });
 
   afterAll(async () => {
@@ -191,23 +187,22 @@ describe('JWT Legacy HS256 no-kid fallback (integration)', () => {
   });
 
   it('verifies a hand-crafted no-kid HS256 REFRESH token via the legacy fallback (round-trip through renewToken)', async () => {
-    expect(isNonEmptyString(sharedRefreshPayload.jti)).toBe(true);
-
-    const forgedRefreshPayload = {
-      sub: sharedRefreshPayload.sub,
-      type: JwtTokenTypeEnum.REFRESH,
-      userId: sharedRefreshPayload.userId,
-      workspaceId: sharedRefreshPayload.workspaceId,
-      authProvider:
-        sharedRefreshPayload.authProvider ?? AuthProviderEnum.Password,
-      targetedTokenType:
-        sharedRefreshPayload.targetedTokenType ?? JwtTokenTypeEnum.ACCESS,
-    };
+    const { appTokenId } = await seedLegacyRefreshToken({
+      userId: sharedAccessPayload.userId,
+      workspaceId: sharedAccessPayload.workspaceId,
+    });
 
     const forgedToken = forgeLegacyHs256Token(
-      forgedRefreshPayload,
-      sharedRefreshPayload.workspaceId ?? sharedRefreshPayload.userId,
-      { expiresIn: '5m', jwtid: sharedRefreshPayload.jti },
+      {
+        sub: sharedAccessPayload.sub,
+        type: JwtTokenTypeEnum.REFRESH,
+        userId: sharedAccessPayload.userId,
+        workspaceId: sharedAccessPayload.workspaceId,
+        authProvider: sharedAccessPayload.authProvider,
+        targetedTokenType: JwtTokenTypeEnum.ACCESS,
+      },
+      sharedAccessPayload.workspaceId,
+      { expiresIn: '5m', jwtid: appTokenId },
     );
 
     const decoded = decodeJwtCompleteOrThrow(forgedToken);

@@ -1,4 +1,3 @@
-import { type UserSessionCreationOrigin } from 'src/engine/core-modules/user-session/types/user-session-creation-origin.type';
 import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 export type CreateUserSessionInput = {
@@ -14,5 +13,4 @@ export type CreateUserSessionInput = {
   country?: string | null;
   region?: string | null;
   city?: string | null;
-  origin: UserSessionCreationOrigin;
 };
