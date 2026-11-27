@@ -67,6 +67,7 @@ export const useObjectRecordSearchRecords = ({
 
   return {
     searchRecords,
+    hasNextPage: effectiveData?.search?.pageInfo?.hasNextPage ?? false,
     loading: isWaitingForData,
     error,
   };
