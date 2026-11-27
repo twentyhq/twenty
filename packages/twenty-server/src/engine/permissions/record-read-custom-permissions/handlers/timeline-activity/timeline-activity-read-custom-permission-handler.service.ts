@@ -54,7 +54,6 @@ export class TimelineActivityReadCustomPermissionHandlerService implements Recor
       return;
     }
 
-    // The columns linking an activity to its record may be unreadable to the caller, so they are read here
     const subjectColumnsByTimelineActivityId =
       await this.findSubjectColumnsByTimelineActivityId({
         workspaceId: authContext.workspace.id,

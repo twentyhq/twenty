@@ -18,7 +18,6 @@ import {
   type RecordReadCustomPermissionRecordsInput,
 } from 'src/engine/permissions/record-read-custom-permissions/types/record-read-custom-permission-handler-service.type';
 
-// TODO(@charlesBochet): replace with row-level security once it can express channel visibility
 @Injectable()
 export class RecordReadCustomPermissionsService implements OnModuleInit {
   private readonly handlersByObjectNameSingular = new Map<
@@ -102,7 +101,6 @@ export class RecordReadCustomPermissionsService implements OnModuleInit {
     return handler.restrictEvents(eventRestrictionInput);
   }
 
-  // A protected object without its handler must deny rather than serve unrestricted records
   private findHandlerOrThrow(
     objectNameSingular: string,
   ): RecordReadCustomPermissionHandlerService {

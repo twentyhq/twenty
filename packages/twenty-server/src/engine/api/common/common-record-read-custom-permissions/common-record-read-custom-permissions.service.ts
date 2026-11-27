@@ -7,7 +7,6 @@ import { type RecordReadCustomPermissionRecordsInput } from 'src/engine/permissi
 import { RECORD_READ_CUSTOM_PERMISSION_OBJECT_NAME_SINGULARS } from 'src/engine/permissions/record-read-custom-permissions/constants/record-read-custom-permission-object-name-singulars.constant';
 import { RecordReadCustomPermissionsService } from 'src/engine/permissions/record-read-custom-permissions/record-read-custom-permissions.service';
 
-// Runs on every record of a result, nested relations included, so restricted fields cannot leak through a relation
 @Injectable()
 export class CommonRecordReadCustomPermissionsService {
   constructor(
