@@ -213,7 +213,7 @@ export class NavigationMenuItemEntity
       ADD_NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_UPGRADE_COMMAND_NAME,
   })
   @Column({ nullable: true, type: 'integer' })
-  visibleItemLimit: number | null;
+  visibleItemLimit?: number | null;
 
   @ManyToOne(() => WorkflowEntity, {
     onDelete: 'CASCADE',
