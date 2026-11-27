@@ -3585,10 +3585,16 @@ type MinimalObjectMetadata {
 }
 
 type MinimalView {
+  icon: String!
   id: UUID!
+  isActive: Boolean!
+  isPrivate: Boolean!
   key: ViewKey
+  name: String!
   objectMetadataId: UUID!
+  position: Float!
   type: ViewType!
+  universalIdentifier: UUID!
 }
 
 enum ModelFamily {

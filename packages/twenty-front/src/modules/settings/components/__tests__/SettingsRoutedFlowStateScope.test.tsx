@@ -26,6 +26,10 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { updatedObjectNamePluralState } from '@/settings/data-model/object-details/states/updatedObjectNamePluralState';
 import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
 
+jest.mock('@/views/hooks/useEnsureObjectViewsLoaded', () => ({
+  useEnsureObjectViewsLoaded: jest.fn(),
+}));
+
 const ROLE_ID = 'role-1';
 const MODAL_ID = 'role-modal';
 const DROPDOWN_ID = 'role-dropdown';

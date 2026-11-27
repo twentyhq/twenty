@@ -4,15 +4,14 @@ import {
   CreateOneObjectMetadataItemDocument,
   FindManyCommandMenuItemsDocument,
   FindManyNavigationMenuItemsDocument,
-  FindManyViewsDocument,
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
+import { useLoadObjectViews } from '@/metadata-store/hooks/useLoadObjectViews';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatFieldMetadataItem } from '@/metadata-store/types/FlatFieldMetadataItem';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
-import { splitViewWithRelated } from '@/metadata-store/utils/splitViewWithRelated';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
@@ -33,6 +32,7 @@ export const useCreateOneObjectMetadataItem = () => {
   const { addToDraft, replaceDraft, applyChanges } =
     useUpdateMetadataStoreDraft();
   const { invalidateMetadataStore } = useInvalidateMetadataStore();
+  const { loadObjectViews } = useLoadObjectViews();
   const { loadCurrentUser } = useLoadCurrentUser();
 
   const createOneObjectMetadataItem = async (
@@ -76,42 +76,17 @@ export const useCreateOneObjectMetadataItem = () => {
 
         applyChanges();
 
-        const [viewsResult, navItemsResult, commandMenuItemsResult] =
-          await Promise.all([
-            client.query({
-              query: FindManyViewsDocument,
-              variables: { objectMetadataId: createdObject.id },
-              fetchPolicy: 'network-only',
-            }),
-            client.query({
-              query: FindManyNavigationMenuItemsDocument,
-              fetchPolicy: 'network-only',
-            }),
-            client.query({
-              query: FindManyCommandMenuItemsDocument,
-              fetchPolicy: 'network-only',
-            }),
-          ]);
-
-        const fetchedViews = viewsResult.data?.getViews ?? [];
-
-        const {
-          flatViews,
-          flatViewFields,
-          flatViewFilters,
-          flatViewSorts,
-          flatViewGroups,
-          flatViewFilterGroups,
-          flatViewFieldGroups,
-        } = splitViewWithRelated(fetchedViews);
-
-        addToDraft({ key: 'views', items: flatViews });
-        addToDraft({ key: 'viewFields', items: flatViewFields });
-        addToDraft({ key: 'viewFilters', items: flatViewFilters });
-        addToDraft({ key: 'viewSorts', items: flatViewSorts });
-        addToDraft({ key: 'viewGroups', items: flatViewGroups });
-        addToDraft({ key: 'viewFilterGroups', items: flatViewFilterGroups });
-        addToDraft({ key: 'viewFieldGroups', items: flatViewFieldGroups });
+        const [, navItemsResult, commandMenuItemsResult] = await Promise.all([
+          loadObjectViews(createdObject.id),
+          client.query({
+            query: FindManyNavigationMenuItemsDocument,
+            fetchPolicy: 'network-only',
+          }),
+          client.query({
+            query: FindManyCommandMenuItemsDocument,
+            fetchPolicy: 'network-only',
+          }),
+        ]);
 
         replaceDraft(
           'navigationMenuItems',

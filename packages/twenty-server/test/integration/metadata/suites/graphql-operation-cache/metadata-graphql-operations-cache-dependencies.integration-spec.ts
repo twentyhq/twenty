@@ -5,7 +5,6 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { type ASTNode } from 'graphql';
 
 import { METADATA_GRAPHQL_OPERATIONS_TO_CACHE } from 'src/engine/api/graphql/graphql-config/constants/metadata-graphql-operations-to-cache.constant';
-import { FIND_ALL_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-views-graphql-operation.constant';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceCacheOrDerivedCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
@@ -140,96 +139,6 @@ const OBJECT_METADATA_ITEMS_BASELINE_QUERY = gql`
   }
 `;
 
-// Mirrors VIEW_FRAGMENT from twenty-front
-// (packages/twenty-front/src/modules/views/graphql/fragments/viewFragment.ts).
-const FIND_ALL_VIEWS_QUERY = gql`
-  query FindAllViews {
-    getViews {
-      id
-      name
-      objectMetadataId
-      type
-      key
-      icon
-      position
-      isCompact
-      openRecordIn
-      kanbanAggregateOperation
-      kanbanAggregateOperationFieldMetadataId
-      mainGroupByFieldMetadataId
-      shouldHideEmptyGroups
-      kanbanColumnWidth
-      groupLoadLimit
-      anyFieldFilterValue
-      calendarFieldMetadataId
-      calendarEndFieldMetadataId
-      calendarLayout
-      isPrivate
-      createdByUserWorkspaceId
-      isActive
-      viewFields {
-        id
-        fieldMetadataId
-        isVisible
-        size
-        position
-        aggregateOperation
-      }
-      viewFieldGroups {
-        id
-        name
-        position
-        isVisible
-        viewId
-        isActive
-        viewFields {
-          id
-          fieldMetadataId
-          isVisible
-          size
-          position
-          aggregateOperation
-        }
-      }
-      viewFilters {
-        id
-        fieldMetadataId
-        operand
-        value
-        viewFilterGroupId
-        positionInViewFilterGroup
-        subFieldName
-      }
-      viewFilterGroups {
-        id
-        parentViewFilterGroupId
-        logicalOperator
-        positionInViewFilterGroup
-      }
-      viewSorts {
-        id
-        fieldMetadataId
-        direction
-      }
-      viewGroups {
-        id
-        isVisible
-        fieldValue
-        position
-        viewId
-      }
-    }
-  }
-`;
-
-const FIND_ALL_VIEWS_BASELINE_QUERY = gql`
-  query FindAllViews {
-    getViews {
-      id
-    }
-  }
-`;
-
 describe('metadata GraphQL operations cache dependencies', () => {
   const recordAccessedCacheKeys = async (
     query: ASTNode,
@@ -279,16 +188,6 @@ describe('metadata GraphQL operations cache dependencies', () => {
       operationName: 'ObjectMetadataItems',
       fullQuery: OBJECT_METADATA_ITEMS_QUERY,
       baselineQuery: OBJECT_METADATA_ITEMS_BASELINE_QUERY,
-    });
-
-    expect(undeclaredDependencies).toEqual([]);
-  });
-
-  it('declares every flat map the FindAllViews resolvers read', async () => {
-    const undeclaredDependencies = await findUndeclaredDependencies({
-      operationName: FIND_ALL_VIEWS_GRAPHQL_OPERATION,
-      fullQuery: FIND_ALL_VIEWS_QUERY,
-      baselineQuery: FIND_ALL_VIEWS_BASELINE_QUERY,
     });
 
     expect(undeclaredDependencies).toEqual([]);

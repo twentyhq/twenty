@@ -38,6 +38,13 @@ jest.mock('@/views/states/selectors/viewsSelector', () => {
   };
 });
 
+const mockUseEnsureObjectViewsLoaded = jest.fn();
+
+jest.mock('@/views/hooks/useEnsureObjectViewsLoaded', () => ({
+  useEnsureObjectViewsLoaded: (objectMetadataIds: string[]) =>
+    mockUseEnsureObjectViewsLoaded(objectMetadataIds),
+}));
+
 const WIDGET_ID = 'widget-1';
 const OTHER_WIDGET_ID = 'widget-2';
 
@@ -102,6 +109,9 @@ describe('useInitializeRecordTableWidgetViewDrafts', () => {
     expect(draftSnapshots[WIDGET_ID]).toBeDefined();
     expect(draftSnapshots[WIDGET_ID].view.id).toBe(view.id);
     expect(persistedSnapshots[WIDGET_ID]).toBe(draftSnapshots[WIDGET_ID]);
+    expect(mockUseEnsureObjectViewsLoaded).toHaveBeenLastCalledWith([
+      view.objectMetadataId,
+    ]);
   });
 
   it('should not seed anything outside edit mode', () => {
@@ -126,6 +136,7 @@ describe('useInitializeRecordTableWidgetViewDrafts', () => {
     );
 
     expect(draftSnapshots[WIDGET_ID]).toBeUndefined();
+    expect(mockUseEnsureObjectViewsLoaded).toHaveBeenLastCalledWith([]);
   });
 
   it('should keep an existing snapshot over the freshly built one while seeding the missing ones', () => {

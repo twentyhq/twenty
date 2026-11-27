@@ -17,9 +17,15 @@ const MINIMAL_METADATA_QUERY = `
       }
       views {
         id
+        universalIdentifier
+        name
+        icon
         type
         key
         objectMetadataId
+        position
+        isPrivate
+        isActive
       }
       collectionHashes {
         collectionName

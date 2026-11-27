@@ -1,4 +1,8 @@
+import { VIEW_METADATA_ENTITY_KEYS } from '@/metadata-store/constants/ViewMetadataEntityKeys';
 import { FIND_MINIMAL_METADATA } from '@/metadata-store/graphql/queries/findMinimalMetadata';
+import { useReplaceViewsDraft } from '@/metadata-store/hooks/useReplaceViewsDraft';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { loadedViewsObjectMetadataIdsState } from '@/metadata-store/states/loadedViewsObjectMetadataIdsState';
 import {
   ALL_METADATA_ENTITY_KEYS,
   metadataStoreState,
@@ -7,6 +11,7 @@ import {
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
 import { type FlatView } from '@/metadata-store/types/FlatView';
 import { type FindMinimalMetadataQuery } from '@/metadata-store/types/MinimalMetadata';
+import { getDraftOrCurrentMetadataItems } from '@/metadata-store/utils/getDraftOrCurrentMetadataItems';
 import { mapAllMetadataNameToEntityKey } from '@/metadata-store/utils/mapAllMetadataNameToEntityKey';
 import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
@@ -16,6 +21,8 @@ import { isDefined } from 'twenty-shared/utils';
 export const useLoadMinimalMetadata = () => {
   const client = useApolloClient();
   const store = useStore();
+  const { applyChanges } = useUpdateMetadataStoreDraft();
+  const { replaceViewsDraft } = useReplaceViewsDraft();
 
   const loadMinimalMetadata = useCallback(async () => {
     const result = await client.query<FindMinimalMetadataQuery>({
@@ -67,21 +74,19 @@ export const useLoadMinimalMetadata = () => {
     }
 
     // Cached before the fragment selected universalIdentifier, with a matching hash
-    for (const entityKey of ['views', 'navigationMenuItems'] as const) {
-      const cachedEntities = store.get(
-        metadataStoreState.atomFamily(entityKey),
-      ).current;
+    const navigationMenuItemsEntry = store.get(
+      metadataStoreState.atomFamily('navigationMenuItems'),
+    );
 
-      if (
-        !staleEntityKeys.includes(entityKey) &&
-        cachedEntities.some(
-          (entity) =>
-            !('universalIdentifier' in entity) ||
-            !isDefined(entity.universalIdentifier),
-        )
-      ) {
-        staleEntityKeys.push(entityKey);
-      }
+    if (
+      !staleEntityKeys.includes('navigationMenuItems') &&
+      navigationMenuItemsEntry.current.some(
+        (navigationMenuItem) =>
+          !('universalIdentifier' in navigationMenuItem) ||
+          !isDefined(navigationMenuItem.universalIdentifier),
+      )
+    ) {
+      staleEntityKeys.push('navigationMenuItems');
     }
 
     const objectsEntry = store.get(
@@ -101,20 +106,40 @@ export const useLoadMinimalMetadata = () => {
       );
     }
 
-    const viewsEntry = store.get(metadataStoreState.atomFamily('views'));
+    const areViewsStale =
+      store.get(metadataStoreState.atomFamily('views')).status === 'empty' ||
+      VIEW_METADATA_ENTITY_KEYS.some((viewEntityKey) =>
+        staleEntityKeys.includes(viewEntityKey),
+      );
 
-    if (viewsEntry.status === 'empty') {
-      store.set(metadataStoreState.atomFamily('views'), (prev) => ({
-        ...prev,
-        current: views as unknown as FlatView[],
-        status: 'up-to-date',
-        currentCollectionHash: prev.draftCollectionHash,
-        draftCollectionHash: undefined,
-      }));
+    if (areViewsStale) {
+      const cachedViewsById = new Map(
+        getDraftOrCurrentMetadataItems({
+          store,
+          metadataEntityKey: 'views',
+        }).map((view) => [view.id, view]),
+      );
+
+      const mergedViews = views.map(
+        ({ __typename: _typename, ...minimalView }) =>
+          ({
+            ...cachedViewsById.get(minimalView.id),
+            ...minimalView,
+          }) as FlatView,
+      );
+
+      replaceViewsDraft({
+        views: mergedViews,
+        viewIdsKeepingChildren: new Set(mergedViews.map((view) => view.id)),
+      });
+
+      applyChanges();
+
+      store.set(loadedViewsObjectMetadataIdsState.atom, []);
     }
 
     return { staleEntityKeys };
-  }, [client, store]);
+  }, [client, store, applyChanges, replaceViewsDraft]);
 
   return { loadMinimalMetadata };
 };

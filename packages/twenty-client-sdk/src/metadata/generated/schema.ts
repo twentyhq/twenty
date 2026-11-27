@@ -2465,10 +2465,16 @@ export interface MinimalObjectMetadata {
 }
 
 export interface MinimalView {
+    icon: Scalars['String']
     id: Scalars['UUID']
+    isActive: Scalars['Boolean']
+    isPrivate: Scalars['Boolean']
     key?: ViewKey
+    name: Scalars['String']
     objectMetadataId: Scalars['UUID']
+    position: Scalars['Float']
     type: ViewType
+    universalIdentifier: Scalars['UUID']
     __typename: 'MinimalView'
 }
 
@@ -7429,10 +7435,16 @@ export interface MinimalObjectMetadataGenqlSelection{
 }
 
 export interface MinimalViewGenqlSelection{
+    icon?: boolean | number
     id?: boolean | number
+    isActive?: boolean | number
+    isPrivate?: boolean | number
     key?: boolean | number
+    name?: boolean | number
     objectMetadataId?: boolean | number
+    position?: boolean | number
     type?: boolean | number
+    universalIdentifier?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

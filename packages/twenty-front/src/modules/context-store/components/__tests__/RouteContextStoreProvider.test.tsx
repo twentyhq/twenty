@@ -25,6 +25,13 @@ jest.mock('@/views/states/selectors/viewsSelector', () => ({
   viewsSelector: { key: 'views' },
 }));
 
+const mockUseEnsureObjectViewsLoaded = jest.fn();
+
+jest.mock('@/views/hooks/useEnsureObjectViewsLoaded', () => ({
+  useEnsureObjectViewsLoaded: (objectMetadataIds: (string | undefined)[]) =>
+    mockUseEnsureObjectViewsLoaded(objectMetadataIds),
+}));
+
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
   useAtomStateValue: ({ key }: { key: string }) => {
     if (key === 'inbox-names-by-legacy-name') {
@@ -207,6 +214,14 @@ const renderAt = (initialEntry: string, children: ReactNode) =>
   );
 
 describe('RouteContextStoreProvider', () => {
+  it('loads the views of the route object', () => {
+    renderAt('/objects/companies', <MainSurfaceRoutes />);
+
+    expect(mockUseEnsureObjectViewsLoaded).toHaveBeenLastCalledWith([
+      'company-object',
+    ]);
+  });
+
   it('accepts a query-param view owned by the route object', () => {
     renderAt('/objects/companies?viewId=company-view', <MainSurfaceRoutes />);
 
