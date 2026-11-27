@@ -7874,7 +7874,7 @@ msgstr "Povežite nalog"
 #. js-lingui-id: uvyCU0
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
 msgid "Connect an email account"
-msgstr ""
+msgstr "Povežite nalog e-pošte"
 
 #. js-lingui-id: B+ajzf
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
@@ -8584,7 +8584,7 @@ msgstr "Nije moguće sačuvati radni tok"
 #. js-lingui-id: g0DwAz
 #: src/modules/side-panel/pages/start-app-conversation/components/SidePanelStartAppConversationPage.tsx
 msgid "Could not start the conversation"
-msgstr ""
+msgstr "Nije bilo moguće pokrenuti razgovor"
 
 #. js-lingui-id: p75IO8
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx

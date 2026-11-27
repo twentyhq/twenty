@@ -13797,7 +13797,7 @@ msgstr "Las habilidades estándar no pueden modificarse."
 #. js-lingui-id: w3TWxe
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Start conversation logic function \"{startConversationLogicFunctionUniversalIdentifier}\" was not found in this application"
-msgstr ""
+msgstr "No se encontró la función lógica de inicio de conversación \"{startConversationLogicFunctionUniversalIdentifier}\" en esta aplicación"
 
 #. js-lingui-id: ndAwoq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -14830,7 +14830,7 @@ msgstr "No se encontró en su aplicación la función lógica que utiliza este p
 #. js-lingui-id: 3Auz53
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The logic function this messaging provider starts conversations with was not found in its application."
-msgstr ""
+msgstr "No se encontró en su aplicación la función lógica con la que este proveedor de mensajería inicia conversaciones."
 
 #. js-lingui-id: zIwdvk
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -15855,7 +15855,7 @@ msgstr "Este canal de mensajes no puede enviar mensajes."
 #. js-lingui-id: yXQyf9
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "This message channel cannot start new conversations."
-msgstr ""
+msgstr "Este canal de mensajería no puede iniciar nuevas conversaciones."
 
 #. js-lingui-id: Rt42MP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts

@@ -13797,7 +13797,7 @@ msgstr "Les habilitats estàndard no es poden modificar."
 #. js-lingui-id: w3TWxe
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Start conversation logic function \"{startConversationLogicFunctionUniversalIdentifier}\" was not found in this application"
-msgstr ""
+msgstr "No s'ha trobat la funció de lògica d'inici de conversa \"{startConversationLogicFunctionUniversalIdentifier}\" en aquesta aplicació"
 
 #. js-lingui-id: ndAwoq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -14830,7 +14830,7 @@ msgstr "No s'ha trobat a la seva aplicació la funció de lògica amb què envia
 #. js-lingui-id: 3Auz53
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The logic function this messaging provider starts conversations with was not found in its application."
-msgstr ""
+msgstr "No s'ha trobat en la seva aplicació la funció de lògica amb què aquest proveïdor de missatgeria inicia converses."
 
 #. js-lingui-id: zIwdvk
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -15855,7 +15855,7 @@ msgstr "Aquest canal de missatges no pot enviar missatges."
 #. js-lingui-id: yXQyf9
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "This message channel cannot start new conversations."
-msgstr ""
+msgstr "Aquest canal de missatges no pot iniciar converses noves."
 
 #. js-lingui-id: Rt42MP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts

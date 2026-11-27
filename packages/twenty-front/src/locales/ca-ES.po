@@ -7874,7 +7874,7 @@ msgstr "Connecta un compte"
 #. js-lingui-id: uvyCU0
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
 msgid "Connect an email account"
-msgstr ""
+msgstr "Connecta un compte de correu electrònic"
 
 #. js-lingui-id: B+ajzf
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
@@ -8584,7 +8584,7 @@ msgstr "No s'ha pogut desar el flux de treball"
 #. js-lingui-id: g0DwAz
 #: src/modules/side-panel/pages/start-app-conversation/components/SidePanelStartAppConversationPage.tsx
 msgid "Could not start the conversation"
-msgstr ""
+msgstr "No s'ha pogut iniciar la conversa"
 
 #. js-lingui-id: p75IO8
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx

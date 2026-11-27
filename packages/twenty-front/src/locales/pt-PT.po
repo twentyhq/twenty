@@ -7874,7 +7874,7 @@ msgstr "Conectar uma conta"
 #. js-lingui-id: uvyCU0
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
 msgid "Connect an email account"
-msgstr ""
+msgstr "Conectar uma conta de e-mail"
 
 #. js-lingui-id: B+ajzf
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
@@ -8584,7 +8584,7 @@ msgstr "Não foi possível salvar o fluxo de trabalho"
 #. js-lingui-id: g0DwAz
 #: src/modules/side-panel/pages/start-app-conversation/components/SidePanelStartAppConversationPage.tsx
 msgid "Could not start the conversation"
-msgstr ""
+msgstr "Não foi possível iniciar a conversa"
 
 #. js-lingui-id: p75IO8
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx

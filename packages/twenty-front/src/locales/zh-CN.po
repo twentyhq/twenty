@@ -7874,7 +7874,7 @@ msgstr "连接账户"
 #. js-lingui-id: uvyCU0
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
 msgid "Connect an email account"
-msgstr ""
+msgstr "连接电子邮件账户"
 
 #. js-lingui-id: B+ajzf
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
@@ -8584,7 +8584,7 @@ msgstr "无法保存工作流"
 #. js-lingui-id: g0DwAz
 #: src/modules/side-panel/pages/start-app-conversation/components/SidePanelStartAppConversationPage.tsx
 msgid "Could not start the conversation"
-msgstr ""
+msgstr "无法开始对话"
 
 #. js-lingui-id: p75IO8
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx

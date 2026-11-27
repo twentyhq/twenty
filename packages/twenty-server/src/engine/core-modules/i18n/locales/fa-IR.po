@@ -13797,7 +13797,7 @@ msgstr "مهارت‌های استاندارد قابل تغییر نیستند.
 #. js-lingui-id: w3TWxe
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Start conversation logic function \"{startConversationLogicFunctionUniversalIdentifier}\" was not found in this application"
-msgstr ""
+msgstr "تابع منطق شروع گفت‌وگو \"{startConversationLogicFunctionUniversalIdentifier}\" در این برنامه یافت نشد"
 
 #. js-lingui-id: ndAwoq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -14830,7 +14830,7 @@ msgstr "تابع منطقی که این ارائه‌دهنده پیام‌رس�
 #. js-lingui-id: 3Auz53
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The logic function this messaging provider starts conversations with was not found in its application."
-msgstr ""
+msgstr "تابع منطقی که این ارائه‌دهنده پیام‌رسانی با آن گفت‌وگوها را شروع می‌کند، در برنامه آن یافت نشد."
 
 #. js-lingui-id: zIwdvk
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -15855,7 +15855,7 @@ msgstr "این کانال پیام نمی‌تواند پیام ارسال کن�
 #. js-lingui-id: yXQyf9
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "This message channel cannot start new conversations."
-msgstr ""
+msgstr "این کانال پیام نمی‌تواند گفت‌وگوهای جدیدی را شروع کند."
 
 #. js-lingui-id: Rt42MP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts

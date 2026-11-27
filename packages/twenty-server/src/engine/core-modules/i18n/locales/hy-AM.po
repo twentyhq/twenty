@@ -13797,7 +13797,7 @@ msgstr "Ստանդարտ հմտությունները չի կարելի փոփո
 #. js-lingui-id: w3TWxe
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Start conversation logic function \"{startConversationLogicFunctionUniversalIdentifier}\" was not found in this application"
-msgstr ""
+msgstr "\"{startConversationLogicFunctionUniversalIdentifier}\" զրույցի մեկնարկի տրամաբանության գործառույթը չի գտնվել այս հավելվածում"
 
 #. js-lingui-id: ndAwoq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -14830,7 +14830,7 @@ msgstr "Տրամաբանության ֆունկցիան, որով այս հաղ�
 #. js-lingui-id: 3Auz53
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The logic function this messaging provider starts conversations with was not found in its application."
-msgstr ""
+msgstr "Տրամաբանության գործառույթը, որով հաղորդագրությունների այս մատակարարը սկսում է զրույցները, չի գտնվել իր հավելվածում։"
 
 #. js-lingui-id: zIwdvk
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -15855,7 +15855,7 @@ msgstr "Հաղորդագրությունների այս ալիքը չի կարո
 #. js-lingui-id: yXQyf9
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "This message channel cannot start new conversations."
-msgstr ""
+msgstr "Հաղորդագրությունների այս ալիքը չի կարող սկսել նոր զրույցներ։"
 
 #. js-lingui-id: Rt42MP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts

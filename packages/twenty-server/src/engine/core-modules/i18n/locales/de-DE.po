@@ -13797,7 +13797,7 @@ msgstr "Standard-Skills können nicht geändert werden."
 #. js-lingui-id: w3TWxe
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Start conversation logic function \"{startConversationLogicFunctionUniversalIdentifier}\" was not found in this application"
-msgstr ""
+msgstr "Die Logikfunktion zum Starten von Unterhaltungen \"{startConversationLogicFunctionUniversalIdentifier}\" wurde in dieser Anwendung nicht gefunden"
 
 #. js-lingui-id: ndAwoq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -14830,7 +14830,7 @@ msgstr "Die Logikfunktion, mit der dieser Nachrichtenanbieter sendet, wurde in s
 #. js-lingui-id: 3Auz53
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The logic function this messaging provider starts conversations with was not found in its application."
-msgstr ""
+msgstr "Die Logikfunktion, mit der dieser Messaging-Anbieter Unterhaltungen startet, wurde in seiner Anwendung nicht gefunden."
 
 #. js-lingui-id: zIwdvk
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -15855,7 +15855,7 @@ msgstr "Dieser Nachrichtenkanal kann keine Nachrichten senden."
 #. js-lingui-id: yXQyf9
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "This message channel cannot start new conversations."
-msgstr ""
+msgstr "Dieser Nachrichtenkanal kann keine neuen Unterhaltungen starten."
 
 #. js-lingui-id: Rt42MP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
