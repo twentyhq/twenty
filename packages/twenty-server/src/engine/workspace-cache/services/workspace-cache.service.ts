@@ -566,7 +566,21 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           const local = JSON.stringify(version.data ?? null);
           const [redisHashAfter] = await this.cacheStorage.mget<string>([`${localKey}:hash`]);
           if (redisHashAfter === hashBefore && this.localCache.get(localKey)?.latestHash === hashBefore && fresh !== local) {
-            staleLocalOnly.push(`${keyName}(local=${local.length}b db=${fresh.length}b)`);
+            const paths: string[] = [];
+            const walk = (left: any, right: any, path: string) => {
+              if (paths.length >= 14) return;
+              if (JSON.stringify(left) === JSON.stringify(right)) return;
+              const isObj = (v: any) => v !== null && typeof v === 'object';
+              if (!isObj(left) || !isObj(right)) {
+                paths.push(`${path}: local=${JSON.stringify(left)?.slice(0, 60)} db=${JSON.stringify(right)?.slice(0, 60)}`);
+                return;
+              }
+              for (const key of new Set([...Object.keys(left), ...Object.keys(right)])) {
+                walk(left[key], right[key], `${path}.${key}`);
+              }
+            };
+            walk(JSON.parse(local), JSON.parse(fresh), '');
+            staleLocalOnly.push(`${keyName}(local=${local.length}b db=${fresh.length}b) DIFF[ ${paths.join(' | ')} ]`);
           }
         }
         return staleLocalOnly;
