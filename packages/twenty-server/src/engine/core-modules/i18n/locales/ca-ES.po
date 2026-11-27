@@ -16075,11 +16075,6 @@ msgstr "Aquest usuari ja forma part de l'espai de treball."
 msgid "This user is not a member of the workspace."
 msgstr "Aquest usuari no forma part de l'espai de treball."
 
-#. js-lingui-id: BFSoo/
-#: src/engine/metadata-modules/validation-rule/validation-rule.service.ts
-msgid "This validation rule is being upgraded. Try again in a few minutes."
-msgstr "Aquesta regla de validació s'està actualitzant. Torneu-ho a provar d'aquí a uns minuts."
-
 #. js-lingui-id: LtsBYU
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "This variable can only be set via environment."

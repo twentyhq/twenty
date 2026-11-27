@@ -16075,11 +16075,6 @@ msgstr "Tento uživatel je již členem pracovního prostoru."
 msgid "This user is not a member of the workspace."
 msgstr "Tento uživatel není členem pracovního prostoru."
 
-#. js-lingui-id: BFSoo/
-#: src/engine/metadata-modules/validation-rule/validation-rule.service.ts
-msgid "This validation rule is being upgraded. Try again in a few minutes."
-msgstr "Toto validační pravidlo se aktualizuje. Zkuste to znovu za několik minut."
-
 #. js-lingui-id: LtsBYU
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "This variable can only be set via environment."
