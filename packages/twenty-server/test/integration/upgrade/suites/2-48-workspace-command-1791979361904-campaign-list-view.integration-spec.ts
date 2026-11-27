@@ -46,7 +46,6 @@ const readViewColumnFieldNames = async (viewUniversalIdentifier: string) => {
      JOIN core.view v ON v.id = vf."viewId"
      JOIN core."fieldMetadata" f ON f.id = vf."fieldMetadataId"
      WHERE v."workspaceId" = $1 AND v."universalIdentifier" = $2
-       AND vf."deletedAt" IS NULL
      ORDER BY vf.position`,
     [SEED_APPLE_WORKSPACE_ID, viewUniversalIdentifier],
   );
@@ -63,8 +62,7 @@ const readView = async (viewUniversalIdentifier: string) => {
   }[] = await global.testDataSource.query(
     `SELECT id, type, key, position
      FROM core.view
-     WHERE "workspaceId" = $1 AND "universalIdentifier" = $2
-       AND "deletedAt" IS NULL`,
+     WHERE "workspaceId" = $1 AND "universalIdentifier" = $2`,
     [SEED_APPLE_WORKSPACE_ID, viewUniversalIdentifier],
   );
 
