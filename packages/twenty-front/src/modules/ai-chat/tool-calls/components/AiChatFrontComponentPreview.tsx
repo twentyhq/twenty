@@ -1,7 +1,5 @@
 import { AiChatFrontComponentPreviewContent } from '@/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent';
 import { useAiChatFrontComponentPreview } from '@/ai-chat/tool-calls/hooks/useAiChatFrontComponentPreview';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type AiChatFrontComponentPreviewProps = {
   draftId: string;
@@ -10,13 +8,7 @@ type AiChatFrontComponentPreviewProps = {
 export const AiChatFrontComponentPreview = ({
   draftId,
 }: AiChatFrontComponentPreviewProps) => {
-  const isEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_AI_CHAT_COMPONENT_BUILDER_ENABLED,
-  );
-
-  return isEnabled ? (
-    <AiChatFrontComponentPreviewLoader key={draftId} draftId={draftId} />
-  ) : null;
+  return <AiChatFrontComponentPreviewLoader key={draftId} draftId={draftId} />;
 };
 
 type AiChatFrontComponentPreviewLoaderProps = AiChatFrontComponentPreviewProps;

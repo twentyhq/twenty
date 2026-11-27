@@ -1,3 +1,4 @@
+import { FRONT_COMPONENT_METADATA_API_CLIENT_IMPORT_SPECIFIER } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-metadata-api-client-import-specifier.constant';
 import { FRONT_COMPONENT_CORE_API_CLIENT_IMPORT_SPECIFIER } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-core-api-client-import-specifier.constant';
 import { isDefined } from 'twenty-shared/utils';
 import { FrontComponentBuildException } from 'src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception';
@@ -95,7 +96,7 @@ export const buildFrontComponent = async ({
             return {
               errors: [
                 {
-                  text: `Unsupported import: ${path}. Use React, ${FRONT_COMPONENT_CORE_API_CLIENT_IMPORT_SPECIFIER}, twenty-sdk/front-component and the supported twenty-ui imports.`,
+                  text: `Unsupported import: ${path}. Use React, ${FRONT_COMPONENT_CORE_API_CLIENT_IMPORT_SPECIFIER}, ${FRONT_COMPONENT_METADATA_API_CLIENT_IMPORT_SPECIFIER}, twenty-sdk/front-component and the supported twenty-ui imports.`,
                 },
               ],
             };
@@ -149,7 +150,7 @@ export const buildFrontComponent = async ({
     hasSdkClientImport: sdkClientImports.some((entry) =>
       [
         FRONT_COMPONENT_CORE_API_CLIENT_IMPORT_SPECIFIER,
-        'twenty-client-sdk/metadata',
+        FRONT_COMPONENT_METADATA_API_CLIENT_IMPORT_SPECIFIER,
       ].includes(entry.path),
     ),
     sharedDependenciesChecksum: sharedDependencies.checksum,

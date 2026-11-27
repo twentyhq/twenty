@@ -155,13 +155,9 @@ export const RuntimeError: Story = {
   },
 };
 
-export const Disabled: Story = {
+export const StaleDisabledFeatureFlag: Story = {
   beforeEach: () => seedFrontComponentPreviewWorkspace(false),
-  play: async ({ canvasElement }) => {
-    await expect(
-      within(canvasElement).queryByText('Sample data'),
-    ).not.toBeInTheDocument();
-  },
+  play: InteractivePreview.play,
 };
 
 export const RetryDraftLoad: Story = {
@@ -179,7 +175,7 @@ export const RetryDraftLoad: Story = {
     await expect(await canvas.findByRole('alert')).toHaveTextContent(
       'Could not load preview.',
     );
-    replaceStoryThreadFetchedMessages();
+    await userEvent.click(canvas.getByRole('button', { name: 'Retry' }));
     await expect(
       await canvas.findByRole(
         'button',

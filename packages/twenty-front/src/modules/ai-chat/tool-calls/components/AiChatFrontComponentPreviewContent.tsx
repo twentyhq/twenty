@@ -1,3 +1,5 @@
+import { useMemo, useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { FrontComponentSourceRenderer } from 'twenty-front-component-renderer';
@@ -6,6 +8,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { Badge } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables, useThemeColorScheme } from 'twenty-ui/theme';
 
+import { useFrontComponentApplicationTokenPair } from '@/front-components/hooks/useFrontComponentApplicationTokenPair';
+import { createQueryFrontComponentPreviewMetadata } from '@/ai-chat/tool-calls/utils/queryFrontComponentPreviewMetadata';
 import { AiChatFrontComponentPreviewEffect } from '@/ai-chat/tool-calls/components/AiChatFrontComponentPreviewEffect';
 import { type useAiChatFrontComponentPreview } from '@/ai-chat/tool-calls/hooks/useAiChatFrontComponentPreview';
 import { useGetFrontComponentObjectMetadata } from '@/front-components/hooks/useGetFrontComponentObjectMetadata';
@@ -48,13 +52,29 @@ export const AiChatFrontComponentPreviewContent = ({
 }: AiChatFrontComponentPreviewContentProps) => {
   const { t } = useLingui();
   const colorScheme = useThemeColorScheme();
-  const getObjectMetadata = useGetFrontComponentObjectMetadata(
-    preview?.applicationId,
+  const { loadFrontComponentApplicationTokenPair } =
+    useFrontComponentApplicationTokenPair();
+  const applicationId = preview?.applicationId;
+  const getObjectMetadata = useGetFrontComponentObjectMetadata(applicationId);
+  const queryMetadata = useMemo(
+    () =>
+      isDefined(applicationId)
+        ? createQueryFrontComponentPreviewMetadata(async () => {
+            const { applicationAccessToken } =
+              await loadFrontComponentApplicationTokenPair(applicationId);
+            return applicationAccessToken.token;
+          })
+        : undefined,
+    [applicationId, loadFrontComponentApplicationTokenPair],
   );
+  const [retryCount, setRetryCount] = useState(0);
 
   return (
     <StyledPreview>
-      <AiChatFrontComponentPreviewEffect loadPreview={loadPreview} />
+      <AiChatFrontComponentPreviewEffect
+        key={retryCount}
+        loadPreview={loadPreview}
+      />
       <div>
         <Badge>{t`Sample data`}</Badge>
         {isDefined(preview) && (
@@ -82,6 +102,7 @@ export const AiChatFrontComponentPreviewContent = ({
               componentSource={preview.componentSource}
               sharedDependenciesSource={preview.sharedDependenciesSource}
               mockQueryResult={preview.mockQueryResult}
+              queryMetadata={queryMetadata}
               getObjectMetadata={getObjectMetadata}
               selectedRecordIds={preview.selectedRecordIds}
               selectedObjectMetadata={preview.selectedObjectMetadata}
@@ -98,6 +119,11 @@ export const AiChatFrontComponentPreviewContent = ({
         </span>
       )}
       {isDefined(error) && <span role="alert">{error}</span>}
+      {isDefined(error) && !isDefined(preview) && (
+        <Button size="sm" onClick={() => setRetryCount((count) => count + 1)}>
+          {t`Retry`}
+        </Button>
+      )}
     </StyledPreview>
   );
 };

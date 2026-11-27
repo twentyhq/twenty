@@ -1,20 +1,19 @@
 import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentHostCommunicationApi';
 
-export const FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP: FrontComponentHostCommunicationApi =
-  {
-    navigate: async () => {},
-    getObjectMetadata: async () => null,
-    requestAccessTokenRefresh: async () => '',
-    openSidePanelPage: async () => {},
-    openCommandConfirmationModal: async () => {},
-    unmountFrontComponent: async () => {},
-    enqueueSnackbar: async () => {},
-    closeSidePanel: async () => {},
-    updateProgress: async () => {},
-    copyToClipboard: async () => {},
-    setToolCallArguments: async () => {},
-    uploadFile: async () => ({ status: 'failed', reason: 'upload-failed' }),
-    storageSet: async () => {},
-    storageDelete: async () => {},
-    storageClear: async () => {},
-  };
+export const FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP = {
+  navigate: async () => {},
+  getObjectMetadata: async () => null,
+  requestAccessTokenRefresh: async () => '',
+  openSidePanelPage: async () => {},
+  openCommandConfirmationModal: async () => {},
+  unmountFrontComponent: async () => {},
+  enqueueSnackbar: async () => {},
+  closeSidePanel: async () => {},
+  updateProgress: async () => {},
+  copyToClipboard: async () => {},
+  setToolCallArguments: async () => {},
+  uploadFile: async () => ({ status: 'failed', reason: 'upload-failed' }),
+  storageSet: async () => {},
+  storageDelete: async () => {},
+  storageClear: async () => {},
+} satisfies FrontComponentHostCommunicationApi;

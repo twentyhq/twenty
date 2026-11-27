@@ -1,3 +1,4 @@
+import { type MetadataApiClient } from 'twenty-client-sdk/metadata';
 import {
   type CloseSidePanelFunction,
   type CopyToClipboardFunction,
@@ -17,6 +18,7 @@ import {
 } from 'twenty-sdk/front-component';
 
 export type WorkerFrontComponentHostCommunicationApi = {
+  queryMetadata?: MetadataApiClient['query'];
   navigate?: NavigateFunction;
   requestAccessTokenRefresh?: RequestAccessTokenRefreshFunction;
   getObjectMetadata?: GetObjectMetadataFunction;

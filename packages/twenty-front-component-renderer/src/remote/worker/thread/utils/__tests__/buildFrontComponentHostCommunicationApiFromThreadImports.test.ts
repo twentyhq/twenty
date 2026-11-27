@@ -40,6 +40,7 @@ describe('buildFrontComponentHostCommunicationApiFromThreadImports', () => {
       'navigate',
       'openCommandConfirmationModal',
       'openSidePanelPage',
+      'queryMetadata',
       'requestAccessTokenRefresh',
       'setToolCallArguments',
       'storageClear',

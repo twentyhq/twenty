@@ -16075,11 +16075,6 @@ msgstr "이 사용자는 이미 워크스페이스의 멤버입니다."
 msgid "This user is not a member of the workspace."
 msgstr "이 사용자는 워크스페이스의 구성원이 아닙니다."
 
-#. js-lingui-id: BFSoo/
-#: src/engine/metadata-modules/validation-rule/validation-rule.service.ts
-msgid "This validation rule is being upgraded. Try again in a few minutes."
-msgstr "이 유효성 검사 규칙이 업그레이드되고 있습니다. 몇 분 후에 다시 시도하세요."
-
 #. js-lingui-id: LtsBYU
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "This variable can only be set via environment."

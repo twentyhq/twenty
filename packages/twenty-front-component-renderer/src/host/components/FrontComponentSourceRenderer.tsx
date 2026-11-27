@@ -1,3 +1,4 @@
+import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentHostCommunicationApi';
 import { useMemo } from 'react';
 import {
   type FrontComponentSelectedObjectMetadata,
@@ -18,6 +19,7 @@ type FrontComponentSourceRendererProps = {
   selectedRecordIds?: string[];
   selectedObjectMetadata?: FrontComponentSelectedObjectMetadata | null;
   colorScheme: 'light' | 'dark';
+  queryMetadata?: FrontComponentHostCommunicationApi['queryMetadata'];
   onReady?: () => void;
   onError: (error?: Error) => void;
 };
@@ -33,6 +35,7 @@ export const FrontComponentSourceRenderer = ({
   selectedRecordIds = EMPTY_SELECTED_RECORD_IDS,
   selectedObjectMetadata = null,
   colorScheme,
+  queryMetadata,
   onReady,
   onError,
 }: FrontComponentSourceRendererProps) => {
@@ -43,9 +46,10 @@ export const FrontComponentSourceRenderer = ({
   const hostCommunicationApi = useMemo(
     () => ({
       ...FRONT_COMPONENT_PREVIEW_HOST_COMMUNICATION_API,
+      queryMetadata,
       getObjectMetadata,
     }),
-    [getObjectMetadata],
+    [queryMetadata, getObjectMetadata],
   );
   const executionContext = useMemo(
     () => ({
