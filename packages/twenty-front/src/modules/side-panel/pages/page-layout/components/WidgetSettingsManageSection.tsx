@@ -5,6 +5,7 @@ import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayo
 import { useResetPageLayoutWidgetToDefault } from '@/page-layout/hooks/useResetPageLayoutWidgetToDefault';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
+import { WidgetVisibilitySubPageItem } from '@/side-panel/pages/page-layout/components/WidgetVisibilitySubPageItem';
 import { WidgetVisibilityDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityDropdownContent';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
 import { useOpenReplaceWidgetPicker } from '@/side-panel/pages/page-layout/hooks/useOpenReplaceWidgetPicker';
@@ -19,6 +20,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -29,6 +31,7 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const RESET_WIDGET_TO_DEFAULT_MODAL_ID = 'reset-widget-to-default-modal';
 const RESET_WIDGET_TO_DEFAULT_MENU_ITEM_ID =
@@ -64,6 +67,10 @@ export const WidgetSettingsManageSection = ({
 
   const visibilityLabel = useTranslatedVisibilityLabel(widgetInEditMode);
 
+  const isWidgetConditionalAvailabilityEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED,
+  );
+
   if (!isDefined(pageLayoutEditingWidgetId)) {
     return null;
   }
@@ -91,37 +98,42 @@ export const WidgetSettingsManageSection = ({
   return (
     <>
       <SidePanelGroup heading={t`Manage`}>
-        <SelectableListItem
-          itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
-          onEnter={() =>
-            openDropdown({
-              dropdownComponentInstanceIdFromProps:
-                WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION,
-            })
-          }
-        >
-          <DropdownRoot
-            dropdownId={
-              WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION
+        {isWidgetConditionalAvailabilityEnabled && (
+          <WidgetVisibilitySubPageItem pageLayoutId={pageLayoutId} />
+        )}
+        {!isWidgetConditionalAvailabilityEnabled && (
+          <SelectableListItem
+            itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
+            onEnter={() =>
+              openDropdown({
+                dropdownComponentInstanceIdFromProps:
+                  WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION,
+              })
             }
-            type="picker"
           >
-            <CommandMenuItemDropdownTrigger
-              id={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
-              label={t`Visibility Restriction`}
-              Icon={IconEyeX}
-              description={visibilityLabel}
-              contextualTextPosition="right"
-            />
-            <DropdownContent
-              side="bottom"
-              align="end"
-              collisionPadding={{ left: 0, right: 0 }}
+            <DropdownRoot
+              dropdownId={
+                WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION
+              }
+              type="picker"
             >
-              <WidgetVisibilityDropdownContent />
-            </DropdownContent>
-          </DropdownRoot>
-        </SelectableListItem>
+              <CommandMenuItemDropdownTrigger
+                id={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
+                label={t`Visibility Restriction`}
+                Icon={IconEyeX}
+                description={visibilityLabel}
+                contextualTextPosition="right"
+              />
+              <DropdownContent
+                side="bottom"
+                align="end"
+                collisionPadding={{ left: 0, right: 0 }}
+              >
+                <WidgetVisibilityDropdownContent />
+              </DropdownContent>
+            </DropdownRoot>
+          </SelectableListItem>
+        )}
         <Tooltip
           delay={TooltipDelay.mediumDelay}
           content={t`No default configuration available for this widget`}
