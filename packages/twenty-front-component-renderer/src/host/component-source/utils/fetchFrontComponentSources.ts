@@ -1,7 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildAuthorizationHeadersFromAccessToken } from '@/host/component-source/utils/buildAuthorizationHeadersFromAccessToken';
-import { createSourceFetcherWithOptionalPrefetch } from '@/host/component-source/utils/createSourceFetcherWithOptionalPrefetch';
 import { fetchComponentSource } from '@/host/component-source/utils/fetchComponentSource';
 import { fetchSdkClientSources } from '@/host/component-source/utils/fetchSdkClientSources';
 import { type FrontComponentSources } from '@/types/FrontComponentSources';
@@ -37,36 +36,38 @@ export const fetchFrontComponentSources = async ({
     applicationAccessToken,
   );
 
-  const fetchSdkClientSourcesOrAwaitPrefetch =
-    isDefined(sdkClientUrls) && !isDefined(providedSdkClientSources)
-      ? createSourceFetcherWithOptionalPrefetch({
-          shouldPrefetch: shouldPrefetchSdkClientSources,
-          fetchSource: () => fetchSdkClientSources({ sdkClientUrls, headers }),
-        })
-      : undefined;
+  const canFetchSdkClientSources =
+    isDefined(sdkClientUrls) && !isDefined(providedSdkClientSources);
 
-  const fetchSharedDependenciesSourceOrAwaitPrefetch =
+  const canFetchSharedDependenciesSource =
     isDefined(sharedDependenciesUrl) &&
-    !isDefined(providedSharedDependenciesSource)
-      ? createSourceFetcherWithOptionalPrefetch({
-          shouldPrefetch: shouldPrefetchSharedDependenciesSource,
-          fetchSource: () =>
-            fetchComponentSource({ url: sharedDependenciesUrl, headers }),
-        })
-      : undefined;
+    !isDefined(providedSharedDependenciesSource);
 
-  const componentSource =
+  const [
+    componentSource,
+    prefetchedSdkClientSources,
+    prefetchedSharedDependenciesSource,
+  ] = await Promise.all([
     providedComponentSource ??
-    (await fetchComponentSource({ url: componentUrl, headers }));
+      fetchComponentSource({ url: componentUrl, headers }),
+    shouldPrefetchSdkClientSources && canFetchSdkClientSources
+      ? fetchSdkClientSources({ sdkClientUrls, headers })
+      : undefined,
+    shouldPrefetchSharedDependenciesSource && canFetchSharedDependenciesSource
+      ? fetchComponentSource({ url: sharedDependenciesUrl, headers })
+      : undefined,
+  ]);
 
   const [sdkClientSources, sharedDependenciesSource] = await Promise.all([
-    isDefined(fetchSdkClientSourcesOrAwaitPrefetch) &&
+    canFetchSdkClientSources &&
     containsSdkClientImportSpecifier(componentSource)
-      ? fetchSdkClientSourcesOrAwaitPrefetch()
+      ? (prefetchedSdkClientSources ??
+        fetchSdkClientSources({ sdkClientUrls, headers }))
       : providedSdkClientSources,
-    isDefined(fetchSharedDependenciesSourceOrAwaitPrefetch) &&
+    canFetchSharedDependenciesSource &&
     containsSharedDependenciesImportSpecifier(componentSource)
-      ? fetchSharedDependenciesSourceOrAwaitPrefetch()
+      ? (prefetchedSharedDependenciesSource ??
+        fetchComponentSource({ url: sharedDependenciesUrl, headers }))
       : providedSharedDependenciesSource,
   ]);
 

@@ -97,9 +97,8 @@ describe('fetchFrontComponentSources', () => {
     });
   });
 
-  it('should ignore a failed hinted fetch the component source does not need', async () => {
+  it('should leave out a hinted source the component source does not import', async () => {
     mockedFetchComponentSource.mockResolvedValue(SOURCE_WITHOUT_IMPORTS);
-    mockedFetchSdkClientSources.mockRejectedValue(new Error('unreachable'));
 
     await expect(
       fetchFrontComponentSources({
@@ -114,7 +113,7 @@ describe('fetchFrontComponentSources', () => {
     });
   });
 
-  it('should surface the failure of a hinted fetch the component source needs', async () => {
+  it('should fail when a hinted fetch fails', async () => {
     mockedFetchComponentSource.mockResolvedValue(SOURCE_IMPORTING_SDK_CLIENT);
     mockedFetchSdkClientSources.mockRejectedValue(new Error('unreachable'));
 
