@@ -4,5 +4,5 @@ import { type SettingsPath } from 'twenty-shared/types';
 export type SettingsSearchRouteMetadata = {
   title: MessageDescriptor;
   keywords?: MessageDescriptor[];
-  requiresBillingEnabled?: boolean;
+  isHiddenWhenBillingDisabled?: boolean;
 } & ({ section: MessageDescriptor } | { parentPath: SettingsPath });
