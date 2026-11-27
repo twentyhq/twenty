@@ -2603,7 +2603,7 @@ msgstr "הוסף פריט לפני"
 #. js-lingui-id: /kLKYB
 #: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Add item to {targetSectionName}"
-msgstr ""
+msgstr "הוסף פריט אל {targetSectionName}"
 
 #. js-lingui-id: VzGJRl
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
@@ -3036,7 +3036,7 @@ msgstr "מנהל וחבר"
 #. js-lingui-id: ZHWySn
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Admin channel write access"
-msgstr ""
+msgstr "גישת כתיבה של ערוץ מנהל"
 
 #. js-lingui-id: SsHJsm
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -7123,7 +7123,7 @@ msgstr "סגור תצוגה מקדימה"
 #. js-lingui-id: QBOwbf
 #: src/modules/navigation/components/NavigationDrawerCloseSettingsButton.tsx
 msgid "Close settings"
-msgstr ""
+msgstr "סגור הגדרות"
 
 #. js-lingui-id: saip/v
 #: src/modules/side-panel/components/SidePanelCloseButton.tsx
@@ -7257,7 +7257,7 @@ msgstr "כווץ את {heading}"
 #. js-lingui-id: LeVkuA
 #: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Collapse all sections"
-msgstr ""
+msgstr "כווץ את כל המקטעים"
 
 #. js-lingui-id: kBUgVh
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -13215,7 +13215,7 @@ msgstr "הרחב את {heading}"
 #. js-lingui-id: m2n9ZO
 #: src/modules/navigation/components/MainNavigationDrawerContextMenuContent.tsx
 msgid "Expand all sections"
-msgstr ""
+msgstr "הרחב את כל הסעיפים"
 
 #. js-lingui-id: JjrOSL
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -23832,7 +23832,7 @@ msgstr "נעוץ"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownListPinnedFieldContent.tsx
 msgid "Pinned field"
-msgstr ""
+msgstr "שדה מוצמד"
 
 #. js-lingui-id: OFY07S
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
@@ -25624,7 +25624,7 @@ msgstr "הסר מיון?"
 #. js-lingui-id: koiY9C
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would, and keep their role's write access to them."
-msgstr ""
+msgstr "הסרת הגישה להודעות וליומן של מפתחות API בתפקידים שניתן להקצות למשתמשים. כאשר האפשרות כבויה, מפתחות API אלה קוראים אותם כפי שחבר שאינו הבעלים של הערוץ היה קורא אותם, ושומרים על גישת הכתיבה של תפקידם אליהם."
 
 #. js-lingui-id: yBC05U
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -27168,7 +27168,7 @@ msgstr "מחפש צ'אטים..."
 #. js-lingui-id: xrtPMt
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "Searching records..."
-msgstr ""
+msgstr "מחפש רשומות..."
 
 #. js-lingui-id: KhCAL1
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -27341,7 +27341,7 @@ msgstr "צפה בפונקציה"
 #. js-lingui-id: kuQBTx
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "See in search results"
-msgstr ""
+msgstr "הצג בתוצאות החיפוש"
 
 #. js-lingui-id: 1HzZ+y
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -32148,7 +32148,7 @@ msgstr "הפוך ל־"
 #. js-lingui-id: rjkNOe
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Turn on for a workspace that reported broken links, merges or deletes. Gives the Admin role back its write access to messages and calendar events, without letting it see more of them."
-msgstr ""
+msgstr "יש להפעיל עבור סביבת עבודה שדיווחה על קישורים שבורים, מיזוגים או מחיקות. מחזיר לתפקיד מנהל את גישת הכתיבה שלו להודעות ולאירועי יומן, בלי לאפשר לו לראות יותר מהם."
 
 #. js-lingui-id: Njwcqh
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx

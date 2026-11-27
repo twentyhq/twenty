@@ -813,13 +813,13 @@ msgstr "ビューソートエラーが発生しました。"
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A visibleItemLimit is only allowed on SECTION type"
-msgstr ""
+msgstr "visibleItemLimit は SECTION タイプでのみ使用できます"
 
 #. js-lingui-id: +DI2pX
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A visibleItemLimit must be an integer between {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN} and {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX}"
-msgstr ""
+msgstr "visibleItemLimit は {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN} から {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX} までの整数である必要があります"
 
 #. js-lingui-id: SMhyGZ
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
@@ -6642,7 +6642,7 @@ msgstr "{objectLabelPlural}に移動"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Admin Panel"
-msgstr ""
+msgstr "管理パネルに移動"
 
 #. js-lingui-id: zPVvLp
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6654,13 +6654,13 @@ msgstr "エージェントに移動"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to AI"
-msgstr ""
+msgstr "AIに移動"
 
 #. js-lingui-id: OVO+nS
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Apps"
-msgstr ""
+msgstr "アプリに移動"
 
 #. js-lingui-id: TndVqR
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6672,61 +6672,61 @@ msgstr "アプリの設定に移動"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Billing"
-msgstr ""
+msgstr "請求に移動"
 
 #. js-lingui-id: xk8nZG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Community"
-msgstr ""
+msgstr "コミュニティに移動"
 
 #. js-lingui-id: TMv4vU
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Data Model"
-msgstr ""
+msgstr "データモデルに移動"
 
 #. js-lingui-id: nvVoDQ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Developers"
-msgstr ""
+msgstr "開発者に移動"
 
 #. js-lingui-id: YTMzOA
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Domains"
-msgstr ""
+msgstr "ドメインに移動"
 
 #. js-lingui-id: 8V43iD
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Experience"
-msgstr ""
+msgstr "経験に移動"
 
 #. js-lingui-id: YA1mxo
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to General"
-msgstr ""
+msgstr "一般に移動"
 
 #. js-lingui-id: bSctn/
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Members"
-msgstr ""
+msgstr "メンバーに移動"
 
 #. js-lingui-id: F15zBM
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Roles"
-msgstr ""
+msgstr "ロールに移動"
 
 #. js-lingui-id: R1fbZB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Security"
-msgstr ""
+msgstr "セキュリティに移動"
 
 #. js-lingui-id: Rrvufq
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
