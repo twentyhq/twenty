@@ -17,12 +17,18 @@ const StyledContent = styled.div`
 
 export const SettingsApplicationFunctionDomainSection = ({
   applicationId,
+  applicationFunctionsBaseUrl,
 }: {
   applicationId: string;
+  applicationFunctionsBaseUrl?: string | null;
 }) => {
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
-  const { functionsBaseUrl } = useGetLogicFunctionHttpUrl();
+  const { functionsBaseUrl: workspaceFunctionsBaseUrl } =
+    useGetLogicFunctionHttpUrl();
+
+  const functionsBaseUrl =
+    applicationFunctionsBaseUrl ?? workspaceFunctionsBaseUrl;
 
   return (
     <Section.Root>
@@ -42,7 +48,10 @@ export const SettingsApplicationFunctionDomainSection = ({
             copyToClipboard(functionsBaseUrl, t`URL copied to clipboard`)
           }
         />
-        <SettingsPublicDomainsListCard applicationId={applicationId} />
+        <SettingsPublicDomainsListCard
+          applicationId={applicationId}
+          functionsBaseUrl={functionsBaseUrl}
+        />
       </StyledContent>
     </Section.Root>
   );

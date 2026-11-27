@@ -9,6 +9,8 @@ import {
   type DeletePublicDomainMutation,
   type DeletePublicDomainMutationVariables,
   type FindManyPublicDomainsQuery,
+  type SetApplicationPrimaryPublicDomainMutation,
+  type SetApplicationPrimaryPublicDomainMutationVariables,
 } from '~/generated-metadata/graphql';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
@@ -23,6 +25,7 @@ const publicDomain = {
 };
 const DELETE_FAILURE_MESSAGE = 'Domain deletion failed';
 const onDeletePublicDomain = fn();
+const onSetApplicationPrimaryPublicDomain = fn();
 const onFindManyPublicDomains = fn();
 let pendingDeletion = Promise.resolve();
 let completeDeletion = () => {};
@@ -50,10 +53,11 @@ const meta: Meta<typeof SettingPublicDomainRowDropdownMenu> = {
     ComponentDecorator,
     ToastDecorator,
   ],
-  args: { publicDomain },
+  args: { publicDomain, applicationId: 'application-id', isPrimary: false },
   beforeEach: async () => {
     await mockedApolloClient.clearStore();
     onDeletePublicDomain.mockClear();
+    onSetApplicationPrimaryPublicDomain.mockClear();
     onFindManyPublicDomains.mockClear();
     pendingDeletion = new Promise<void>((resolve) => {
       completeDeletion = resolve;
@@ -71,6 +75,21 @@ const meta: Meta<typeof SettingPublicDomainRowDropdownMenu> = {
           onDeletePublicDomain(variables);
           await pendingDeletion;
           return HttpResponse.json({ data: { deletePublicDomain: true } });
+        }),
+        graphql.mutation<
+          SetApplicationPrimaryPublicDomainMutation,
+          SetApplicationPrimaryPublicDomainMutationVariables
+        >('SetApplicationPrimaryPublicDomain', ({ variables }) => {
+          onSetApplicationPrimaryPublicDomain(variables);
+          return HttpResponse.json({
+            data: {
+              setApplicationPrimaryPublicDomain: {
+                __typename: 'PublicDomain',
+                id: publicDomain.id,
+                domain: publicDomain.domain,
+              },
+            },
+          });
         }),
       ],
     },
@@ -152,5 +171,42 @@ export const DeleteFailureShowsOneError: Story = {
     await expect(canvas.getAllByText(DELETE_FAILURE_MESSAGE)).toHaveLength(1);
     await expect(onDeletePublicDomain).toHaveBeenCalledTimes(1);
     await expect(onFindManyPublicDomains).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const SetAsPrimary: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(canvas.getByRole('button', { name: 'More options' }));
+    await userEvent.click(
+      canvas.getByRole('menuitem', { name: 'Set as primary' }),
+    );
+
+    await waitFor(() =>
+      expect(onSetApplicationPrimaryPublicDomain).toHaveBeenCalledWith({
+        applicationId: 'application-id',
+        publicDomainId: publicDomain.id,
+      }),
+    );
+    await expect(
+      await canvas.findByText('Primary domain updated'),
+    ).toBeVisible();
+  },
+};
+
+export const PrimaryDomainHasNoSetAsPrimaryItem: Story = {
+  args: { isPrimary: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(canvas.getByRole('button', { name: 'More options' }));
+
+    await expect(
+      await canvas.findByRole('menuitem', { name: 'Delete' }),
+    ).toBeVisible();
+    await expect(
+      canvas.queryByRole('menuitem', { name: 'Set as primary' }),
+    ).not.toBeInTheDocument();
   },
 };

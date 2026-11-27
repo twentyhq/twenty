@@ -16,8 +16,10 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsPublicDomainsListCard = ({
   applicationId,
+  functionsBaseUrl,
 }: {
   applicationId: string;
+  functionsBaseUrl: string;
 }) => {
   const navigate = useNavigateSettings();
 
@@ -65,14 +67,23 @@ export const SettingsPublicDomainsListCard = ({
           publicDomainId: publicDomain.id,
         })
       }
-      RowRightComponent={({ item: publicDomain }) => (
-        <>
-          {!publicDomain.isValidated && (
-            <Status color="orange">{t`Pending`}</Status>
-          )}
-          <SettingPublicDomainRowDropdownMenu publicDomain={publicDomain} />
-        </>
-      )}
+      RowRightComponent={({ item: publicDomain }) => {
+        const isPrimary = functionsBaseUrl === `https://${publicDomain.domain}`;
+
+        return (
+          <>
+            {!publicDomain.isValidated && (
+              <Status color="orange">{t`Pending`}</Status>
+            )}
+            {isPrimary && <Status color="gray">{t`Primary`}</Status>}
+            <SettingPublicDomainRowDropdownMenu
+              publicDomain={publicDomain}
+              applicationId={applicationId}
+              isPrimary={isPrimary}
+            />
+          </>
+        );
+      }}
       hasFooter
       footerButtonLabel={t`Add Custom Domain`}
       onFooterButtonClick={navigateToCreate}

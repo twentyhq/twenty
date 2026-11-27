@@ -1194,6 +1194,9 @@ export default {
             "frontComponents": [
                 310
             ],
+            "functionsBaseUrl": [
+                4
+            ],
             "grantRoleId": [
                 573
             ],
@@ -9346,6 +9349,19 @@ export default {
                     "input": [
                         527,
                         "SetAppKeyValueInput!"
+                    ]
+                }
+            ],
+            "setApplicationPrimaryPublicDomain": [
+                458,
+                {
+                    "applicationId": [
+                        4,
+                        "String!"
+                    ],
+                    "publicDomainId": [
+                        4,
+                        "String!"
                     ]
                 }
             ],

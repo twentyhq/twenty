@@ -33,6 +33,7 @@ type SettingsApplicationDetailGeneralTabProps = {
     | 'logoUrl'
     | 'autoUpgrade'
     | 'canBeUninstalled'
+    | 'functionsBaseUrl'
     | 'isUninstallBlockedByOtherWorkspaceInstallations'
     | 'applicationRegistration'
     | 'logicFunctions'
@@ -187,6 +188,7 @@ export const SettingsApplicationDetailGeneralTab = ({
       {applicationHasHttpTriggeredFunctions(application) && (
         <SettingsApplicationFunctionDomainSection
           applicationId={application.id}
+          applicationFunctionsBaseUrl={application.functionsBaseUrl}
         />
       )}
       {canManageApplications && isOAuthOnlyApplication(application) && (
