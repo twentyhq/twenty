@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { CORE_PICTURE_MAX_FILE_SIZE_IN_MB } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { ImageInput, type ImageInputProps } from 'twenty-ui/components/input';
@@ -12,7 +13,7 @@ const SETTINGS_IMAGE_INPUT_ACCEPTED_TYPES = [
   'image/gif',
 ];
 
-const SETTINGS_IMAGE_INPUT_MAX_SIZE = 10 * 1024 * 1024;
+const SETTINGS_IMAGE_INPUT_MAX_SIZE = CORE_PICTURE_MAX_FILE_SIZE_IN_MB * 1024 * 1024;
 
 type SettingsImageInputProps = Pick<
   ImageInputProps,
@@ -37,13 +38,14 @@ export const SettingsImageInput = ({
 }: SettingsImageInputProps) => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
+  const maxSizeInMb = CORE_PICTURE_MAX_FILE_SIZE_IN_MB;
 
   const handleFileSelect = (file: File) => {
     if (!SETTINGS_IMAGE_INPUT_ACCEPTED_TYPES.includes(file.type)) {
       enqueueToast({
         status: 'error',
         children: t`This file isn't a PNG, JPEG or GIF`,
-        description: t`Pick a square PNG, JPEG or GIF under 10 MB.`,
+        description: t`Pick a square PNG, JPEG or GIF under ${maxSizeInMb} MB.`,
       });
       return;
     }
@@ -54,7 +56,7 @@ export const SettingsImageInput = ({
       enqueueToast({
         status: 'error',
         children: t`This file is ${fileSize}`,
-        description: t`Pick a square PNG, JPEG or GIF under 10 MB.`,
+        description: t`Pick a square PNG, JPEG or GIF under ${maxSizeInMb} MB.`,
       });
       return;
     }

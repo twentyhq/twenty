@@ -1,0 +1,1 @@
+export const CORE_PICTURE_MAX_FILE_SIZE_IN_MB = 10;
