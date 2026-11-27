@@ -1,6 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { getRowLevelPermissionRuleLabel } from '@/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel';
 import {
+  RelationType,
   type RowLevelPermissionPredicate,
   RowLevelPermissionPredicateOperand,
 } from '~/generated-metadata/graphql';
@@ -16,6 +17,31 @@ const OBJECT_METADATA_ITEM = {
       id: 'account-owner-field',
       label: 'Account Owner',
       type: FieldMetadataType.RELATION,
+    },
+    {
+      id: 'target-field',
+      label: 'Related to',
+      type: FieldMetadataType.MORPH_RELATION,
+      morphRelations: [
+        {
+          type: RelationType.MANY_TO_ONE,
+          sourceObjectMetadata: {
+            id: 'attachment-object',
+            nameSingular: 'attachment',
+            namePlural: 'attachments',
+          },
+          targetObjectMetadata: {
+            id: 'message-object',
+            nameSingular: 'message',
+            namePlural: 'messages',
+          },
+          sourceFieldMetadata: { id: 'target-message-field', name: 'target' },
+          targetFieldMetadata: {
+            id: 'message-attachments-field',
+            name: 'attachments',
+          },
+        },
+      ],
     },
   ],
 };
@@ -86,5 +112,23 @@ describe('getRowLevelPermissionRuleLabel', () => {
         recordLabelById: new Map([['phil-id', 'Phil Schiler']]),
       }),
     ).toBe('Account Owner is 2 records');
+  });
+
+  it('should name a morph relation condition after its field and target object', () => {
+    expect(
+      getRowLevelPermissionRuleLabel({
+        predicates: [
+          buildPredicate({
+            fieldMetadataId: 'target-message-field',
+            operand: RowLevelPermissionPredicateOperand.IS_EMPTY,
+            value: null,
+          }),
+        ],
+        objectMetadataItem: OBJECT_METADATA_ITEM,
+        objectMetadataItems: [
+          { id: 'message-object', labelSingular: 'Message' },
+        ],
+      }),
+    ).toBe('Related to (Message) is empty');
   });
 });

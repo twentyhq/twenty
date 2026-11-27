@@ -95,15 +95,16 @@ export const SettingsRoleRuleConditionFilterBuilderContent = ({
       recordFilterGroupId: rootRecordFilterGroup?.id,
     });
 
-  const { hasInitialized } = useRuleConditionFilterInitialization({
-    roleId,
-    rowLevelPermissionRuleId,
-    settingsDraftRole,
-    filterableFieldMetadataItems,
-    setCurrentRecordFilters,
-    setCurrentRecordFilterGroups,
-    setRecordFilterUsedInAdvancedFilterDropdownRow,
-  });
+  const { hasInitialized, predicateIdsWithoutFilter } =
+    useRuleConditionFilterInitialization({
+      roleId,
+      rowLevelPermissionRuleId,
+      settingsDraftRole,
+      filterableFieldMetadataItems,
+      setCurrentRecordFilters,
+      setCurrentRecordFilterGroups,
+      setRecordFilterUsedInAdvancedFilterDropdownRow,
+    });
 
   useRuleConditionSyncToDraftRole({
     roleId,
@@ -112,6 +113,7 @@ export const SettingsRoleRuleConditionFilterBuilderContent = ({
     currentRecordFilters,
     currentRecordFilterGroups,
     hasInitialized,
+    predicateIdsWithoutFilter,
   });
 
   const { handleCreateFirstFilter, handleAddFilter } =

@@ -4,7 +4,7 @@ import { Injector } from '@nestjs/core/injector/injector';
 import { type Module } from '@nestjs/core/injector/module';
 
 import { type ObjectRecord } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { type QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
 import {
@@ -131,6 +131,10 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
   }
 
   private transformPayload(payload: QueryResultFieldValue): ObjectRecord[] {
+    if (!isDefined(payload)) {
+      return [];
+    }
+
     if (isQueryResultFieldValueAConnection(payload)) {
       return payload.edges.map((edge) => edge.node);
     }

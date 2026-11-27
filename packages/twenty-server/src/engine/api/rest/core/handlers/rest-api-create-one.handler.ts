@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ObjectRecord } from 'twenty-shared/types';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import { parseFieldsRestRequest } from 'src/engine/api/rest/input-request-parsers/fields-parser-utils/parse-fields-rest-request.util';
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
@@ -71,16 +71,15 @@ export class RestApiCreateOneHandler extends RestApiBaseHandler {
     objectNameSingular,
     selectedFields,
   }: {
-    record: ObjectRecord;
+    record: ObjectRecord | undefined;
     objectNameSingular: string;
     selectedFields: CommonSelectedFields;
   }) {
     return {
       data: {
-        [`create${capitalize(objectNameSingular)}`]: pickRestResponseFields({
-          record,
-          selectedFields,
-        }),
+        [`create${capitalize(objectNameSingular)}`]: isDefined(record)
+          ? pickRestResponseFields({ record, selectedFields })
+          : null,
       },
     };
   }

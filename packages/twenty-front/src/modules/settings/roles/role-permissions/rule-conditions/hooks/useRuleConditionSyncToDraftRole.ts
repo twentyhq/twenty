@@ -20,6 +20,7 @@ type UseRuleConditionSyncToDraftRoleProps = {
   currentRecordFilters: RecordFilter[];
   currentRecordFilterGroups: RecordFilterGroup[];
   hasInitialized: boolean;
+  predicateIdsWithoutFilter: string[];
 };
 
 export const useRuleConditionSyncToDraftRole = ({
@@ -29,6 +30,7 @@ export const useRuleConditionSyncToDraftRole = ({
   currentRecordFilters,
   currentRecordFilterGroups,
   hasInitialized,
+  predicateIdsWithoutFilter,
 }: UseRuleConditionSyncToDraftRoleProps) => {
   const setSettingsDraftRole = useSetAtomFamilyState(
     settingsDraftRoleFamilyState,
@@ -42,7 +44,9 @@ export const useRuleConditionSyncToDraftRole = ({
       ).filter(
         (predicate) =>
           predicate.rowLevelPermissionRuleId !== rowLevelPermissionRuleId ||
-          isDefined(predicate.relationFieldMetadataId),
+          isDefined(predicate.relationFieldMetadataId) ||
+          // e.g. a condition on one target of a morph relation, which the filter builder cannot show
+          predicateIdsWithoutFilter.includes(predicate.id),
       );
 
       const otherRuleGroups = (
@@ -92,6 +96,7 @@ export const useRuleConditionSyncToDraftRole = ({
     currentRecordFilters,
     currentRecordFilterGroups,
     objectMetadataItem.id,
+    predicateIdsWithoutFilter,
     roleId,
     rowLevelPermissionRuleId,
     setSettingsDraftRole,

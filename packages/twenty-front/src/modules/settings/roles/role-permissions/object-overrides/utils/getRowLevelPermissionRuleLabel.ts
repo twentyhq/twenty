@@ -1,4 +1,6 @@
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { doesFieldMetadataItemMatchFieldMetadataId } from '@/object-metadata/utils/doesFieldMetadataItemMatchFieldMetadataId';
 import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
 import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
 import { t } from '@lingui/core/macro';
@@ -101,17 +103,59 @@ const getPredicateValueLabel = ({
   return '';
 };
 
+const getPredicateFieldLabel = ({
+  field,
+  fieldMetadataId,
+  objectMetadataItems,
+}: {
+  field?: Pick<FieldMetadataItem, 'label' | 'morphRelations'>;
+  fieldMetadataId: string;
+  objectMetadataItems?: Pick<
+    EnrichedObjectMetadataItem,
+    'id' | 'labelSingular'
+  >[];
+}) => {
+  if (!isDefined(field)) {
+    return t`Unknown field`;
+  }
+
+  const morphTargetObjectMetadataId = field.morphRelations?.find(
+    ({ sourceFieldMetadata }) => sourceFieldMetadata.id === fieldMetadataId,
+  )?.targetObjectMetadata.id;
+
+  const morphTargetObjectLabel = objectMetadataItems?.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.id === morphTargetObjectMetadataId,
+  )?.labelSingular;
+
+  if (!isNonEmptyString(morphTargetObjectLabel)) {
+    return field.label;
+  }
+
+  const morphFieldLabel = field.label;
+
+  return t`${morphFieldLabel} (${morphTargetObjectLabel})`;
+};
+
 export const getRowLevelPermissionRuleLabel = ({
   predicates,
   objectMetadataItem,
+  objectMetadataItems,
   workspaceMemberObjectMetadataItem,
   recordLabelById,
   getDateValueLabel,
 }: {
   predicates: RowLevelPermissionPredicate[];
   objectMetadataItem: {
-    fields: Pick<FieldMetadataItem, 'id' | 'label' | 'type'>[];
+    fields: Pick<
+      FieldMetadataItem,
+      'id' | 'label' | 'type' | 'relation' | 'morphRelations'
+    >[];
   };
+  objectMetadataItems?: Pick<
+    EnrichedObjectMetadataItem,
+    'id' | 'labelSingular'
+  >[];
   workspaceMemberObjectMetadataItem?: {
     fields: Pick<FieldMetadataItem, 'id' | 'name' | 'label'>[];
   };
@@ -124,10 +168,17 @@ export const getRowLevelPermissionRuleLabel = ({
     return '';
   }
 
-  const field = objectMetadataItem.fields.find(
-    (objectField) => objectField.id === firstPredicate.fieldMetadataId,
+  const field = objectMetadataItem.fields.find((objectField) =>
+    doesFieldMetadataItemMatchFieldMetadataId({
+      fieldMetadataItem: objectField,
+      fieldMetadataId: firstPredicate.fieldMetadataId,
+    }),
   );
-  const fieldLabel = field?.label ?? t`Unknown field`;
+  const fieldLabel = getPredicateFieldLabel({
+    field,
+    fieldMetadataId: firstPredicate.fieldMetadataId,
+    objectMetadataItems,
+  });
 
   const isDateValue =
     isNonEmptyString(firstPredicate.value) &&
