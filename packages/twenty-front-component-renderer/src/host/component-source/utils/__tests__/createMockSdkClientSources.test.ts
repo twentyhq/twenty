@@ -1,9 +1,12 @@
 import { createMockSdkClientSources } from '../createMockSdkClientSources';
 
-const loadModule = (
-  source: string,
+const loadModule = ({
+  source,
   queryMetadata = jest.fn(),
-): {
+}: {
+  source: string;
+  queryMetadata?: ReturnType<typeof jest.fn>;
+}): {
   CoreApiClient: new () => {
     query: (selection?: Record<string, unknown>) => Promise<unknown>;
     mutation: () => Promise<never>;
@@ -33,7 +36,7 @@ describe('createMockSdkClientSources', () => {
         pageInfo: { hasNextPage: false },
       },
     });
-    const client = new (loadModule(core).CoreApiClient)();
+    const client = new (loadModule({ source: core }).CoreApiClient)();
     const query = (id: string) => ({
       companies: { __args: { filter: { id: { eq: id } } } },
     });
@@ -59,20 +62,20 @@ describe('createMockSdkClientSources', () => {
       },
     };
     const { core } = createMockSdkClientSources(result);
-    const client = new (loadModule(core).CoreApiClient)();
+    const client = new (loadModule({ source: core }).CoreApiClient)();
 
     expect(await client.query()).toEqual(result);
   });
 
   it('rejects Core and Metadata writes in previews', async () => {
     const { core, metadata } = createMockSdkClientSources({});
-    const client = new (loadModule(core).CoreApiClient)();
+    const client = new (loadModule({ source: core }).CoreApiClient)();
 
     await expect(client.mutation()).rejects.toThrow(
       'Mutations are unavailable',
     );
     await expect(
-      new (loadModule(metadata).MetadataApiClient)().mutation(),
+      new (loadModule({ source: metadata }).MetadataApiClient)().mutation(),
     ).rejects.toThrow('Mutations are unavailable');
   });
 });
@@ -81,7 +84,10 @@ it('forwards metadata queries and permission errors through the host', async () 
   const result = { object: { id: 'opportunity' } };
   const queryMetadata = jest.fn().mockResolvedValueOnce(result);
   const { metadata } = createMockSdkClientSources({});
-  const client = new (loadModule(metadata, queryMetadata).MetadataApiClient)();
+  const client = new (loadModule({
+    source: metadata,
+    queryMetadata,
+  }).MetadataApiClient)();
   const selection = { object: { __args: { id: 'opportunity' }, id: true } };
 
   expect(await client.query(selection)).toEqual(result);

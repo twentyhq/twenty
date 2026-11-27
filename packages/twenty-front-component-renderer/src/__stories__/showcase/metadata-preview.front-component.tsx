@@ -5,6 +5,9 @@ import { defineFrontComponent } from 'twenty-sdk/define';
 
 const MetadataPreview = () => {
   const [result, setResult] = useState('Loading');
+  const showError = (error: unknown) => {
+    setResult(error instanceof Error ? error.message : String(error));
+  };
   const load = async () => {
     try {
       const data = await new MetadataApiClient().query({
@@ -32,7 +35,7 @@ const MetadataPreview = () => {
           .join(', '),
       );
     } catch (error) {
-      setResult(error instanceof Error ? error.message : String(error));
+      showError(error);
     }
   };
 
@@ -49,7 +52,7 @@ const MetadataPreview = () => {
           try {
             await new MetadataApiClient().mutation({});
           } catch (error) {
-            setResult(error instanceof Error ? error.message : String(error));
+            showError(error);
           }
         }}
       >

@@ -45648,6 +45648,7 @@ __metadata:
     ts-morph: "npm:^25.0.0"
     tsc-alias: "npm:^1.8.16"
     tsx: "npm:^4.7.0"
+    twenty-client-sdk: "workspace:*"
     twenty-sdk: "workspace:*"
     twenty-shared: "workspace:*"
     twenty-ui: "workspace:*"

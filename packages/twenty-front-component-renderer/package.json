@@ -53,6 +53,7 @@
     "ts-morph": "^25.0.0",
     "tsc-alias": "^1.8.16",
     "tsx": "^4.7.0",
+    "twenty-client-sdk": "workspace:*",
     "twenty-sdk": "workspace:*",
     "twenty-shared": "workspace:*",
     "twenty-ui": "workspace:*"
