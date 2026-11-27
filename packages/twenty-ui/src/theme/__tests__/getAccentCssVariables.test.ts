@@ -6,10 +6,13 @@ import { getAccentCssVariables } from '../internal/getAccentCssVariables';
 
 const THEME_BY_COLOR_SCHEME = { light: THEME_LIGHT, dark: THEME_DARK };
 
-const resolveColorReference = (
-  reference: string,
-  colorScheme: 'light' | 'dark',
-) => {
+const resolveColorReference = ({
+  reference,
+  colorScheme,
+}: {
+  reference: string;
+  colorScheme: 'light' | 'dark';
+}) => {
   const theme = THEME_BY_COLOR_SCHEME[colorScheme];
   const [, isTransparent, colorKey = ''] =
     reference.match(/^var\(--t-color-(transparent-)?([a-z]+\d+)\)$/) ?? [];
@@ -35,7 +38,7 @@ describe('getAccentCssVariables', () => {
       )) {
         const accentKey = cssVariable.replace('--t-accent-', '');
 
-        expect(resolveColorReference(reference, colorScheme)).toBe(
+        expect(resolveColorReference({ reference, colorScheme })).toBe(
           accentTokens[accentKey],
         );
       }
