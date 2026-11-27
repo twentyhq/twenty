@@ -213,4 +213,38 @@ describe('Timeline activity field permissions', () => {
       RESTRICTED_JOB_TITLE,
     );
   });
+
+  it('should omit every field of a target object the role cannot read', async () => {
+    const { roleId: personDeniedRoleId } =
+      await createCustomRoleWithObjectPermissions({
+        label: 'TimelinePersonDeniedRole',
+        canReadPerson: false,
+      });
+
+    await updateWorkspaceMemberRole({
+      client,
+      roleId: personDeniedRoleId,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    });
+
+    try {
+      const response = await makeGraphqlApiRequestWithMemberRole(
+        buildTimelineActivitiesOperation({ personId }),
+      );
+
+      const serializedData = JSON.stringify(response.body.data);
+
+      expect(response.body.errors).toBeUndefined();
+      expect(serializedData).not.toContain(READABLE_FIRST_NAME);
+      expect(serializedData).not.toContain(RESTRICTED_JOB_TITLE);
+    } finally {
+      await updateWorkspaceMemberRole({
+        client,
+        roleId: customRoleId,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      });
+
+      await deleteRole(client, personDeniedRoleId);
+    }
+  });
 });
