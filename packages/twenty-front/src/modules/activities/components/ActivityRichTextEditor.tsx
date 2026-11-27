@@ -7,6 +7,7 @@ import { type Note } from '@/activities/types/Note';
 import { type Task } from '@/activities/types/Task';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { RichTextFieldEditor } from '@/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor';
+import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { RICH_TEXT_FIELD_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/object-record/record-field/ui/meta-types/input/constants/RichTextFieldEditorGlobalHotkeysConfig';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isTitleCellInEditModeComponentState } from '@/object-record/record-title-cell/states/isTitleCellInEditModeComponentState';
@@ -60,7 +61,7 @@ export const ActivityRichTextEditor = ({
   });
 
   const handlePersistBody = useCallback(
-    (tiptap: string) => {
+    (richTextValue: FieldRichTextValue) => {
       if (!canCreateActivity) {
         setCanCreateActivity(true);
       }
@@ -72,9 +73,7 @@ export const ActivityRichTextEditor = ({
       if (isDefined(activity)) {
         upsertActivity({
           activity,
-          input: {
-            bodyV2: { blocknote: null, markdown: null, tiptap },
-          },
+          input: { bodyV2: richTextValue },
         });
       }
     },
