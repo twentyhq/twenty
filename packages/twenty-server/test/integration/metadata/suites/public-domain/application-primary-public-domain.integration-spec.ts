@@ -36,6 +36,7 @@ const FIND_APPLICATION_FUNCTIONS_BASE_URL = gql`
     findOneApplication(id: $id) {
       id
       functionsBaseUrl
+      primaryPublicDomainId
     }
   }
 `;
@@ -117,9 +118,11 @@ describe('Application primary public domain (integration)', () => {
         `https://${olderPublicDomain}`,
       );
 
+      const newerPublicDomainId = await findPublicDomainId(newerPublicDomain);
+
       const response = await setPrimaryPublicDomain({
         applicationId,
-        publicDomainId: await findPublicDomainId(newerPublicDomain),
+        publicDomainId: newerPublicDomainId,
       });
 
       expect(response.body.errors).toBeUndefined();
@@ -138,6 +141,9 @@ describe('Application primary public domain (integration)', () => {
       expect(
         applicationResponse.body.data.findOneApplication.functionsBaseUrl,
       ).toBe(`https://${newerPublicDomain}`);
+      expect(
+        applicationResponse.body.data.findOneApplication.primaryPublicDomainId,
+      ).toBe(newerPublicDomainId);
     } finally {
       await deletePublicDomains([olderPublicDomain, newerPublicDomain]);
       await cleanupApplicationAndAppRegistration({

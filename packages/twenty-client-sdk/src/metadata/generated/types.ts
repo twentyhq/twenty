@@ -1233,6 +1233,9 @@ export default {
             "packageJsonFileId": [
                 573
             ],
+            "primaryPublicDomainId": [
+                573
+            ],
             "requestedIframeMediaPermissions": [
                 332
             ],

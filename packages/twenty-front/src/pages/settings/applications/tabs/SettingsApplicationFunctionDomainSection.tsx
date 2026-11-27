@@ -18,9 +18,11 @@ const StyledContent = styled.div`
 export const SettingsApplicationFunctionDomainSection = ({
   applicationId,
   applicationFunctionsBaseUrl,
+  primaryPublicDomainId,
 }: {
   applicationId: string;
   applicationFunctionsBaseUrl?: string | null;
+  primaryPublicDomainId?: string | null;
 }) => {
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
@@ -50,7 +52,7 @@ export const SettingsApplicationFunctionDomainSection = ({
         />
         <SettingsPublicDomainsListCard
           applicationId={applicationId}
-          functionsBaseUrl={functionsBaseUrl}
+          primaryPublicDomainId={primaryPublicDomainId}
         />
       </StyledContent>
     </Section.Root>

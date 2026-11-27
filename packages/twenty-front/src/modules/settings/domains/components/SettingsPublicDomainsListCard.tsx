@@ -16,10 +16,10 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsPublicDomainsListCard = ({
   applicationId,
-  functionsBaseUrl,
+  primaryPublicDomainId,
 }: {
   applicationId: string;
-  functionsBaseUrl: string;
+  primaryPublicDomainId?: string | null;
 }) => {
   const navigate = useNavigateSettings();
 
@@ -68,7 +68,7 @@ export const SettingsPublicDomainsListCard = ({
         })
       }
       RowRightComponent={({ item: publicDomain }) => {
-        const isPrimary = functionsBaseUrl === `https://${publicDomain.domain}`;
+        const isPrimary = publicDomain.id === primaryPublicDomainId;
 
         return (
           <>

@@ -608,6 +608,7 @@ export type Application = {
   objects: Array<Object>;
   packageJsonChecksum?: Maybe<Scalars['String']['output']>;
   packageJsonFileId?: Maybe<Scalars['UUID']['output']>;
+  primaryPublicDomainId?: Maybe<Scalars['UUID']['output']>;
   requestedIframeMediaPermissions: Array<IframeMediaPermission>;
   requestedRoleId?: Maybe<Scalars['UUID']['output']>;
   runHealthCheckOnUserPreferences: Scalars['Boolean']['output'];

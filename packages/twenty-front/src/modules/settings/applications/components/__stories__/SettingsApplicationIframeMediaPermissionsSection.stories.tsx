@@ -39,6 +39,7 @@ const REFRESHED_APPLICATION: FindOneApplicationQuery['findOneApplication'] = {
   applicationRegistration: null,
   canBeUninstalled: true,
   functionsBaseUrl: null,
+  primaryPublicDomainId: null,
   isUninstallBlockedByOtherWorkspaceInstallations: false,
   autoUpgrade: false,
   createdAt: '2026-11-02T00:00:00.000Z',

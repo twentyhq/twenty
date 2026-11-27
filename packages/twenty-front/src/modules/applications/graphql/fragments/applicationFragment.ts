@@ -23,6 +23,7 @@ export const APPLICATION_FRAGMENT = gql`
     }
     canBeUninstalled
     functionsBaseUrl
+    primaryPublicDomainId
     autoUpgrade
     createdAt
     requestedRoleId

@@ -568,6 +568,7 @@ type Application {
   objects: [Object!]!
   packageJsonChecksum: String
   packageJsonFileId: UUID
+  primaryPublicDomainId: UUID
   requestedIframeMediaPermissions: [IframeMediaPermission!]!
   requestedRoleId: UUID
   runHealthCheckOnUserPreferences: Boolean!

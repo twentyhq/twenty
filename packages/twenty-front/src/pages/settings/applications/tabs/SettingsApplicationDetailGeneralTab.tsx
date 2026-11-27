@@ -34,6 +34,7 @@ type SettingsApplicationDetailGeneralTabProps = {
     | 'autoUpgrade'
     | 'canBeUninstalled'
     | 'functionsBaseUrl'
+    | 'primaryPublicDomainId'
     | 'isUninstallBlockedByOtherWorkspaceInstallations'
     | 'applicationRegistration'
     | 'logicFunctions'
@@ -189,6 +190,7 @@ export const SettingsApplicationDetailGeneralTab = ({
         <SettingsApplicationFunctionDomainSection
           applicationId={application.id}
           applicationFunctionsBaseUrl={application.functionsBaseUrl}
+          primaryPublicDomainId={application.primaryPublicDomainId}
         />
       )}
       {canManageApplications && isOAuthOnlyApplication(application) && (

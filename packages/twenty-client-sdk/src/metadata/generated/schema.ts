@@ -441,6 +441,7 @@ export interface Application {
     objects: Object[]
     packageJsonChecksum?: Scalars['String']
     packageJsonFileId?: Scalars['UUID']
+    primaryPublicDomainId?: Scalars['UUID']
     requestedIframeMediaPermissions: IframeMediaPermission[]
     requestedRoleId?: Scalars['UUID']
     runHealthCheckOnUserPreferences: Scalars['Boolean']
@@ -5121,6 +5122,7 @@ export interface ApplicationGenqlSelection{
     objects?: ObjectGenqlSelection
     packageJsonChecksum?: boolean | number
     packageJsonFileId?: boolean | number
+    primaryPublicDomainId?: boolean | number
     requestedIframeMediaPermissions?: IframeMediaPermissionGenqlSelection
     requestedRoleId?: boolean | number
     runHealthCheckOnUserPreferences?: boolean | number

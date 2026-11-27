@@ -88,6 +88,11 @@ export class ApplicationDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   applicationRegistrationId?: string;
 
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  primaryPublicDomainId?: string;
+
   @Field(() => Boolean)
   @IsBoolean()
   canBeUninstalled: boolean;
