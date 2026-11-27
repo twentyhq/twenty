@@ -1,4 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { doesFieldMetadataItemMatchFieldMetadataId } from '@/object-metadata/utils/doesFieldMetadataItemMatchFieldMetadataId';
 import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
 import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
 import { t } from '@lingui/core/macro';
@@ -110,7 +111,10 @@ export const getRowLevelPermissionRuleLabel = ({
 }: {
   predicates: RowLevelPermissionPredicate[];
   objectMetadataItem: {
-    fields: Pick<FieldMetadataItem, 'id' | 'label' | 'type'>[];
+    fields: Pick<
+      FieldMetadataItem,
+      'id' | 'label' | 'type' | 'relation' | 'morphRelations'
+    >[];
   };
   workspaceMemberObjectMetadataItem?: {
     fields: Pick<FieldMetadataItem, 'id' | 'name' | 'label'>[];
@@ -124,8 +128,11 @@ export const getRowLevelPermissionRuleLabel = ({
     return '';
   }
 
-  const field = objectMetadataItem.fields.find(
-    (objectField) => objectField.id === firstPredicate.fieldMetadataId,
+  const field = objectMetadataItem.fields.find((objectField) =>
+    doesFieldMetadataItemMatchFieldMetadataId({
+      fieldMetadataItem: objectField,
+      fieldMetadataId: firstPredicate.fieldMetadataId,
+    }),
   );
   const fieldLabel = field?.label ?? t`Unknown field`;
 

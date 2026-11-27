@@ -2,7 +2,7 @@ import { Injectable, type NestMiddleware } from '@nestjs/common';
 
 import { type NextFunction, type Request, type Response } from 'express';
 
-import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
+import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.constant';
 
 // MCP streamable-http spec (2025-03-26) requires that servers respond with
 // 405 Method Not Allowed (plus an Allow header) for HTTP methods they do not
