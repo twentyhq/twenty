@@ -12,21 +12,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { useThemeColorScheme } from 'twenty-ui/theme';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { type ResolvedFrontComponent } from '@/front-components/types/ResolvedFrontComponent';
-import {
-  type FrontComponentSources,
-  FrontComponentRenderer as SharedFrontComponentRenderer,
-  type SdkClientUrls,
-} from 'twenty-front-component-renderer';
+import { useFrontComponentRendererPrerequisitesOrThrow } from '@/front-components/contexts/FrontComponentRendererPrerequisitesContext';
+import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-front-component-renderer';
 
 type FrontComponentRendererContentProps = {
-  frontComponent: ResolvedFrontComponent;
-  applicationAccessToken: string;
-  componentUrl: string;
-  sdkClientUrls: SdkClientUrls;
-  sharedDependenciesUrl: string;
-  usesSharedDependencies: boolean;
-  preloadedSourcesPromise?: Promise<FrontComponentSources | undefined>;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
   selectedRecordsFilter?: RecordGqlOperationFilter | null;
@@ -40,13 +29,6 @@ type FrontComponentRendererContentProps = {
 };
 
 export const FrontComponentRendererContent = ({
-  frontComponent,
-  applicationAccessToken,
-  componentUrl,
-  sdkClientUrls,
-  sharedDependenciesUrl,
-  usesSharedDependencies,
-  preloadedSourcesPromise,
   commandMenuItemId,
   selectedRecordIds,
   selectedRecordsFilter,
@@ -58,6 +40,16 @@ export const FrontComponentRendererContent = ({
   errorFallback,
   shouldPreventPageZoom,
 }: FrontComponentRendererContentProps) => {
+  const {
+    frontComponent,
+    applicationAccessToken,
+    componentUrl,
+    sdkClientUrls,
+    sharedDependenciesUrl,
+    usesSharedDependencies,
+    preloadedSourcesPromise,
+  } = useFrontComponentRendererPrerequisitesOrThrow();
+
   const colorScheme = useThemeColorScheme();
   const { enqueueToast } = useToast();
   const { functionsBaseUrl } = useGetLogicFunctionHttpUrl();

@@ -7,6 +7,7 @@ import { type ReactNode } from 'react';
 import { type FrontComponentToolCall } from 'twenty-sdk/front-component';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { FrontComponentRendererContent } from '@/front-components/components/FrontComponentRendererContent';
 import { FrontComponentRendererPrerequisitesLoader } from '@/front-components/components/FrontComponentRendererPrerequisitesLoader';
 import { FindOneFrontComponentDocument } from '~/generated-metadata/graphql';
 
@@ -77,18 +78,22 @@ export const FrontComponentRenderer = ({
               frontComponentFieldsNeededToStartLoading
             }
             frontComponentFromFindOneQuery={frontComponentFromFindOneQuery}
-            commandMenuItemId={commandMenuItemId}
-            selectedRecordIds={selectedRecordIds}
-            selectedRecordsFilter={selectedRecordsFilter}
-            objectNameSingular={objectNameSingular}
-            timelineActivityId={timelineActivityId}
-            toolCall={toolCall}
-            onToolCallArgumentsChange={onToolCallArgumentsChange}
             loadingFallback={loadingFallback}
             unavailableFallback={unavailableFallback}
-            errorFallback={errorFallback}
-            shouldPreventPageZoom={shouldPreventPageZoom}
-          />
+          >
+            <FrontComponentRendererContent
+              commandMenuItemId={commandMenuItemId}
+              selectedRecordIds={selectedRecordIds}
+              selectedRecordsFilter={selectedRecordsFilter}
+              objectNameSingular={objectNameSingular}
+              timelineActivityId={timelineActivityId}
+              toolCall={toolCall}
+              onToolCallArgumentsChange={onToolCallArgumentsChange}
+              loadingFallback={loadingFallback}
+              errorFallback={errorFallback}
+              shouldPreventPageZoom={shouldPreventPageZoom}
+            />
+          </FrontComponentRendererPrerequisitesLoader>
         )}
     </>
   );
