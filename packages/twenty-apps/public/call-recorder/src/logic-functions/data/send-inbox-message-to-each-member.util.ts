@@ -8,7 +8,7 @@ type SendInboxMessageToEachMemberResult = {
   failedSends: { workspaceMemberId: string; error: unknown }[];
 };
 
-// A member's messages go in order and stop at the first failure, so a retry never posts them out of order.
+// Stopping at a member's first failure keeps a retry from posting their messages out of order.
 export const sendInboxMessageToEachMember = async ({
   workspaceMemberIds,
   buildMessages,
