@@ -57,7 +57,6 @@ export class AccessGroupSyncService {
     const syncStart = performance.now();
 
     await this.workspaceCacheService.markWorkspaceLocalCacheStale(workspaceId);
-    void this.workspaceCacheService.tempDebugFindStaleSameHash(workspaceId, 'sync');
 
     const workspaceCache = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
