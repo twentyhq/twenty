@@ -13,6 +13,7 @@ const identifyAccountResultSchema = z.object({
     .max(EXTERNAL_ACCOUNT_ID_MAX_LENGTH)
     .nullable(),
   handle: z.string().trim().min(1).nullish(),
+  name: z.string().trim().min(1).nullish(),
 });
 
 type ParseIdentifyAccountResultOutcome =
@@ -31,7 +32,7 @@ export const parseIdentifyAccountResult = (
     };
   }
 
-  const { externalAccountId, handle } = parsed.data;
+  const { externalAccountId, handle, name } = parsed.data;
 
   if (!isDefined(externalAccountId)) {
     return { isValid: true, identifiedAccount: null };
@@ -39,8 +40,10 @@ export const parseIdentifyAccountResult = (
 
   return {
     isValid: true,
-    identifiedAccount: isDefined(handle)
-      ? { externalAccountId, handle }
-      : { externalAccountId },
+    identifiedAccount: {
+      externalAccountId,
+      ...(isDefined(handle) ? { handle } : {}),
+      ...(isDefined(name) ? { name } : {}),
+    },
   };
 };
