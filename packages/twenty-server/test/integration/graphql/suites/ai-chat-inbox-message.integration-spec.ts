@@ -109,11 +109,11 @@ describe('Sending an inbox message as an application', () => {
       token,
     );
 
-  const readPendingQuestionMessageId = async () =>
+  const readPendingQuestionMessageId = async (id = threadId) =>
     (
       await global.testDataSource.query(
         `SELECT "pendingQuestionMessageId" FROM "${schema}"."agentChatThread" WHERE id = $1`,
-        [threadId],
+        [id],
       )
     )[0].pendingQuestionMessageId as string | null;
 
@@ -455,18 +455,17 @@ describe('Sending an inbox message as an application', () => {
     const [followUpCallId, pricingCallId, questionCallId] = [0, 1, 2].map(
       (position) => buildInboxMessageToolCallId({ messageId, position }),
     );
-    const readStackPendingQuestionMessageId = async () =>
-      (
-        await global.testDataSource.query(
-          `SELECT "pendingQuestionMessageId" FROM "${schema}"."agentChatThread" WHERE id = $1`,
-          [stackThreadId],
-        )
-      )[0].pendingQuestionMessageId as string | null;
     const findStackStreamJobs = () =>
       enqueueStream.mock.calls.filter(
         ([, jobData]) => jobData?.threadId === stackThreadId,
       );
-    const answer = (toolCallId: string, response: Record<string, unknown>) =>
+    const answer = ({
+      toolCallId,
+      response,
+    }: {
+      toolCallId: string;
+      response: Record<string, unknown>;
+    }) =>
       answerToolCall({
         toolCall: { threadId: stackThreadId, toolCallId },
         response,
@@ -497,25 +496,29 @@ describe('Sending an inbox message as an application', () => {
         { type: 'tool-propose_tool_call', toolCallId: pricingCallId },
         { type: 'tool-ask_question', toolCallId: questionCallId },
       ]);
-      expect(await readStackPendingQuestionMessageId()).toBe(messageId);
+      expect(await readPendingQuestionMessageId(stackThreadId)).toBe(messageId);
 
       for (const toolCallId of [followUpCallId, pricingCallId]) {
-        const answerResponse = await answer(toolCallId, {
-          decision: 'reject',
+        const answerResponse = await answer({
+          toolCallId,
+          response: { decision: 'reject' },
         });
 
         expect(answerResponse.body.errors).toBeUndefined();
-        expect(await readStackPendingQuestionMessageId()).toBe(messageId);
+        expect(await readPendingQuestionMessageId(stackThreadId)).toBe(
+          messageId,
+        );
       }
 
       expect(findStackStreamJobs()).toHaveLength(0);
 
-      const lastAnswerResponse = await answer(questionCallId, {
-        selectedOptionIndices: [0],
+      const lastAnswerResponse = await answer({
+        toolCallId: questionCallId,
+        response: { selectedOptionIndices: [0] },
       });
 
       expect(lastAnswerResponse.body.errors).toBeUndefined();
-      expect(await readStackPendingQuestionMessageId()).toBeNull();
+      expect(await readPendingQuestionMessageId(stackThreadId)).toBeNull();
       expect(findStackStreamJobs()).toHaveLength(1);
     } finally {
       await makeMetadataApiRequest({

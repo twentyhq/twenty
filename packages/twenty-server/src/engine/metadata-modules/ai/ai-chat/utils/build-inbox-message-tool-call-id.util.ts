@@ -2,8 +2,7 @@ import { v5 } from 'uuid';
 
 import { INBOX_MESSAGE_ID_NAMESPACE } from 'src/engine/metadata-modules/ai/ai-chat/constants/inbox-message-id-namespace.constant';
 
-// The first call keeps the id of a message that could hold only one, so a
-// retry of a message sent before still finds its call.
+// position 0 keeps the single-call id, so retries of older messages still match
 export const buildInboxMessageToolCallId = ({
   messageId,
   position,

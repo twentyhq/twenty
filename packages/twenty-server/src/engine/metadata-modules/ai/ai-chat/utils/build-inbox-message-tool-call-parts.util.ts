@@ -51,8 +51,6 @@ const listToolCalls = ({
   return toolCalls;
 };
 
-// The calls are parts of one message, so those the member answers stack like
-// the calls the assistant makes in one step, and the message waits on them.
 export const buildInboxMessageToolCallParts = async ({
   toolCall,
   toolCalls,
