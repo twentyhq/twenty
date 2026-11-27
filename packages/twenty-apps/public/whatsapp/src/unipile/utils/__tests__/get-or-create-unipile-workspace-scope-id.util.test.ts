@@ -37,9 +37,20 @@ const buildScope = (id: string, reference: string | null) => ({
 describe('getOrCreateUnipileWorkspaceScopeId', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.stubEnv('UNIPILE_API_KEY', 'unipile-key');
+    vi.stubEnv('UNIPILE_API_KEY', 'unipile-account-key');
+    vi.stubEnv('UNIPILE_SERVICE_API_KEY', 'unipile-service-key');
     mocks.kvStore.clear();
     mocks.listScopes.mockResolvedValue({ data: { data: [] } });
+  });
+
+  it('leaves accounts unscoped when no service key is configured', async () => {
+    vi.stubEnv('UNIPILE_SERVICE_API_KEY', '');
+
+    await expect(
+      getOrCreateUnipileWorkspaceScopeId(WORKSPACE_ID),
+    ).resolves.toBeUndefined();
+    expect(mocks.listScopes).not.toHaveBeenCalled();
+    expect(mocks.createScope).not.toHaveBeenCalled();
   });
 
   it('reuses the Scope already stored for the workspace', async () => {
@@ -81,6 +92,8 @@ describe('getOrCreateUnipileWorkspaceScopeId', () => {
     await expect(
       getOrCreateUnipileWorkspaceScopeId(WORKSPACE_ID),
     ).resolves.toBe('scp_new');
+    expect(mocks.listScopes.mock.calls[0][0].auth).toBe('unipile-service-key');
+    expect(mocks.createScope.mock.calls[0][0].auth).toBe('unipile-service-key');
     expect(mocks.createScope.mock.calls[0][0].body).toEqual({
       name: `Twenty workspace ${WORKSPACE_ID}`,
       reference: WORKSPACE_ID,

@@ -12,7 +12,7 @@ export const createUnipileHostedAuthLink = async ({
 }: {
   provider: Exclude<UnipileProvider, 'mock'>;
   callbackUrl: string;
-  accountScopeId: string;
+  accountScopeId?: string;
   config?: NonNullable<CreateAuthLinkData['body']>['config'];
 }): Promise<string> => {
   const { data } = await new UnipileHostedAuth().createAuthLink({

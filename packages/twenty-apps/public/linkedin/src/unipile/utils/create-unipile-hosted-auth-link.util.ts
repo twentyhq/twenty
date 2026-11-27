@@ -11,7 +11,7 @@ export const createUnipileHostedAuthLink = async ({
 }: {
   provider: Exclude<UnipileProvider, 'mock'>;
   callbackUrl: string;
-  accountScopeId: string;
+  accountScopeId?: string;
 }): Promise<string> => {
   const { data } = await new UnipileHostedAuth().createAuthLink({
     ...getUnipileRequestOptions(),

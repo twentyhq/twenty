@@ -39,6 +39,12 @@ export default defineApplication({
       isSecret: true,
       isRequired: true,
     },
+    UNIPILE_SERVICE_API_KEY: {
+      description:
+        'Optional Service API key of the same Unipile application. Lets each workspace link its accounts in its own Unipile Scope, so one LinkedIn account can be connected in several workspaces.',
+      isSecret: true,
+      isRequired: false,
+    },
     UNIPILE_WEBHOOK_SECRET: {
       description:
         'Signing secret of the Unipile webhook endpoint pointing at this app.',
