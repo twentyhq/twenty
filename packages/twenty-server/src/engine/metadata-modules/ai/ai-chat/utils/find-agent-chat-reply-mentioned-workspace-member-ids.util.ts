@@ -7,8 +7,6 @@ import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules
 import { extractInboxMessageMentionedWorkspaceMemberIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-inbox-message-mentioned-workspace-member-ids.util';
 import { getAgentChatThreadMemberIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-member-ids.util';
 
-// Only current members other than the sender, so a reply never shares the
-// thread with someone new or notifies a made-up id
 export const findAgentChatReplyMentionedWorkspaceMemberIds = ({
   replyParts,
   thread,

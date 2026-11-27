@@ -13,7 +13,6 @@ export const buildThreadMembersSection = (
       reference: formatRecordReference({
         objectNameSingular: 'workspaceMember',
         recordId: member.workspaceMemberId,
-        // brackets and line breaks would end the reference early
         displayName: member.name.replace(/[\s[\]]+/g, ' ').trim(),
       }),
     }));
