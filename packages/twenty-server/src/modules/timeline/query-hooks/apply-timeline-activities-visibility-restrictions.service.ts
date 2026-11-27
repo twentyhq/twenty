@@ -4,7 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type ObjectRecord } from 'twenty-shared/types';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
@@ -176,7 +176,7 @@ export class ApplyTimelineActivitiesVisibilityRestrictionsService
 
     if (
       !isDefined(timelineActivityFlatObjectMetadata) ||
-      timelineActivityIds.length === 0
+      !isNonEmptyArray(timelineActivityIds)
     ) {
       return new Map();
     }
