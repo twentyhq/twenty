@@ -28,7 +28,7 @@ runs:
         NX_CACHE_SERVER_DIRECTORY: ${{ runner.temp }}/nx-remote-cache
         SERVER_LOG: ${{ runner.temp }}/nx-cache-server.log
       run: |
-        nohup npx tsx packages/twenty-utils/nx-cache-server/start-nx-cache-server.ts > "$SERVER_LOG" 2>&1 &
+        nohup node "$GITHUB_ACTION_PATH/nx-cache-server.mjs" > "$SERVER_LOG" 2>&1 &
         for attempt in $(seq 1 40); do
           url=$(grep -m 1 '^http://' "$SERVER_LOG" 2>/dev/null || true)
           if [[ "$url" == http://* ]] && [ "$(curl -s -o /dev/null -w '%{http_code}' "$url/v1/cache/healthcheck")" = "404" ]; then
