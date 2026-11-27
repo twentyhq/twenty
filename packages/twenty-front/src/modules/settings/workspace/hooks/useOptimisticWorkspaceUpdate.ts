@@ -6,17 +6,13 @@ import {
   type CurrentWorkspace,
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
+import { isWorkspaceAppearanceShowing } from '@/settings/workspace/utils/isWorkspaceAppearanceShowing';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 
 type WorkspaceAppearanceUpdate = Partial<
   Pick<CurrentWorkspace, 'accentColor' | 'uiScale'>
 >;
-
-type UpdateWorkspaceOptimisticallyArgs = {
-  update: WorkspaceAppearanceUpdate;
-  rollback: WorkspaceAppearanceUpdate;
-};
 
 export const useOptimisticWorkspaceUpdate = () => {
   const store = useStore();
@@ -27,22 +23,13 @@ export const useOptimisticWorkspaceUpdate = () => {
       isDefined(workspace) ? { ...workspace, ...values } : workspace,
     );
 
-  const isStillShowing = ({
-    accentColor,
-    uiScale,
-  }: WorkspaceAppearanceUpdate) => {
-    const workspace = store.get(currentWorkspaceState.atom);
-
-    return (
-      (!isDefined(accentColor) || workspace?.accentColor === accentColor) &&
-      (!isDefined(uiScale) || workspace?.uiScale === uiScale)
-    );
-  };
-
   const updateWorkspaceOptimistically = async ({
     update,
     rollback,
-  }: UpdateWorkspaceOptimisticallyArgs) => {
+  }: {
+    update: WorkspaceAppearanceUpdate;
+    rollback: WorkspaceAppearanceUpdate;
+  }) => {
     applyToCurrentWorkspace(update);
 
     try {
@@ -52,7 +39,12 @@ export const useOptimisticWorkspaceUpdate = () => {
         throw result.error;
       }
     } catch (error) {
-      if (isStillShowing(update)) {
+      if (
+        isWorkspaceAppearanceShowing({
+          workspace: store.get(currentWorkspaceState.atom),
+          appearance: update,
+        })
+      ) {
         applyToCurrentWorkspace(rollback);
       }
       logError(error);
