@@ -468,14 +468,20 @@ export const createPermissionTestTimelineFixture = async (
     objectNameSingular,
     adminAccessToken,
   });
-  const accessRecord = (
-    record: PermissionTestTimelineRecordName,
-    recordId: string,
-  ): TimelineRecord => ({ record, objectNameSingular, recordId });
-  const item = async (
-    record: PermissionTestTimelineRecordName,
-    accessRecordId: string,
-  ): Promise<TimelineRecord> => ({
+  const accessRecord = ({
+    record,
+    recordId,
+  }: {
+    record: PermissionTestTimelineRecordName;
+    recordId: string;
+  }): TimelineRecord => ({ record, objectNameSingular, recordId });
+  const item = async ({
+    record,
+    accessRecordId,
+  }: {
+    record: PermissionTestTimelineRecordName;
+    accessRecordId: string;
+  }): Promise<TimelineRecord> => ({
     record,
     objectNameSingular: ITEM_OBJECT_NAME_SINGULAR,
     recordId: await createRecordOrThrow({
@@ -485,13 +491,34 @@ export const createPermissionTestTimelineFixture = async (
     }),
   });
   const timelineRecords: TimelineRecord[] = [
-    accessRecord('insideEveryFilter', recordIds.insideEveryFilter),
-    accessRecord('outsideStatusFilter', recordIds.outsideStatusFilter),
-    accessRecord('lowVisibilityTier', recordIds.lowVisibilityTier),
-    accessRecord('fullVisibilityTier', recordIds.fullVisibilityTier),
-    accessRecord('privateRecord', await createPrivateRecord(workspace)),
-    await item('itemOfReadableRecord', recordIds.insideEveryFilter),
-    await item('itemOfUnreadableRecord', recordIds.outsideStatusFilter),
+    accessRecord({
+      record: 'insideEveryFilter',
+      recordId: recordIds.insideEveryFilter,
+    }),
+    accessRecord({
+      record: 'outsideStatusFilter',
+      recordId: recordIds.outsideStatusFilter,
+    }),
+    accessRecord({
+      record: 'lowVisibilityTier',
+      recordId: recordIds.lowVisibilityTier,
+    }),
+    accessRecord({
+      record: 'fullVisibilityTier',
+      recordId: recordIds.fullVisibilityTier,
+    }),
+    accessRecord({
+      record: 'privateRecord',
+      recordId: await createPrivateRecord(workspace),
+    }),
+    await item({
+      record: 'itemOfReadableRecord',
+      accessRecordId: recordIds.insideEveryFilter,
+    }),
+    await item({
+      record: 'itemOfUnreadableRecord',
+      accessRecordId: recordIds.outsideStatusFilter,
+    }),
   ];
 
   const tokens = await createTokens({
