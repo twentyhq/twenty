@@ -14579,6 +14579,11 @@ msgstr "Ολοκληρώστε την επεξεργασία της διάταξ
 msgid "Finish editing the layout to open Settings"
 msgstr "Ολοκληρώστε την επεξεργασία της διάταξης για να ανοίξετε τις Ρυθμίσεις"
 
+#. js-lingui-id: aFsDUw
+#: src/modules/navigation/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton.tsx
+msgid "Finish editing the layout to open this menu"
+msgstr ""
+
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Finish flow with errors"

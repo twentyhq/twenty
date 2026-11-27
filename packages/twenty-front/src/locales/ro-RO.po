@@ -14579,6 +14579,11 @@ msgstr "Finalizează editarea aspectului pentru a deschide Inbox"
 msgid "Finish editing the layout to open Settings"
 msgstr "Finalizează editarea aspectului pentru a deschide Setările"
 
+#. js-lingui-id: aFsDUw
+#: src/modules/navigation/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton.tsx
+msgid "Finish editing the layout to open this menu"
+msgstr ""
+
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Finish flow with errors"
