@@ -39,10 +39,10 @@ export class KeepWarmWorkspaceLogicFunctionsJob {
         ),
     });
 
-    // warmUp is best-effort and never throws.
+    // keepWarm is best-effort and never throws.
     await Promise.all(
       logicFunctionIds.map((logicFunctionId) =>
-        this.logicFunctionExecutorService.warmUp({
+        this.logicFunctionExecutorService.keepWarm({
           workspaceId,
           logicFunctionId,
         }),

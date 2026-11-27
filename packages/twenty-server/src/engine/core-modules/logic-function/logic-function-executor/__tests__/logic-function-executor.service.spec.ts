@@ -13,6 +13,10 @@ import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-functi
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LogicFunctionExecutionThrottleService } from 'src/engine/core-modules/logic-function/logic-function-execution-throttle/logic-function-execution-throttle.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -134,10 +138,14 @@ describe('LogicFunctionExecutorService.warmUp', () => {
   const createWarmUpExecutorService = async ({
     isApplicationStopped = false,
     driverWarmUp = jest.fn().mockResolvedValue(undefined),
+    assertUsageAllowed = jest.fn().mockResolvedValue(undefined),
   }: {
     isApplicationStopped?: boolean;
     driverWarmUp?: jest.Mock;
+    assertUsageAllowed?: jest.Mock;
   } = {}) => {
+    const charge = jest.fn().mockResolvedValue(undefined);
+
     const flatLogicFunction = {
       id: 'logic-function-id',
       applicationId: FLAT_APPLICATION.id,
@@ -210,6 +218,11 @@ describe('LogicFunctionExecutorService.warmUp', () => {
           provide: UserApplicationVariableValueService,
           useValue: { getServerEnvVariables: jest.fn().mockResolvedValue({}) },
         },
+        { provide: UsageLimitQuotaService, useValue: { charge } },
+        {
+          provide: UsageQuotaAdmissionService,
+          useValue: { assertUsageAllowed },
+        },
       ],
     })
       .useMocker(() => ({}))
@@ -221,6 +234,7 @@ describe('LogicFunctionExecutorService.warmUp', () => {
       ),
       flatLogicFunction,
       driverWarmUp,
+      charge,
     };
   };
 
@@ -265,5 +279,65 @@ describe('LogicFunctionExecutorService.warmUp', () => {
         logicFunctionId: 'logic-function-id',
       }),
     ).resolves.toBeUndefined();
+  });
+
+  it('does not charge the install-time warm-up', async () => {
+    const { logicFunctionExecutorService, charge } =
+      await createWarmUpExecutorService();
+
+    await logicFunctionExecutorService.warmUp({
+      workspaceId: 'workspace-id',
+      logicFunctionId: 'logic-function-id',
+    });
+
+    expect(charge).not.toHaveBeenCalled();
+  });
+
+  describe('keepWarm', () => {
+    it('charges each keep-warm ping as a normal execution', async () => {
+      const { logicFunctionExecutorService, driverWarmUp, charge } =
+        await createWarmUpExecutorService();
+
+      await logicFunctionExecutorService.keepWarm({
+        workspaceId: 'workspace-id',
+        logicFunctionId: 'logic-function-id',
+      });
+
+      expect(driverWarmUp).toHaveBeenCalledTimes(1);
+      expect(charge).toHaveBeenCalledWith({
+        workspaceId: 'workspace-id',
+        events: [
+          expect.objectContaining({
+            operationType: UsageOperationType.CODE_KEEP_WARM,
+            unit: UsageUnit.INVOCATION,
+            creditsUsedMicro: 100,
+            resourceId: 'logic-function-id',
+          }),
+          expect.objectContaining({
+            operationType: UsageOperationType.CODE_KEEP_WARM,
+            unit: UsageUnit.MILLISECOND,
+          }),
+        ],
+      });
+    });
+
+    it('neither pings nor charges a workspace that is out of credits', async () => {
+      const { logicFunctionExecutorService, driverWarmUp, charge } =
+        await createWarmUpExecutorService({
+          assertUsageAllowed: jest
+            .fn()
+            .mockRejectedValue(new Error('Credits exhausted')),
+        });
+
+      await expect(
+        logicFunctionExecutorService.keepWarm({
+          workspaceId: 'workspace-id',
+          logicFunctionId: 'logic-function-id',
+        }),
+      ).resolves.toBeUndefined();
+
+      expect(driverWarmUp).not.toHaveBeenCalled();
+      expect(charge).not.toHaveBeenCalled();
+    });
   });
 });

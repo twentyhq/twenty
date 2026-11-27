@@ -11,6 +11,10 @@ export const USAGE_LIMIT_INVOCATION_UNIT_LABELS: Partial<
     suffix: msg`steps`,
   },
   [UsageOperationType.CODE_EXECUTION]: { name: msg`Runs`, suffix: msg`runs` },
+  [UsageOperationType.CODE_KEEP_WARM]: {
+    name: msg`Pings`,
+    suffix: msg`pings`,
+  },
   [UsageOperationType.WEB_SEARCH]: {
     name: msg`Searches`,
     suffix: msg`searches`,

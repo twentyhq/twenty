@@ -22,7 +22,6 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import {
-  LogicFunctionDriverType,
   type LogicFunctionExecuteResult,
   type LogicFunctionTranspileParams,
   type LogicFunctionTranspileResult,
@@ -47,7 +46,6 @@ import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-functi
 import { type ExecutableFlatLogicFunction } from 'src/engine/core-modules/logic-function/logic-function-drivers/types/executable-flat-logic-function.type';
 import { LogicFunctionExecutionThrottleService } from 'src/engine/core-modules/logic-function/logic-function-execution-throttle/logic-function-execution-throttle.service';
 import { buildLogicFunctionErrorLogLine } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-error-log-line.util';
-import { isLogicFunctionWarmEligible } from 'src/engine/core-modules/logic-function/logic-function-warm-up/utils/is-logic-function-warm-eligible.util';
 import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-execution-usage.util';
 import { buildLogicFunctionRunMetricEvent } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-run-metric-event.util';
 import { buildWorkflowCodeStepFlatLogicFunction } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-workflow-code-step-flat-logic-function.util';
@@ -224,30 +222,111 @@ export class LogicFunctionExecutorService {
     logicFunctionId: string;
   }): Promise<void> {
     try {
-      const {
-        flatApplication,
-        flatLogicFunction,
-        flatApplicationVariableMaps,
-      } = await this.getFlatEntitiesOrThrow({ workspaceId, logicFunctionId });
+      await this.invokeWarmUp({ workspaceId, logicFunctionId });
+    } catch (error) {
+      this.logWarmUpFailure({ workspaceId, logicFunctionId, error });
+    }
+  }
 
-      await this.assertApplicationNotStopped(flatApplication);
+  // Recurring pings of an isWarm function are billed like an execution; the install-time warmUp stays free.
+  async keepWarm({
+    workspaceId,
+    logicFunctionId,
+  }: {
+    workspaceId: string;
+    logicFunctionId: string;
+  }): Promise<void> {
+    try {
+      const { flatApplication, flatLogicFunction, durationMs } =
+        await this.invokeWarmUp({
+          workspaceId,
+          logicFunctionId,
+          shouldAssertExecutionAllowed: true,
+        });
 
-      // The bundle's module scope may read process.env, and real executions reuse the warmed module.
-      const envVariables = await this.getExecutionEnvVariables({
+      await this.usageLimitQuotaService.charge({
+        workspaceId,
+        events: buildLogicFunctionExecutionUsage({
+          durationMs,
+          isBillingExempt: isBillingExemptApplication(
+            flatApplication.universalIdentifier,
+          ),
+          resourceId: flatLogicFunction.id,
+          spenders: {
+            logicFunctionId: flatLogicFunction.id,
+            applicationId: flatApplication.id,
+          },
+          operationType: UsageOperationType.CODE_KEEP_WARM,
+        }),
+      });
+    } catch (error) {
+      this.logWarmUpFailure({ workspaceId, logicFunctionId, error });
+    }
+  }
+
+  private async invokeWarmUp({
+    workspaceId,
+    logicFunctionId,
+    shouldAssertExecutionAllowed = false,
+  }: {
+    workspaceId: string;
+    logicFunctionId: string;
+    shouldAssertExecutionAllowed?: boolean;
+  }): Promise<{
+    flatApplication: FlatApplication;
+    flatLogicFunction: FlatLogicFunction;
+    durationMs: number;
+  }> {
+    const { flatApplication, flatLogicFunction, flatApplicationVariableMaps } =
+      await this.getFlatEntitiesOrThrow({ workspaceId, logicFunctionId });
+
+    await this.assertApplicationNotStopped(flatApplication);
+
+    if (shouldAssertExecutionAllowed) {
+      await this.assertExecutionAllowed({
         workspaceId,
         flatApplication,
-        flatApplicationVariableMaps,
+        spenders: {
+          logicFunctionId: flatLogicFunction.id,
+          applicationId: flatApplication.id,
+        },
+        operationType: UsageOperationType.CODE_KEEP_WARM,
       });
-
-      await this.logicFunctionDriverFactory
-        .getCurrentDriver()
-        .warmUp({ flatLogicFunction, env: envVariables });
-    } catch (error) {
-      this.logger.warn(
-        `Failed to warm up logic function ${logicFunctionId} in workspace ${workspaceId}: ` +
-          `${error instanceof Error ? error.message : String(error)}`,
-      );
     }
+
+    // The bundle's module scope may read process.env, and real executions reuse the warmed module.
+    const envVariables = await this.getExecutionEnvVariables({
+      workspaceId,
+      flatApplication,
+      flatApplicationVariableMaps,
+    });
+
+    const startedAt = Date.now();
+
+    await this.logicFunctionDriverFactory
+      .getCurrentDriver()
+      .warmUp({ flatLogicFunction, env: envVariables });
+
+    return {
+      flatApplication,
+      flatLogicFunction,
+      durationMs: Date.now() - startedAt,
+    };
+  }
+
+  private logWarmUpFailure({
+    workspaceId,
+    logicFunctionId,
+    error,
+  }: {
+    workspaceId: string;
+    logicFunctionId: string;
+    error: unknown;
+  }): void {
+    this.logger.warn(
+      `Failed to warm up logic function ${logicFunctionId} in workspace ${workspaceId}: ` +
+        `${error instanceof Error ? error.message : String(error)}`,
+    );
   }
 
   // The build runs after admission so a rejected run never spends a compilation
@@ -465,10 +544,12 @@ export class LogicFunctionExecutorService {
     workspaceId,
     flatApplication,
     spenders,
+    operationType = UsageOperationType.CODE_EXECUTION,
   }: {
     workspaceId: string;
     flatApplication: FlatApplication;
     spenders: UsageSpenders;
+    operationType?: UsageOperationType;
   }): Promise<void> {
     if (isBillingExemptApplication(flatApplication.universalIdentifier)) {
       return;
@@ -477,7 +558,7 @@ export class LogicFunctionExecutorService {
     await this.usageQuotaAdmissionService.assertUsageAllowed({
       workspaceId,
       resourceType: UsageResourceType.LOGIC_FUNCTION,
-      operationType: UsageOperationType.CODE_EXECUTION,
+      operationType,
       spenders,
     });
   }
@@ -837,11 +918,6 @@ export class LogicFunctionExecutorService {
         isBillingExempt: isBillingExemptApplication(
           flatApplication.universalIdentifier,
         ),
-        // Only the Lambda driver keeps executors warm; elsewhere the ping is a no-op.
-        isWarm:
-          this.twentyConfigService.get('LOGIC_FUNCTION_TYPE') ===
-            LogicFunctionDriverType.LAMBDA &&
-          isLogicFunctionWarmEligible(flatLogicFunction),
         resourceId: flatLogicFunction.id,
         spenders,
       }),

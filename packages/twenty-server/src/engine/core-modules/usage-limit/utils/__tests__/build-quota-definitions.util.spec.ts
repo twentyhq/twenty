@@ -102,12 +102,20 @@ describe('buildQuotaDefinitions', () => {
     expect(allResources?.allowedSpenderTypes).toEqual(['application']);
   });
 
-  it('offers credits and runs on code execution, with no every-operation entry', () => {
+  it('offers credits and runs on code execution and keep-warm pings, plus a credits-only every-operation entry', () => {
     expect(
       findQuotaDefinition(UsageResourceType.LOGIC_FUNCTION)?.allowedOperations,
     ).toEqual([
       {
+        operationType: UsageOperationType.ALL,
+        allowedUnits: [UsageUnit.CREDIT],
+      },
+      {
         operationType: UsageOperationType.CODE_EXECUTION,
+        allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
+      },
+      {
+        operationType: UsageOperationType.CODE_KEEP_WARM,
         allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
       },
     ]);

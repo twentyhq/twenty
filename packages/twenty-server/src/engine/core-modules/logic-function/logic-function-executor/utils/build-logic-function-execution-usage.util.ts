@@ -8,27 +8,23 @@ import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-sp
 export const buildLogicFunctionExecutionUsage = ({
   durationMs,
   isBillingExempt,
-  isWarm = false,
   resourceId,
   spenders,
+  operationType = UsageOperationType.CODE_EXECUTION,
 }: {
   durationMs: number;
   isBillingExempt: boolean;
-  isWarm?: boolean;
+  operationType?: UsageOperationType;
   resourceId: string;
   spenders: UsageSpenders;
 }): RecordUsageInput[] => {
   const { invocationCreditsMicro, durationCreditsMicro, billedDurationMs } =
-    computeLogicFunctionExecutionCreditsMicro({
-      durationMs,
-      isBillingExempt,
-      isWarm,
-    });
+    computeLogicFunctionExecutionCreditsMicro({ durationMs, isBillingExempt });
 
   return [
     {
       resourceType: UsageResourceType.LOGIC_FUNCTION,
-      operationType: UsageOperationType.CODE_EXECUTION,
+      operationType,
       creditsUsedMicro: invocationCreditsMicro,
       quantity: 1,
       unit: UsageUnit.INVOCATION,
@@ -37,7 +33,7 @@ export const buildLogicFunctionExecutionUsage = ({
     },
     {
       resourceType: UsageResourceType.LOGIC_FUNCTION,
-      operationType: UsageOperationType.CODE_EXECUTION,
+      operationType,
       creditsUsedMicro: durationCreditsMicro,
       quantity: billedDurationMs,
       unit: UsageUnit.MILLISECOND,

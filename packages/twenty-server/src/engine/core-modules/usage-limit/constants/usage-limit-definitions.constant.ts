@@ -159,6 +159,10 @@ export const USAGE_LIMIT_DEFINITIONS = {
           operationType: UsageOperationType.CODE_EXECUTION,
           allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
         },
+        {
+          operationType: UsageOperationType.CODE_KEEP_WARM,
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
+        },
       ],
       allowedSpenderTypes: ['workspace', 'application', 'logicFunction'],
       defaults: [],

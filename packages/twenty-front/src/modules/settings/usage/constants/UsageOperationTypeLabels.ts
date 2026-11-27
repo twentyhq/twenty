@@ -12,6 +12,7 @@ export const USAGE_OPERATION_TYPE_LABELS: Record<
   [UsageOperationType.AI_WORKFLOW_TOKEN]: msg`Agents`,
   [UsageOperationType.WORKFLOW_EXECUTION]: msg`Workflow Execution`,
   [UsageOperationType.CODE_EXECUTION]: msg`Code Execution`,
+  [UsageOperationType.CODE_KEEP_WARM]: msg`Keep-warm Pings`,
   [UsageOperationType.WEB_SEARCH]: msg`Web Search`,
   [UsageOperationType.AI_WORKFLOW_WEB_SEARCH]: msg`Agent Web Search`,
   [UsageOperationType.CALL_RECORDING]: msg`Call Recording`,

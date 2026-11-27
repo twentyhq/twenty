@@ -41,6 +41,8 @@ Logic function pricing mirrors AWS Lambda: a flat charge per invocation plus a d
 
 A typical function that finishes in under a second costs at most double the flat invocation charge. Long-running functions pay for the compute they use: a function running for a full minute adds \$0.006, and one hitting the 15-minute timeout adds \$0.09. A function that times out is billed for its full elapsed time, just like on AWS.
 
+A logic function flagged to stay warm is pinged every minute to avoid cold starts. Each ping is billed like a run, about \$0.15 a day per warm function, and shows up as **Keep-warm Pings**, apart from **Code Execution**.
+
 For apps with [server routes](/developers/extend/apps/operations/publishing#owner-workspace-costs-and-availability), the resolver runs against the app owner's workspace balance. A target function dispatched to another workspace is billed separately to that workspace.
 
 ## How AI usage is metered
