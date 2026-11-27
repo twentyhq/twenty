@@ -1,6 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { validateFlatFieldMetadataFormula } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util';
 import {
@@ -266,15 +267,14 @@ describe('validateFlatFieldMetadataFormula', () => {
 
   it('should refuse a stored formula reading now through a query-time formula', () => {
     const flatFieldMetadataToValidate = setFormulaFieldTrees({
-      universalFlatFieldMetadata: {
+      universalFlatFieldMetadata: getFlatFieldMetadataMock({
         name: 'checkSummary',
         type: FieldMetadataType.TEXT,
         universalIdentifier: 'supplier-check-summary-uid',
+        objectMetadataId: 'supplier-object',
         objectMetadataUniversalIdentifier: 'supplier-object-uid',
         formula: { expression: 'concat(count(gadgets), checkedAt)' },
-        isUnique: false,
-        isSearchable: false,
-      },
+      }),
       universalFlatObjectMetadataMaps: FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
       universalFlatFieldMetadataMaps: FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK,
     });
