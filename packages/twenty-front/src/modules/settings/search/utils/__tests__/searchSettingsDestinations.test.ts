@@ -5,11 +5,10 @@ const createDestination = ({
   title,
   breadcrumbs,
   keywords = [],
-}: {
-  title: string;
-  breadcrumbs: string[];
-  keywords?: string[];
-}): SettingsSearchDestination => ({
+}: Pick<SettingsSearchDestination, 'title' | 'breadcrumbs'> &
+  Partial<
+    Pick<SettingsSearchDestination, 'keywords'>
+  >): SettingsSearchDestination => ({
   id: [...breadcrumbs, title].join('/'),
   path: `/settings/${title}`,
   title,
