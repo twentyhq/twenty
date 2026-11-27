@@ -8,7 +8,11 @@ import { isSettingsSearchRouteAvailable } from '@/settings/search/utils/isSettin
 import { getAvailableSettingsTabs } from '@/settings/utils/getAvailableSettingsTabs';
 import { type I18n } from '@lingui/core';
 import { generatePath } from 'react-router-dom';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import {
+  getSettingsPath,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type SettingsSearchObject =
@@ -69,7 +73,7 @@ export const getSettingsSearchDestinations = ({
   const getPathObjects = ({ path, metadata }: SettingsSearchRoute) => {
     const pathParameters = path.match(/:\w+/g) ?? [];
 
-    if (pathParameters.length === 0) {
+    if (!isNonEmptyArray(pathParameters)) {
       return [undefined];
     }
 
