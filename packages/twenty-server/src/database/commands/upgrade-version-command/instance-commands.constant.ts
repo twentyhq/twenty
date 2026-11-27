@@ -350,6 +350,7 @@ import { DropViewVisibilityFastInstanceCommand } from 'src/database/commands/upg
 import { AddListPinnedFieldMetadataIdToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795713501522-add-list-pinned-field-metadata-id-to-view';
 import { RelaxViewDeletedAtSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795715543417-relax-view-deleted-at';
 import { AddValidationRuleTreeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795719490855-add-validation-rule-tree';
+import { PurgeExpiredRefreshTokensSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795731384123-purge-expired-refresh-tokens';
 import { AddLogicFunctionKeepWarmFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795733526221-add-logic-function-keep-warm';
 
 export const INSTANCE_COMMANDS = [
@@ -703,5 +704,6 @@ export const INSTANCE_COMMANDS = [
   AddListPinnedFieldMetadataIdToViewFastInstanceCommand,
   RelaxViewDeletedAtSlowInstanceCommand,
   AddValidationRuleTreeFastInstanceCommand,
+  PurgeExpiredRefreshTokensSlowInstanceCommand,
   AddLogicFunctionKeepWarmFastInstanceCommand,
 ];

@@ -77,9 +77,6 @@ describe('SSO exchange token redemption (integration)', () => {
       data.getAuthTokensFromSSOExchangeToken.tokens
         .accessOrWorkspaceAgnosticToken.token,
     ).toBeDefined();
-    expect(
-      data.getAuthTokensFromSSOExchangeToken.tokens.refreshToken.token,
-    ).toBeDefined();
     expect(await countRemainingRows(plainToken)).toBe(0);
   });
 

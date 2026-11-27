@@ -16,7 +16,10 @@ describe('isLogicFunctionWarmEligible', () => {
 
   it('rejects a function that is not warm', () => {
     expect(
-      isLogicFunctionWarmEligible({ ...READY_PREBUILT_FIELDS, keepWarm: false }),
+      isLogicFunctionWarmEligible({
+        ...READY_PREBUILT_FIELDS,
+        keepWarm: false,
+      }),
     ).toBe(false);
   });
 

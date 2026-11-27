@@ -12,6 +12,7 @@ import {
   CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
   CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
   CALL_RECORDER_JOIN_EARLY_MINUTES_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+  CALL_RECORDER_MEMBER_INBOX_RECAPS_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
   CALL_RECORDER_MEMBER_RECORDING_PREFERENCE_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
   CALL_RECORDER_NAME_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
   CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
@@ -27,6 +28,7 @@ import { CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME } from 'src/
 import { CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS } from 'src/logic-functions/constants/call-recorder-everyone-left-timeout-seconds';
 import { CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-everyone-left-timeout-seconds-env-var-name';
 import { CALL_RECORDER_JOIN_EARLY_MINUTES_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-join-early-minutes-env-var-name';
+import { CALL_RECORDER_MEMBER_INBOX_RECAPS_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-member-inbox-recaps-enabled-env-var-name';
 import { CALL_RECORDER_MEMBER_RECORDING_PREFERENCE_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-member-recording-preference-env-var-name';
 import { CALL_RECORDER_NAME_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-name-env-var-name';
 import { CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS } from 'src/logic-functions/constants/call-recorder-noone-joined-timeout-seconds';
@@ -52,6 +54,7 @@ import { DEFAULT_CALL_RECORDER_STYLE } from 'src/logic-functions/constants/defau
 import { DEFAULT_CALL_RECORDER_SUMMARY_ENABLED } from 'src/logic-functions/constants/default-call-recorder-summary-enabled';
 import { DEFAULT_CALL_RECORDER_TRANSCRIPT_PROVIDER } from 'src/logic-functions/constants/default-call-recorder-transcript-provider';
 import { DEFAULT_CALL_RECORDER_USE_WORKSPACE_LOGO } from 'src/logic-functions/constants/default-call-recorder-use-workspace-logo';
+import { DEFAULT_MEMBER_INBOX_RECAPS_ENABLED } from 'src/logic-functions/constants/default-member-inbox-recaps-enabled';
 import { DEFAULT_MEMBER_RECORDING_PREFERENCE } from 'src/logic-functions/constants/default-member-recording-preference';
 import { DEFAULT_RECALL_REGION } from 'src/logic-functions/constants/default-recall-region';
 import { RECALL_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-api-key-env-var-name';
@@ -100,6 +103,17 @@ export default defineApplication({
         value,
       })),
       value: DEFAULT_MEMBER_RECORDING_PREFERENCE,
+    },
+    [CALL_RECORDER_MEMBER_INBOX_RECAPS_ENABLED_ENV_VAR_NAME]: {
+      universalIdentifier:
+        CALL_RECORDER_MEMBER_INBOX_RECAPS_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Recaps in my inbox',
+      description:
+        'Get a recap in your inbox after each of your recorded calls.',
+      isSecret: false,
+      type: FieldType.BOOLEAN,
+      scope: 'USER',
+      value: DEFAULT_MEMBER_INBOX_RECAPS_ENABLED,
     },
     [CALL_RECORDER_NAME_ENV_VAR_NAME]: {
       universalIdentifier: CALL_RECORDER_NAME_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
