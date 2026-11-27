@@ -185,7 +185,6 @@ export class FrontendService {
           throw error;
         });
 
-      // A member signed in on a pending domain would keep that session once it validates.
       if (
         isDefined(publicDomainType) ||
         (await this.workspaceDomainsService.hasUnvalidatedPublicDomain(origin))

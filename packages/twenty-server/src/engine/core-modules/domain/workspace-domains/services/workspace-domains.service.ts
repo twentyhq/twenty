@@ -105,7 +105,6 @@ export class WorkspaceDomainsService {
     return foundWorkspace;
   }
 
-  // A row is created before its DNS is proven, so only validated rows may route traffic.
   private findValidatedPublicDomain(domain: string) {
     return this.publicDomainRepository.findOne({
       where: { domain, isValidated: true },
@@ -148,7 +147,6 @@ export class WorkspaceDomainsService {
       };
     }
 
-    // Older rows under the public base must not take over the workspace's shared host.
     if (isUnderPublicDomainUrl) {
       const workspaceFromSubdomain = isDefined(subdomain)
         ? ((await this.workspaceRepository.findOne({
@@ -229,7 +227,6 @@ export class WorkspaceDomainsService {
       order: { createdAt: 'ASC' },
     });
 
-    // Rows on an instance hostname are never routed to the application.
     const routablePublicDomains = validatedPublicDomains.filter(
       ({ domain }) =>
         !this.domainServerConfigService.isInstanceHostname(domain),

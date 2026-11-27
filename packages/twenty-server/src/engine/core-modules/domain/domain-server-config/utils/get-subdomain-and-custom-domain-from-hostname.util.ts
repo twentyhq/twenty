@@ -35,7 +35,6 @@ export const getSubdomainAndCustomDomainFromHostname = ({
     };
   }
 
-  // The API host serves the Twenty app itself, even when it sits outside the front domain.
   if (isDefined(serverDomain) && hostname === serverDomain) {
     return {
       subdomain: undefined,
