@@ -24,7 +24,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { StyledFormCardTitle } from '@/settings/data-model/fields/components/StyledFormCardTitle';
+import { StyledFormCardTitle } from '@/settings/components/StyledFormCardTitle';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
 import { buildValidationRulePreviewRelationGqlFields } from '@/validation-rules/utils/buildValidationRulePreviewRelationGqlFields';

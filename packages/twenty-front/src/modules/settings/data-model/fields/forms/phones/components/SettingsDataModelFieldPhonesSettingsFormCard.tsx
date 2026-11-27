@@ -1,4 +1,4 @@
-import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
+import { SettingsPreviewCard } from '@/settings/components/SettingsPreviewCard';
 
 import { SettingsCardSeparator } from '@/settings/components/SettingsCardSeparator';
 import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm';
@@ -30,7 +30,7 @@ export const SettingsDataModelFieldPhonesSettingsFormCard = ({
   >();
 
   return (
-    <SettingsDataModelPreviewFormCard
+    <SettingsPreviewCard
       preview={
         <SettingsDataModelFieldPreviewWidget
           fieldMetadataItem={{
@@ -42,7 +42,7 @@ export const SettingsDataModelFieldPhonesSettingsFormCard = ({
           objectNameSingular={objectNameSingular}
         />
       }
-      form={
+      content={
         <>
           <SettingsDataModelFieldPhonesForm
             disabled={disabled}

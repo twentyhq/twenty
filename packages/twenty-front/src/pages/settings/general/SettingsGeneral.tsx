@@ -3,6 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useIsLogConsoleAllowed } from '@/log-console/hooks/useIsLogConsoleAllowed';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsPreviewCard } from '@/settings/components/SettingsPreviewCard';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
@@ -14,6 +15,8 @@ import { SettingsPrivacy } from '@/settings/privacy/components/SettingsPrivacy';
 import { useHasPrivacySettings } from '@/settings/privacy/hooks/useHasPrivacySettings';
 import { SettingsSecuritySettings } from '@/settings/security/components/SettingsSecuritySettings';
 import { NameField } from '@/settings/workspace/components/NameField';
+import { WorkspaceAccentColorPreview } from '@/settings/workspace/components/WorkspaceAccentColorPreview';
+import { WorkspaceInterfaceSection } from '@/settings/workspace/components/WorkspaceInterfaceSection';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Section } from 'twenty-ui/components/layout';
@@ -84,6 +87,13 @@ export const SettingsGeneral = () => {
     return (
       <>
         <Section.Root>
+          <SettingsPreviewCard
+            hasPreviewGutter={false}
+            isPreviewTitleVisible={false}
+            preview={<WorkspaceAccentColorPreview />}
+          />
+        </Section.Root>
+        <Section.Root>
           <Section.Header title={t`Picture`} />
           <WorkspaceLogoUploader />
         </Section.Root>
@@ -94,6 +104,7 @@ export const SettingsGeneral = () => {
           />
           <NameField />
         </Section.Root>
+        <WorkspaceInterfaceSection />
         {isMultiWorkspaceEnabled && (
           <Section.Root>
             <Section.Header

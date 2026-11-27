@@ -1,0 +1,1 @@
+export const SETTINGS_ROW_CONTROL_WIDTH = 220;

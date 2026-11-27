@@ -1,7 +1,7 @@
 import { useFormContext } from 'react-hook-form';
 import { type z } from 'zod';
 
-import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
+import { SettingsPreviewCard } from '@/settings/components/SettingsPreviewCard';
 import {
   type settingsDataModelFieldMultiSelectFormSchema,
   SettingsDataModelFieldSelectForm,
@@ -35,7 +35,7 @@ export const SettingsDataModelFieldSelectSettingsFormCard = ({
   >();
 
   return (
-    <SettingsDataModelPreviewFormCard
+    <SettingsPreviewCard
       preview={
         <SettingsDataModelFieldPreviewWidget
           fieldMetadataItem={{
@@ -48,7 +48,7 @@ export const SettingsDataModelFieldSelectSettingsFormCard = ({
           objectNameSingular={objectNameSingular}
         />
       }
-      form={
+      content={
         <SettingsDataModelFieldSelectForm
           fieldType={fieldType}
           existingFieldMetadataId={existingFieldMetadataId}
