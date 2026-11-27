@@ -21,10 +21,6 @@ on:
 permissions:
   contents: read
 
-env:
-  # Saved by front-sb-build in ci-front.yaml
-  STORYBOOK_BUILD_CACHE_KEY_FOR_RESTORE_ACTION: storybook-build-ubuntu-latest-8-cores-runner
-
 jobs:
   storybook-test:
     timeout-minutes: 30
@@ -39,12 +35,6 @@ jobs:
           fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
-      - name: Restore storybook build cache
-        uses: ./.github/actions/restore-cache
-        with:
-          key: ${{ env.STORYBOOK_BUILD_CACHE_KEY_FOR_RESTORE_ACTION }}
-      - name: Clean stale storybook vitest cache
-        run: rm -rf packages/twenty-front/node_modules/.cache/storybook
       - name: Cache storybook vitest dependency optimizer
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:

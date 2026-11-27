@@ -33,6 +33,8 @@ jobs:
         packages/twenty-shared/**
         packages/twenty-sdk/**
         !packages/twenty-sdk/package.json
+        .github/workflows/ci-front.yaml
+        .github/workflows/ci-front-storybook-test.yaml
   pick-runner:
     permissions:
       actions: read
@@ -71,6 +73,7 @@ jobs:
           path: packages/twenty-front/storybook-static
           retention-days: 1
       - name: Save storybook build cache
+        if: github.event_name == 'push'
         uses: ./.github/actions/save-cache
         with:
           key: ${{ env.STORYBOOK_BUILD_CACHE_KEY_FOR_SAVE_ACTION }}
