@@ -1,15 +1,13 @@
 import { styled } from '@linaria/react';
 import { useMemo } from 'react';
 
+import { SettingsPreviewCard } from '@/settings/components/SettingsPreviewCard';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
-import { SettingsDataModelCardTitle } from '@/settings/data-model/components/SettingsDataModelCardTitle';
 import { SettingsDataModelPreviewMiniCard } from '@/settings/data-model/components/SettingsDataModelPreviewMiniCard';
 import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
 import { SettingsDataModelObjectPreview } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
 import { SettingsDataModelObjectIdentifiersForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm';
-import { SETTINGS_DATA_MODEL_PREVIEW_SECTION_CLASS_NAME } from '@/settings/data-model/styles/SettingsDataModelPreviewSectionClassName';
-import { Trans } from '@lingui/react/macro';
 import { Card } from 'twenty-ui/primitives/surfaces';
 
 type SettingsDataModelObjectSettingsFormCardProps = {
@@ -32,15 +30,9 @@ export const SettingsDataModelObjectSettingsFormCard = ({
   }, [objectMetadataItem]);
 
   return (
-    <Card.Root fullWidth>
-      <Card.Content
-        className={SETTINGS_DATA_MODEL_PREVIEW_SECTION_CLASS_NAME}
-        divider
-      >
-        <SettingsDataModelCardTitle>
-          <Trans>Preview</Trans>
-        </SettingsDataModelCardTitle>
-        {labelIdentifierFieldMetadataItem ? (
+    <SettingsPreviewCard
+      preview={
+        labelIdentifierFieldMetadataItem ? (
           <SettingsDataModelFieldPreviewWidget
             objectNameSingular={objectMetadataItem.nameSingular}
             fieldMetadataItem={labelIdentifierFieldMetadataItem}
@@ -54,13 +46,15 @@ export const SettingsDataModelObjectSettingsFormCard = ({
               />
             </SettingsDataModelPreviewMiniCard>
           </StyledObjectSummaryCardContainer>
-        )}
-      </Card.Content>
-      <Card.Content>
-        <SettingsDataModelObjectIdentifiersForm
-          objectMetadataItem={objectMetadataItem}
-        />
-      </Card.Content>
-    </Card.Root>
+        )
+      }
+      content={
+        <Card.Content>
+          <SettingsDataModelObjectIdentifiersForm
+            objectMetadataItem={objectMetadataItem}
+          />
+        </Card.Content>
+      }
+    />
   );
 };

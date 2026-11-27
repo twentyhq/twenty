@@ -108,6 +108,12 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/settings/components/SettingsPreviewCard.tsx',
+    reason:
+      'Tinted preview Card.Content, optionally flush, and unpadded content Card.Content',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/settings/components/SettingsTableCard.tsx',
     reason: 'Forwards the caller className to Card.Root',
   },
@@ -115,11 +121,6 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
     filePath:
       'packages/twenty-front/src/modules/settings/config-variables/components/ConfigVariableEdit.tsx',
     reason: 'Section.Header without trailing margin above the variable input',
-  },
-  {
-    filePath:
-      'packages/twenty-front/src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx',
-    reason: 'Tinted preview Card.Content and unpadded form Card.Content',
   },
   {
     filePath:
@@ -135,11 +136,6 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
     filePath:
       'packages/twenty-front/src/modules/settings/data-model/graph-overview/components/SettingsDataModelOverview.tsx',
     reason: 'React Flow panel classes on ButtonGroup',
-  },
-  {
-    filePath:
-      'packages/twenty-front/src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx',
-    reason: 'Tinted preview Card.Content',
   },
   {
     filePath:
