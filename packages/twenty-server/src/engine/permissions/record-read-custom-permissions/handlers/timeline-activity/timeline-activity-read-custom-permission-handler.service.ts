@@ -14,6 +14,7 @@ import {
   type RecordReadCustomPermissionRecordsInput,
 } from 'src/engine/permissions/record-read-custom-permissions/types/record-read-custom-permission-handler-service.type';
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -64,16 +65,11 @@ export class TimelineActivityReadCustomPermissionHandlerService implements Recor
         flatFieldMetadataMaps,
       });
 
-    const isRecordReadable = isSystemAuthContext(authContext)
-      ? () => true
-      : await this.buildIsRecordReadable({
-          timelineActivities: [...subjectColumnsByTimelineActivityId.values()],
-          permissionsPrincipals:
-            await this.principalPermissionsReadService.resolvePermissionsPrincipals(
-              { authContext },
-            ),
-          flatObjectMetadataMaps,
-        });
+    const isRecordReadable = await this.buildIsRecordReadableForCaller({
+      authContext,
+      timelineActivities: [...subjectColumnsByTimelineActivityId.values()],
+      flatObjectMetadataMaps,
+    });
 
     for (const timelineActivity of timelineActivities) {
       timelineActivity.properties = omitRestrictedFieldsFromTimelineActivity({
@@ -117,6 +113,29 @@ export class TimelineActivityReadCustomPermissionHandlerService implements Recor
         flatFieldMetadataMaps,
       }),
     );
+  }
+
+  private async buildIsRecordReadableForCaller({
+    authContext,
+    timelineActivities,
+    flatObjectMetadataMaps,
+  }: {
+    authContext: WorkspaceAuthContext;
+    timelineActivities: Record<string, unknown>[];
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  }): Promise<IsTimelineActivityRecordReadable> {
+    if (isSystemAuthContext(authContext)) {
+      return () => true;
+    }
+
+    return this.buildIsRecordReadable({
+      timelineActivities,
+      permissionsPrincipals:
+        await this.principalPermissionsReadService.resolvePermissionsPrincipals(
+          { authContext },
+        ),
+      flatObjectMetadataMaps,
+    });
   }
 
   private async buildIsRecordReadable({
