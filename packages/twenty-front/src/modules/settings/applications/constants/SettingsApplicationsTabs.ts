@@ -2,21 +2,19 @@ import { type SettingsTabDefinition } from '@/settings/types/SettingsTabDefiniti
 import { msg } from '@lingui/core/macro';
 import { IconApps, IconShoppingBag } from 'twenty-ui/icon';
 
-const TABS_IDS = {
-  MARKETPLACE: 'marketplace',
-  INSTALLED: 'installed',
-} as const;
-
 export const SETTINGS_APPLICATIONS_TABS = {
   COMPONENT_INSTANCE_ID: 'applications-tab-list',
-  TABS_IDS,
+  TABS_IDS: {
+    MARKETPLACE: 'marketplace',
+    INSTALLED: 'installed',
+  } as const,
   TABS: [
     {
-      id: TABS_IDS.MARKETPLACE,
+      id: 'marketplace',
       title: msg`Marketplace`,
       Icon: IconShoppingBag,
       pill: msg`Beta`,
     },
-    { id: TABS_IDS.INSTALLED, title: msg`Installed`, Icon: IconApps },
+    { id: 'installed', title: msg`Installed`, Icon: IconApps },
   ] satisfies SettingsTabDefinition[],
 };

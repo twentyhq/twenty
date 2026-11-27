@@ -10,29 +10,27 @@ import {
 } from 'twenty-ui/icon';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-const TABS_IDS = {
-  OVERVIEW: 'overview',
-  MCP: 'mcp',
-  MODELS: 'models',
-  SKILLS: 'skills',
-  TOOLS: 'tools',
-  USAGE: 'usage',
-} as const;
-
 export const SETTINGS_AI_TABS = {
   COMPONENT_INSTANCE_ID: 'settings-ai-tab-list',
-  TABS_IDS,
+  TABS_IDS: {
+    OVERVIEW: 'overview',
+    MCP: 'mcp',
+    MODELS: 'models',
+    SKILLS: 'skills',
+    TOOLS: 'tools',
+    USAGE: 'usage',
+  } as const,
   TABS: [
     {
-      id: TABS_IDS.OVERVIEW,
+      id: 'overview',
       title: msg`Overview`,
       Icon: IconLayoutDashboard,
       requiredFeatureFlag: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
     },
-    { id: TABS_IDS.MCP, title: msg`MCP`, Icon: IconSparkles },
-    { id: TABS_IDS.MODELS, title: msg`Models`, Icon: IconCpu },
-    { id: TABS_IDS.SKILLS, title: msg`Skills`, Icon: IconBook },
-    { id: TABS_IDS.TOOLS, title: msg`Tools`, Icon: IconTool },
-    { id: TABS_IDS.USAGE, title: msg`Usage`, Icon: IconChartBar },
+    { id: 'mcp', title: msg`MCP`, Icon: IconSparkles },
+    { id: 'models', title: msg`Models`, Icon: IconCpu },
+    { id: 'skills', title: msg`Skills`, Icon: IconBook },
+    { id: 'tools', title: msg`Tools`, Icon: IconTool },
+    { id: 'usage', title: msg`Usage`, Icon: IconChartBar },
   ] satisfies SettingsTabDefinition[],
 };
