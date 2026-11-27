@@ -114,6 +114,10 @@ export class WorkspaceMigrationRunnerService {
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         workspaceId,
       );
+      // holds full workspace member records, so their fields follow the schema
+      await this.workspaceCacheService.flush(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
     }
 
     this.logger.perfTimeEnd(
