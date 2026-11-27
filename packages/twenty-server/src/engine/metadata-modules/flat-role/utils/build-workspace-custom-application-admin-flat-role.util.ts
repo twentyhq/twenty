@@ -4,7 +4,7 @@ import { v4 } from 'uuid';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 
-export const buildWorkspaceAdminFlatRole = ({
+export const buildWorkspaceCustomApplicationAdminFlatRole = ({
   workspaceId,
   ownerFlatApplication,
 }: {
