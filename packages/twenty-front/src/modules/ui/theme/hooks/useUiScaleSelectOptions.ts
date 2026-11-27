@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   WORKSPACE_UI_SCALES,
   type WorkspaceUiScale,
@@ -34,6 +35,9 @@ export const useUiScaleSelectOptions = (workspaceUiScale: WorkspaceUiScale) => {
     scaleOptions: WORKSPACE_UI_SCALES.map((uiScale) =>
       toOption(uiScale, uiScale),
     ),
-    workspaceDefaultOption: toOption('Default', workspaceUiScale),
+    workspaceDefaultOption: toOption(
+      doNotTranslate('Default'),
+      workspaceUiScale,
+    ),
   };
 };
