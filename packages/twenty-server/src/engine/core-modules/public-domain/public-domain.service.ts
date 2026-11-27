@@ -159,7 +159,10 @@ export class PublicDomainService {
       );
     }
 
-    if (!publicDomain.isValidated) {
+    if (
+      this.domainServerConfigService.isPublicDomainValidationEnforced() &&
+      !publicDomain.isValidated
+    ) {
       throw new PublicDomainException(
         'Public domain is not validated',
         PublicDomainExceptionCode.PUBLIC_DOMAIN_NOT_VALIDATED,

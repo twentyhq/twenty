@@ -2,6 +2,7 @@ import gql from 'graphql-tag';
 import request from 'supertest';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { mockCloudflareConfigured } from 'test/integration/route-trigger/utils/mock-cloudflare-configured.util';
 import {
   deletePublicDomains,
   insertPublicDomain,
@@ -145,10 +146,11 @@ describe('Application primary public domain (integration)', () => {
     }
   }, 60000);
 
-  it('refuses a public domain that is not validated yet', async () => {
+  it('refuses a public domain that is not validated yet when Cloudflare is configured', async () => {
     const publicDomain = `pending-${uuidv4()}.example.com`;
     const { applicationId, applicationUniversalIdentifier } =
       await setupEchoFunctionsUrlApplication();
+    const cloudflareConfigured = mockCloudflareConfigured();
 
     try {
       await insertPublicDomain({
@@ -166,6 +168,7 @@ describe('Application primary public domain (integration)', () => {
         'BAD_USER_INPUT',
       );
     } finally {
+      cloudflareConfigured.mockRestore();
       await deletePublicDomains([publicDomain]);
       await cleanupApplicationAndAppRegistration({
         applicationUniversalIdentifier,
