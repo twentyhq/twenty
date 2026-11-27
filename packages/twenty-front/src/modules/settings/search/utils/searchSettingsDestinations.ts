@@ -1,6 +1,6 @@
 import { type SettingsSearchDestination } from '@/settings/search/types/SettingsSearchDestination';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { getEditDistance } from 'twenty-shared/workflow';
 import { normalizeSearchText } from 'twenty-ui/utilities';
 
@@ -107,7 +107,7 @@ export const searchSettingsDestinations = ({
 }): SettingsSearchDestination[] => {
   const searchWords = splitIntoWords([search]);
 
-  if (searchWords.length === 0) {
+  if (!isNonEmptyArray(searchWords)) {
     return [];
   }
 
