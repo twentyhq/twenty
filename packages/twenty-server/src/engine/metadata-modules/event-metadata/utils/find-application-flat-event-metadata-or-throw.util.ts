@@ -8,26 +8,38 @@ import { type FlatEventMetadata } from 'src/engine/metadata-modules/flat-event-m
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
 
-export const findApplicationFlatEventMetadataByNameOrThrow = ({
+export const findApplicationFlatEventMetadataOrThrow = ({
   flatEventMetadataMaps,
   applicationId,
   name,
+  universalIdentifier,
 }: {
   flatEventMetadataMaps: FlatEntityMaps<FlatEventMetadata>;
   applicationId: string;
-  name: string;
+  name?: string;
+  universalIdentifier?: string;
 }): FlatEventMetadata => {
+  if (isDefined(name) === isDefined(universalIdentifier)) {
+    throw new EventMetadataException(
+      'Pass either the event name or its universal identifier',
+      EventMetadataExceptionCode.INVALID_EVENT_TARGET,
+    );
+  }
+
+  // Only the caller's own events, so an app cannot emit another app's event
   const flatEventMetadata = findFlatEntitiesByApplicationId({
     flatEntityMaps: flatEventMetadataMaps,
     applicationId,
-  }).find(
-    (applicationFlatEventMetadata) =>
-      applicationFlatEventMetadata.name === name,
+  }).find((applicationFlatEventMetadata) =>
+    isDefined(name)
+      ? applicationFlatEventMetadata.name === name
+      : applicationFlatEventMetadata.universalIdentifier ===
+        universalIdentifier,
   );
 
   if (!isDefined(flatEventMetadata)) {
     throw new EventMetadataException(
-      `Event "${name}" is not declared by this application`,
+      `Event "${name ?? universalIdentifier}" is not declared by this application`,
       EventMetadataExceptionCode.EVENT_METADATA_NOT_FOUND,
     );
   }

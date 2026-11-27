@@ -9,6 +9,7 @@ export enum EventMetadataExceptionCode {
   INVALID_EVENT_METADATA_INPUT = 'INVALID_EVENT_METADATA_INPUT',
   EVENT_METADATA_NAME_ALREADY_EXISTS = 'EVENT_METADATA_NAME_ALREADY_EXISTS',
   INVALID_EVENT_PROPERTIES = 'INVALID_EVENT_PROPERTIES',
+  INVALID_EVENT_TARGET = 'INVALID_EVENT_TARGET',
 }
 
 const getEventMetadataExceptionUserFriendlyMessage = (
@@ -23,6 +24,8 @@ const getEventMetadataExceptionUserFriendlyMessage = (
       return msg`An event with this name already exists for this application.`;
     case EventMetadataExceptionCode.INVALID_EVENT_PROPERTIES:
       return msg`The event properties do not match its definition.`;
+    case EventMetadataExceptionCode.INVALID_EVENT_TARGET:
+      return msg`Pass either the event name or its universal identifier.`;
     default:
       assertUnreachable(code);
   }

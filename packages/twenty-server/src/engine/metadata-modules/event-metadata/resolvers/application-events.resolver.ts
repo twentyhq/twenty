@@ -50,6 +50,8 @@ export class ApplicationEventsResolver {
       workspaceId: workspace.id,
       applicationId: application.id,
       event: input.event,
+      eventUniversalIdentifier: input.eventUniversalIdentifier,
+      id: input.id,
       properties: input.properties ?? {},
     });
   }

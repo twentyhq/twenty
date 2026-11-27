@@ -2452,13 +2452,15 @@ export type EmailsConfiguration = {
 };
 
 export type EmitAppEventInput = {
-  event: Scalars['String']['input'];
+  event?: InputMaybe<Scalars['String']['input']>;
+  eventUniversalIdentifier?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
   properties?: InputMaybe<Scalars['JSON']['input']>;
 };
 
 export type EmitAppEventOutput = {
   __typename?: 'EmitAppEventOutput';
-  id: Scalars['UUID']['output'];
+  id: Scalars['String']['output'];
   occurredAt: Scalars['String']['output'];
 };
 

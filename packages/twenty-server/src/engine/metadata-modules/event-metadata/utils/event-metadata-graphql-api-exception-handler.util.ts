@@ -17,6 +17,7 @@ export const eventMetadataGraphqlApiExceptionHandler = (error: Error) => {
         throw new NotFoundError(error);
       case EventMetadataExceptionCode.INVALID_EVENT_METADATA_INPUT:
       case EventMetadataExceptionCode.INVALID_EVENT_PROPERTIES:
+      case EventMetadataExceptionCode.INVALID_EVENT_TARGET:
         throw new UserInputError(error);
       case EventMetadataExceptionCode.EVENT_METADATA_NAME_ALREADY_EXISTS:
         throw new ConflictError(error);

@@ -61,6 +61,33 @@ describe('emitEvent', () => {
     expect(JSON.parse(String(body)).variables).toEqual({ input });
   });
 
+  it('sends an event universal identifier and a caller id as given', async () => {
+    fetchSpy.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: {
+            emitAppEvent: {
+              id: 'message-added-1',
+              occurredAt: '2026-10-27T10:00:00.000Z',
+            },
+          },
+        }),
+        { status: 200 },
+      ),
+    );
+
+    const input = {
+      eventUniversalIdentifier: '3c1d2a4b-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
+      id: 'message-added-1',
+    };
+
+    await emitEvent(input);
+
+    const body = fetchSpy.mock.calls[0][1]?.body;
+
+    expect(JSON.parse(String(body)).variables).toEqual({ input });
+  });
+
   it('throws with the server error messages', async () => {
     fetchSpy.mockResolvedValue(
       new Response(

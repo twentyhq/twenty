@@ -12,7 +12,7 @@ import {
   EventMetadataException,
   EventMetadataExceptionCode,
 } from 'src/engine/metadata-modules/event-metadata/event-metadata.exception';
-import { findApplicationFlatEventMetadataByNameOrThrow } from 'src/engine/metadata-modules/event-metadata/utils/find-application-flat-event-metadata-by-name-or-throw.util';
+import { findApplicationFlatEventMetadataOrThrow } from 'src/engine/metadata-modules/event-metadata/utils/find-application-flat-event-metadata-or-throw.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -23,11 +23,15 @@ export class ApplicationEventEmitterService {
     workspaceId,
     applicationId,
     event,
+    eventUniversalIdentifier,
+    id,
     properties,
   }: {
     workspaceId: string;
     applicationId: string;
-    event: string;
+    event?: string;
+    eventUniversalIdentifier?: string;
+    id?: string;
     properties: Record<string, unknown>;
   }): Promise<EmitEventResult> {
     const { flatEventMetadataMaps } =
@@ -35,14 +39,15 @@ export class ApplicationEventEmitterService {
         'flatEventMetadataMaps',
       ]);
 
-    const flatEventMetadata = findApplicationFlatEventMetadataByNameOrThrow({
+    const flatEventMetadata = findApplicationFlatEventMetadataOrThrow({
       flatEventMetadataMaps,
       applicationId,
       name: event,
+      universalIdentifier: eventUniversalIdentifier,
     });
 
     const propertyErrors = getEventPropertyValuesErrors({
-      eventName: event,
+      eventName: flatEventMetadata.name,
       schema: flatEventMetadata.schema,
       values: properties,
     });
@@ -55,8 +60,8 @@ export class ApplicationEventEmitterService {
     }
 
     const occurrence: EventOccurrence = {
-      id: v4(),
-      type: event,
+      id: id ?? v4(),
+      type: flatEventMetadata.name,
       occurredAt: new Date().toISOString(),
       properties,
     };

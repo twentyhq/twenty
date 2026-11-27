@@ -36,7 +36,8 @@ const MESSAGE_ADDED_EVENT: EventManifest = {
     properties: {
       companyId: {
         type: 'record',
-        objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
       },
       text: { type: 'string' },
     },
@@ -74,7 +75,9 @@ describe('app events (e2e)', () => {
   let frontComponentToken: string;
 
   const emit = (input: {
-    event: string;
+    event?: string;
+    eventUniversalIdentifier?: string;
+    id?: string;
     properties?: Record<string, unknown>;
   }) =>
     makeMetadataApiRequest(
@@ -137,7 +140,10 @@ describe('app events (e2e)', () => {
           schema: {
             type: 'object',
             properties: {
-              companyId: { type: 'record', objectUniversalIdentifier: uuidv4() },
+              companyId: {
+                type: 'record',
+                objectUniversalIdentifier: uuidv4(),
+              },
             },
           },
         },
@@ -176,6 +182,37 @@ describe('app events (e2e)', () => {
       id: expect.any(String),
       occurredAt: expect.any(String),
     });
+  });
+
+  it('finds the event by universal identifier and keeps the id the caller chose', async () => {
+    const response = await emit({
+      eventUniversalIdentifier: MESSAGE_ADDED_EVENT_ID,
+      id: 'message-added-1',
+      properties: { companyId: COMPANY_ID },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.emitAppEvent.id).toBe('message-added-1');
+  });
+
+  it('refuses an id outside the allowed characters', async () => {
+    const response = await emit({
+      event: 'messageAdded',
+      id: 'not allowed!',
+      properties: { companyId: COMPANY_ID },
+    });
+
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('BAD_USER_INPUT');
+  });
+
+  it('refuses both an event name and a universal identifier', async () => {
+    const response = await emit({
+      event: 'messageAdded',
+      eventUniversalIdentifier: MESSAGE_ADDED_EVENT_ID,
+      properties: { companyId: COMPANY_ID },
+    });
+
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('BAD_USER_INPUT');
   });
 
   it('refuses a member acting through a front component token', async () => {

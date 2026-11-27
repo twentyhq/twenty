@@ -2329,12 +2329,14 @@ type EmailsConfiguration {
 }
 
 input EmitAppEventInput {
-  event: String!
+  event: String
+  eventUniversalIdentifier: String
+  id: String
   properties: JSON
 }
 
 type EmitAppEventOutput {
-  id: UUID!
+  id: String!
   occurredAt: String!
 }
 

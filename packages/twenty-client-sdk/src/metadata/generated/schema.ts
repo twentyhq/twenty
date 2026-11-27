@@ -1596,7 +1596,7 @@ export interface EmailsConfiguration {
 }
 
 export interface EmitAppEventOutput {
-    id: Scalars['UUID']
+    id: Scalars['String']
     occurredAt: Scalars['String']
     __typename: 'EmitAppEventOutput'
 }
@@ -6493,7 +6493,7 @@ export interface EmailsConfigurationGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface EmitAppEventInput {event: Scalars['String'],properties?: (Scalars['JSON'] | null)}
+export interface EmitAppEventInput {event?: (Scalars['String'] | null),eventUniversalIdentifier?: (Scalars['String'] | null),id?: (Scalars['String'] | null),properties?: (Scalars['JSON'] | null)}
 
 export interface EmitAppEventOutputGenqlSelection{
     id?: boolean | number
