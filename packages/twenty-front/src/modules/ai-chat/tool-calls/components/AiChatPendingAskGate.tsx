@@ -13,10 +13,13 @@ const StyledInputStack = styled.div`
 
 const StyledBlockingToolInset = styled.div`
   box-sizing: border-box;
-  padding: 0 ${themeCssVariables.spacing[2]};
   width: 100%;
 
-  [data-blocking-tool-card] {
+  &[data-docked] {
+    padding: 0 ${themeCssVariables.spacing[2]};
+  }
+
+  &[data-docked] [data-blocking-tool-card] {
     border-bottom: 0;
     border-radius: ${themeCssVariables.border.radius.sm}
       ${themeCssVariables.border.radius.sm} 0 0;
@@ -37,18 +40,14 @@ export const AiChatPendingAskGate = ({
       pendingToolCall.kind === 'toolCallApproval' &&
       !pendingToolCall.isPostedByWorkflow,
   );
-  const requests = (
-    <AiChatPendingToolCallRequests pendingToolCalls={pendingToolCalls} />
-  );
 
   return (
     <StyledInputStack>
-      {hasPendingToolCalls &&
-        (isComposerShown ? (
-          <StyledBlockingToolInset>{requests}</StyledBlockingToolInset>
-        ) : (
-          requests
-        ))}
+      {hasPendingToolCalls && (
+        <StyledBlockingToolInset data-docked={isComposerShown || undefined}>
+          <AiChatPendingToolCallRequests pendingToolCalls={pendingToolCalls} />
+        </StyledBlockingToolInset>
+      )}
       {isComposerShown && children}
     </StyledInputStack>
   );
