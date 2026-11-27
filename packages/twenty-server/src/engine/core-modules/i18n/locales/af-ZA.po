@@ -366,6 +366,28 @@ msgstr "'n Skakel wat in 'n veldtog nagespoor word"
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
 msgstr "’n Bemarkings-e-pos kan slegs op ’n slag aan een ontvanger gestuur word, sodat elke persoon hul eie uitteken-skakel kry."
 
+#. js-lingui-id: TS5uum
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util.ts
+msgid "A marketplace application cannot declare row-level rules or field permissions"
+msgstr "’n Markplektoepassing kan nie reëls op ryvlak of veldtoestemmings verklaar nie"
+
+#. js-lingui-id: bH9jpk
+#: src/engine/permissions/permissions.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-restriction-errors.util.ts
+msgid "A marketplace application cannot declare row-level rules or field permissions."
+msgstr "’n Markplektoepassing kan nie reëls op ryvlak of veldtoestemmings verklaar nie."
+
+#. js-lingui-id: +//ajp
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util.ts
+msgid "A marketplace application role can only be assigned to agents"
+msgstr "’n Markplektoepassingsrol kan slegs aan agente toegewys word"
+
+#. js-lingui-id: BRZH6M
+#: src/engine/permissions/permissions.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-assignability-errors.util.ts
+msgid "A marketplace application role can only be assigned to agents."
+msgstr "’n Markplektoepassingsrol kan slegs aan agente toegewys word."
+
 #. js-lingui-id: Spm4/x
 #: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
 msgid "A message needs text or at least one attachment."
@@ -786,6 +808,18 @@ msgstr "'n Siggroepfout het voorgekom."
 #: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "A view sort error occurred."
 msgstr "'n Sigsorteerfout het voorgekom."
+
+#. js-lingui-id: r0+ZZA
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A visibleItemLimit is only allowed on SECTION type"
+msgstr "'n visibleItemLimit word slegs op die SECTION-tipe toegelaat"
+
+#. js-lingui-id: +DI2pX
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A visibleItemLimit must be an integer between {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN} and {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX}"
+msgstr "'n visibleItemLimit moet 'n heelgetal tussen {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MIN} en {NAVIGATION_MENU_ITEM_VISIBLE_ITEM_LIMIT_MAX} wees"
 
 #. js-lingui-id: SMhyGZ
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
@@ -6604,11 +6638,11 @@ msgctxt "commandMenuItem.label"
 msgid "Go to {objectLabelPlural}"
 msgstr "Gaan na {objectLabelPlural}"
 
-#. js-lingui-id: tKVJbL
+#. js-lingui-id: RQG1+p
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Admin Panel Settings"
-msgstr "Gaan na Adminpaneel-instellings"
+msgid "Go to Admin Panel"
+msgstr "Gaan na Admin Paneel"
 
 #. js-lingui-id: zPVvLp
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6616,11 +6650,17 @@ msgctxt "commandMenuItem.label"
 msgid "Go to Agents"
 msgstr "Gaan na agente"
 
-#. js-lingui-id: iLqs3S
+#. js-lingui-id: EiL/A6
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to AI Settings"
-msgstr "Gaan na KI-instellings"
+msgid "Go to AI"
+msgstr "Gaan na KI"
+
+#. js-lingui-id: OVO+nS
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Go to Apps"
+msgstr "Gaan na Toepassings"
 
 #. js-lingui-id: TndVqR
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6628,71 +6668,65 @@ msgctxt "commandMenuItem.label"
 msgid "Go to Apps preferences"
 msgstr "Gaan na toepvoorkeure"
 
-#. js-lingui-id: 60o/+J
+#. js-lingui-id: zsFm1q
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Apps Settings"
-msgstr "Gaan na Apps-instellings"
+msgid "Go to Billing"
+msgstr "Gaan na Fakturering"
 
-#. js-lingui-id: tlIbgN
+#. js-lingui-id: xk8nZG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Billing Settings"
-msgstr "Gaan na Faktureringsinstellings"
+msgid "Go to Community"
+msgstr "Gaan na Gemeenskap"
 
-#. js-lingui-id: u5u/QJ
+#. js-lingui-id: TMv4vU
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Community Settings"
-msgstr "Gaan na Gemeenskapsinstellings"
+msgid "Go to Data Model"
+msgstr "Gaan na Datamodel"
 
-#. js-lingui-id: dZPXqH
+#. js-lingui-id: nvVoDQ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Data Model Settings"
-msgstr "Gaan na Datamodel-instellings"
+msgid "Go to Developers"
+msgstr "Gaan na Ontwikkelaars"
 
-#. js-lingui-id: SNbGsK
+#. js-lingui-id: YTMzOA
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Developers Settings"
-msgstr "Gaan na ontwikkelaarinstellings"
+msgid "Go to Domains"
+msgstr "Gaan na Domeine"
 
-#. js-lingui-id: OLopIl
+#. js-lingui-id: 8V43iD
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Domains Settings"
-msgstr "Gaan na Domein-instellings"
+msgid "Go to Experience"
+msgstr "Gaan na Ervaring"
 
-#. js-lingui-id: 46ZD9h
+#. js-lingui-id: YA1mxo
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Experience Settings"
-msgstr "Gaan na Ervaringsinstellings"
+msgid "Go to General"
+msgstr "Gaan na Algemeen"
 
-#. js-lingui-id: gfZlPy
+#. js-lingui-id: bSctn/
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to General Settings"
-msgstr "Gaan na Algemene instellings"
+msgid "Go to Members"
+msgstr "Gaan na Lede"
 
-#. js-lingui-id: vPl+B/
+#. js-lingui-id: F15zBM
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Members Settings"
-msgstr "Gaan na Lede-instellings"
+msgid "Go to Roles"
+msgstr "Gaan na Rolle"
 
-#. js-lingui-id: qN3wNQ
+#. js-lingui-id: R1fbZB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
-msgid "Go to Roles Settings"
-msgstr "Gaan na Rol-instellings"
-
-#. js-lingui-id: xAAHTC
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Security Settings"
-msgstr "Gaan na Veiligheidsinstellings"
+msgid "Go to Security"
+msgstr "Gaan na Sekuriteit"
 
 #. js-lingui-id: Rrvufq
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -7475,6 +7509,11 @@ msgstr "Ongeldige filter: gebruik \"{joinColumnName}\" om volgens hierdie relasi
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
 msgid "Invalid formula: {errorMessage}"
 msgstr "Ongeldige formule: {errorMessage}"
+
+#. js-lingui-id: uJjrgd
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
+msgid "Invalid formula: write it as text"
+msgstr "Ongeldige formule: skryf dit as teks"
 
 #. js-lingui-id: rFH0az
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -8632,6 +8671,22 @@ msgctxt "fieldMetadata.description"
 msgid "List of opportunities for which that person is the point of contact"
 msgstr "Lys van geleenthede waarvoor daardie persoon die kontakpunt is"
 
+#. js-lingui-id: rbXxvc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
+msgid "List pinned field metadata not found"
+msgstr "Metadata van vasgespelde lysveld nie gevind nie"
+
+#. js-lingui-id: j3iJjW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
+msgid "List pinned field must belong to the view object"
+msgstr "Vasgespelde lysveld moet aan die aansigobjek behoort"
+
+#. js-lingui-id: ucNAgC
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-pinned-field.util.ts
+msgid "List pinned field not found"
+msgstr "Vasgespelde lysveld nie gevind nie"
+
 #. js-lingui-id: Lgr7Gd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -9561,6 +9616,11 @@ msgstr "Naam"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available"
 msgstr "Naam \"{name}\" is nie beskikbaar nie"
+
+#. js-lingui-id: 2tJW5E
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-composite-flat-field-metadata-column-names-availability.util.ts
+msgid "Name \"{name}\" is not available as \"{columnName}\" is already used by another field"
+msgstr "Naam \"{name}\" is nie beskikbaar nie aangesien \"{columnName}\" reeds deur 'n ander veld gebruik word"
 
 #. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
@@ -14403,9 +14463,14 @@ msgid "The condition of a database event trigger must be text"
 msgstr "Die voorwaarde van ’n databasisgebeurtenissneller moet teks wees"
 
 #. js-lingui-id: kxzWhP
-#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
+#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-trees-or-throw.util.ts
 msgid "The condition of an agent trigger is invalid"
 msgstr "Die voorwaarde van 'n agent-sneller is ongeldig"
+
+#. js-lingui-id: 2l+SMV
+#: src/engine/metadata-modules/logic-function/services/logic-function-from-source.service.ts
+msgid "The condition of the database event trigger is invalid"
+msgstr "Die voorwaarde van die databasisgebeurtenissneller is ongeldig"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -14853,6 +14918,11 @@ msgstr "Die verskaffer is tydelik nie beskikbaar nie. Probeer asseblief later we
 #: src/modules/messaging/message-import-manager/drivers/inbound-email/sources/resend-inbound-email-message-source.service.ts
 msgid "The received email content is no longer available."
 msgstr "Die inhoud van die ontvangde e-pos is nie meer beskikbaar nie."
+
+#. js-lingui-id: b84VDO
+#: src/engine/api/common/common-query-runners/common-create-one-query-runner.service.ts
+msgid "The record was created, but you do not have permission to see it."
+msgstr "Die rekord is geskep, maar jy het nie toestemming om dit te sien nie."
 
 #. js-lingui-id: dXHirT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -15464,6 +15534,11 @@ msgstr "Hierdie domein is reeds geregistreer."
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "This domain is already taken."
 msgstr "Hierdie domein is reeds geneem."
+
+#. js-lingui-id: IBjn2S
+#: src/engine/core-modules/public-domain/public-domain.exception.ts
+msgid "This domain is used by Twenty itself and cannot be a public domain."
+msgstr "Hierdie domein word deur Twenty self gebruik en kan nie 'n openbare domein wees nie."
 
 #. js-lingui-id: Ukfndw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts

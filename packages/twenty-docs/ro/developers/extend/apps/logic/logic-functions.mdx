@@ -174,7 +174,7 @@ const handler = async (event: RoutePayload) => {
 };
 ```
 
-Din motive de securitate, anteturile de răspuns sunt limitate la o listă de antete permise. Orice antet care nu se află pe listă (de exemplu, `Set-Cookie`, anteturi CORS precum `Access-Control-Allow-Origin` sau anteturi personalizate `X-*`) este eliminat în mod silențios înainte ca răspunsul să fie trimis. Anteturile de răspuns permise sunt:
+Pe gazda spațiului de lucru (`/s/`) și pe rutele serverului, antetele de răspuns sunt restricționate la o listă de elemente permise din motive de securitate. Orice antet care nu se află pe listă (de exemplu, `Set-Cookie`, anteturi CORS precum `Access-Control-Allow-Origin` sau anteturi personalizate `X-*`) este eliminat în mod silențios înainte ca răspunsul să fie trimis. Pe un [domeniu public](#where-route-pages-run), toate antetele sunt păstrate. Anteturile de răspuns permise sunt:
 
 * `content-type`
 * `content-language`
@@ -185,6 +185,30 @@ Din motive de securitate, anteturile de răspuns sunt limitate la o listă de an
 <Note>
   Codul de stare trebuie să fie un cod de stare HTTP valid (între 100 și 599).
   Numele anteturilor de răspuns sunt comparate fără a ține cont de majuscule și minuscule.
+</Note>
+
+#### Unde rulează paginile rutelor
+
+Fiecare răspuns al unei rute conține `X-Content-Type-Options: nosniff`, astfel încât o rută încărcată ca script sau foaie de stil trebuie să declare un tip de conținut JavaScript sau CSS. Majoritatea conțin și o politică de sandbox, care izolează paginile returnate de rutele dvs. de aplicația Twenty și de alte aplicații:
+
+```
+Content-Security-Policy: sandbox allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals allow-downloads
+```
+
+O pagină izolată în sandbox păstrează scripturile, formularele, ferestrele pop-up, ferestrele modale și descărcările, dar rulează cu o origine opacă: `document.cookie`, `localStorage` și `sessionStorage` generează erori, iar cererile sale, chiar și către propriile rute, sunt de origine încrucișată. Bibliotecile de browser care au nevoie de o origine reală, precum Stripe.js, nu funcționează acolo.
+
+| Unde este servită ruta                                                                                          | Antete de răspuns                    | Mediu sandbox |
+| --------------------------------------------------------------------------------------------------------------- | ------------------------------------ | ------------- |
+| `/s/` pe gazda spațiului de lucru și rutele serverului                                                          | Lista de elemente permise de mai sus | Da            |
+| Domeniul funcțiilor spațiului de lucru (`https://\<workspace>.withtwenty.com` pe Twenty Cloud) | Toate                                | Da            |
+| Un domeniu personalizat validat al aplicației dvs.                                                              | Toate                                | Nu            |
+
+Un domeniu personalizat aparține unei singure aplicații. Înregistrați-l în **Setări → Aplicații → aplicația dvs. → Domeniu personalizat**, adăugați înregistrările DNS afișate acolo și așteptați până când este validat. De atunci, `TWENTY_FUNCTIONS_URL` indică spre acesta (cel mai vechi validat atunci când există mai multe), astfel încât linkurile construite cu `RestApiClient` sau `resolveUrl` utilizează acel domeniu.
+
+<Note>
+  Domeniile personalizate sunt validate prin Cloudflare. Pe o instanță fără
+  Cloudflare configurat, un domeniu personalizat servește rute de îndată ce există
+  înregistrarea `core.publicDomain`.
 </Note>
 
 #### Răspunsuri de eroare ale platformei
@@ -813,7 +837,7 @@ export default defineFrontComponent({
 
 Componenta se montează imediat ce agentul a terminat transmiterea în flux a argumentelor sale, astfel încât gestionează întregul apel, nu doar rezultatul. `toolCall.status` trece prin `input-available`, stările de aprobare atunci când instrumentul are nevoie de aprobare, apoi prin `output-available`, `output-denied` sau `output-error`; `input` este ceea ce a propus agentul, iar `output` este ceea ce a returnat handlerul dvs. Afișați fiecare stare care vă interesează, deoarece rândul de pași nu mai este disponibil pentru a le acoperi.
 
-Când agentul propune un apel care așteaptă aprobarea unei persoane, cardul de aprobare afișează aceeași componentă în locul argumentelor JSON brute. Cardul își păstrează antetul, **Respinge**, **Aprobă** și feedbackul. Cât timp `toolCall.status` este `approval-requested`, `input` conține argumentele pe care le va trimite **Aprobă**, iar componenta le poate modifica folosind `setToolCallArguments`:
+Când agentul propune un apel care așteaptă aprobarea unei persoane, cardul de aprobare afișează aceeași componentă în locul argumentelor JSON brute. Cardul își păstrează antetul, **Respinge** și **Aprobă**. Cât timp `toolCall.status` este `approval-requested`, `input` conține argumentele pe care le va trimite **Aprobă**, iar componenta le poate modifica folosind `setToolCallArguments`:
 
 ```tsx
 import { setToolCallArguments, useToolCall } from 'twenty-sdk/front-component';

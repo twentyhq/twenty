@@ -439,9 +439,6 @@ export class ClientConfig {
   calendarBookingPageId?: string;
 
   @Field(() => Boolean)
-  isBookCallOnboardingStepEnabled: boolean;
-
-  @Field(() => Boolean)
   isCompanyEnrichmentEnabled: boolean;
 
   @Field(() => Boolean)

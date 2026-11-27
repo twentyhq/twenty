@@ -344,7 +344,18 @@ import { DropLegacyWorkflowVersionIdColumnsFastInstanceCommand } from 'src/datab
 import { AddStripeCustomerEmailToBillingCustomerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795601185766-add-stripe-customer-email-to-billing-customer';
 import { RelaxViewVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795618787744-relax-view-visibility';
 import { RenameAgentChatChannelTablesToInboxChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795688525750-rename-agent-chat-channel-tables-to-inbox-channel';
-import { AddInteractiveConfigToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795814918088-add-interactive-config-to-connection-provider';
+import { AddFieldMetadataFormulaColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795701090644-add-field-metadata-formula-column';
+import { MoveFieldMetadataFormulaOutOfSettingsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795701107918-move-field-metadata-formula-out-of-settings';
+import { DropViewVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795709923763-drop-view-visibility';
+import { AddListPinnedFieldMetadataIdToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795713501522-add-list-pinned-field-metadata-id-to-view';
+import { RelaxViewDeletedAtSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795715543417-relax-view-deleted-at';
+import { AddValidationRuleTreeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795719490855-add-validation-rule-tree';
+import { PurgeExpiredRefreshTokensSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795731384123-purge-expired-refresh-tokens';
+import { AddNavigationMenuItemVisibleItemLimitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795772817031-add-navigation-menu-item-visible-item-limit';
+import { BackfillRecentChatsSectionVisibleItemLimitSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795772818031-backfill-recent-chats-section-visible-item-limit';
+import { AddEventMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-66/2-66-instance-command-fast-1795792442166-add-event-metadata';
+import { AddStartConversationLogicFunctionToMessagingProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-66/2-66-instance-command-fast-1795809856924-add-start-conversation-logic-function-to-messaging-provider';
+import { AddInteractiveConfigToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-66/2-66-instance-command-fast-1795816565857-add-interactive-config-to-connection-provider';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -691,5 +702,16 @@ export const INSTANCE_COMMANDS = [
   AddStripeCustomerEmailToBillingCustomerFastInstanceCommand,
   RelaxViewVisibilityFastInstanceCommand,
   RenameAgentChatChannelTablesToInboxChannelFastInstanceCommand,
+  AddFieldMetadataFormulaColumnFastInstanceCommand,
+  MoveFieldMetadataFormulaOutOfSettingsSlowInstanceCommand,
+  DropViewVisibilityFastInstanceCommand,
+  AddListPinnedFieldMetadataIdToViewFastInstanceCommand,
+  RelaxViewDeletedAtSlowInstanceCommand,
+  AddValidationRuleTreeFastInstanceCommand,
+  PurgeExpiredRefreshTokensSlowInstanceCommand,
+  AddNavigationMenuItemVisibleItemLimitFastInstanceCommand,
+  BackfillRecentChatsSectionVisibleItemLimitSlowInstanceCommand,
+  AddEventMetadataFastInstanceCommand,
+  AddStartConversationLogicFunctionToMessagingProviderFastInstanceCommand,
   AddInteractiveConfigToConnectionProviderFastInstanceCommand,
 ];

@@ -288,6 +288,31 @@ const mockThinkingStepsDone: ExtendedUIMessage = {
   },
 };
 
+const mockToolsOnlyTurn: ExtendedUIMessage = {
+  id: 'msg-tools-only',
+  role: 'assistant',
+  parts: [
+    {
+      type: 'reasoning',
+      text: 'The member asked for Acme, so I will create the company.',
+      state: 'done',
+    },
+    {
+      type: 'tool-create_company',
+      toolCallId: 'tool-create-company-done',
+      input: { name: 'Acme' },
+      output: { success: true },
+      state: 'output-available',
+    },
+  ],
+  metadata: {
+    createdAt: MOCKED_DATE,
+    startedAt: '2026-01-01T10:00:00.000Z',
+    finishedAt: '2026-01-01T10:00:09.000Z',
+    isBuiltInAssistant: true,
+  },
+};
+
 const mockAnsweredForm: ExtendedUIMessage = {
   id: 'msg-answered-form',
   role: 'assistant',
@@ -309,6 +334,77 @@ const mockAnsweredForm: ExtendedUIMessage = {
             callDate: '2026-09-29',
             summary: 'Pipeline import first, SSO the week after.',
           },
+        },
+      },
+      state: 'output-available',
+    },
+  ],
+  metadata: {
+    createdAt: MOCKED_DATE,
+  },
+};
+
+const ONBOARDING_OWNER_QUESTION = {
+  question: 'Who should own the Linear onboarding?',
+  options: [
+    { label: 'Jony', description: 'Designs the rollout with their team' },
+    { label: 'Phil', description: 'Runs the technical setup' },
+  ],
+};
+
+const mockAnsweredQuestion: ExtendedUIMessage = {
+  id: 'msg-answered-question',
+  role: 'assistant',
+  parts: [
+    {
+      type: 'tool-ask_question',
+      toolCallId: 'tool-ask-question',
+      input: ONBOARDING_OWNER_QUESTION,
+      output: {
+        success: true,
+        result: {
+          question: ONBOARDING_OWNER_QUESTION,
+          status: 'answered',
+          answer: { selectedOptionIndices: [1] },
+        },
+      },
+      state: 'output-available',
+    },
+  ],
+  metadata: {
+    createdAt: MOCKED_DATE,
+  },
+};
+
+const ONBOARDING_WEBHOOK_PROPOSAL = {
+  toolName: 'http_request',
+  toolLabel: 'HTTP Request',
+  summary: 'Tell the onboarding tool that Linear signed',
+  template: 'generic' as const,
+  arguments: {
+    url: 'https://hooks.example.com/onboarding',
+    method: 'POST',
+  },
+};
+
+const mockApprovedToolCall: ExtendedUIMessage = {
+  id: 'msg-approved-tool-call',
+  role: 'assistant',
+  parts: [
+    {
+      type: 'tool-propose_tool_call',
+      toolCallId: 'tool-propose-tool-call',
+      input: {
+        toolName: ONBOARDING_WEBHOOK_PROPOSAL.toolName,
+        arguments: ONBOARDING_WEBHOOK_PROPOSAL.arguments,
+        summary: ONBOARDING_WEBHOOK_PROPOSAL.summary,
+      },
+      output: {
+        success: true,
+        result: {
+          status: 'approved',
+          proposal: ONBOARDING_WEBHOOK_PROPOSAL,
+          output: { status: 202 },
         },
       },
       state: 'output-available',
@@ -490,6 +586,8 @@ const allMockMessages = [
   mockThinkingStepsStreaming,
   mockThinkingStepsDone,
   mockAnsweredForm,
+  mockAnsweredQuestion,
+  mockApprovedToolCall,
   mockTeammateMessage,
   mockFormerMemberMessage,
   mockUnknownSenderMessage,
@@ -822,6 +920,91 @@ export const ThinkingStepsDoneExpanded: Story = {
 
 export const AnsweredForm: Story = {
   render: () => <AiChatMessage messageId={mockAnsweredForm.id} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByRole('button', { name: 'Request form' }),
+    ).toHaveAttribute('aria-expanded', 'false');
+    await expect(canvas.queryByText('Summary')).not.toBeInTheDocument();
+  },
+};
+
+export const AnsweredFormExpanded: Story = {
+  render: () => <AiChatMessage messageId={mockAnsweredForm.id} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Request form' }),
+    );
+
+    await expect(await canvas.findByText('Summary')).toBeVisible();
+    await expect(
+      await canvas.findByText('Pipeline import first, SSO the week after.'),
+    ).toBeVisible();
+    await expect(
+      canvas.queryByRole('button', { name: 'Submit' }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const AnsweredQuestionExpanded: Story = {
+  render: () => <AiChatMessage messageId={mockAnsweredQuestion.id} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const row = await canvas.findByRole('button', {
+      name: 'Who should own the Linear onboarding?',
+    });
+
+    await expect(row).toHaveAttribute('aria-expanded', 'false');
+    await userEvent.click(row);
+
+    await expect(await canvas.findByText('Jony')).toBeVisible();
+    await expect(canvas.getByLabelText('Selected')).toBeVisible();
+  },
+};
+
+export const ApprovedToolCallExpanded: Story = {
+  render: () => <AiChatMessage messageId={mockApprovedToolCall.id} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const row = await canvas.findByRole('button', {
+      name: 'Tell the onboarding tool that Linear signed',
+    });
+
+    await expect(row).toHaveAttribute('aria-expanded', 'false');
+    await userEvent.click(row);
+
+    await expect(await canvas.findByText('HTTP Request')).toBeVisible();
+    await expect(
+      canvas.queryByRole('button', { name: 'Approve' }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const ToolsOnlyTurn: Story = {
+  parameters: {
+    isInboxEnabled: true,
+    messages: [mockUserMessage, mockToolsOnlyTurn],
+  },
+  render: () => (
+    <StyledConversationContainer>
+      <AiChatMessage messageId={mockUserMessage.id} />
+      <AiChatMessage messageId={mockToolsOnlyTurn.id} />
+    </StyledConversationContainer>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByRole('button', { name: /worked for 9s/i }),
+    ).toBeVisible();
+    await expect(canvas.queryByText('Ada')).not.toBeInTheDocument();
+    await expect(
+      canvas.queryByRole('separator', { name: 'New' }),
+    ).not.toBeInTheDocument();
+  },
 };
 
 export const MultiplayerConversation: Story = {

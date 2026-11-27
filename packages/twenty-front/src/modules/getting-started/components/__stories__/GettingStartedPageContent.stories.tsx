@@ -27,7 +27,6 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import {
   ApplicationRegistrationSourceType,
-  FeatureFlagKey,
   FindInstallApplicationJobStatusDocument,
   FindManyMarketplaceAppsDocument,
   FindMarketplaceAppDetailDocument,
@@ -57,9 +56,6 @@ import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const TRIALING_WORKSPACE = {
   ...mockCurrentWorkspace,
-  featureFlags: [
-    { key: FeatureFlagKey.IS_GETTING_STARTED_ENABLED, value: true },
-  ],
   currentBillingSubscription: {
     ...mockCurrentWorkspace.currentBillingSubscription,
     status: SubscriptionStatus.Trialing,

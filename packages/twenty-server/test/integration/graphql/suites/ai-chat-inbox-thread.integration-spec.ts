@@ -9,6 +9,7 @@ import {
 } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
+import { AGENT_CHAT_OBJECT_PERMISSIONS } from 'test/integration/constants/agent-chat-object-permissions.constant';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { type GraphQLResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
@@ -34,7 +35,6 @@ import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
@@ -237,7 +237,7 @@ describe('Inbox thread mutations for members and applications', () => {
       turnId,
       role: AgentMessageRole.USER,
       agentId: null,
-      senderUserWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      senderWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       senderApplicationId: application.id,
       parts: [{ type: 'text', text: 'Summarize the renewal call' }],
     });
@@ -256,6 +256,7 @@ describe('Inbox thread mutations for members and applications', () => {
       name: 'Inbox Thread Application',
       permissionFlagUniversalIdentifiers: [SystemPermissionFlag.AI],
       canReadAndUpdateAllObjectRecords: true,
+      objectPermissions: AGENT_CHAT_OBJECT_PERMISSIONS,
     });
     jest.useRealTimers();
 

@@ -247,6 +247,8 @@ npm يقبل إثبات المصدر (provenance) فقط من مستودعات �
 }
 ```
 
+يجب أن تتبع أدوارك أيضًا [قواعد الأدوار خارج تطبيق Custom لمساحة العمل](/ar/developers/extend/apps/config/roles#roles-outside-the-workspace-custom-application): لا يمكن إلا للوكلاء امتلاكها، ولا تعلن أي أذونات على مستوى الحقول أو الصفوف. وإلا، يفشل `twenty app publish` مع `INVALID_INPUT` ويسرد الأدوار المخالفة.
+
 ### بيانات التعريف لسوق التطبيقات
 
 يدعم إعداد `defineApplication()` حقولًا اختيارية تتحكم في كيفية ظهور تطبيقك في السوق. استخدم `logo` و`galleryImages` للإشارة إلى الصور من مجلد `public/`:

@@ -4,10 +4,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { PublicDomainDTO } from 'src/engine/core-modules/public-domain/dtos/public-domain.dto';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import {
@@ -22,6 +22,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 export class PublicDomainService {
   constructor(
     private readonly dnsManagerService: DnsManagerService,
+    private readonly domainServerConfigService: DomainServerConfigService,
     @InjectWorkspaceScopedRepository(PublicDomainEntity)
     private readonly publicDomainRepository: WorkspaceScopedRepository<PublicDomainEntity>,
     // Hostname-to-workspace resolution at request-routing time, before workspace context exists.
@@ -63,6 +64,13 @@ export class PublicDomainService {
   }): Promise<PublicDomainDTO> {
     const formattedDomain = domain.trim().toLowerCase();
 
+    if (this.domainServerConfigService.isInstanceHostname(formattedDomain)) {
+      throw new PublicDomainException(
+        'Domain is used by this instance',
+        PublicDomainExceptionCode.DOMAIN_USED_BY_INSTANCE,
+      );
+    }
+
     const [workspaceWithCustomDomain, existingPublicDomain, application] =
       await Promise.all([
         this.workspaceRepository.findOneBy({ customDomain: formattedDomain }),
@@ -101,20 +109,14 @@ export class PublicDomainService {
       );
     }
 
-    const publicDomain = {
-      domain: formattedDomain,
-      workspaceId: workspace.id,
-      applicationId,
-    } as PublicDomainEntity;
-
     await this.dnsManagerService.registerHostname(formattedDomain, {
       isPublicDomain: true,
     });
 
     try {
-      await this.publicDomainRepository.insert(
+      return await this.publicDomainRepository.insertAndReturnOne(
         workspace.id,
-        publicDomain as QueryDeepPartialEntity<PublicDomainEntity>,
+        { domain: formattedDomain, applicationId },
       );
     } catch (error) {
       await this.dnsManagerService.deleteHostnameSilently(formattedDomain, {
@@ -123,8 +125,6 @@ export class PublicDomainService {
 
       throw error;
     }
-
-    return publicDomain;
   }
 
   async checkPublicDomainValidRecords(

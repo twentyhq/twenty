@@ -1,11 +1,8 @@
 import { useLingui } from '@lingui/react/macro';
-import { isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { type ProposedToolCall } from 'twenty-shared/ai';
 import {
-  isEmailDocumentShape,
   isNonEmptyArray,
-  isPlainObject,
   parseCanonicalTipTapJsonDocument,
 } from 'twenty-shared/utils';
 import {
@@ -16,30 +13,14 @@ import {
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
-import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
 import { serializeEmailRecipients } from '@/activities/emails/recipients/utils/serializeEmailRecipients';
-import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeJsonContentAsAdvancedTextEditorDocument';
 import { AiChatApprovalEmailReview } from '@/ai-chat/tool-calls/components/AiChatApprovalEmailReview';
 import { AiChatToolCallApprovalCardLayout } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalCardLayout';
+import { EMAIL_TOOL_NAMES } from '@/ai-chat/tool-calls/constants/EmailToolNames';
 import { useAnswerToolCallApproval } from '@/ai-chat/tool-calls/hooks/useAnswerToolCallApproval';
 import { type AiChatApprovalReviewEmailDraft } from '@/ai-chat/tool-calls/types/AiChatApprovalReviewEmailDraft';
-
-const EMAIL_TOOL_NAMES = {
-  send: 'send_email',
-  draft: 'draft_email',
-} as const;
-
-const readRecipients = (toolArguments: Record<string, unknown>) => {
-  const recipients = isPlainObject(toolArguments.recipients)
-    ? toolArguments.recipients
-    : {};
-
-  return {
-    to: parseEmailRecipients(isString(recipients.to) ? recipients.to : ''),
-    cc: parseEmailRecipients(isString(recipients.cc) ? recipients.cc : ''),
-    bcc: parseEmailRecipients(isString(recipients.bcc) ? recipients.bcc : ''),
-  };
-};
+import { getProposedToolCallLabel } from '@/ai-chat/tool-calls/utils/getProposedToolCallLabel';
+import { readEmailDraftFromToolArguments } from '@/ai-chat/tool-calls/utils/readEmailDraftFromToolArguments';
 
 type AiChatToolCallApprovalEmailCardProps = {
   toolCallId: string;
@@ -54,17 +35,9 @@ export const AiChatToolCallApprovalEmailCard = ({
   const approval = useAnswerToolCallApproval({ toolCallId, proposal });
   const { pendingResponse, isAnswering, approve, reject } = approval;
 
-  const [draft, setDraft] = useState<AiChatApprovalReviewEmailDraft>(() => ({
-    ...readRecipients(proposal.arguments),
-    subject: isString(proposal.arguments.subject)
-      ? proposal.arguments.subject
-      : '',
-    body: isEmailDocumentShape(proposal.arguments.body)
-      ? serializeJsonContentAsAdvancedTextEditorDocument(
-          proposal.arguments.body,
-        )
-      : '',
-  }));
+  const [draft, setDraft] = useState<AiChatApprovalReviewEmailDraft>(() =>
+    readEmailDraftFromToolArguments(proposal.arguments),
+  );
 
   const runnableToolNames = [
     proposal.toolName,
@@ -96,13 +69,8 @@ export const AiChatToolCallApprovalEmailCard = ({
 
   return (
     <AiChatToolCallApprovalCardLayout
-      title={
-        proposal.toolName === EMAIL_TOOL_NAMES.draft
-          ? t`Draft email`
-          : t`Send email`
-      }
+      title={getProposedToolCallLabel(proposal)}
       Icon={IconMail}
-      approval={approval}
       actions={
         <>
           <Button

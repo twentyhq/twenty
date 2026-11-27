@@ -20,13 +20,20 @@ type HttpResponseLogicFunctionApplication = {
   logicFunctionUniversalIdentifier: string;
 };
 
+type HandlerSource =
+  | {
+      response: Omit<LogicFunctionHttpResponse, '__twentyHttpResponse'>;
+      handlerCode?: never;
+    }
+  | { handlerCode: string; response?: never };
+
 export const setupHttpResponseLogicFunctionApplication = async ({
   name,
   response,
+  handlerCode,
   triggerSettings,
-}: {
+}: HandlerSource & {
   name: string;
-  response: Omit<LogicFunctionHttpResponse, '__twentyHttpResponse'>;
   triggerSettings: Pick<
     LogicFunctionManifest,
     'httpRouteTriggerSettings' | 'serverRouteTriggerSettings'
@@ -34,10 +41,12 @@ export const setupHttpResponseLogicFunctionApplication = async ({
 }): Promise<HttpResponseLogicFunctionApplication> => {
   const applicationUniversalIdentifier = uuidv4();
   const logicFunctionUniversalIdentifier = uuidv4();
-  const builtHandlerCode = `export const main = async () => (${JSON.stringify({
-    [LOGIC_FUNCTION_HTTP_RESPONSE_MARKER]: true,
-    ...response,
-  })});\n`;
+  const builtHandlerCode =
+    handlerCode ??
+    `export const main = async () => (${JSON.stringify({
+      [LOGIC_FUNCTION_HTTP_RESPONSE_MARKER]: true,
+      ...response,
+    })});\n`;
 
   await setupApplicationForSync({
     applicationUniversalIdentifier,

@@ -19,6 +19,7 @@ export type MessageChannel = {
   excludeNonProfessionalEmails: boolean;
   excludeGroupEmails: boolean;
   isSyncEnabled: boolean;
+  canStartConversation: boolean;
   syncStatus: MessageChannelSyncStatus;
   syncStage: MessageChannelSyncStage;
   syncStageStartedAt: string | null;

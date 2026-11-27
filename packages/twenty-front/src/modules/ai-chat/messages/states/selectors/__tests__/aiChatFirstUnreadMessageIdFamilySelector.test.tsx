@@ -200,4 +200,36 @@ describe('aiChatFirstUnreadMessageIdFamilySelector', () => {
       ),
     ).toBeNull();
   });
+
+  it('hides the unread divider above a turn that only ran tools', () => {
+    expect(
+      getFirstUnreadMessageId(
+        {
+          threadId: THREAD_ID,
+          isUnread: true,
+          lastReadAt: '2026-10-01T10:00:00.000Z',
+        },
+        [
+          {
+            ...buildMessage('tools', 'assistant', '2026-10-01T10:05:00.000Z'),
+            parts: [
+              {
+                type: 'tool-create_company',
+                toolCallId: 'call-1',
+                state: 'output-available',
+                input: {},
+                output: { success: true },
+              },
+            ],
+          },
+          buildMessage(
+            'teammate',
+            'user',
+            '2026-10-01T10:07:00.000Z',
+            TEAMMATE,
+          ),
+        ],
+      ),
+    ).toBe('teammate');
+  });
 });

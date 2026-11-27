@@ -331,9 +331,14 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           return freshEntries;
         }
 
-        const { validKeys, keysNeedingDataFromRedis, keysNeedingRecompute } =
-          await this.validateLocalHashAgainstRedisHash(workspaceId, staleKeys);
-        const validatedEntries = this.getFromLocalCache(workspaceId, validKeys);
+        const {
+          validatedEntries,
+          keysNeedingDataFromRedis,
+          keysNeedingRecompute,
+        } = await this.validateLocalHashAgainstRedisHash(
+          workspaceId,
+          staleKeys,
+        );
 
         const { redisEntries, missingInRedis } = await this.fetchDataFromRedis(
           workspaceId,
@@ -564,17 +569,17 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
   ): Promise<{
-    validKeys: WorkspaceCacheKeyName[];
+    validatedEntries: CacheEntriesResult;
     keysNeedingDataFromRedis: WorkspaceCacheKeyName[];
     keysNeedingRecompute: KeyToRecompute[];
   }> {
-    const validKeys: WorkspaceCacheKeyName[] = [];
+    const validatedEntries: CacheEntriesResult = { data: {}, hashes: {} };
     const keysNeedingDataFromRedis: WorkspaceCacheKeyName[] = [];
     const keysNeedingRecompute: KeyToRecompute[] = [];
 
     if (cacheKeyNames.length === 0) {
       return {
-        validKeys,
+        validatedEntries,
         keysNeedingDataFromRedis,
         keysNeedingRecompute,
       };
@@ -590,14 +595,26 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       const redisHash = redisHashes[index];
       const localKey = this.buildCacheKey(workspaceId, keyName);
       const localEntry = this.localCache.get(localKey);
+      const localVersion = localEntry?.versions.get(localEntry.latestHash);
 
+      // Read now: an eviction before the caller resumes would drop the key from the result
       if (
         isDefined(localEntry) &&
+        isDefined(localVersion) &&
         isDefined(redisHash) &&
         localEntry.latestHash === redisHash
       ) {
         localEntry.lastHashCheckedAt = Date.now();
-        validKeys.push(keyName);
+        Object.assign(validatedEntries.data, {
+          [keyName]: this.readVersion({
+            keyName,
+            entry: localEntry,
+            hash: redisHash,
+            version: localVersion,
+          }),
+        });
+        validatedEntries.hashes[keyName] = redisHash;
+        this.cleanupStaleVersions(localEntry);
       } else if (this.localDataOnlyKeys.has(keyName)) {
         keysNeedingRecompute.push({ keyName, expectedHash: redisHash });
       } else {
@@ -606,7 +623,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     }
 
     return {
-      validKeys,
+      validatedEntries,
       keysNeedingDataFromRedis,
       keysNeedingRecompute,
     };

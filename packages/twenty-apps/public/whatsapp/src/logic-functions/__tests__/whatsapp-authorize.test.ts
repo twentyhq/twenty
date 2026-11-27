@@ -1,12 +1,23 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const mocks = vi.hoisted(() => ({ createAuthLink: vi.fn() }));
+const mocks = vi.hoisted(() => ({
+  createAuthLink: vi.fn(),
+  getOrCreateUnipileWorkspaceScopeId: vi.fn(),
+}));
 
 vi.mock('@unipile/sdk', () => ({
   UnipileHostedAuth: class {
     createAuthLink = mocks.createAuthLink;
   },
 }));
+
+vi.mock(
+  'src/unipile/utils/get-or-create-unipile-workspace-scope-id.util',
+  () => ({
+    getOrCreateUnipileWorkspaceScopeId:
+      mocks.getOrCreateUnipileWorkspaceScopeId,
+  }),
+);
 
 const { whatsappAuthorizeHandler } =
   await import('src/logic-functions/whatsapp-authorize');
@@ -15,6 +26,7 @@ describe('whatsappAuthorizeHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.stubEnv('UNIPILE_API_KEY', 'unipile-key');
+    mocks.getOrCreateUnipileWorkspaceScopeId.mockResolvedValue('scp_workspace');
     mocks.createAuthLink.mockResolvedValue({
       data: { link: 'https://account.unipile.com/qr-page' },
     });
@@ -22,20 +34,30 @@ describe('whatsappAuthorizeHandler', () => {
 
   it('sends the member to a page that only offers the WhatsApp QR code', async () => {
     await expect(
-      whatsappAuthorizeHandler({
-        connectionProviderId: 'provider-id',
-        connectionProviderName: 'whatsapp',
-        callbackUrl: 'https://twenty.example/apps/callback?state=signed-state',
-      }),
+      whatsappAuthorizeHandler(
+        {
+          connectionProviderId: 'provider-id',
+          connectionProviderName: 'whatsapp',
+          callbackUrl:
+            'https://twenty.example/apps/callback?state=signed-state',
+        },
+        { workspaceId: 'workspace-id' },
+      ),
     ).resolves.toEqual({
       authorizationUrl: 'https://account.unipile.com/qr-page',
     });
 
-    expect(mocks.createAuthLink.mock.calls[0][0].body).toMatchObject({
+    const { body } = mocks.createAuthLink.mock.calls[0][0];
+
+    expect(body).toMatchObject({
       providers: ['whatsapp'],
-      redirect_uri: 'https://twenty.example/apps/callback',
-      state: 'signed-state',
+      redirect_uri: 'https://twenty.example/apps/callback?state=signed-state',
+      account_scope_id: 'scp_workspace',
       config: { whatsapp: { allow_methods: ['qr'] } },
     });
+    expect(body).not.toHaveProperty('state');
+    expect(mocks.getOrCreateUnipileWorkspaceScopeId).toHaveBeenCalledWith(
+      'workspace-id',
+    );
   });
 });

@@ -1,7 +1,10 @@
+import { type FieldMetadataFormula } from '@/types/FieldMetadataFormula';
 import { getFieldMetadataFormulaEvaluation } from '@/utils/formula/getFieldMetadataFormulaEvaluation';
 
 export const isQueryTimeFormulaFieldMetadata = ({
-  settings,
+  formula,
 }: {
-  settings?: unknown;
-}): boolean => getFieldMetadataFormulaEvaluation({ settings }) === 'QUERY_TIME';
+  formula?: Partial<
+    Pick<FieldMetadataFormula, 'expression' | 'evaluation'>
+  > | null;
+}): boolean => getFieldMetadataFormulaEvaluation({ formula }) === 'QUERY_TIME';

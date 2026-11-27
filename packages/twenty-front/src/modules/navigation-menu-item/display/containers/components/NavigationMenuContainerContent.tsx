@@ -63,7 +63,7 @@ export const NavigationMenuContainerContent = ({
   if (isLayoutCustomizationModeEnabled) {
     return (
       <>
-        <NavigationDrawerSection>
+        <NavigationDrawerSection shouldNestedSectionsFillWidth>
           <NavigationMenuContainerEditableItems
             containerId={containerId}
             topLevelItems={sortedChildren}

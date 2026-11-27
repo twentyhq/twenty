@@ -16,6 +16,9 @@ import { getFieldFilesValueFromFilePart } from '@/chat/utils/getFieldFilesValueF
 
 import { ChatMessageDaySeparator } from '@/chat/components/ChatMessageDaySeparator';
 import { AiChatMessageAuthorHeader } from '@/ai-chat/messages/components/AiChatMessageAuthorHeader';
+import { AiChatToolsOnlyTurn } from '@/ai-chat/messages/components/AiChatToolsOnlyTurn';
+import { useHasAiChatMessageFinishedStreamingInView } from '@/ai-chat/messages/hooks/useHasAiChatMessageFinishedStreamingInView';
+import { isToolsOnlyAiChatMessage } from '@/ai-chat/messages/utils/isToolsOnlyAiChatMessage';
 import { AiChatMessageReplyQuote } from '@/ai-chat/messages/components/AiChatMessageReplyQuote';
 import { AiChatMessagePartsRenderer } from '@/ai-chat/messages/components/AiChatMessagePartsRenderer';
 import { AiChatMessageReactions } from '@/ai-chat/messages/components/AiChatMessageReactions';
@@ -174,6 +177,12 @@ export const AiChatMessage = ({
     aiChatMessageReactionsFamilyState,
     { messageId },
   );
+  const hasFinishedStreamingInView = useHasAiChatMessageFinishedStreamingInView(
+    {
+      messageId,
+      isStreaming: isLastMessageStreaming,
+    },
+  );
 
   if (
     !isDefined(aiChatMessage) ||
@@ -224,6 +233,11 @@ export const AiChatMessage = ({
     isGroupedWithNext && !hasVisibleTimeInBubble && !hasFooter;
   const shouldShowError =
     isDefined(error) && aiChatMessage.role === AGENT_MESSAGE_ROLE.ASSISTANT;
+  const isToolsOnlyTurn =
+    isAiChatInboxEnabled &&
+    !isLastMessageStreaming &&
+    !shouldShowError &&
+    isToolsOnlyAiChatMessage(aiChatMessage);
 
   const attachments = aiChatMessage.parts
     .filter(isExtendedFileUIPart)
@@ -242,6 +256,7 @@ export const AiChatMessage = ({
       );
   const messageContent = (
     <AiChatMessagePartsRenderer
+      messageId={messageId}
       isUserMessage={isUser}
       isLastMessageStreaming={isLastMessageStreaming}
       messageParts={messageParts}
@@ -298,7 +313,7 @@ export const AiChatMessage = ({
         tabIndex={hasFloatingActions && isTouchDevice ? -1 : undefined}
         data-agent-chat-message-id={messageId}
       >
-        {hasHeader && (
+        {hasHeader && !isToolsOnlyTurn && (
           <AiChatMessageAuthorHeader
             messageId={messageId}
             role={aiChatMessage.role}
@@ -321,7 +336,15 @@ export const AiChatMessage = ({
               quote={messageQuote}
             />
           )}
-          {isUser ? (
+          {isToolsOnlyTurn && (
+            <AiChatToolsOnlyTurn
+              message={aiChatMessage}
+              hasTrailingSpace={hasFinishedStreamingInView && hasHeader}
+            >
+              {messageContent}
+            </AiChatToolsOnlyTurn>
+          )}
+          {!isToolsOnlyTurn && isUser && (
             <AiChatUserMessageText
               messageId={messageId}
               isOtherMember={isOtherMemberMessage}
@@ -329,7 +352,8 @@ export const AiChatMessage = ({
             >
               {messageContent}
             </AiChatUserMessageText>
-          ) : (
+          )}
+          {!isToolsOnlyTurn && !isUser && (
             <StyledChatMessageBubble>{messageContent}</StyledChatMessageBubble>
           )}
           {isNonEmptyArray(attachments) && (

@@ -2,6 +2,10 @@ import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEf
 import { formatQueueJobProgressLabel } from '@/queue-job/utils/formatQueueJobProgressLabel';
 import { isOAuthOnlyApplication } from '@/settings/applications/utils/isOAuthOnlyApplication';
 import { SettingsApplicationConnectedMembersSection } from '@/settings/applications/components/SettingsApplicationConnectedMembersSection';
+import {
+  type SettingsApplicationConfigurationLink,
+  SettingsApplicationConfigurationSection,
+} from '@/settings/applications/components/SettingsApplicationConfigurationSection';
 import { SettingsApplicationContentSummarySection } from '@/settings/applications/components/SettingsApplicationContentSummarySection';
 import { useInstalledApplicationContent } from '@/settings/applications/hooks/useInstalledApplicationContent';
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
@@ -25,6 +29,7 @@ import { SettingsApplicationFunctionDomainSection } from '~/pages/settings/appli
 import { applicationHasHttpTriggeredFunctions } from '~/pages/settings/applications/utils/applicationHasHttpTriggeredFunctions';
 import { isUpgradableApplicationSourceType } from '@/settings/applications/utils/isUpgradableApplicationSourceType';
 import { useLingui } from '@lingui/react/macro';
+import { type ReactNode } from 'react';
 
 type SettingsApplicationDetailGeneralTabProps = {
   application: Pick<
@@ -42,10 +47,12 @@ type SettingsApplicationDetailGeneralTabProps = {
   displayName: string;
   description?: string;
   coverImageUrl?: string;
+  healthCheckBanner?: ReactNode;
   marketplaceUniversalIdentifier?: string;
   isMarketplaceApplication: boolean;
   hasUpdate: boolean;
   latestAvailableVersion?: string;
+  configurationLinks: SettingsApplicationConfigurationLink[];
   onUpgrade: () => void;
   isUpgrading: boolean;
   upgradeProgress?: number;
@@ -59,10 +66,12 @@ export const SettingsApplicationDetailGeneralTab = ({
   displayName,
   description,
   coverImageUrl,
+  healthCheckBanner,
   marketplaceUniversalIdentifier,
   isMarketplaceApplication,
   hasUpdate,
   latestAvailableVersion,
+  configurationLinks,
   onUpgrade,
   isUpgrading,
   upgradeProgress,
@@ -161,6 +170,13 @@ export const SettingsApplicationDetailGeneralTab = ({
           actions={isNonEmptyArray(actions) ? actions : undefined}
         />
       </Section.Root>
+      {healthCheckBanner}
+      {isNonEmptyArray(configurationLinks) && (
+        <SettingsApplicationConfigurationSection
+          applicationName={displayName}
+          links={configurationLinks}
+        />
+      )}
       <ToastOnQueryErrorEffect error={contentError} />
       {isDefined(content) && (
         <SettingsApplicationContentSummarySection

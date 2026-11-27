@@ -9,6 +9,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     ],
     "commandMenuItems": [],
     "connectionProviders": [],
+    "events": [],
     "fields": [],
     "frontComponents": [],
     "indexes": [],
@@ -62,6 +63,7 @@ The scripts invoke that local build directly, so the SDK binary cannot shadow it
     },
     "commandMenuItems": [],
     "connectionProviders": [],
+    "events": [],
     "fields": [],
     "frontComponents": [],
     "indexes": [],
@@ -144,6 +146,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     ],
     "commandMenuItems": [],
     "connectionProviders": [],
+    "events": [],
     "fields": [],
     "frontComponents": [
       "my.front-component.tsx",
@@ -189,6 +192,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     },
     "commandMenuItems": [],
     "connectionProviders": [],
+    "events": [],
     "fields": [],
     "frontComponents": [
       {
@@ -303,6 +307,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     ],
     "commandMenuItems": [],
     "connectionProviders": [],
+    "events": [],
     "fields": [
       "src/fields/company-can-receive-postcards.field.ts",
       "src/fields/post-card-category.field.ts",
@@ -602,6 +607,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     },
     "commandMenuItems": [],
     "connectionProviders": [],
+    "events": [],
     "fields": [
       {
         "description": "Priority level for the post card (1-10)",
@@ -1197,13 +1203,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
               "canSoftDeleteAllRecords": false,
               "canUpdateAllRecords": true,
               "objectUniversalIdentifier": "54b589ca-eeed-4950-a176-358418b85c05",
-              "uneditableFields": [
-                "58a0a314-d7ea-4865-9850-7fb84e72f30b",
-              ],
               "universalIdentifier": "fab82874-880a-556f-93d9-626610bb0770",
-              "unreadableFields": [
-                "58a0a314-d7ea-4865-9850-7fb84e72f30b",
-              ],
             },
             {
               "canDestroyAllRecords": false,
@@ -1220,7 +1220,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
       {
         "canBeAssignedToAgents": false,
         "canBeAssignedToApiKeys": false,
-        "canBeAssignedToUsers": true,
+        "canBeAssignedToUsers": false,
         "canUpdateAllSettings": false,
         "description": "A simple root-level role",
         "label": "Root role",
@@ -1427,6 +1427,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     ],
     "commandMenuItems": [],
     "connectionProviders": [],
+    "events": [],
     "fields": [],
     "frontComponents": [
       "src/counter.front-component.tsx",
@@ -1465,6 +1466,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
         "builtPath": "front-component-shared-dependencies.mjs",
         "dependencies": [
           "react",
+          "react-dom",
           "react-dom/client",
           "react/jsx-runtime",
         ],
@@ -1477,6 +1479,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     },
     "commandMenuItems": [],
     "connectionProviders": [],
+    "events": [],
     "fields": [],
     "frontComponents": [
       {

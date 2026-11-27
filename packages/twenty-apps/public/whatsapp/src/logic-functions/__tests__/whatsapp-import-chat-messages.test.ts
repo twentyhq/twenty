@@ -1,0 +1,259 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { type WhatsappHistoryImportState } from 'src/types/whatsapp-history-import-state.type';
+import { getWhatsappChatJobIdSegment } from 'src/logic-functions/utils/get-whatsapp-history-import-job-id.util';
+
+const mocks = vi.hoisted(() => ({
+  getConnection: vi.fn(),
+  listMessageChannels: vi.fn(),
+  enqueueJobs: vi.fn(),
+  kvStore: new Map<string, unknown>(),
+  listUnipileChatMessagesPage: vi.fn(),
+  ingestWhatsappChatMessages: vi.fn(),
+}));
+
+vi.mock('twenty-sdk/define', () => ({
+  defineLogicFunction: (config: unknown) => config,
+}));
+
+vi.mock('twenty-sdk/logic-function', () => ({
+  AppConnectionAuthFailedError: class extends Error {},
+  RetryableLogicFunctionError: class RetryableLogicFunctionError extends Error {},
+  getConnection: mocks.getConnection,
+  listMessageChannels: mocks.listMessageChannels,
+  enqueueJobs: mocks.enqueueJobs,
+  kv: {
+    get: async (key: string) => mocks.kvStore.get(key) ?? null,
+    set: async (key: string, value: unknown) => {
+      mocks.kvStore.set(key, value);
+    },
+  },
+}));
+
+vi.mock('src/unipile/utils/list-unipile-chat-messages-page.util', () => ({
+  listUnipileChatMessagesPage: mocks.listUnipileChatMessagesPage,
+}));
+
+vi.mock('src/logic-functions/utils/ingest-whatsapp-chat-messages.util', () => ({
+  ingestWhatsappChatMessages: mocks.ingestWhatsappChatMessages,
+}));
+
+const { UnipileRateLimitError, UnipileRequestError } =
+  await import('src/unipile/utils/request-unipile.util');
+
+const { whatsappImportChatMessagesHandler } =
+  await import('src/logic-functions/whatsapp-import-chat-messages');
+
+const STATE_KEY = 'whatsapp-history-import:connection-id';
+const CHAT_KEY = 'whatsapp-history-import-chat:connection-id:run-1:chat-1';
+
+const RUNNING_STATE: WhatsappHistoryImportState = {
+  runId: 'run-1',
+  importPolicy: 'ALL',
+  conversationLimit: 50,
+  status: 'IMPORTING',
+  importedConversationCount: 0,
+  processedConversationCount: 0,
+  startedAt: '2026-10-30T00:00:00.000Z',
+};
+
+const ADA = {
+  id: '33611111111@s.whatsapp.net',
+  display_name: 'Ada Lovelace',
+};
+
+const ADA_COUNTERPART = { user: ADA, handle: '+33611111111' };
+
+const PAYLOAD = {
+  connectedAccountId: 'connection-id',
+  runId: 'run-1',
+  chat: {
+    id: 'chat-1',
+    name: 'Ada Lovelace',
+    is_group: false,
+    is_1to1: true,
+    user: ADA,
+  },
+  counterparts: [ADA_COUNTERPART],
+  personIdByHandle: { '+33611111111': 'person-ada' },
+  pageIndex: 0,
+};
+
+const getEnqueueInputs = () =>
+  mocks.enqueueJobs.mock.calls.map(([input]) => input);
+
+describe('whatsappImportChatMessagesHandler', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.useRealTimers();
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    mocks.kvStore.clear();
+    mocks.kvStore.set(STATE_KEY, RUNNING_STATE);
+    mocks.getConnection.mockResolvedValue({ externalAccountId: 'acc_1' });
+    mocks.listMessageChannels.mockResolvedValue([
+      { id: 'channel-id', handle: '+33600000000' },
+    ]);
+    mocks.listUnipileChatMessagesPage.mockResolvedValue({
+      items: [{ id: 'message-1' }, { id: 'message-2' }],
+      nextCursor: 'cursor-1',
+    });
+    mocks.ingestWhatsappChatMessages.mockResolvedValue({
+      ingestedMessageCount: 2,
+      importedAttachmentCount: 0,
+    });
+  });
+
+  it('imports one page with the people found for the conversation and queues the next page', async () => {
+    await expect(whatsappImportChatMessagesHandler(PAYLOAD)).resolves.toEqual({
+      status: 'CONTINUED',
+    });
+
+    expect(mocks.listUnipileChatMessagesPage).toHaveBeenCalledWith({
+      accountId: 'acc_1',
+      chatId: 'chat-1',
+      cursor: undefined,
+    });
+    expect(mocks.ingestWhatsappChatMessages).toHaveBeenCalledWith(
+      expect.objectContaining({
+        counterparts: [ADA_COUNTERPART],
+        personIdByHandle: new Map([['+33611111111', 'person-ada']]),
+        messages: [{ id: 'message-1' }, { id: 'message-2' }],
+      }),
+    );
+
+    const nextPayload = {
+      ...PAYLOAD,
+      cursor: 'cursor-1',
+      pageIndex: 1,
+      hasImportedMessages: true,
+      attempt: undefined,
+    };
+
+    expect(getEnqueueInputs()).toEqual([
+      expect.objectContaining({
+        limiter: { max: 30, durationMs: 60_000 },
+        jobs: [
+          {
+            jobId: `whatsapp-history-messages-run-1-${getWhatsappChatJobIdSegment('chat-1')}-1-0`,
+            payload: nextPayload,
+          },
+        ],
+      }),
+    ]);
+    expect(mocks.kvStore.get(CHAT_KEY)).toEqual({
+      status: 'IMPORTING',
+      job: { kind: 'MESSAGES', payload: nextPayload },
+    });
+  });
+
+  it('marks the conversation imported after its last page', async () => {
+    mocks.listUnipileChatMessagesPage.mockResolvedValue({
+      items: [{ id: 'message-3' }],
+    });
+    mocks.ingestWhatsappChatMessages.mockResolvedValue({
+      ingestedMessageCount: 0,
+      importedAttachmentCount: 0,
+    });
+
+    await expect(
+      whatsappImportChatMessagesHandler({
+        ...PAYLOAD,
+        cursor: 'cursor-1',
+        pageIndex: 1,
+        hasImportedMessages: true,
+      }),
+    ).resolves.toEqual({ status: 'COMPLETED' });
+    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
+    expect(mocks.kvStore.get(CHAT_KEY)).toEqual({ status: 'IMPORTED' });
+  });
+
+  it('marks a conversation without any message to import as skipped', async () => {
+    mocks.listUnipileChatMessagesPage.mockResolvedValue({ items: [] });
+    mocks.ingestWhatsappChatMessages.mockResolvedValue({
+      ingestedMessageCount: 0,
+      importedAttachmentCount: 0,
+    });
+
+    await whatsappImportChatMessagesHandler(PAYLOAD);
+
+    expect(mocks.kvStore.get(CHAT_KEY)).toEqual({ status: 'SKIPPED' });
+  });
+
+  it('stops when Unipile returns the cursor it was given', async () => {
+    mocks.listUnipileChatMessagesPage.mockResolvedValue({
+      items: [{ id: 'message-1' }],
+      nextCursor: 'cursor-1',
+    });
+
+    await expect(
+      whatsappImportChatMessagesHandler({
+        ...PAYLOAD,
+        cursor: 'cursor-1',
+        pageIndex: 1,
+      }),
+    ).resolves.toEqual({ status: 'COMPLETED' });
+    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
+  });
+
+  it('retries the same page once the rate limit resets', async () => {
+    vi.useFakeTimers({ now: Date.UTC(2026, 0, 1) });
+    mocks.listUnipileChatMessagesPage.mockRejectedValue(
+      new UnipileRateLimitError('Too many requests', 90),
+    );
+
+    await expect(
+      whatsappImportChatMessagesHandler({
+        ...PAYLOAD,
+        cursor: 'cursor-2',
+        pageIndex: 2,
+      }),
+    ).resolves.toEqual({ status: 'PAUSED' });
+
+    const [enqueueInput] = getEnqueueInputs();
+
+    expect(enqueueInput.delayMs).toBe(90_000);
+    expect(enqueueInput.jobs).toEqual([
+      {
+        jobId: `whatsapp-history-messages-run-1-${getWhatsappChatJobIdSegment('chat-1')}-2-1`,
+        payload: { ...PAYLOAD, cursor: 'cursor-2', pageIndex: 2, attempt: 1 },
+      },
+    ]);
+    expect(mocks.kvStore.get(CHAT_KEY)).toEqual(
+      expect.objectContaining({ resumeAt: '2026-01-01T00:01:30.000Z' }),
+    );
+  });
+
+  it('lets Twenty retry while WhatsApp is unreachable', async () => {
+    mocks.listUnipileChatMessagesPage.mockRejectedValue(
+      new UnipileRequestError('list chat messages failed', 503),
+    );
+
+    await expect(
+      whatsappImportChatMessagesHandler(PAYLOAD, {
+        retryCount: 0,
+        maxRetries: 3,
+      }),
+    ).rejects.toThrow('list chat messages failed');
+    expect(mocks.kvStore.get(CHAT_KEY)).toBeUndefined();
+  });
+
+  it('drops a chunk job queued by the previous version of the import', async () => {
+    await expect(
+      whatsappImportChatMessagesHandler({
+        connectedAccountId: 'connection-id',
+        runId: 'run-1',
+        chunkIndex: 2,
+      }),
+    ).resolves.toEqual({ status: 'CANCELLED' });
+    expect(mocks.listUnipileChatMessagesPage).not.toHaveBeenCalled();
+  });
+
+  it('does nothing once the run is cancelled', async () => {
+    mocks.kvStore.set(STATE_KEY, { ...RUNNING_STATE, status: 'CANCELLED' });
+
+    await expect(whatsappImportChatMessagesHandler(PAYLOAD)).resolves.toEqual({
+      status: 'CANCELLED',
+    });
+    expect(mocks.listUnipileChatMessagesPage).not.toHaveBeenCalled();
+  });
+});

@@ -12,5 +12,5 @@ export const isLogicFunctionReadyForPrebuiltInstall = (
   flatLogicFunction: LogicFunctionPrebuiltStateFields,
 ): boolean =>
   flatLogicFunction.executionMode === LogicFunctionExecutionMode.PREBUILT &&
-  flatLogicFunction.isBuildUpToDate === true &&
+  flatLogicFunction.isBuildUpToDate &&
   isNonEmptyString(flatLogicFunction.checksum);

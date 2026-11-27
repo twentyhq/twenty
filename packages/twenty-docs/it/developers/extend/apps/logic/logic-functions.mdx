@@ -173,7 +173,7 @@ const handler = async (event: RoutePayload) => {
 };
 ```
 
-Per motivi di sicurezza, le intestazioni di risposta sono limitate a un elenco consentito. Qualsiasi intestazione che non è presente nell'elenco (ad esempio `Set-Cookie`, intestazioni CORS come `Access-Control-Allow-Origin` o intestazioni personalizzate `X-*`) viene ignorata senza segnalazione prima che la risposta venga inviata. Le intestazioni di risposta consentite sono:
+Sull'host dell'area di lavoro (`/s/`) e sulle route del server, le intestazioni di risposta sono limitate a un elenco consentito per motivi di sicurezza. Qualsiasi intestazione che non è presente nell'elenco (ad esempio `Set-Cookie`, intestazioni CORS come `Access-Control-Allow-Origin` o intestazioni personalizzate `X-*`) viene ignorata senza segnalazione prima che la risposta venga inviata. Su un [dominio pubblico](#where-route-pages-run), tutte le intestazioni vengono mantenute. Le intestazioni di risposta consentite sono:
 
 * `content-type`
 * `content-language`
@@ -184,6 +184,30 @@ Per motivi di sicurezza, le intestazioni di risposta sono limitate a un elenco c
 <Note>
   Il codice di stato deve essere un codice di stato HTTP valido (compreso tra 100 e 599).
   I nomi delle intestazioni di risposta vengono confrontati senza distinzione tra maiuscole e minuscole.
+</Note>
+
+#### Dove vengono eseguite le pagine delle route
+
+Ogni risposta della route include `X-Content-Type-Options: nosniff`, pertanto una route caricata come script o foglio di stile deve dichiarare un tipo di contenuto JavaScript o CSS. La maggior parte include anche una policy sandbox, che isola le pagine restituite dalle tue route dall'app Twenty e da altre applicazioni:
+
+```
+Content-Security-Policy: sandbox allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals allow-downloads
+```
+
+Una pagina in sandbox mantiene script, moduli, popup, modali e download, ma viene eseguita con un'origine opaca: `document.cookie`, `localStorage` e `sessionStorage` generano un errore e le relative richieste, anche alle tue route, sono cross-origin. Le librerie del browser che necessitano di un'origine reale, come Stripe.js, non funzionano in questo ambiente.
+
+| Dove viene servita la route                                                                                            | Intestazioni di risposta | Ambiente isolato |
+| ---------------------------------------------------------------------------------------------------------------------- | ------------------------ | ---------------- |
+| `/s/` sull'host dell'area di lavoro e route del server                                                                 | Elenco consentito sopra  | Sì               |
+| Il dominio delle funzioni dell'area di lavoro (`https://\<workspace>.withtwenty.com` su Twenty Cloud) | Tutti                    | Sì               |
+| Un dominio personalizzato convalidato della tua applicazione                                                           | Tutti                    | No               |
+
+Un dominio personalizzato appartiene a una sola applicazione. Registralo in **Impostazioni → Applicazioni → la tua applicazione → Dominio personalizzato**, aggiungi i record DNS mostrati e attendi che venga convalidato. Da quel momento, `TWENTY_FUNCTIONS_URL` punta a esso (quello convalidato meno di recente quando ce ne sono diversi), pertanto i collegamenti creati con `RestApiClient` o `resolveUrl` usano quel dominio.
+
+<Note>
+  I domini personalizzati vengono convalidati tramite Cloudflare. In un'istanza senza
+  Cloudflare configurato, un dominio personalizzato serve le route non appena esiste la relativa
+  riga `core.publicDomain`.
 </Note>
 
 #### Risposte di errore della piattaforma
@@ -812,7 +836,7 @@ export default defineFrontComponent({
 
 Il componente viene montato non appena l'agente ha terminato lo streaming dei suoi argomenti, quindi gestisce l'intera chiamata, non solo il risultato. `toolCall.status` passa attraverso `input-available`, gli stati di approvazione quando lo strumento ne richiede una, e quindi `output-available`, `output-denied` o `output-error`; `input` è ciò che l'agente ha proposto, `output` ciò che il tuo gestore ha restituito. Esegui il rendering di ogni stato che ti interessa, poiché la riga del passaggio non è più presente per gestirli.
 
-Quando l'agente propone una chiamata che attende l'approvazione di una persona, la scheda di approvazione mostra lo stesso componente al posto degli argomenti JSON non elaborati. La scheda mantiene l'intestazione, **Rifiuta**, **Approva** e il feedback. Mentre `toolCall.status` è `approval-requested`, `input` contiene gli argomenti che **Approva** invierà e il componente può modificarli con `setToolCallArguments`:
+Quando l'agente propone una chiamata che attende l'approvazione di una persona, la scheda di approvazione mostra lo stesso componente al posto degli argomenti JSON non elaborati. La scheda mantiene l'intestazione, **Rifiuta** e **Approva**. Mentre `toolCall.status` è `approval-requested`, `input` contiene gli argomenti che **Approva** invierà e il componente può modificarli con `setToolCallArguments`:
 
 ```tsx
 import { setToolCallArguments, useToolCall } from 'twenty-sdk/front-component';

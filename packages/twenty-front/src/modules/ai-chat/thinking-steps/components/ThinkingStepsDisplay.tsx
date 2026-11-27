@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
-import { useState } from 'react';
 import { Collapsible } from 'twenty-ui/primitives/layout';
 import { IconChevronRight, ThinkingOrbitLoaderIcon } from 'twenty-ui/icon';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,6 +8,8 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { ShimmeringText } from '@/ai-chat/components/ShimmeringText';
 import { ThinkingReasoningStepRow } from '@/ai-chat/thinking-steps/components/ThinkingReasoningStepRow';
 import { ThinkingToolStepRow } from '@/ai-chat/thinking-steps/components/ThinkingToolStepRow';
+import { thinkingStepsIsExpandedFamilyState } from '@/ai-chat/thinking-steps/states/thinkingStepsIsExpandedFamilyState';
+import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
 import { getThinkingStepLabel } from '@/ai-chat/thinking-steps/utils/getThinkingStepLabel';
 import { isThinkingStepPartActive } from '@/ai-chat/thinking-steps/utils/isThinkingStepPartActive';
@@ -126,18 +127,25 @@ const ThinkingStepRow = ({
   );
 
 export const ThinkingStepsDisplay = ({
+  messageId,
+  renderItemIndex,
   parts,
   isLastMessageStreaming,
   isTrailingWhileStreaming = false,
   workDurationMs,
 }: {
+  messageId: string;
+  renderItemIndex: number;
   parts: ThinkingStepPart[];
   isLastMessageStreaming: boolean;
   isTrailingWhileStreaming?: boolean;
   workDurationMs?: number | null;
 }) => {
   const { t } = useLingui();
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useAtomFamilyState(
+    thinkingStepsIsExpandedFamilyState,
+    { messageId, renderItemIndex },
+  );
   const displayContext = useToolDisplayContext();
 
   const stepCountLabel = plural(parts.length, {
@@ -164,22 +172,23 @@ export const ThinkingStepsDisplay = ({
     <Collapsible.Root
       open={isExpanded}
       onOpenChange={setIsExpanded}
-      render={<StyledContainer />}
+      render={<StyledContainer data-hover-card-ignore />}
     >
       <Collapsible.Trigger render={<StyledSummaryButton />}>
         {isWorking ? (
-          <StyledIconContainer>
-            <ThinkingOrbitLoaderIcon />
-          </StyledIconContainer>
+          <>
+            <StyledIconContainer>
+              <ThinkingOrbitLoaderIcon />
+            </StyledIconContainer>
+            <StyledShimmeringRowLabel>{workingLabel}</StyledShimmeringRowLabel>
+          </>
         ) : (
-          <StyledChevronContainer>
-            <IconChevronRight size={14} />
-          </StyledChevronContainer>
-        )}
-        {isWorking ? (
-          <StyledShimmeringRowLabel>{workingLabel}</StyledShimmeringRowLabel>
-        ) : (
-          <StyledSummaryText>{summaryLabel}</StyledSummaryText>
+          <>
+            <StyledSummaryText>{summaryLabel}</StyledSummaryText>
+            <StyledChevronContainer>
+              <IconChevronRight size={14} />
+            </StyledChevronContainer>
+          </>
         )}
         {isWorking && parts.length > 1 && (
           <StyledStepCount>{stepCountLabel}</StyledStepCount>

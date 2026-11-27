@@ -1,6 +1,7 @@
 import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
 import {
   Args,
+  Context,
   Int,
   Mutation,
   Parent,
@@ -8,6 +9,7 @@ import {
   ResolveField,
 } from '@nestjs/graphql';
 
+import DataLoader from 'dataloader';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -38,6 +40,7 @@ import {
   MessageChannelExceptionCode,
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
+import { ApplicationMessageSendService } from 'src/engine/metadata-modules/message-channel/services/application-message-send.service';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -86,6 +89,11 @@ const EMAIL_GROUP_CHANNEL_ACCESS_POLICY: AccessPolicy = {
 @MetadataResolver(() => MessageChannelDTO)
 @UseFilters(AuthGraphqlApiExceptionFilter)
 export class MessageChannelResolver {
+  private readonly startableChannelLoadersByRequest = new WeakMap<
+    object,
+    DataLoader<MessageChannelDTO, boolean, string>
+  >();
+
   constructor(
     private readonly messageChannelMetadataService: MessageChannelMetadataService,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
@@ -93,6 +101,7 @@ export class MessageChannelResolver {
     @InjectWorkspaceScopedRepository(MessageFolderEntity)
     private readonly messageFolderRepository: WorkspaceScopedRepository<MessageFolderEntity>,
     private readonly messagingProcessGroupEmailActionsService: MessagingProcessGroupEmailActionsService,
+    private readonly applicationMessageSendService: ApplicationMessageSendService,
   ) {}
 
   @ResolveField('importProgress', () => Int, { nullable: true })
@@ -105,6 +114,63 @@ export class MessageChannelResolver {
       messageChannelId: messageChannel.id,
       workspaceId: workspace.id,
     });
+  }
+
+  @ResolveField('canStartConversation', () => Boolean)
+  @UseGuards(NoPermissionGuard)
+  async canStartConversation(
+    @Parent() messageChannel: MessageChannelDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Context() context: object,
+    @AuthUserWorkspaceId({ allowUndefined: true }) userWorkspaceId?: string,
+  ): Promise<boolean> {
+    if (!isDefined(userWorkspaceId)) {
+      return false;
+    }
+
+    return this.findStartableChannelLoader({
+      context,
+      userWorkspaceId,
+      workspaceId: workspace.id,
+    }).load(messageChannel);
+  }
+
+  private findStartableChannelLoader({
+    context,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    context: object;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): DataLoader<MessageChannelDTO, boolean, string> {
+    const existingLoader = this.startableChannelLoadersByRequest.get(context);
+
+    if (isDefined(existingLoader)) {
+      return existingLoader;
+    }
+
+    const loader = new DataLoader<MessageChannelDTO, boolean, string>(
+      async (messageChannels) => {
+        const startableMessageChannelIds =
+          await this.applicationMessageSendService.findStartableMessageChannelIds(
+            {
+              messageChannels: [...messageChannels],
+              userWorkspaceId,
+              workspaceId,
+            },
+          );
+
+        return messageChannels.map(({ id }) =>
+          startableMessageChannelIds.has(id),
+        );
+      },
+      { cacheKeyFn: ({ id }) => id },
+    );
+
+    this.startableChannelLoadersByRequest.set(context, loader);
+
+    return loader;
   }
 
   @ResolveField('connectedAccount', () => ConnectedAccountPublicDTO, {

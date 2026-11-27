@@ -4,7 +4,7 @@ import { HttpResponse, graphql } from 'msw';
 import { expect, within } from 'storybook/test';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { LIST_PLANS } from '@/settings/billing/graphql/queries/listPlans';
+import { BILLING_PLANS } from '@/settings/billing/graphql/queries/billingPlans';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { AppPath } from 'twenty-shared/types';
@@ -113,7 +113,7 @@ export const PlansQueryError: Story = {
   parameters: {
     msw: {
       handlers: [
-        graphql.query(getOperationName(LIST_PLANS) ?? '', () => {
+        graphql.query(getOperationName(BILLING_PLANS) ?? '', () => {
           return HttpResponse.json({
             errors: [{ message: 'Internal server error' }],
           });

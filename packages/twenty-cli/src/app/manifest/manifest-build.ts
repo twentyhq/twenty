@@ -43,6 +43,7 @@ import {
   type McpServerManifest,
   type RelatedRecordPathManifest,
   type MessagingProviderManifest,
+  type EventManifest,
   type FieldManifest,
   type FrontComponentManifest,
   type IndexManifest,
@@ -124,6 +125,7 @@ export const buildManifest = async (
   const messagingProviders: MessagingProviderManifest[] = [];
   const mcpServers: McpServerManifest[] = [];
   const relatedRecordPaths: RelatedRecordPathManifest[] = [];
+  const events: EventManifest[] = [];
   const logicFunctions: LogicFunctionManifest[] = [];
   const frontComponents: FrontComponentManifest[] = [];
   const publicAssets: AssetManifest[] = [];
@@ -160,6 +162,7 @@ export const buildManifest = async (
   const messagingProvidersFilePaths: string[] = [];
   const mcpServersFilePaths: string[] = [];
   const relatedRecordPathsFilePaths: string[] = [];
+  const eventsFilePaths: string[] = [];
   const logicFunctionsFilePaths: string[] = [];
   const frontComponentsFilePaths: string[] = [];
   const publicAssetsFilePaths: string[] = [];
@@ -341,6 +344,17 @@ export const buildManifest = async (
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         relatedRecordPathsFilePaths.push(relativePath);
+        break;
+      }
+      case 'events': {
+        const extract = await extractManifestFromFile<EventManifest>({
+          appPath,
+          filePath,
+        });
+        events.push(extract.config);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        eventsFilePaths.push(relativePath);
         break;
       }
       case 'logicFunctions': {
@@ -790,6 +804,7 @@ export const buildManifest = async (
         connectionProviders: connectionProviders.sort(byId),
         messagingProviders: messagingProviders.sort(byId),
         mcpServers: mcpServers.sort(byId),
+        events: events.sort(byId),
         logicFunctions: logicFunctions.sort(byId),
         frontComponents: frontComponents.sort(byId),
         publicAssets: publicAssets.sort(byPath),
@@ -821,6 +836,7 @@ export const buildManifest = async (
     messagingProviders: messagingProvidersFilePaths,
     mcpServers: mcpServersFilePaths,
     relatedRecordPaths: relatedRecordPathsFilePaths,
+    events: eventsFilePaths,
     logicFunctions: logicFunctionsFilePaths,
     frontComponents: frontComponentsFilePaths,
     publicAssets: publicAssetsFilePaths,

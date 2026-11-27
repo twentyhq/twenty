@@ -155,6 +155,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     type: NavigationMenuItemType.SECTION,
     builtInSectionKey: 'aiChatRecents',
     position: 2,
+    visibleItemLimit: 5,
   },
 } as const;
 

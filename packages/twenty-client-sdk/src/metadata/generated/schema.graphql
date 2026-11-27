@@ -187,7 +187,6 @@ type AgentMessage {
   reactions: [AgentMessageReactionSummary!]!
   role: String!
   senderApplicationId: UUID
-  senderUserWorkspaceId: UUID
   senderWorkspaceMemberId: UUID
   status: String!
   threadId: UUID!
@@ -405,6 +404,7 @@ enum AllMetadataName {
   applicationVariable
   commandMenuItem
   connectionProvider
+  eventMetadata
   fieldMetadata
   fieldMetadataOption
   fieldPermission
@@ -984,7 +984,7 @@ type AuthToken {
 
 type AuthTokenPair {
   accessOrWorkspaceAgnosticToken: AuthToken!
-  refreshToken: AuthToken!
+  refreshToken: AuthToken @deprecated(reason: "Always null. Will be removed.")
 }
 
 type AuthTokens {
@@ -1520,7 +1520,6 @@ type ClientConfig {
   enterpriseInstanceType: String!
   frontDomain: String!
   isAttachmentPreviewEnabled: Boolean!
-  isBookCallOnboardingStepEnabled: Boolean!
   isClickHouseConfigured: Boolean!
   isCloudflareIntegrationEnabled: Boolean!
   isCompanyEnrichmentEnabled: Boolean!
@@ -1779,6 +1778,7 @@ input CreateEmailingDomainInput {
 input CreateFieldInput {
   defaultValue: JSON
   description: String
+  formula: JSON
   icon: String
   isActive: Boolean
   isAuditLogged: Boolean
@@ -1870,6 +1870,7 @@ input CreateNavigationMenuItemInput {
   type: NavigationMenuItemType!
   userWorkspaceId: UUID
   viewId: UUID
+  visibleItemLimit: Int
   workflowId: UUID
 }
 
@@ -2063,6 +2064,7 @@ input CreateViewInput {
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
   key: ViewKey
+  listPinnedFieldMetadataId: UUID
   mainGroupByFieldMetadataId: UUID
   name: String!
   objectMetadataId: UUID!
@@ -2326,6 +2328,18 @@ type EmailsConfiguration {
   configurationType: WidgetConfigurationType!
 }
 
+input EmitAppEventInput {
+  event: String
+  eventUniversalIdentifier: String
+  id: String
+  properties: JSON
+}
+
+type EmitAppEventOutput {
+  id: String!
+  occurredAt: String!
+}
+
 enum EngineComponentKey {
   ACTIVATE_WORKFLOW
   ADD_NODE_WORKFLOW
@@ -2563,6 +2577,7 @@ type FeatureFlag {
 }
 
 enum FeatureFlagKey {
+  IS_ADMIN_CHANNEL_WRITE_ACCESS_RESTORED
   IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED
   IS_AI_CHAT_INBOX_ENABLED
@@ -2571,7 +2586,6 @@ enum FeatureFlagKey {
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_CUSTOMIZABLE_SIDEBAR_ENABLED
   IS_FORMULA_FIELD_ENABLED
-  IS_GETTING_STARTED_ENABLED
   IS_INBOX_OBJECT_NAMING_ENABLED
   IS_INTERNAL_IMPORT_COLUMN_ENABLED
   IS_LOOKUP_COLUMNS_ENABLED
@@ -2589,6 +2603,7 @@ type Field {
   defaultValue: JSON
   description: String
   disabledFieldPermissionActions: [String!]
+  formula: JSON
   icon: String
   id: UUID!
   isActive: Boolean
@@ -2791,6 +2806,7 @@ type FormFieldConfiguration {
 }
 
 type FrontComponent {
+  applicationFunctionsBaseUrl: String
   applicationGrantedCapabilities: [String!]
   applicationGrantedIframeMediaPermissions: [IframeMediaPermission!]
   applicationId: UUID!
@@ -3385,6 +3401,7 @@ type MessageCampaignSendBlockerDTO {
 }
 
 type MessageChannel {
+  canStartConversation: Boolean!
   connectedAccount: ConnectedAccountPublicDTO
   connectedAccountId: UUID!
   contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy!
@@ -3619,7 +3636,6 @@ type Mutation {
   claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
   completeAppTarballUpload(fileId: UUID!): ApplicationRegistration!
   completeApplicationFileUploads(applicationUniversalIdentifier: String!, fileIds: [UUID!]!): CompleteApplicationFileUploadsResult!
-  completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   completeFileUpload(fileId: String!): FileWithSignedUrl!
   completeNewWorkspaceLogoUpload(fileId: String!, workspaceId: String!): FileWithSignedUrl!
   completeWorkspaceLogoUpload(fileId: String!): FileWithSignedUrl!
@@ -3733,6 +3749,7 @@ type Mutation {
   duplicateMessageList(id: UUID!): DuplicatedMessageList!
   editSSOIdentityProvider(input: EditSsoInput!): EditSso!
   emailPasswordResetLink(captchaToken: String, email: String!, workspaceId: UUID): EmailPasswordResetLink!
+  emitAppEvent(input: EmitAppEventInput!): EmitAppEventOutput!
   endSubscriptionTrialPeriod: BillingEndTrialPeriod!
   enqueueJob(input: EnqueueJobInput!): EnqueueJobResult! @deprecated(reason: "Use enqueueJobs instead.")
   enqueueJobs(input: EnqueueJobsInput!): EnqueueJobsResult!
@@ -3771,7 +3788,7 @@ type Mutation {
   removeRecordShare(principal: RecordSharePrincipalInput!, target: RecordTargetInput!): RecordSharingDTO!
   removeRoleFromAgent(agentId: UUID!): Boolean!
   renewApplicationToken(applicationRefreshToken: String!): ApplicationTokenPair!
-  renewToken(appToken: String!): AuthTokens!
+  renewToken(appToken: String!): AuthTokens! @deprecated(reason: "Refresh tokens are no longer issued; this is removed once the last one expires.")
   reopenAgentChatThreadInChannel(threadId: UUID!): Boolean!
   reportAppConnectionAuthFailure(input: ReportAppConnectionAuthFailureInput!): Boolean!
   resendEmailVerificationToken(affiliatePartnerName: String, email: String!, origin: String!): ResendEmailVerificationToken!
@@ -3808,12 +3825,13 @@ type Mutation {
   setRecordShare(accessLevel: RecordShareAccessLevel!, principal: RecordSharePrincipalInput!, target: RecordTargetInput!): RecordSharingDTO!
   setResourceCreditSubscriptionPrice(priceId: String!): BillingUpdate!
   signIn(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
-  signOut(refreshToken: String): Boolean!
+  signOut(refreshToken: String @deprecated(reason: "Refresh tokens are no longer issued; this is removed once the last one expires.")): Boolean!
   signUp(affiliatePartnerName: String, captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
   signUpInNewWorkspace(input: SignUpInNewWorkspaceInput): SignUp!
   signUpInWorkspace(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String, workspaceId: UUID, workspaceInviteHash: String, workspacePersonalInviteToken: String): SignUp!
   skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   snoozeAgentChatThreadInChannel(snoozedUntil: DateTime!, threadId: UUID!): Boolean!
+  startAppChannelConversation(input: StartAppChannelConversationInput!): SendAppChannelMessageOutput!
   startChannelSync(connectedAccountId: UUID!): ChannelSyncSuccess!
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
@@ -3940,6 +3958,7 @@ type NavigationMenuItem {
   updatedAt: DateTime!
   userWorkspaceId: UUID
   viewId: UUID
+  visibleItemLimit: Int
   workflowId: UUID
 }
 
@@ -4143,7 +4162,6 @@ type ObjectRecordsPermissions {
 
 """Onboarding status"""
 enum OnboardingStatus {
-  BOOK_CALL
   COMPLETED
   INVITE_TEAM
   PLAN_REQUIRED
@@ -4796,6 +4814,7 @@ type Role {
   agents: [Agent!]!
   apiKeys: [ApiKeyForRole!]!
   applicationId: UUID!
+  areRecordPermissionsEditable: Boolean!
   canAccessAllAgentChatChannels: Boolean!
   canAccessAllTools: Boolean!
   canBeAssignedToAgents: Boolean!
@@ -5099,7 +5118,8 @@ input SendInboxMessageInput {
   text: String!
   threadKey: String!
   title: String!
-  toolCall: JSON
+  toolCall: JSON @deprecated(reason: "Use toolCalls instead.")
+  toolCalls: [JSON!]
   workspaceMemberIds: [UUID!]!
 }
 
@@ -5220,6 +5240,13 @@ type Skill {
 type StandaloneRichTextConfiguration {
   body: RichTextBody!
   configurationType: WidgetConfigurationType!
+}
+
+input StartAppChannelConversationInput {
+  idempotencyKey: UUID!
+  messageChannelId: UUID!
+  personId: UUID!
+  text: String!
 }
 
 type StartWorkspaceSetupChatResult {
@@ -5563,6 +5590,7 @@ input UpdateEmailGroupChannelInput {
 input UpdateFieldInput {
   defaultValue: JSON
   description: String
+  formula: JSON
   icon: String
   isActive: Boolean
   isAuditLogged: Boolean
@@ -5689,6 +5717,7 @@ input UpdateNavigationMenuItemInput {
   pageLayoutId: UUID
   parentId: UUID
   position: Float
+  visibleItemLimit: Int
 }
 
 input UpdateObjectPayload {
@@ -5952,6 +5981,7 @@ input UpdateViewInput {
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
+  listPinnedFieldMetadataId: UUID
   mainGroupByFieldMetadataId: UUID
   name: String
 
@@ -6504,6 +6534,7 @@ type View {
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
   key: ViewKey
+  listPinnedFieldMetadataId: UUID
   mainGroupByFieldMetadataId: UUID
   name: String!
   objectMetadataId: UUID!
@@ -6947,7 +6978,6 @@ enum WorkspaceCompanyEnrichmentOutcome {
 
 type WorkspaceCompanyEnrichmentResult {
   enrichment: JSON
-  isBookCallOnboardingStepPending: Boolean!
   outcome: WorkspaceCompanyEnrichmentOutcome!
   personEnrichment: JSON
   personOutcome: WorkspacePersonEnrichmentOutcome!

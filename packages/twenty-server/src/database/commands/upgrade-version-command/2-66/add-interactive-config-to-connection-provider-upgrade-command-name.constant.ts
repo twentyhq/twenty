@@ -1,0 +1,2 @@
+export const ADD_INTERACTIVE_CONFIG_TO_CONNECTION_PROVIDER_UPGRADE_COMMAND_NAME =
+  '2.66.0_AddInteractiveConfigToConnectionProviderFastInstanceCommand_1795816565857';

@@ -127,7 +127,8 @@ export const SettingsRoleRuleAllowsSection = ({
                 isAllowedOnAllRecords || ruleOperations.includes(operation)
               }
               disabled={
-                !settingsDraftRole.isEditable ||
+                // TODO(@charlesBochet): temporary Admin record permissions exception, remove once the workspace owns Admin's record permissions
+                !settingsDraftRole.areRecordPermissionsEditable ||
                 isAllowedOnAllRecords ||
                 !isOperationEnabled(operation)
               }

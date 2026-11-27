@@ -9,9 +9,6 @@ export type LinkedinHistoryImportState = {
   importedConversationCount: number;
   processedConversationCount: number;
   totalConversationCount?: number;
-  chunkCount?: number;
-  plannedChunkCount?: number;
-  plannedConversationCount?: number;
   startedAt: string;
   resumeAt?: string;
   finishedAt?: string;

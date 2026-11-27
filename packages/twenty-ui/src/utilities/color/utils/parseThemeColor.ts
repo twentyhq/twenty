@@ -1,10 +1,9 @@
-import { DEFAULT_THEME_COLOR_FALLBACK, type ThemeColor } from '@ui/theme';
+import {
+  DEFAULT_THEME_COLOR_FALLBACK,
+  MAIN_COLOR_NAMES,
+  type ThemeColor,
+} from '@ui/theme';
 
-import { themeColorSchema } from './themeColorSchema';
-
-export const parseThemeColor = (
-  color: string | null | undefined,
-): ThemeColor => {
-  const result = themeColorSchema.safeParse(color ?? '');
-  return result.success ? result.data : DEFAULT_THEME_COLOR_FALLBACK;
-};
+export const parseThemeColor = (color: string | null | undefined): ThemeColor =>
+  MAIN_COLOR_NAMES.find((themeColor) => themeColor === color) ??
+  DEFAULT_THEME_COLOR_FALLBACK;

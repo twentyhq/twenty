@@ -116,6 +116,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     calendarEndFieldMetadata: {
       foreignKey: 'calendarEndFieldMetadataId',
     },
+    listPinnedFieldMetadata: {
+      foreignKey: 'listPinnedFieldMetadataId',
+    },
     kanbanAggregateOperationFieldMetadata: {
       foreignKey: 'kanbanAggregateOperationFieldMetadataId',
     },
@@ -376,6 +379,10 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     application: null,
   },
   messagingProvider: {
+    workspace: null,
+    application: null,
+  },
+  eventMetadata: {
     workspace: null,
     application: null,
   },

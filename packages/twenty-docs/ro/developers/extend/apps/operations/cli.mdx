@@ -146,6 +146,8 @@ Alte comenzi pentru aplicații:
 
 Definițiile care lipsesc din sursă sunt șterse implicit din spațiul de lucru. Transmiteți `--no-prune` pentru a le păstra. Aplicația Personalizată pentru spațiul de lucru le păstrează dacă nu transmiteți `--prune`. Ștergerea obiectelor sau a câmpurilor șterge și datele acestora, deci necesită confirmare. Consultați [Sincronizare și recuperare](/ro/developers/extend/apps/operations/sync-and-recovery) pentru detalii.
 
+În afara aplicației Custom din spațiul de lucru, `plan`, `apply`, `dev` și `publish` refuză rolurile pe care le pot avea membrii spațiului de lucru sau cheile API, precum și permisiunile la nivel de câmp sau rând. Consultați [Roluri în afara aplicației Custom din spațiul de lucru](/ro/developers/extend/apps/config/roles#roles-outside-the-workspace-custom-application).
+
 ## Executarea funcțiilor
 
 Rulați o funcție logică implementată fără a o declanșa printr-o rută, un cron sau un eveniment de bază de date. Sincronizați mai întâi modificările locale cu `app apply` sau `app dev`.

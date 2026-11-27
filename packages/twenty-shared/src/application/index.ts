@@ -98,7 +98,13 @@ export { ASSETS_DIR } from './constants/AssetDirectory';
 export { CONNECTION_PROVIDER_SCOPES } from './constants/ConnectionProviderScopes';
 export { DEFAULT_CONNECTION_PROVIDER_SCOPE } from './constants/DefaultConnectionProviderScope';
 export { DEFAULT_SETTINGS_MENU_ITEM_POSITION } from './constants/DefaultSettingsMenuItemPosition';
+export { EMPTY_EVENT_SCHEMA } from './constants/EmptyEventSchema';
 export { EMPTY_YARN_LOCK_CONTENT } from './constants/EmptyYarnLockContent';
+export { EVENT_LIMITS } from './constants/EventLimits';
+export { EVENT_NAME_PATTERN } from './constants/EventNamePattern';
+export { EVENT_OCCURRENCE_ID_PATTERN } from './constants/EventOccurrenceIdPattern';
+export { EVENT_SCHEMA_PROPERTY_TYPES } from './constants/EventSchemaPropertyTypes';
+export { EVENT_SCHEMA_STRING_FORMATS } from './constants/EventSchemaStringFormats';
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH } from './constants/FrontComponentSharedDependenciesBuiltPath';
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from './constants/FrontComponentSharedDependenciesImportSpecifier';
 export { FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES } from './constants/FrontComponentWidgetPageLayoutTypes';
@@ -179,6 +185,7 @@ export { getViewSortUniversalIdentifier } from './deterministic-identifier/get-v
 export { getViewUniversalIdentifier } from './deterministic-identifier/get-view-universal-identifier.util';
 export { getWorkflowCommandMenuItemUniversalIdentifier } from './deterministic-identifier/get-workflow-command-menu-item-universal-identifier.util';
 export { getWorkflowVersionUniversalIdentifier } from './deterministic-identifier/get-workflow-version-universal-identifier.util';
+export type { EmitEventInput, EmitEventResult } from './emitEventType';
 export type {
   EnqueueJobOptions,
   EnqueueJobsLimiter,
@@ -192,6 +199,8 @@ export type {
   JobStatusResult,
 } from './enqueueJobType';
 export { SyncableEntity } from './enums/syncable-entities.enum';
+export type { EventManifest } from './eventManifestType';
+export type { EventOccurrence } from './eventOccurrenceType';
 export type { EventTriggerManifestSettings } from './eventTriggerManifestSettingsType';
 export type { FieldManifestOptions } from './fieldManifestOptionsType';
 export type {
@@ -346,6 +355,12 @@ export {
 } from './settingsMenuItemManifestType';
 export type { SkillManifest } from './skillManifestType';
 export type { SourceFileManifest } from './sourceFileManifestType';
+export type {
+  StartAppConversationRecipient,
+  StartAppConversationPayload,
+  StartAppConversationResultRecipient,
+  StartAppConversationResult,
+} from './startAppConversationType';
 export type { StoredCustomConnectionProviderConfig } from './storedCustomConnectionProviderConfigType';
 export type { StoredInteractiveConnectionProviderConfig } from './storedInteractiveConnectionProviderConfigType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
@@ -368,6 +383,12 @@ export {
   serializeApplicationVariableValue,
   deserializeApplicationVariableValue,
 } from './utils/applicationVariableValueSerialization';
+export type {
+  ApplicationManifestRoleKind,
+  ClassifiedApplicationManifestRoles,
+  ApplicationManifestRoleSources,
+} from './utils/classifyApplicationManifestRoles';
+export { classifyApplicationManifestRoles } from './utils/classifyApplicationManifestRoles';
 export { computeDependencyFileChecksum } from './utils/computeDependencyFileChecksum';
 export { computePackageJsonChecksum } from './utils/computePackageJsonChecksum';
 export type {
@@ -377,6 +398,11 @@ export type {
   FlattenedRowLevelPermissionRuleManifests,
 } from './utils/flattenRowLevelPermissionRuleManifests';
 export { flattenRowLevelPermissionRuleManifests } from './utils/flattenRowLevelPermissionRuleManifests';
+export type { ApplicationManifestRoleViolation } from './utils/getApplicationManifestRoleViolations';
+export {
+  getApplicationManifestRoleViolations,
+  formatApplicationManifestRoleViolation,
+} from './utils/getApplicationManifestRoleViolations';
 export { getDeclaredLegacyRoleRecordsPermissionsKeys } from './utils/getDeclaredLegacyRoleRecordsPermissionsKeys';
 export type {
   EffectiveObjectPermissions,
@@ -386,6 +412,9 @@ export {
   ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
   getEffectiveObjectPermissionsFromRoleManifest,
 } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
+export { getEventDefinitionErrors } from './utils/getEventDefinitionErrors';
+export { getEventPropertyValuesErrors } from './utils/getEventPropertyValuesErrors';
+export { getEventSchemaRecordProperties } from './utils/getEventSchemaRecordProperties';
 export { getReachableObjectPermissionsFromRoleManifest } from './utils/getReachableObjectPermissionsFromRoleManifest';
 export { getRecordsPermissionsFromRoleManifest } from './utils/getRecordsPermissionsFromRoleManifest';
 export { getRoleManifestGrantsNotCoveredBy } from './utils/getRoleManifestGrantsNotCoveredBy';
@@ -412,7 +441,6 @@ export { normalizeMcpServerManifest } from './utils/normalizeMcpServerManifest';
 export { normalizeMessagingProviderManifest } from './utils/normalizeMessagingProviderManifest';
 export { normalizeNavigationMenuItemManifest } from './utils/normalizeNavigationMenuItemManifest';
 export { resolveManifestReferenceUniversalIdentifier } from './utils/resolveManifestReferenceUniversalIdentifier';
-export { resolveObjectPermissionValue } from './utils/resolveObjectPermissionValue';
 export { withDeprecatedConnectionProviderReferences } from './utils/withDeprecatedConnectionProviderReferences';
 export { withDeprecatedMcpServerReferences } from './utils/withDeprecatedMcpServerReferences';
 export { withDeprecatedMessagingProviderReferences } from './utils/withDeprecatedMessagingProviderReferences';

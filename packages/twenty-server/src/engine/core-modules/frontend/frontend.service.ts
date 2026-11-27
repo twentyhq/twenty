@@ -173,8 +173,10 @@ export class FrontendService {
     );
 
     try {
+      const origin = getRequestBaseUrl(request);
+
       const { workspace, isPublicDomain } = await this.workspaceDomainsService
-        .resolveWorkspaceAndPublicDomain(getRequestBaseUrl(request))
+        .resolveWorkspaceAndPublicDomain(origin)
         .catch((error: unknown) => {
           if (error === WorkspaceNotFoundDefaultError) {
             return { workspace: undefined, isPublicDomain: false };
@@ -183,7 +185,10 @@ export class FrontendService {
           throw error;
         });
 
-      if (isPublicDomain) {
+      if (
+        isPublicDomain ||
+        (await this.workspaceDomainsService.hasUnvalidatedPublicDomain(origin))
+      ) {
         response.status(404).end();
 
         return;

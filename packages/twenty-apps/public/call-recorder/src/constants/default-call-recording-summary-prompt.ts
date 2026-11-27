@@ -1,3 +1,5 @@
+import { CALL_RECORDING_SUMMARY_ACTION_ITEMS_HEADING } from 'src/constants/call-recording-summary-action-items-heading';
+import { CALL_RECORDING_SUMMARY_GIST_HEADING } from 'src/constants/call-recording-summary-gist-heading';
 import { CALL_RECORDING_SUMMARY_UNAVAILABLE_PREFIX } from 'src/constants/call-recording-summary-unavailable-prefix';
 
 export const DEFAULT_CALL_RECORDING_SUMMARY_PROMPT = [
@@ -10,14 +12,14 @@ export const DEFAULT_CALL_RECORDING_SUMMARY_PROMPT = [
   'with its heading exactly as written. Omit a section only when its rule says',
   'to.',
   '',
-  '## Gist',
+  CALL_RECORDING_SUMMARY_GIST_HEADING,
   'A single sentence (no bullet) capturing the essence of the meeting.',
   '',
   '## Overview',
   'One paragraph of 2-4 sentences covering what the meeting was about and how',
   'it ended. No bullets.',
   '',
-  '## Action Items',
+  CALL_RECORDING_SUMMARY_ACTION_ITEMS_HEADING,
   'Concrete follow-ups, grouped by the person responsible. Write each owner as',
   'a bold line, then their tasks as a bulleted list beneath it. Use the',
   'speaker name from the transcript, or "Unassigned" when no owner is clear.',

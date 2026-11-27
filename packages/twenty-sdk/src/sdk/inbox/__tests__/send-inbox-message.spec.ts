@@ -64,14 +64,16 @@ describe('sendInboxMessage', () => {
       idempotencyKey: 'first-call-recording',
       title: 'Your first recording is ready',
       text: 'Your call was recorded.',
-      toolCall: {
-        toolName: 'ask_question' as const,
-        input: {
-          header: 'Share',
-          question: 'Share the recording with the attendees?',
-          options: [{ label: 'Draft an email' }, { label: 'Not now' }],
+      toolCalls: [
+        {
+          toolName: 'ask_question' as const,
+          input: {
+            header: 'Share',
+            question: 'Share the recording with the attendees?',
+            options: [{ label: 'Draft an email' }, { label: 'Not now' }],
+          },
         },
-      },
+      ],
     };
 
     const result = await sendInboxMessage(input);
@@ -86,6 +88,42 @@ describe('sendInboxMessage', () => {
 
     expect(sentBody.query).toContain('sendInboxMessage(input:$v1){threadId}');
     expect(Object.values(sentBody.variables)).toEqual([input]);
+  });
+
+  it('sends several tool calls in one message', async () => {
+    fetchSpy.mockResolvedValue(successResponse());
+
+    const sendInboxMessage = await importSendInboxMessage();
+
+    const input = {
+      ...MESSAGE_INPUT,
+      toolCalls: [
+        {
+          logicFunctionUniversalIdentifier: 'call-recap-tool',
+          input: { callRecordingId: 'call-recording-1' },
+        },
+        {
+          toolName: 'propose_tool_call' as const,
+          input: {
+            toolName: 'send_email',
+            arguments: {
+              recipients: { to: 'team@acme.com', cc: '', bcc: '' },
+              subject: 'Follow-up',
+              body: { type: 'text', text: 'Thanks for your time today.' },
+            },
+            summary: 'Send the follow-up email',
+          },
+        },
+      ],
+    };
+
+    await sendInboxMessage(input);
+
+    const [, requestInit] = fetchSpy.mock.calls[0];
+
+    expect(
+      Object.values(JSON.parse(String(requestInit?.body)).variables),
+    ).toEqual([input]);
   });
 
   it('sends the access token of the person behind the run, like the default clients', async () => {
