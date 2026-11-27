@@ -9,7 +9,7 @@ import { type ExpressionVariableNode } from '@/expression/types/ExpressionVariab
 export type ConditionalEvaluationNode =
   | ExpressionLiteralNode
   | ExpressionVariableNode
-  | ExpressionFieldNode
+  | Omit<ExpressionFieldNode, 'isPreviousValue'>
   | ExpressionComparisonNode<ConditionalEvaluationNode>
   | ExpressionGroupNode<ConditionalEvaluationNode>
   | ExpressionNotNode<ConditionalEvaluationNode>
