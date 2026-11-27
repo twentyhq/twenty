@@ -68,12 +68,16 @@ describe('app connection interactive flow', () => {
       [provider.id],
     );
 
-  const start = (token?: string) =>
+  const start = ({
+    token,
+    reconnectingConnectedAccountId,
+  }: { token?: string; reconnectingConnectedAccountId?: string } = {}) =>
     makeMetadataApiRequest(
       startInteractiveConnectionQueryFactory({
         input: {
           applicationId: provider.applicationId,
           providerName: provider.name,
+          reconnectingConnectedAccountId,
         },
       }),
       token,
@@ -93,12 +97,26 @@ describe('app connection interactive flow', () => {
     return response;
   };
 
-  const startFlowId = async (): Promise<string> => {
-    const response = await start();
+  const startFlowId = async (
+    reconnectingConnectedAccountId?: string,
+  ): Promise<string> => {
+    const response = await start({ reconnectingConnectedAccountId });
 
     expect(response.body.errors).toBeUndefined();
 
     return response.body.data.startInteractiveConnection.flowId;
+  };
+
+  const advanceToApproval = async (flowId: string) => {
+    const response = await continueFlow({
+      flowId,
+      action: 'SUBMIT',
+      values: { email: 'marie@acme.com', password: 'right-password' },
+    });
+
+    expect(response.body.data.continueInteractiveConnection.status).toBe(
+      'IN_PROGRESS',
+    );
   };
 
   beforeAll(async () => {
@@ -323,8 +341,57 @@ describe('app connection interactive flow', () => {
   });
 
   it('refuses callers that are not a member session', async () => {
-    const response = await start(API_KEY_ACCESS_TOKEN);
+    const response = await start({ token: API_KEY_ACCESS_TOKEN });
 
     expect(response.body.errors).toBeDefined();
+  });
+
+  it('creates a single connection when two flows complete for the same account', async () => {
+    const [firstFlowId, secondFlowId] = [
+      await startFlowId(),
+      await startFlowId(),
+    ];
+
+    await advanceToApproval(firstFlowId);
+    await advanceToApproval(secondFlowId);
+
+    const responses = await Promise.all([
+      continueFlow({ flowId: firstFlowId, action: 'POLL' }),
+      continueFlow({ flowId: secondFlowId, action: 'POLL' }),
+    ]);
+    const accounts = await readAccounts();
+
+    expect(
+      responses.map(
+        (response) => response.body.data.continueInteractiveConnection.status,
+      ),
+    ).toEqual(['CONNECTED', 'CONNECTED']);
+    expect(accounts).toHaveLength(1);
+    expect(readOnConnectExecutions()).toEqual([accounts[0].id]);
+  });
+
+  it('does not reactivate an account disconnected after the flow started', async () => {
+    const firstFlowId = await startFlowId();
+
+    await advanceToApproval(firstFlowId);
+    await continueFlow({ flowId: firstFlowId, action: 'POLL' });
+    const [connection] = await readAccounts();
+
+    const reconnectFlowId = await startFlowId(connection.id);
+
+    await advanceToApproval(reconnectFlowId);
+    await globalThis.testDataSource.query(
+      `UPDATE core."connectedAccount" SET "archivedAt" = NOW() + interval '5 seconds' WHERE id = $1`,
+      [connection.id],
+    );
+
+    const response = await continueFlow({
+      flowId: reconnectFlowId,
+      action: 'POLL',
+    });
+    const [account] = await readAccounts();
+
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('BAD_USER_INPUT');
+    expect(account.archivedAt).not.toBeNull();
   });
 });

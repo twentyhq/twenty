@@ -7,6 +7,7 @@ import { ConnectionProviderConnectedAccountService } from 'src/engine/core-modul
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { ConnectionProviderInteractiveFlowSessionService } from 'src/engine/core-modules/application/connection-provider/connection-provider-interactive-flow-session.service';
 import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
+import { ConnectionProviderReportedAccountService } from 'src/engine/core-modules/application/connection-provider/connection-provider-reported-account.service';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
 import { type InteractiveConnectionAction } from 'src/engine/core-modules/application/connection-provider/types/interactive-connection-action.type';
@@ -18,7 +19,6 @@ import {
 } from 'src/engine/core-modules/application/connection-provider/utils/assert-interactive-provider.util';
 import { readInteractiveConnectionStepValuesOrThrow } from 'src/engine/core-modules/application/connection-provider/utils/read-interactive-connection-step-values-or-throw.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { plaintextStringSchema } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 
 const FLOW_LOCK_OPTIONS = { ttl: 15_000, maxRetries: 150 };
 
@@ -32,6 +32,7 @@ export class ConnectionProviderInteractiveFlowService {
     private readonly connectionProviderService: ConnectionProviderService,
     private readonly connectedAccountService: ConnectionProviderConnectedAccountService,
     private readonly connectionProviderLifecycleHookService: ConnectionProviderLifecycleHookService,
+    private readonly reportedAccountService: ConnectionProviderReportedAccountService,
     private readonly sessionService: ConnectionProviderInteractiveFlowSessionService,
     private readonly cacheLockService: CacheLockService,
   ) {}
@@ -99,6 +100,7 @@ export class ConnectionProviderInteractiveFlowService {
         screenType: 'form',
         fieldKeys: [],
         state: {},
+        pendingCompletion: null,
       },
       stepResult,
     });
@@ -147,6 +149,15 @@ export class ConnectionProviderInteractiveFlowService {
           reconnectingConnectedAccountId:
             session.reconnectingConnectedAccountId,
         });
+
+        if (isDefined(session.pendingCompletion)) {
+          return this.complete({
+            provider,
+            flowId,
+            session,
+            pendingCompletion: session.pendingCompletion,
+          });
+        }
 
         const stepResult =
           await this.connectionProviderLifecycleHookService.runStep({
@@ -201,90 +212,81 @@ export class ConnectionProviderInteractiveFlowService {
         state: stepResult.state,
       };
 
-      if (!isDefined(flowId)) {
-        return {
-          status: 'IN_PROGRESS',
-          flowId: await this.sessionService.create(nextSession),
-          screen: stepResult.screen,
-        };
-      }
-
-      await this.sessionService.save({ flowId, session: nextSession });
-
-      return { status: 'IN_PROGRESS', flowId, screen: stepResult.screen };
-    }
-
-    if (isDefined(flowId)) {
-      await this.sessionService.delete(flowId);
+      return {
+        status: 'IN_PROGRESS',
+        flowId: await this.sessionService.upsert({
+          flowId,
+          session: nextSession,
+        }),
+        screen: stepResult.screen,
+      };
     }
 
     if (stepResult.type === 'cancelled') {
+      if (isDefined(flowId)) {
+        await this.sessionService.delete(flowId);
+      }
+
       return { status: 'CANCELLED' };
     }
 
-    const connectedAccountId = await this.persistConnectedAccount({
-      provider,
-      session,
-      stepResult,
+    const pendingCompletion = this.sessionService.toPendingCompletion({
+      reportedAccount: stepResult,
+      workspaceId: session.workspaceId,
     });
 
-    return { status: 'CONNECTED', connectedAccountId };
+    const completingFlowId = await this.sessionService.upsert({
+      flowId,
+      session: { ...session, pendingCompletion },
+    });
+
+    return this.complete({
+      provider,
+      flowId: completingFlowId,
+      session,
+      pendingCompletion,
+    });
   }
 
-  private async persistConnectedAccount({
+  // The session keeps the done result until persistence succeeds, so a failed attempt can be retried without signing in again.
+  private async complete({
     provider,
+    flowId,
     session,
-    stepResult: { externalAccountId, handle, accessToken },
+    pendingCompletion,
   }: {
     provider: InteractiveConnectionProvider;
+    flowId: string;
     session: InteractiveConnectionFlowSession;
-    stepResult: Extract<InteractiveConnectionStepResult, { type: 'done' }>;
-  }): Promise<string> {
-    const existingConnectedAccount =
-      await this.connectedAccountService.findConnectedAccountForReport({
+    pendingCompletion: NonNullable<
+      InteractiveConnectionFlowSession['pendingCompletion']
+    >;
+  }): Promise<InteractiveConnectionStepOutcome> {
+    const connectedAccountId =
+      await this.reportedAccountService.persistReportedAccount({
         provider,
         workspaceId: session.workspaceId,
+        userId: session.userId,
         userWorkspaceId: session.userWorkspaceId,
-        externalAccountId,
+        scope: session.scope,
         reconnectingConnectedAccountId: session.reconnectingConnectedAccountId,
+        authorizationIssuedAtSeconds: Math.floor(session.createdAtMs / 1000),
+        reportedAccount: this.sessionService.fromPendingCompletion({
+          pendingCompletion,
+          workspaceId: session.workspaceId,
+        }),
       });
 
-    const connectedAccount = await this.connectedAccountService.persist({
-      provider,
-      credentials: isDefined(accessToken)
-        ? {
-            accessToken: plaintextStringSchema.parse(accessToken),
-            refreshToken: null,
-            scopes: null,
-          }
-        : undefined,
-      handle,
-      identifiedAccount: { externalAccountId },
-      workspaceId: session.workspaceId,
-      userId: session.userId,
-      userWorkspaceId: session.userWorkspaceId,
-      scope: session.scope,
-      reconnectingConnectedAccountId:
-        session.reconnectingConnectedAccountId ??
-        existingConnectedAccount?.id ??
-        null,
-    });
+    await this.sessionService.delete(flowId);
 
-    const isAlreadyActiveAccount =
-      !isDefined(session.reconnectingConnectedAccountId) &&
-      isDefined(existingConnectedAccount) &&
-      !isDefined(existingConnectedAccount.archivedAt) &&
-      !isDefined(existingConnectedAccount.authFailedAt);
-
-    if (!isAlreadyActiveAccount) {
-      await this.connectionProviderLifecycleHookService.dispatchOnConnect({
-        provider,
-        workspaceId: session.workspaceId,
-        connectedAccountId: connectedAccount.id,
-      });
+    if (!isDefined(connectedAccountId)) {
+      throw new ConnectionProviderException(
+        `Interactive connection flow ${flowId} started before account ${pendingCompletion.externalAccountId} was disconnected`,
+        ConnectionProviderExceptionCode.INTERACTIVE_CONNECTION_EXPIRED,
+      );
     }
 
-    return connectedAccount.id;
+    return { status: 'CONNECTED', connectedAccountId };
   }
 
   // The member is leaving either way, so a failing cancel hook must not keep the flow alive.
