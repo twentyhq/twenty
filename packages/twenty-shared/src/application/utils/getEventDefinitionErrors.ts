@@ -8,6 +8,12 @@ import { isValidUniversalIdentifier } from '@/application/utils/isValidUniversal
 import { type InputJsonSchema } from '@/logic-function/input-json-schema.type';
 import { isDefined } from '@/utils/validation/isDefined';
 
+const isEventSchemaPropertyType = (type: string) =>
+  EVENT_SCHEMA_PROPERTY_TYPES.some((propertyType) => propertyType === type);
+
+const isEventSchemaStringFormat = (format: string) =>
+  EVENT_SCHEMA_STRING_FORMATS.some((stringFormat) => stringFormat === format);
+
 const NESTED_SCHEMA_KEYWORDS = [
   'properties',
   'items',
@@ -38,10 +44,7 @@ const getEventSchemaPropertyErrors = ({
 
   const { type, format, objectUniversalIdentifier } = propertySchema;
 
-  if (
-    isDefined(type) &&
-    !(EVENT_SCHEMA_PROPERTY_TYPES as readonly string[]).includes(type)
-  ) {
+  if (isDefined(type) && !isEventSchemaPropertyType(type)) {
     errors.push(
       `${label} type must be one of: ${EVENT_SCHEMA_PROPERTY_TYPES.join(', ')}, or left out to accept any JSON value`,
     );
@@ -57,8 +60,7 @@ const getEventSchemaPropertyErrors = ({
 
   if (
     isDefined(format) &&
-    (type !== 'string' ||
-      !(EVENT_SCHEMA_STRING_FORMATS as readonly string[]).includes(format))
+    (type !== 'string' || !isEventSchemaStringFormat(format))
   ) {
     errors.push(
       `${label} format must be one of: ${EVENT_SCHEMA_STRING_FORMATS.join(', ')}, on a string property`,

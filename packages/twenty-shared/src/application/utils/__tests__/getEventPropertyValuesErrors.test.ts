@@ -126,11 +126,7 @@ describe('getEventPropertyValuesErrors', () => {
     expect(
       getEventPropertyValuesErrors({
         eventName: 'messageAdded',
-        schema: {
-          type: 'object',
-          properties: { toString: {} },
-          required: ['toString'],
-        },
+        schema: { properties: { toString: {} }, required: ['toString'] },
         values: {},
       }),
     ).toEqual(['Event "messageAdded" property "toString" is required']);

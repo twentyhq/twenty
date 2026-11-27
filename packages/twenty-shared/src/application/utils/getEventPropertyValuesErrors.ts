@@ -9,7 +9,7 @@ const isValueOfPropertySchema = ({
   propertySchema,
 }: {
   value: unknown;
-  propertySchema: InputJsonSchema;
+  propertySchema: Pick<InputJsonSchema, 'type' | 'format'>;
 }): boolean => {
   switch (propertySchema.type) {
     case 'string':
@@ -41,7 +41,7 @@ const getPropertyConstraintErrors = ({
   label,
 }: {
   value: unknown;
-  propertySchema: InputJsonSchema;
+  propertySchema: Pick<InputJsonSchema, 'enum' | 'minimum' | 'maximum'>;
   label: string;
 }): string[] => {
   const errors: string[] = [];
@@ -68,7 +68,7 @@ export const getEventPropertyValuesErrors = ({
   values,
 }: {
   eventName: string;
-  schema: InputJsonSchema;
+  schema: Pick<InputJsonSchema, 'properties' | 'required'>;
   values: Record<string, unknown>;
 }): string[] => {
   const errors: string[] = [];

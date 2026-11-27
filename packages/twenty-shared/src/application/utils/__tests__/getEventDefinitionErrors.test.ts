@@ -6,16 +6,15 @@ const CONVERSATION_OBJECT_UNIVERSAL_IDENTIFIER =
 
 const schemaWith = (
   properties: Record<string, InputJsonSchema>,
-  required?: string[],
-): InputJsonSchema => ({ type: 'object', properties, required });
+): InputJsonSchema => ({ type: 'object', properties });
 
 describe('getEventDefinitionErrors', () => {
   it('should accept a record property, formatted strings and an untyped property', () => {
     expect(
       getEventDefinitionErrors({
         name: 'messageAdded',
-        schema: schemaWith(
-          {
+        schema: {
+          ...schemaWith({
             conversationId: {
               type: 'record',
               objectUniversalIdentifier:
@@ -27,9 +26,9 @@ describe('getEventDefinitionErrors', () => {
             priority: { type: 'integer', minimum: 1, maximum: 5 },
             channel: { type: 'string', enum: ['email', 'chat'] },
             metadata: {},
-          },
-          ['conversationId'],
-        ),
+          }),
+          required: ['conversationId'],
+        },
       }),
     ).toEqual([]);
   });
@@ -99,7 +98,11 @@ describe('getEventDefinitionErrors', () => {
     expect(
       getEventDefinitionErrors({
         name: 'messageAdded',
-        schema: schemaWith({ text: { type: 'string' } }, ['missing']),
+        schema: {
+          type: 'object',
+          properties: { text: { type: 'string' } },
+          required: ['missing'],
+        },
       }),
     ).toEqual([
       'Event "messageAdded" requires "missing", which is not one of its properties',

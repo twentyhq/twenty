@@ -6,6 +6,5 @@ export type EventManifest = SyncableEntityOptions & {
   label: string;
   description?: string;
   icon?: string;
-  // An object schema whose properties describe each occurrence
   schema?: InputJsonSchema;
 };
