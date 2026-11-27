@@ -104,6 +104,7 @@ export default defineLogicFunction({
 - The function receives the occurrence: `{ id, type, occurredAt, properties }`.
 - Only events your app declares can trigger its functions; syncing a trigger on any other event fails.
 - The run is queued like a background job and follows the function's `retryLimit`. It has no member: it acts with the app's own token, like a cron run.
+- When Twenty cannot queue the runs, for instance once your app hits its job rate limit, `emitEvent` fails with the reason.
 
 ## Limits
 
