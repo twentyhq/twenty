@@ -10,7 +10,7 @@ import {
   type WorkspaceMigrationBuilderOptions,
   type WorkspaceMigrationValidationBuildOptions,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
-import { isWorkspaceEditingAdminRecordPermissions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-workspace-editing-admin-record-permissions.util';
+import { isAdminRoleChangedByCustomApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-admin-role-changed-by-custom-application.util';
 
 export const getRoleNotEditableErrors = ({
   flatRole,
@@ -18,7 +18,10 @@ export const getRoleNotEditableErrors = ({
   isRecordPermissionsChange = false,
 }: {
   flatRole: UniversalFlatRole;
-  buildOptions: Pick<WorkspaceMigrationBuilderOptions, 'isSystemBuild' | 'applicationUniversalIdentifier'> &
+  buildOptions: Pick<
+    WorkspaceMigrationBuilderOptions,
+    'isSystemBuild' | 'applicationUniversalIdentifier'
+  > &
     Partial<
       Pick<
         WorkspaceMigrationValidationBuildOptions,
@@ -31,7 +34,7 @@ export const getRoleNotEditableErrors = ({
 
   if (
     isRecordPermissionsChange &&
-    isWorkspaceEditingAdminRecordPermissions({ flatRole, buildOptions })
+    isAdminRoleChangedByCustomApplication({ flatRole, buildOptions })
   ) {
     return errors;
   }

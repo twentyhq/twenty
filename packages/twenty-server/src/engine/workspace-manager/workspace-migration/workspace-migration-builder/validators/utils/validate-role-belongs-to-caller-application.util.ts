@@ -7,7 +7,7 @@ import {
   type WorkspaceMigrationBuilderOptions,
   type WorkspaceMigrationValidationBuildOptions,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
-import { isWorkspaceEditingAdminRecordPermissions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-workspace-editing-admin-record-permissions.util';
+import { isAdminRoleChangedByCustomApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-admin-role-changed-by-custom-application.util';
 
 export const validateRoleBelongsToCallerApplication = ({
   referencedRole,
@@ -15,7 +15,10 @@ export const validateRoleBelongsToCallerApplication = ({
   isRecordPermissionsChange = false,
 }: {
   referencedRole: UniversalFlatRole;
-  buildOptions: Pick<WorkspaceMigrationBuilderOptions, 'applicationUniversalIdentifier'> &
+  buildOptions: Pick<
+    WorkspaceMigrationBuilderOptions,
+    'applicationUniversalIdentifier'
+  > &
     Partial<
       Pick<
         WorkspaceMigrationValidationBuildOptions,
@@ -26,7 +29,7 @@ export const validateRoleBelongsToCallerApplication = ({
 }): FlatEntityValidationError[] => {
   if (
     isRecordPermissionsChange &&
-    isWorkspaceEditingAdminRecordPermissions({
+    isAdminRoleChangedByCustomApplication({
       flatRole: referencedRole,
       buildOptions,
     })
