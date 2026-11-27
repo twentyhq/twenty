@@ -20,6 +20,7 @@ const StyledRolePermissionsContainer = styled.div`
 
 type SettingsRolePermissionsProps = {
   roleId: string;
+  // TODO(@charlesBochet): temporary Admin record permissions exception, remove once the workspace owns Admin's record permissions
   areRecordPermissionsEditable: boolean;
   arePermissionFlagsEditable: boolean;
   fromAgentId?: string;

@@ -2,6 +2,7 @@ import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-m
 import { type WorkspaceMigrationValidationBuildOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
+// TODO(@charlesBochet): temporary Admin record permissions exception, remove once the workspace owns Admin's record permissions
 export const isAdminRoleChangedByCustomApplication = ({
   flatRole,
   buildOptions,

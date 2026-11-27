@@ -356,6 +356,7 @@ export class RoleResolver {
     return true;
   }
 
+  // TODO(@charlesBochet): temporary Admin record permissions exception, remove once the workspace owns Admin's record permissions
   @ResolveField('areRecordPermissionsEditable', () => Boolean)
   @UseGuards(NoPermissionGuard)
   getAreRecordPermissionsEditable(@Parent() role: RoleDTO): boolean {

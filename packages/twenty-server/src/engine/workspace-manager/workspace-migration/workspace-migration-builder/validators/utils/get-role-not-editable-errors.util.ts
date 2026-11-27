@@ -33,6 +33,7 @@ export const getRoleNotEditableErrors = ({
   const errors: FlatEntityValidationError[] = [];
 
   if (
+    // TODO(@charlesBochet): temporary Admin record permissions exception, remove once the workspace owns Admin's record permissions
     isRecordPermissionsChange &&
     isAdminRoleChangedByCustomApplication({ flatRole, buildOptions })
   ) {

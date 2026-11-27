@@ -94,6 +94,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   });
 
   const isRoleEditable = settingsDraftRole.isEditable;
+  // TODO(@charlesBochet): temporary Admin record permissions exception, remove once the workspace owns Admin's record permissions
   const areRecordPermissionsEditable =
     settingsDraftRole.areRecordPermissionsEditable;
 

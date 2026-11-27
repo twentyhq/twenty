@@ -237,6 +237,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         ...getRoleNotEditableErrors({
           flatRole: role,
           buildOptions,
+          // TODO(@charlesBochet): temporary Admin record permissions exception, remove once the workspace owns Admin's record permissions
           isRecordPermissionsChange: true,
         }),
       );
@@ -513,6 +514,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         ...getRoleNotEditableErrors({
           flatRole: role,
           buildOptions,
+          // TODO(@charlesBochet): temporary Admin record permissions exception, remove once the workspace owns Admin's record permissions
           isRecordPermissionsChange: true,
         }),
       );

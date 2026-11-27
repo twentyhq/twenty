@@ -10,6 +10,7 @@ export const ROLE_FRAGMENT = gql`
     canAccessAllTools
     canAccessAllAgentChatChannels
     isEditable
+    # TODO(@charlesBochet): temporary Admin record permissions exception, remove once the workspace owns Admin's record permissions
     areRecordPermissionsEditable
     canReadAllObjectRecords
     canUpdateAllObjectRecords
