@@ -1,5 +1,6 @@
 import { getConditionalAvailabilityFilterVariablePath } from '@/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterVariablePath';
 import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/object-filter-dropdown/constants/CurrentWorkspaceMemberSelectableItemId';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import { type ConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
 import { type ExpressionLiteralNode } from 'twenty-shared/expression';
 
@@ -8,8 +9,10 @@ export const convertConditionalAvailabilityNodeToFilterValue = ({
 }: {
   node: ConditionalEvaluationNode;
 }): ExpressionLiteralNode['value'] | null => {
-  if (node.type === 'LITERAL' && node.value !== '') {
-    return node.value;
+  if (node.type === 'LITERAL') {
+    return isString(node.value) && !isNonEmptyString(node.value)
+      ? null
+      : node.value;
   }
 
   const currentWorkspaceMemberPath =
