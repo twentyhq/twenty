@@ -64,6 +64,8 @@ export const FrontComponentSourcesPreloadEffect = ({
       componentUrl,
       sdkClientUrls,
       sharedDependenciesUrl,
+      shouldPrefetchSdkClientSources: usesSdkClient,
+      shouldPrefetchSharedDependenciesSource: hasSharedDependencies,
       sourcesPromise: fetchSourcesOrUndefinedOnFailure(),
     });
   }, [

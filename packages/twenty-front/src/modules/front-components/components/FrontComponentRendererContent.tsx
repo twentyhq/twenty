@@ -47,8 +47,14 @@ export const FrontComponentRendererContent = ({
   errorFallback,
   shouldPreventPageZoom,
 }: FrontComponentRendererContentProps) => {
-  const { componentUrl, sdkClientUrls, sharedDependenciesUrl, sourcesPromise } =
-    sourcesPreload;
+  const {
+    componentUrl,
+    sdkClientUrls,
+    sharedDependenciesUrl,
+    shouldPrefetchSdkClientSources,
+    shouldPrefetchSharedDependenciesSource,
+    sourcesPromise,
+  } = sourcesPreload;
 
   const colorScheme = useThemeColorScheme();
   const { enqueueToast } = useToast();
@@ -58,8 +64,6 @@ export const FrontComponentRendererContent = ({
     id: frontComponentId,
     applicationId,
     applicationName,
-    usesSdkClient,
-    frontComponentSharedDependenciesChecksum,
   } = frontComponent;
 
   const {
@@ -144,10 +148,10 @@ export const FrontComponentRendererContent = ({
           }
           sdkClientUrls={sdkClientUrls}
           sharedDependenciesUrl={sharedDependenciesUrl}
-          shouldPrefetchSdkClientSources={usesSdkClient}
-          shouldPrefetchSharedDependenciesSource={isDefined(
-            frontComponentSharedDependenciesChecksum,
-          )}
+          shouldPrefetchSdkClientSources={shouldPrefetchSdkClientSources}
+          shouldPrefetchSharedDependenciesSource={
+            shouldPrefetchSharedDependenciesSource
+          }
           preloadedSourcesPromise={sourcesPromise}
           executionContext={executionContext}
           frontComponentHostCommunicationApi={
