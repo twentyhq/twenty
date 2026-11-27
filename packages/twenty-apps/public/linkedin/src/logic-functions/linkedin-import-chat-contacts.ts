@@ -151,7 +151,7 @@ export const linkedinImportChatContactsHandler = async (
 ): Promise<LinkedinHistoryImportChatJobResult> => {
   const invokedAt = Date.now();
 
-  if ((await getActiveLinkedinHistoryImportState(payload)) === null) {
+  if (!isDefined(await getActiveLinkedinHistoryImportState(payload))) {
     return { status: 'CANCELLED' };
   }
 

@@ -77,7 +77,7 @@ const listChatsToImport = async ({
 }: {
   connectedAccountId: string;
   unipileAccountId: string;
-  state: LinkedinHistoryImportState;
+  state: Pick<LinkedinHistoryImportState, 'importPolicy' | 'conversationLimit'>;
 }): Promise<UnipileChat[]> => {
   const inboxIds = await listUnipileInboxIds(unipileAccountId);
 
@@ -150,7 +150,7 @@ const planHistoryImport = async ({
     return pausePlanning({ payload, delayMs: error.retryAfterSeconds * 1000 });
   }
 
-  if ((await getActiveLinkedinHistoryImportState(payload)) === null) {
+  if (!isDefined(await getActiveLinkedinHistoryImportState(payload))) {
     return { status: 'CANCELLED' };
   }
 
@@ -190,7 +190,7 @@ export const linkedinPlanHistoryImportHandler = async (
   const invokedAt = Date.now();
   const state = await getActiveLinkedinHistoryImportState(payload);
 
-  if (state === null) {
+  if (!isDefined(state)) {
     return { status: 'CANCELLED' };
   }
 
@@ -201,7 +201,7 @@ export const linkedinPlanHistoryImportHandler = async (
       error,
       context,
       onFinalFailure: async (importError) => {
-        if ((await getActiveLinkedinHistoryImportState(payload)) === null) {
+        if (!isDefined(await getActiveLinkedinHistoryImportState(payload))) {
           return;
         }
 

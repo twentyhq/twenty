@@ -234,6 +234,23 @@ describe('linkedinImportChatMessagesHandler', () => {
     expect(mocks.kvStore.get(CHAT_KEY)).toBeUndefined();
   });
 
+  it('drops a chunk job queued by the previous version of the import', async () => {
+    const legacyPayload: Record<string, unknown> = {
+      connectedAccountId: 'connection-id',
+      runId: 'run-1',
+      chunkIndex: 2,
+    };
+
+    await expect(
+      linkedinImportChatMessagesHandler(
+        legacyPayload as unknown as Parameters<
+          typeof linkedinImportChatMessagesHandler
+        >[0],
+      ),
+    ).resolves.toEqual({ status: 'CANCELLED' });
+    expect(mocks.listUnipileChatMessagesPage).not.toHaveBeenCalled();
+  });
+
   it('does nothing once the run is cancelled', async () => {
     mocks.kvStore.set(STATE_KEY, { ...RUNNING_STATE, status: 'CANCELLED' });
 

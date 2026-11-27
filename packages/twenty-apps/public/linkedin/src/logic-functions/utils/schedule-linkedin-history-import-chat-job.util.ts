@@ -21,7 +21,7 @@ export const scheduleLinkedinHistoryImportChatJob = async ({
 }): Promise<boolean> => {
   const { connectedAccountId, runId, chat } = job.payload;
 
-  if ((await getActiveLinkedinHistoryImportState(job.payload)) === null) {
+  if (!isDefined(await getActiveLinkedinHistoryImportState(job.payload))) {
     return false;
   }
 

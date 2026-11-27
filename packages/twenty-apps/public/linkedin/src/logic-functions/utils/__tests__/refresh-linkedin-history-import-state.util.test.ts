@@ -1,6 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { type LinkedinHistoryImportChatJob } from 'src/logic-functions/types/linkedin-history-import-chat-job.type';
+import { type LinkedinHistoryImportChatProgress } from 'src/logic-functions/types/linkedin-history-import-chat-progress.type';
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
+import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
 
 const mocks = vi.hoisted(() => ({
   getJobs: vi.fn(),
@@ -38,17 +41,32 @@ const RUNNING_STATE: LinkedinHistoryImportState = {
 const getChatKey = (chatId: string) =>
   `linkedin-history-import-chat:connection-id:run-1:${chatId}`;
 
-const buildContactsJob = (chatId: string, attempt?: number) => ({
+const buildChat = (chatId: string): UnipileChat => ({
+  id: chatId,
+  name: chatId,
+  is_group: false,
+  is_1to1: true,
+});
+
+const buildContactsJob = ({
+  chatId,
+  attempt,
+}: {
+  chatId: string;
+  attempt?: number;
+}): LinkedinHistoryImportChatJob => ({
   kind: 'CONTACTS',
   payload: {
     connectedAccountId: 'connection-id',
     runId: 'run-1',
-    chat: { id: chatId },
+    chat: buildChat(chatId),
     attempt,
   },
 });
 
-const setChats = (progressByChatId: Record<string, unknown>) => {
+const setChats = (
+  progressByChatId: Record<string, LinkedinHistoryImportChatProgress>,
+) => {
   mocks.kvStore.set(PLANNING_KEY, {
     chatIds: Object.keys(progressByChatId),
     planJobId: 'linkedin-history-plan-run-1-0',
@@ -129,8 +147,11 @@ describe('refreshLinkedinHistoryImportState', () => {
   it('does not count conversations still waiting for their contacts', async () => {
     setChats({
       'chat-1': { status: 'IMPORTED' },
-      'chat-3': { status: 'IMPORTING', job: buildContactsJob('chat-3') },
-      'chat-4': { status: 'PENDING', chat: { id: 'chat-4' } },
+      'chat-3': {
+        status: 'IMPORTING',
+        job: buildContactsJob({ chatId: 'chat-3' }),
+      },
+      'chat-4': { status: 'PENDING', chat: buildChat('chat-4') },
     });
 
     await expect(
@@ -148,9 +169,12 @@ describe('refreshLinkedinHistoryImportState', () => {
   it('restarts the contacts with the next waiting conversation once no contact job is left', async () => {
     mockJobStates({ 'linkedin-history-contacts-run-1-chat-1-0': 'FAILED' });
     setChats({
-      'chat-1': { status: 'IMPORTING', job: buildContactsJob('chat-1') },
-      'chat-2': { status: 'PENDING', chat: { id: 'chat-2' } },
-      'chat-3': { status: 'PENDING', chat: { id: 'chat-3' } },
+      'chat-1': {
+        status: 'IMPORTING',
+        job: buildContactsJob({ chatId: 'chat-1' }),
+      },
+      'chat-2': { status: 'PENDING', chat: buildChat('chat-2') },
+      'chat-3': { status: 'PENDING', chat: buildChat('chat-3') },
     });
 
     await refreshLinkedinHistoryImportState('connection-id');
@@ -171,7 +195,10 @@ describe('refreshLinkedinHistoryImportState', () => {
     setChats({
       'chat-1': { status: 'IMPORTED' },
       'chat-2': { status: 'SKIPPED' },
-      'chat-3': { status: 'IMPORTING', job: buildContactsJob('chat-3') },
+      'chat-3': {
+        status: 'IMPORTING',
+        job: buildContactsJob({ chatId: 'chat-3' }),
+      },
     });
 
     await expect(
@@ -195,12 +222,12 @@ describe('refreshLinkedinHistoryImportState', () => {
     setChats({
       'chat-1': {
         status: 'IMPORTING',
-        job: buildContactsJob('chat-1', 1),
+        job: buildContactsJob({ chatId: 'chat-1', attempt: 1 }),
         resumeAt: '2026-01-01T02:00:00.000Z',
       },
       'chat-2': {
         status: 'IMPORTING',
-        job: buildContactsJob('chat-2', 1),
+        job: buildContactsJob({ chatId: 'chat-2', attempt: 1 }),
         resumeAt: '2026-01-01T01:00:00.000Z',
       },
     });
@@ -215,7 +242,10 @@ describe('refreshLinkedinHistoryImportState', () => {
   it('completes the run once every conversation is done and clears its data', async () => {
     setChats({
       'chat-1': { status: 'IMPORTED' },
-      'chat-2': { status: 'FAILED', error: { code: 'UNKNOWN', message: 'x' } },
+      'chat-2': {
+        status: 'FAILED',
+        error: { code: 'UNKNOWN', message: 'x' },
+      },
     });
 
     await expect(
@@ -237,7 +267,10 @@ describe('refreshLinkedinHistoryImportState', () => {
   it('fails the run when no conversation could be imported', async () => {
     setChats({
       'chat-1': { status: 'SKIPPED' },
-      'chat-2': { status: 'FAILED', error: { code: 'UNKNOWN', message: 'x' } },
+      'chat-2': {
+        status: 'FAILED',
+        error: { code: 'UNKNOWN', message: 'x' },
+      },
     });
 
     await expect(
@@ -252,8 +285,14 @@ describe('refreshLinkedinHistoryImportState', () => {
 
   it('marks a conversation failed when its job failed', async () => {
     setChats({
-      'chat-1': { status: 'IMPORTING', job: buildContactsJob('chat-1') },
-      'chat-2': { status: 'IMPORTING', job: buildContactsJob('chat-2') },
+      'chat-1': {
+        status: 'IMPORTING',
+        job: buildContactsJob({ chatId: 'chat-1' }),
+      },
+      'chat-2': {
+        status: 'IMPORTING',
+        job: buildContactsJob({ chatId: 'chat-2' }),
+      },
     });
     mockJobStates({
       'linkedin-history-contacts-run-1-chat-1-0': 'FAILED',
@@ -274,7 +313,10 @@ describe('refreshLinkedinHistoryImportState', () => {
   it('queues again a conversation whose job ended without finishing it', async () => {
     mockJobStates({ 'linkedin-history-contacts-run-1-chat-1-0': 'COMPLETED' });
     setChats({
-      'chat-1': { status: 'IMPORTING', job: buildContactsJob('chat-1') },
+      'chat-1': {
+        status: 'IMPORTING',
+        job: buildContactsJob({ chatId: 'chat-1' }),
+      },
     });
 
     await refreshLinkedinHistoryImportState('connection-id');
@@ -298,7 +340,7 @@ describe('refreshLinkedinHistoryImportState', () => {
     setChats({
       'chat-1': {
         status: 'IMPORTING',
-        job: buildContactsJob('chat-1', 3),
+        job: buildContactsJob({ chatId: 'chat-1', attempt: 3 }),
         recoveryCount: 3,
       },
     });
