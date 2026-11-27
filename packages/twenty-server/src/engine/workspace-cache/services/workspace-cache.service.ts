@@ -595,26 +595,16 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
     for (const [index, keyName] of cacheKeyNames.entries()) {
       const redisHash = redisHashes[index];
-      const localKey = this.buildCacheKey(workspaceId, keyName);
-      const localEntry = this.localCache.get(localKey);
+      const validatedEntry = this.readLocalEntryMatchingHash({
+        workspaceId,
+        keyName,
+        redisHash,
+      });
 
-      if (
-        isDefined(localEntry) &&
-        isDefined(redisHash) &&
-        localEntry.latestHash === redisHash
-      ) {
-        localEntry.lastHashCheckedAt = Date.now();
-
-        const { data, hashes, missingKeys } = this.getFromLocalCache(
-          workspaceId,
-          [keyName],
-        );
-
-        if (missingKeys.length === 0) {
-          Object.assign(validatedEntries.data, data);
-          Object.assign(validatedEntries.hashes, hashes);
-          continue;
-        }
+      if (isDefined(validatedEntry)) {
+        Object.assign(validatedEntries.data, validatedEntry.data);
+        Object.assign(validatedEntries.hashes, validatedEntry.hashes);
+        continue;
       }
 
       if (this.localDataOnlyKeys.has(keyName)) {
@@ -629,6 +619,40 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       keysNeedingDataFromRedis,
       keysNeedingRecompute,
     };
+  }
+
+  private readLocalEntryMatchingHash({
+    workspaceId,
+    keyName,
+    redisHash,
+  }: {
+    workspaceId: string;
+    keyName: WorkspaceCacheKeyName;
+    redisHash: string | undefined;
+  }): CacheEntriesResult | undefined {
+    const localEntry = this.localCache.get(
+      this.buildCacheKey(workspaceId, keyName),
+    );
+
+    if (
+      !isDefined(localEntry) ||
+      !isDefined(redisHash) ||
+      localEntry.latestHash !== redisHash
+    ) {
+      return undefined;
+    }
+
+    const { missingKeys, ...entries } = this.getFromLocalCache(workspaceId, [
+      keyName,
+    ]);
+
+    if (missingKeys.length > 0) {
+      return undefined;
+    }
+
+    localEntry.lastHashCheckedAt = Date.now();
+
+    return entries;
   }
 
   private async fetchDataFromRedis(
