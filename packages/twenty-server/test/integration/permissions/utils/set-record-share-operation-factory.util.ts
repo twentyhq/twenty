@@ -4,12 +4,12 @@ import { type RecordShareAccessLevel } from 'twenty-shared/types';
 export const setRecordShareOperationFactory = ({
   objectMetadataId,
   recordId,
-  principal,
+  workspaceMemberId,
   accessLevel,
 }: {
   objectMetadataId: string;
   recordId: string;
-  principal: { workspaceMemberId: string } | { roleId: string };
+  workspaceMemberId: string;
   accessLevel: RecordShareAccessLevel;
 }) => ({
   query: gql`
@@ -29,7 +29,7 @@ export const setRecordShareOperationFactory = ({
   `,
   variables: {
     target: { objectMetadataId, recordId },
-    principal,
+    principal: { workspaceMemberId },
     accessLevel,
   },
 });

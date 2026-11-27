@@ -6,11 +6,6 @@ import {
 } from 'test/integration/metadata/suites/related-record-path/utils/create-related-record-path-query-factory.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
-export const createRelatedRecordPath = ({
-  accessToken,
-  ...input
-}: CreateRelatedRecordPathFactoryInput & { accessToken?: string }) =>
-  makeMetadataApiRequest(
-    createRelatedRecordPathQueryFactory({ input }),
-    accessToken,
-  );
+export const createRelatedRecordPath = (
+  input: CreateRelatedRecordPathFactoryInput,
+) => makeMetadataApiRequest(createRelatedRecordPathQueryFactory({ input }));
