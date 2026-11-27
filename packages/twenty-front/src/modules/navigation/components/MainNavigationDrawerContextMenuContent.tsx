@@ -20,7 +20,6 @@ import { getNavigationMenuSectionNavigationSectionId } from '@/navigation-menu-i
 import { NavigationMenuCustomizeSidebarMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuCustomizeSidebarMenuContent';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
-import { requestInLayoutCustomizationMode } from '@/navigation/utils/requestInLayoutCustomizationMode';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
 
@@ -50,7 +49,10 @@ export const MainNavigationDrawerContextMenuContent = ({
 
   const requestAfterEnteringCustomizationMode = (request: () => void) => {
     closeDropdown();
-    requestInLayoutCustomizationMode({ enterLayoutCustomizationMode, request });
+
+    if (enterLayoutCustomizationMode()) {
+      request();
+    }
   };
 
   const setAllSectionsOpen = (isOpen: boolean) => {
