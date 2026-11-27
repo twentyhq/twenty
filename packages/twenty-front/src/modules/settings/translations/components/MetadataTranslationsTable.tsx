@@ -2,7 +2,7 @@ import { StyledSettingsDataModelTableBodyContainer } from '@/settings/data-model
 import { MetadataTranslationsTableRow } from '@/settings/translations/components/MetadataTranslationsTableRow';
 import { type MetadataTranslationLanguageRow } from '@/settings/translations/types/MetadataTranslationLanguageRow';
 import { type MetadataTranslationRowValue } from '@/settings/translations/types/MetadataTranslationRowValue';
-import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
+import { TableSkeletonRows } from '@/ui/layout/table/components/TableSkeletonRows';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -67,19 +67,22 @@ export const MetadataTranslationsTable = ({
           </TableRow>
           <StyledSettingsDataModelTableBodyContainer>
             <TableBody>
-              {showSkeleton
-                ? Array.from({ length: 3 }).map((_, index) => (
-                    <SkeletonLine height={32} key={index} />
-                  ))
-                : languageRows.map(({ locale, label, translations }) => (
-                    <MetadataTranslationsTableRow
-                      key={locale}
-                      gridTemplateColumns={gridTemplateColumns}
-                      localeLabel={label}
-                      translations={translations}
-                      onSaveTranslationRows={onSaveTranslationRows}
-                    />
-                  ))}
+              {showSkeleton ? (
+                <TableSkeletonRows
+                  gridTemplateColumns={gridTemplateColumns}
+                  columnCount={1}
+                />
+              ) : (
+                languageRows.map(({ locale, label, translations }) => (
+                  <MetadataTranslationsTableRow
+                    key={locale}
+                    gridTemplateColumns={gridTemplateColumns}
+                    localeLabel={label}
+                    translations={translations}
+                    onSaveTranslationRows={onSaveTranslationRows}
+                  />
+                ))
+              )}
               {!showSkeleton && !isNonEmptyArray(languageRows) && (
                 <TableCell color={themeCssVariables.font.color.tertiary}>
                   {t`No languages found`}
