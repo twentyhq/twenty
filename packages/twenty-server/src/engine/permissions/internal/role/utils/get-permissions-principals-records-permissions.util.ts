@@ -23,5 +23,6 @@ export const getPermissionsPrincipalsRecordsPermissions = ({
     rolesPermissions: metadataMaps.rolesPermissions,
     flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
     flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+    // TODO(@charlesBochet): remove after 2026-12-27. Temporary channel write access for admins and API keys, only to unblock customers who reported broken links, merges and deletes
     temporaryChannelWriteAccess: metadataMaps.temporaryChannelWriteAccess,
   });

@@ -11,6 +11,7 @@ import { isApiKeyExemptFromChannelVisibility } from 'src/engine/permissions/chan
 import { getWorkspaceMemberIndividualRoleUniversalIdentifier } from 'src/engine/permissions/workspace-member-individual-role/utils/get-workspace-member-individual-role-universal-identifier.util';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
+// TODO(@charlesBochet): remove after 2026-12-27. Temporary channel write access for admins and API keys, only to unblock customers who reported broken links, merges and deletes
 export const buildTemporaryChannelWriteAccess = ({
   featureFlagsMap,
   flatRoleMaps,

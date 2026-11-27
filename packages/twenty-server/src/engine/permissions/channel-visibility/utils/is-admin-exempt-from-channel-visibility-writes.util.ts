@@ -1,5 +1,6 @@
 import { FeatureFlagKey } from 'twenty-shared/types';
 
+// TODO(@charlesBochet): remove after 2026-12-27. Temporary channel write access for admins and API keys, only to unblock customers who reported broken links, merges and deletes
 export const isAdminExemptFromChannelVisibilityWrites = (
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>,
 ): boolean =>
