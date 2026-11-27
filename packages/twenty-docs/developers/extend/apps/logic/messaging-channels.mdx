@@ -366,7 +366,7 @@ Each recipient carries its `personId`, its `displayName`, and the `handle` the p
 
 Return the sent message's `externalId` and the new conversation's `threadExternalId`, using the same thread id your ingestion uses so later messages land in the same thread. Return each recipient's `handle` in `recipients` unless the payload already carried it: Twenty records the message as an outgoing message from the channel to that handle, linked to the Person, and opens the new thread. Replies then go through your `sendMessageLogicFunctionUniversalIdentifier` function as usual.
 
-Retries, idempotency and failures behave as for [replies](#sending-replies), keyed on the person instead of the thread. A channel whose provider has no `startConversationLogicFunctionUniversalIdentifier`, or uses the `'email'` conversation style, refuses the mutation, and the "New message" entry only lists channels that can start conversations. Requires `"engines": { "twenty": ">=2.65.0" }`.
+Retries, idempotency and failures behave as for [replies](#sending-replies), keyed on the person instead of the thread. A channel whose provider has no `startConversationLogicFunctionUniversalIdentifier`, or uses the `'email'` conversation style, refuses the mutation, and the "New message" entry only lists channels that can start conversations. Requires `"engines": { "twenty": ">=2.66.0" }`.
 
 ## Listing and updating channels
 
