@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CommonRecordVisibilityModule } from 'src/engine/api/common/common-record-visibility/common-record-visibility.module';
 import { AccessGroupPropagationProgressReadService } from 'src/engine/permissions/access-group-propagation-progress-read.service';
 import { AccessGroupReadModule } from 'src/engine/permissions/internal/access-group/access-group-read.module';
 import { AccessGroupComputationModule } from 'src/engine/permissions/internal/access-group/access-group-computation.module';
@@ -12,6 +11,7 @@ import { RecordEventPermissionsReadService } from 'src/engine/permissions/record
 import { RecordAccessGroupWriteService } from 'src/engine/permissions/record-access-group-write.service';
 import { RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
 import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
+import { RecordVisibilityRestrictionsService } from 'src/engine/permissions/record-visibility-restrictions.service';
 import { RecordSharingReadService } from 'src/engine/permissions/record-share/services/record-sharing-read.service';
 import { RecordSharingPermissionsService } from 'src/engine/permissions/record-sharing-permissions.service';
 import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
@@ -28,7 +28,6 @@ import { PermissionsMetricsModule } from 'src/engine/permissions/internal/metric
 @Module({
   imports: [
     AccessGroupComputationModule,
-    CommonRecordVisibilityModule,
     AccessGroupReadModule,
     ApplicationGrantRoleLookupModule,
     CoreEntityCacheModule,
@@ -47,6 +46,7 @@ import { PermissionsMetricsModule } from 'src/engine/permissions/internal/metric
     RecordEventPermissionsReadService,
     RecordFieldPermissionsReadService,
     RecordPermissionsReadService,
+    RecordVisibilityRestrictionsService,
     RecordSharingPermissionsService,
     RecordSharingReadService,
     RolePermissionsService,
@@ -60,6 +60,7 @@ import { PermissionsMetricsModule } from 'src/engine/permissions/internal/metric
     RecordEventPermissionsReadService,
     RecordFieldPermissionsReadService,
     RecordPermissionsReadService,
+    RecordVisibilityRestrictionsService,
     RecordSharingPermissionsService,
     RecordSharingReadService,
     RolePermissionsService,

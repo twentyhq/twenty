@@ -9,8 +9,8 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
-import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
-import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
+import { RecordVisibilityRestrictionsService } from 'src/engine/permissions/record-visibility-restrictions.service';
+import { type RecordVisibilityRestrictionHandler } from 'src/engine/permissions/types/record-visibility-restriction-handler.type';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
@@ -27,13 +27,13 @@ export class ApplyCalendarEventsVisibilityRestrictionsService
 {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly commonRecordVisibilityService: CommonRecordVisibilityService,
+    private readonly recordVisibilityRestrictionsService: RecordVisibilityRestrictionsService,
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
   ) {}
 
   onModuleInit() {
-    this.commonRecordVisibilityService.registerHandler({
+    this.recordVisibilityRestrictionsService.registerHandler({
       objectNameSingular: 'calendarEvent',
       handler: this,
     });

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CommonRecordVisibilityModule } from 'src/engine/api/common/common-record-visibility/common-record-visibility.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ApplyCalendarEventsVisibilityRestrictionsService } from 'src/modules/calendar/common/query-hooks/calendar-event/services/apply-calendar-events-visibility-restrictions.service';
@@ -10,7 +10,7 @@ import { CalendarEventTargetCreateOnePreQueryHook } from 'src/modules/calendar/c
 
 @Module({
   imports: [
-    CommonRecordVisibilityModule,
+    PermissionsModule,
     WorkspaceCacheModule,
     TypeOrmModule.forFeature([CalendarChannelEntity]),
   ],

@@ -6,8 +6,8 @@ import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not } from 'typeorm';
 
-import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
-import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
+import { RecordVisibilityRestrictionsService } from 'src/engine/permissions/record-visibility-restrictions.service';
+import { type RecordVisibilityRestrictionHandler } from 'src/engine/permissions/types/record-visibility-restriction-handler.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isChannelVisibilityEnforcedByIndividualRole } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-enforced-by-individual-role.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -25,13 +25,13 @@ export class ApplyAttachmentsVisibilityRestrictionsService
 {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly commonRecordVisibilityService: CommonRecordVisibilityService,
+    private readonly recordVisibilityRestrictionsService: RecordVisibilityRestrictionsService,
     private readonly applyMessagesVisibilityRestrictionsService: ApplyMessagesVisibilityRestrictionsService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   onModuleInit() {
-    this.commonRecordVisibilityService.registerHandler({
+    this.recordVisibilityRestrictionsService.registerHandler({
       objectNameSingular: 'attachment',
       handler: this,
     });

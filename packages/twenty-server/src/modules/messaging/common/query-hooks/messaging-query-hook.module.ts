@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CommonRecordVisibilityModule } from 'src/engine/api/common/common-record-visibility/common-record-visibility.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { ApplyAttachmentsVisibilityRestrictionsService } from 'src/modules/messaging/common/query-hooks/attachment/apply-attachments-visibility-restrictions.service';
@@ -12,7 +12,7 @@ import { MessageThreadTargetCreateOnePreQueryHook } from 'src/modules/messaging/
 @Module({
   imports: [
     WorkspaceCacheModule,
-    CommonRecordVisibilityModule,
+    PermissionsModule,
     TypeOrmModule.forFeature([MessageChannelEntity]),
   ],
   providers: [

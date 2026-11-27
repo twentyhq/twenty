@@ -7,8 +7,8 @@ import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
-import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
-import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
+import { RecordVisibilityRestrictionsService } from 'src/engine/permissions/record-visibility-restrictions.service';
+import { type RecordVisibilityRestrictionHandler } from 'src/engine/permissions/types/record-visibility-restriction-handler.type';
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -31,13 +31,13 @@ export class ApplyTimelineActivitiesVisibilityRestrictionsService
   implements RecordVisibilityRestrictionHandler, OnModuleInit
 {
   constructor(
-    private readonly commonRecordVisibilityService: CommonRecordVisibilityService,
+    private readonly recordVisibilityRestrictionsService: RecordVisibilityRestrictionsService,
     private readonly recordPermissionsReadService: RecordPermissionsReadService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   onModuleInit() {
-    this.commonRecordVisibilityService.registerHandler({
+    this.recordVisibilityRestrictionsService.registerHandler({
       objectNameSingular: 'timelineActivity',
       handler: this,
     });
