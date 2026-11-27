@@ -1,6 +1,9 @@
+import { type ConditionalEvaluationNode } from '@/conditional-evaluation/common/types/ConditionalEvaluationNode';
 import { evaluateConditionalEvaluationExpression } from '@/conditional-evaluation/evaluate/utils/evaluateConditionalEvaluationExpression';
 import { evaluateConditionalEvaluationNode } from '@/conditional-evaluation/evaluate/utils/evaluateConditionalEvaluationNode';
 import { parseConditionalEvaluationExpression } from '@/conditional-evaluation/expression-to-nodes/utils/parseConditionalEvaluationExpression';
+import { FieldMetadataType } from '@/types/FieldMetadataType';
+import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
 
 const EXPRESSIONS = [
   'true',
@@ -116,6 +119,163 @@ describe('evaluateConditionalEvaluationNode', () => {
         context: {},
       }),
     ).toBe(false);
+  });
+
+  describe('record fields', () => {
+    const FIELDS: ValidationRuleFieldDescriptor[] = [
+      {
+        name: 'stage',
+        type: FieldMetadataType.SELECT,
+        universalIdentifier: 'stage-universal-identifier',
+      },
+      {
+        name: 'amount',
+        type: FieldMetadataType.CURRENCY,
+        universalIdentifier: 'amount-universal-identifier',
+      },
+      {
+        name: 'accountOwner',
+        type: FieldMetadataType.RELATION,
+        universalIdentifier: 'account-owner-universal-identifier',
+        relationTargetFields: [
+          {
+            name: 'id',
+            type: FieldMetadataType.UUID,
+            universalIdentifier: 'workspace-member-id-universal-identifier',
+          },
+        ],
+      },
+    ];
+
+    const RECORD = {
+      stage: 'WON',
+      amount: { amountMicros: 5_000_000, currencyCode: 'USD' },
+      accountOwner: { id: 'workspace-member-1' },
+    };
+
+    const STAGE_IS_WON: ConditionalEvaluationNode = {
+      type: 'COMPARISON',
+      operator: 'EQUAL',
+      left: {
+        type: 'FIELD',
+        fieldUniversalIdentifier: 'stage-universal-identifier',
+      },
+      right: { type: 'LITERAL', value: 'WON' },
+    };
+
+    it('should compare a field of the record', () => {
+      expect(
+        evaluateConditionalEvaluationNode({
+          node: STAGE_IS_WON,
+          context: {},
+          record: RECORD,
+          fields: FIELDS,
+        }),
+      ).toBe(true);
+      expect(
+        evaluateConditionalEvaluationNode({
+          node: STAGE_IS_WON,
+          context: {},
+          record: { ...RECORD, stage: 'LOST' },
+          fields: FIELDS,
+        }),
+      ).toBe(false);
+    });
+
+    it('should compare a sub field of the record', () => {
+      expect(
+        evaluateConditionalEvaluationNode({
+          node: {
+            type: 'COMPARISON',
+            operator: 'GREATER_THAN_OR_EQUAL',
+            left: {
+              type: 'FIELD',
+              fieldUniversalIdentifier: 'amount-universal-identifier',
+              subFieldName: 'amountMicros',
+            },
+            right: { type: 'LITERAL', value: 1_000_000 },
+          },
+          context: {},
+          record: RECORD,
+          fields: FIELDS,
+        }),
+      ).toBe(true);
+    });
+
+    it('should compare a field read through a relation with a variable', () => {
+      const node: ConditionalEvaluationNode = {
+        type: 'COMPARISON',
+        operator: 'EQUAL',
+        left: {
+          type: 'FIELD',
+          relationFieldUniversalIdentifier:
+            'account-owner-universal-identifier',
+          fieldUniversalIdentifier: 'workspace-member-id-universal-identifier',
+        },
+        right: { type: 'VARIABLE', path: 'currentWorkspaceMember.id' },
+      };
+
+      expect(
+        evaluateConditionalEvaluationNode({
+          node,
+          context: { currentWorkspaceMember: { id: 'workspace-member-1' } },
+          record: RECORD,
+          fields: FIELDS,
+        }),
+      ).toBe(true);
+      expect(
+        evaluateConditionalEvaluationNode({
+          node,
+          context: { currentWorkspaceMember: { id: 'workspace-member-2' } },
+          record: RECORD,
+          fields: FIELDS,
+        }),
+      ).toBe(false);
+    });
+
+    it('should hide the item when there is no record', () => {
+      expect(
+        evaluateConditionalEvaluationNode({
+          node: STAGE_IS_WON,
+          context: {},
+          fields: FIELDS,
+        }),
+      ).toBe(false);
+    });
+
+    it('should hide the item when the field no longer exists', () => {
+      expect(
+        evaluateConditionalEvaluationNode({
+          node: {
+            type: 'NOT',
+            child: STAGE_IS_WON,
+          },
+          context: {},
+          record: RECORD,
+          fields: [],
+        }),
+      ).toBe(false);
+    });
+
+    it('should not read a sub field through a prototype', () => {
+      expect(
+        evaluateConditionalEvaluationNode({
+          node: {
+            type: 'COMPARISON',
+            operator: 'NOT_EQUAL',
+            left: {
+              type: 'FIELD',
+              fieldUniversalIdentifier: 'stage-universal-identifier',
+              subFieldName: 'constructor',
+            },
+            right: { type: 'LITERAL', value: 'x' },
+          },
+          context: {},
+          record: RECORD,
+          fields: FIELDS,
+        }),
+      ).toBe(false);
+    });
   });
 
   it.each(EXPRESSIONS)(

@@ -51,6 +51,7 @@ const getUnknownName = ({
         ? undefined
         : node.operator;
     case 'LITERAL':
+    case 'FIELD':
     case 'GROUP':
     case 'NOT':
       return undefined;

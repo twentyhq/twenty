@@ -4,6 +4,9 @@ import { CONDITIONAL_EVALUATION_FUNCTIONS } from '@/conditional-evaluation/commo
 import { type ExpressionComparisonOperator } from '@/expression/types/ExpressionComparisonOperator';
 import { type ConditionalEvaluationNode } from '@/conditional-evaluation/common/types/ConditionalEvaluationNode';
 import { FORBIDDEN_PROPERTY_NAMES } from '@/constants/ForbiddenPropertyNames';
+import { type ExpressionFieldNode } from '@/expression/types/ExpressionFieldNode';
+import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
+import { buildExpressionFieldPrinter } from '@/utils/expression/buildExpressionFieldPrinter';
 import { isDefined } from '@/utils/validation/isDefined';
 
 type EvaluationContext = Record<string, unknown>;
@@ -93,18 +96,24 @@ const compareValues = ({
 const computeNodeValue = ({
   node,
   context,
+  record,
+  printField,
 }: {
   node: ConditionalEvaluationNode;
   context: EvaluationContext;
+  record: Record<string, unknown>;
+  printField: (fieldNode: ExpressionFieldNode) => string;
 }): unknown => {
   const computeChildValue = (childNode: ConditionalEvaluationNode) =>
-    computeNodeValue({ node: childNode, context });
+    computeNodeValue({ node: childNode, context, record, printField });
 
   switch (node.type) {
     case 'LITERAL':
       return node.value;
     case 'VARIABLE':
       return readPathOrThrow({ path: node.path, context });
+    case 'FIELD':
+      return readPathOrThrow({ path: printField(node), context: record });
     case 'COMPARISON':
       return compareValues({
         operator: node.operator,
@@ -143,16 +152,27 @@ const computeNodeValue = ({
 export const evaluateConditionalEvaluationNode = ({
   node,
   context,
+  record = {},
+  fields = [],
 }: {
   node: ConditionalEvaluationNode | null | undefined;
   context: EvaluationContext;
+  record?: Record<string, unknown>;
+  fields?: ValidationRuleFieldDescriptor[];
 }): boolean => {
   if (!isDefined(node)) {
     return true;
   }
 
   try {
-    return computeNodeValue({ node, context }) === true;
+    return (
+      computeNodeValue({
+        node,
+        context,
+        record,
+        printField: buildExpressionFieldPrinter({ fields }),
+      }) === true
+    );
   } catch {
     return false;
   }

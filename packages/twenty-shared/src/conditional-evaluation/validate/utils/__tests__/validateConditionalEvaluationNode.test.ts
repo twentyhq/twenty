@@ -41,8 +41,31 @@ describe('validateConditionalEvaluationNode', () => {
     ).toEqual({ isValid: true, node });
   });
 
+  it('should accept a widget rule on a record field', () => {
+    const node = {
+      ...DEVICE_IS_MOBILE,
+      left: {
+        type: 'FIELD',
+        fieldUniversalIdentifier: 'stage-universal-identifier',
+        subFieldName: 'amountMicros',
+      },
+    };
+
+    expect(
+      validateConditionalEvaluationNode({
+        node,
+        metadataName: 'pageLayoutWidget',
+      }),
+    ).toEqual({ isValid: true, node });
+  });
+
   it.each([
     ['a text instead of a tree', 'device == "MOBILE"', ''],
+    [
+      'a record field with no identifier',
+      { ...DEVICE_IS_MOBILE, left: { type: 'FIELD' } },
+      'left.fieldUniversalIdentifier',
+    ],
     ['an unknown kind of node', { type: 'ASSIGNMENT' }, 'type'],
     [
       'an unknown comparison operator',

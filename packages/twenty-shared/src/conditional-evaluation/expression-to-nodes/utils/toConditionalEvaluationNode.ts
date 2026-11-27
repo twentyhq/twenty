@@ -19,8 +19,6 @@ const getComputationToken = (node: ExpressionNode): string | undefined => {
       return '[';
     case 'IN':
       return 'in';
-    case 'FIELD':
-      return node.fieldUniversalIdentifier;
     case 'CONCATENATION':
       return '||';
     case 'MEMBER':

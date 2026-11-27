@@ -8,6 +8,7 @@ import {
   evaluateConditionalEvaluationExpression,
   evaluateConditionalEvaluationNode,
 } from 'twenty-shared/conditional-evaluation';
+import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibilityContext';
@@ -17,6 +18,7 @@ type EvaluateWidgetVisibilityParams = {
   conditionalDisplay: RulesLogic<AdditionalOperation> | undefined;
   conditionalAvailability?: ConditionalEvaluationNode | null;
   context: WidgetVisibilityContext;
+  fields?: ValidationRuleFieldDescriptor[];
 };
 
 export const evaluateWidgetVisibility = ({
@@ -24,6 +26,7 @@ export const evaluateWidgetVisibility = ({
   conditionalDisplay,
   conditionalAvailability,
   context,
+  fields,
 }: EvaluateWidgetVisibilityParams): boolean => {
   if (isDefined(conditionalAvailabilityExpression)) {
     return evaluateConditionalEvaluationExpression(
@@ -33,9 +36,13 @@ export const evaluateWidgetVisibility = ({
   }
 
   if (!isDefined(conditionalDisplay)) {
+    const [targetRecord] = context.selectedRecords;
+
     return evaluateConditionalEvaluationNode({
       node: conditionalAvailability,
       context,
+      record: targetRecord,
+      fields,
     });
   }
 
