@@ -14,6 +14,7 @@ const GET_ROLES_QUERY = `
       canUpdateAllSettings
       canAccessAllTools
       isEditable
+      areRecordPermissionsEditable
       canReadAllObjectRecords
       canUpdateAllObjectRecords
       canSoftDeleteAllObjectRecords

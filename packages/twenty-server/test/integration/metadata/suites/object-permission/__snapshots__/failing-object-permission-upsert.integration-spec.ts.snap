@@ -54,7 +54,7 @@ exports[`Object permission upsert should fail when role is not editable (system 
       "objectPermission": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Cannot target a role owned by another application.",
+    "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
   },
   "message": "Validation errors occurred while upserting object permissions",
   "name": "GraphQLError",
