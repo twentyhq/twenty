@@ -32,7 +32,7 @@ describe('settings search route coverage', () => {
   it('makes every static settings route searchable or explicitly excluded', () => {
     const undeclaredPaths = ROUTES.filter(
       ({ path, handle }) =>
-        !path?.includes(':') && getSettingsSearch(handle) === undefined,
+        !path?.includes(':') && !isDefined(getSettingsSearch(handle)),
     ).map(({ path }) => path);
 
     expect(undeclaredPaths).toEqual([]);
