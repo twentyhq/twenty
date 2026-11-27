@@ -18,6 +18,7 @@ import {
   FeatureFlagKey,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 jest.mock(
   '@/command-menu-item/display/components/PinnedCommandMenuItemButtons',
@@ -96,16 +97,20 @@ const renderSettingsPageLayout = ({
   const store = createStore();
 
   store.set(currentWorkspaceState.atom, {
+    ...mockCurrentWorkspace,
     featureFlags: [
       {
         key: FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
         value: isCustomizableSidebarEnabled,
       },
     ],
-  } as never);
+  });
   store.set(currentUserWorkspaceState.atom, {
     permissionFlags: [PermissionFlagType.AI],
-  } as never);
+    twoFactorAuthenticationMethodSummary: [],
+    objectRecordsPermissions: [],
+    isImpersonating: false,
+  });
   store.set(metadataStoreState.atomFamily('commandMenuItems'), {
     current: [ASK_AI_COMMAND_MENU_ITEM],
     draft: [],
