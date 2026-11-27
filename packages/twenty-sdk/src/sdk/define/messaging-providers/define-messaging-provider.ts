@@ -13,6 +13,7 @@ import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 const LOGIC_FUNCTION_KEYS = [
   'sendMessageLogicFunction',
   'markThreadAsReadLogicFunction',
+  'startConversationLogicFunction',
 ] as const;
 
 export const defineMessagingProvider: DefineEntity<

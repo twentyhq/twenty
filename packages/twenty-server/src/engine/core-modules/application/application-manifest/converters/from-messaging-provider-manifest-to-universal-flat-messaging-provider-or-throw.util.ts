@@ -27,6 +27,7 @@ export const fromMessagingProviderManifestToUniversalFlatMessagingProviderOrThro
       connectionProviderUniversalIdentifier,
       sendMessageLogicFunctionUniversalIdentifier,
       markThreadAsReadLogicFunctionUniversalIdentifier,
+      startConversationLogicFunctionUniversalIdentifier,
       conversationStyle,
     } = normalizeMessagingProviderManifest(messagingProviderManifest);
 
@@ -47,6 +48,8 @@ export const fromMessagingProviderManifestToUniversalFlatMessagingProviderOrThro
         sendMessageLogicFunctionUniversalIdentifier ?? null,
       markThreadAsReadLogicFunctionUniversalIdentifier:
         markThreadAsReadLogicFunctionUniversalIdentifier ?? null,
+      startConversationLogicFunctionUniversalIdentifier:
+        startConversationLogicFunctionUniversalIdentifier ?? null,
       conversationStyle: conversationStyle ?? null,
       createdAt: now,
       updatedAt: now,
