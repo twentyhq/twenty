@@ -2795,6 +2795,7 @@ type FormFieldConfiguration {
 }
 
 type FrontComponent {
+  applicationFunctionsBaseUrl: String
   applicationGrantedCapabilities: [String!]
   applicationGrantedIframeMediaPermissions: [IframeMediaPermission!]
   applicationId: UUID!

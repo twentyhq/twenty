@@ -5754,6 +5754,9 @@ export default {
             ]
         },
         "FrontComponent": {
+            "applicationFunctionsBaseUrl": [
+                4
+            ],
             "applicationGrantedCapabilities": [
                 4
             ],
