@@ -6,7 +6,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { CHANNEL_WRITE_ACCESS_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-write-access-object-universal-identifiers.constant';
 import { type TemporaryChannelWriteAccess } from 'src/engine/permissions/channel-visibility/types/temporary-channel-write-access.type';
-import { isAdminExemptFromChannelVisibilityWrites } from 'src/engine/permissions/channel-visibility/utils/is-admin-exempt-from-channel-visibility-writes.util';
+import { isAdminChannelWriteAccessRestored } from 'src/engine/permissions/channel-visibility/utils/is-admin-channel-write-access-restored.util';
 import { isApiKeyExemptFromChannelVisibility } from 'src/engine/permissions/channel-visibility/utils/is-api-key-exempt-from-channel-visibility.util';
 import { getWorkspaceMemberIndividualRoleUniversalIdentifier } from 'src/engine/permissions/workspace-member-individual-role/utils/get-workspace-member-individual-role-universal-identifier.util';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
@@ -24,7 +24,7 @@ export const buildTemporaryChannelWriteAccess = ({
     'byUniversalIdentifier'
   >;
 }): TemporaryChannelWriteAccess | undefined => {
-  const adminRoleId = isAdminExemptFromChannelVisibilityWrites(featureFlagsMap)
+  const adminRoleId = isAdminChannelWriteAccessRestored(featureFlagsMap)
     ? flatRoleMaps.byUniversalIdentifier[
         STANDARD_ROLE.admin.universalIdentifier
       ]?.id
