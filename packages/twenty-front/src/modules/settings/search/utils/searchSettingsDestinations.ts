@@ -1,12 +1,16 @@
 import { type SettingsSearchDestination } from '@/settings/search/types/SettingsSearchDestination';
 import { isNonEmptyString } from '@sniptt/guards';
+import { getEditDistance } from 'twenty-shared/workflow';
 import { normalizeSearchText } from 'twenty-ui/utilities';
 
 const TITLE_WEIGHT = 3;
 const BREADCRUMB_WEIGHT = 2;
 const KEYWORD_WEIGHT = 1;
-const MINIMUM_SUBSTRING_LENGTH = 3;
-const MINIMUM_TYPO_TOLERANT_LENGTH = 4;
+const EXACT_MATCH_QUALITY = 4;
+const PREFIX_MATCH_QUALITY = 3;
+const SUBSTRING_MATCH_QUALITY = 2;
+const TYPO_MATCH_QUALITY = 1;
+const MINIMUM_TYPO_TOLERANT_LENGTH = 5;
 
 type WeightedWords = { words: string[]; weight: number };
 
@@ -17,48 +21,6 @@ const splitIntoWords = (texts: string[]) =>
       .filter(isNonEmptyString),
   );
 
-const isWithinOneEdit = ({
-  first,
-  second,
-}: {
-  first: string;
-  second: string;
-}) => {
-  if (Math.abs(first.length - second.length) > 1) {
-    return false;
-  }
-
-  let firstIndex = 0;
-  let secondIndex = 0;
-  let editCount = 0;
-
-  while (firstIndex < first.length && secondIndex < second.length) {
-    if (first[firstIndex] === second[secondIndex]) {
-      firstIndex++;
-      secondIndex++;
-      continue;
-    }
-
-    editCount++;
-
-    if (editCount > 1) {
-      return false;
-    }
-
-    if (first.length >= second.length) {
-      firstIndex++;
-    }
-
-    if (first.length <= second.length) {
-      secondIndex++;
-    }
-  }
-
-  return (
-    editCount + (first.length - firstIndex) + (second.length - secondIndex) <= 1
-  );
-};
-
 const getWordMatchQuality = ({
   searchWord,
   word,
@@ -67,30 +29,28 @@ const getWordMatchQuality = ({
   word: string;
 }) => {
   if (word === searchWord) {
-    return 4;
+    return EXACT_MATCH_QUALITY;
   }
 
   if (word.startsWith(searchWord)) {
-    return 3;
+    return PREFIX_MATCH_QUALITY;
   }
 
-  if (
-    searchWord.length >= MINIMUM_SUBSTRING_LENGTH &&
-    word.includes(searchWord)
-  ) {
-    return 2;
+  if (word.includes(searchWord)) {
+    return SUBSTRING_MATCH_QUALITY;
   }
 
   const isTypoOfWordStart =
     searchWord.length >= MINIMUM_TYPO_TOLERANT_LENGTH &&
-    [-1, 0, 1].some((lengthOffset) =>
-      isWithinOneEdit({
-        first: searchWord,
-        second: word.slice(0, searchWord.length + lengthOffset),
-      }),
+    [-1, 0, 1].some(
+      (lengthOffset) =>
+        getEditDistance(
+          searchWord,
+          word.slice(0, searchWord.length + lengthOffset),
+        ) <= 1,
     );
 
-  return isTypoOfWordStart ? 1 : 0;
+  return isTypoOfWordStart ? TYPO_MATCH_QUALITY : 0;
 };
 
 const getSearchWordScore = ({
