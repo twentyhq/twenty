@@ -7,7 +7,6 @@ import { v4 } from 'uuid';
 import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai-chat/composer/constants/AiChatNewThreadDefaultRecipients';
 import { useOptimisticallyRestoreOnSend } from '@/ai-chat/composer/hooks/useOptimisticallyRestoreOnSend';
 import { useWarnAboutParticipantMentionsNotAdded } from '@/ai-chat/composer/hooks/useWarnAboutParticipantMentionsNotAdded';
-import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/composer/states/aiChatComposerAttachmentsFamilyState';
 import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/composer/states/aiChatComposerNewThreadRecipientsFamilyState';
 import { aiChatThreadReplyUnconfirmedFirstMessageFamilyState } from '@/ai-chat/composer/states/aiChatThreadReplyUnconfirmedFirstMessageFamilyState';
 import { type AiChatMessageToSend } from '@/ai-chat/composer/types/AiChatMessageToSend';
@@ -63,6 +62,7 @@ export const useSendAiChatMessageToThread = () => {
       newThreadRecipients,
       serializedContentToSend,
       contentToSend,
+      attachments,
       participantMentions,
       initialRecipients,
       isAssistantMentioned,
@@ -73,13 +73,7 @@ export const useSendAiChatMessageToThread = () => {
     }: AiChatMessageToSend) => {
       const isSendingMessageAtom =
         aiChatThreadReplyIsSendingFamilyState.atomFamily({ threadId });
-      const uploadedFilesAtom = aiChatComposerAttachmentsFamilyState.atomFamily(
-        { threadId },
-      );
-      const aiChatComposerAttachments = isDirectMessage
-        ? []
-        : store.get(uploadedFilesAtom);
-      const fileIds = aiChatComposerAttachments.map(({ fileId }) => fileId);
+      const fileIds = attachments.map(({ fileId }) => fileId);
       const unconfirmedFirstMessageAtom =
         aiChatThreadReplyUnconfirmedFirstMessageFamilyState.atomFamily(
           threadId,
@@ -127,7 +121,7 @@ export const useSendAiChatMessageToThread = () => {
         createOptimisticAiChatUserMessage({
           messageId,
           text: contentToSend,
-          attachments: aiChatComposerAttachments,
+          attachments,
           createdAt: optimisticMessageCreatedAt,
           senderWorkspaceMemberId: store.get(currentWorkspaceMemberState.atom)
             ?.id,
@@ -139,14 +133,10 @@ export const useSendAiChatMessageToThread = () => {
         getAiChatReplyStatusUnlessStreaming('awaiting-first-chunk'),
       );
 
-      const fileAttachments = aiChatComposerAttachments.map((file) => ({
+      const fileAttachments = attachments.map((file) => ({
         id: file.fileId,
         filename: file.filename,
       }));
-
-      if (!isDirectMessage) {
-        store.set(uploadedFilesAtom, []);
-      }
 
       const pendingApprovalToolCallIdsAtSend =
         getPendingAiChatToolCallApprovals(store.get(messagesAtom)).map(
@@ -280,7 +270,7 @@ export const useSendAiChatMessageToThread = () => {
           store,
           threadId,
           serializedContent: serializedContentToSend,
-          attachments: aiChatComposerAttachments,
+          attachments,
           quotedMessageId,
         });
       } finally {
