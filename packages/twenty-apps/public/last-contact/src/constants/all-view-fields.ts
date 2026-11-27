@@ -11,6 +11,7 @@ import lastContactByField from 'src/fields/last-contact-by.field';
 import lastEmailField from 'src/fields/last-email.field';
 import lastInboundAtField from 'src/fields/last-inbound-at.field';
 import lastMeetingField from 'src/fields/last-meeting.field';
+import lastMessageField from 'src/fields/last-message.field';
 import lastOutboundAtField from 'src/fields/last-outbound-at.field';
 import opportunityLastContactAtField from 'src/fields/opportunity-last-contact-at.field';
 
@@ -30,6 +31,7 @@ export const ALL_VIEW_FIELDS = [
       lastInboundAtField,
       lastContactByField,
       lastEmailField,
+      lastMessageField,
       lastMeetingField,
     ].map(({ config }) => config),
   },

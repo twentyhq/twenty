@@ -44,6 +44,10 @@ const shouldRunPostInstall = ({
     return true;
   }
 
+  if (compare(previousVersion, '1.13.0') < 0 && compare(newVersion, '1.13.0') >= 0) { // Count app channel messages (LinkedIn, WhatsApp...)
+    return true;
+  }
+
   return false
 }
 

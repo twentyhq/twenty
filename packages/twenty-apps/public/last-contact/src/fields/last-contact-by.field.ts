@@ -19,7 +19,7 @@ export default defineField({
   name: 'lastContactBy',
   label: 'Last contact by',
   description:
-    'The team member whose synced email or meeting was the most recent interaction with this person.',
+    'The team member whose synced email, message or meeting was the most recent interaction with this person.',
   icon: 'IconUser',
   isNullable: true,
   relationTargetObjectMetadataUniversalIdentifier:

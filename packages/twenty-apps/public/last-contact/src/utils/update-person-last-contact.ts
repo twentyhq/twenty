@@ -6,14 +6,19 @@ import { type RecordUpsert } from 'src/utils/upsert-records-in-batches';
 
 const PAGE_SIZE = 200;
 
-export type InteractionKind = 'email' | 'meeting';
+// 'message' is a chat from an app channel (LinkedIn, WhatsApp...): Last message, never Last email
+export type MessageInteractionKind = 'email' | 'message';
+export type InteractionKind = MessageInteractionKind | 'meeting';
 export type InteractionDirection = 'outbound' | 'inbound';
 
 export type Interaction = {
   occurredAt: string;
   itemId: string;
   workspaceMemberId: string | null;
-} & ({ kind: 'email'; direction: InteractionDirection } | { kind: 'meeting' });
+} & (
+  | { kind: MessageInteractionKind; direction: InteractionDirection }
+  | { kind: 'meeting' }
+);
 
 export type RelatedLastContact = { id: string; lastContactAt: string | null };
 
@@ -22,6 +27,7 @@ export type PersonLastContactState = {
   lastOutboundAt?: string | null;
   lastInboundAt?: string | null;
   lastEmail?: { receivedAt: string | null } | null;
+  lastMessage?: { receivedAt: string | null } | null;
   lastMeeting?: { startsAt: string | null } | null;
   company?: RelatedLastContact | null;
   pointOfContactForOpportunities?: {
@@ -79,6 +85,7 @@ export const collectPersonLastContactState = async (
                 lastOutboundAt: true,
                 lastInboundAt: true,
                 lastEmail: { receivedAt: true },
+                lastMessage: { receivedAt: true },
                 lastMeeting: { startsAt: true },
                 company: { id: true, lastContactAt: true },
                 pointOfContactForOpportunities: {
@@ -128,12 +135,12 @@ export const buildPersonLastContactUpdate = (
   if (isNewer(occurredAt, current.lastContactAt)) {
     data.lastContactAt = occurredAt;
     data.lastContactById = latestContact.workspaceMemberId ?? null;
-    if (latestContact.kind === 'email') {
-      data.lastContactItemMessageId = latestContact.itemId;
-      data.lastContactItemCalendarEventId = null;
-    } else {
+    if (latestContact.kind === 'meeting') {
       data.lastContactItemCalendarEventId = latestContact.itemId;
       data.lastContactItemMessageId = null;
+    } else {
+      data.lastContactItemMessageId = latestContact.itemId;
+      data.lastContactItemCalendarEventId = null;
     }
   }
 
@@ -142,6 +149,10 @@ export const buildPersonLastContactUpdate = (
   const latestEmail = pickLatest(
     interactions,
     (interaction) => interaction.kind === 'email',
+  );
+  const latestMessage = pickLatest(
+    interactions,
+    (interaction) => interaction.kind === 'message',
   );
   const latestMeeting = pickLatest(
     interactions,
@@ -165,6 +176,12 @@ export const buildPersonLastContactUpdate = (
     isNewer(latestEmail.occurredAt, current.lastEmail?.receivedAt)
   ) {
     data.lastEmailId = latestEmail.itemId;
+  }
+  if (
+    latestMessage &&
+    isNewer(latestMessage.occurredAt, current.lastMessage?.receivedAt)
+  ) {
+    data.lastMessageId = latestMessage.itemId;
   }
   if (
     latestMeeting &&

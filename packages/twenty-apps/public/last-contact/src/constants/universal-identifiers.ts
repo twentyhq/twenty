@@ -1,12 +1,14 @@
 export const APP_DISPLAY_NAME = 'Last contact';
 export const APP_DESCRIPTION =
-  'Know where every relationship stands. Adds Last contact, Last outbound, Last inbound, Last contact by, and the last email and meeting to People, plus Last contact on Companies and Opportunities, kept up to date automatically from your synced emails and meetings.';
+  'Know where every relationship stands. Adds Last contact, Last outbound, Last inbound, Last contact by, and the last email, message and meeting to People, plus Last contact on Companies and Opportunities, kept up to date automatically from your synced emails, messages (LinkedIn, WhatsApp...) and meetings.';
 export const APPLICATION_UNIVERSAL_IDENTIFIER = '66a504cc-0a75-410e-a43f-cdeae1db1522';
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER = '34187abe-1b98-4153-85cd-4808e0aebf30';
 export const LAST_CONTACT_AT_FIELD_UNIVERSAL_IDENTIFIER =
   '4e0fd7ff-0bbc-47b2-baab-5fe2c0d12557';
 export const EMAIL_INTERACTION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER =
   '87c8926b-15e3-43ed-a303-60f6d072f351';
+export const MESSAGE_PARTICIPANT_CREATED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER =
+  'a641a9f6-61cd-4822-add2-640cbe2cf817';
 export const CALENDAR_INTERACTION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER =
   'ff4e9fc0-a5d3-4a3d-87f9-81c23598589e';
 export const BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER =
@@ -64,6 +66,10 @@ export const LAST_EMAIL_FIELD_UNIVERSAL_IDENTIFIER =
   'fd705b81-c6c6-45d3-9777-818956b7627b';
 export const LAST_EMAIL_FOR_PEOPLE_ON_MESSAGE_FIELD_UNIVERSAL_IDENTIFIER =
   '7a3dcccb-d4fd-4839-971a-775ca7bd897f';
+export const LAST_MESSAGE_FIELD_UNIVERSAL_IDENTIFIER =
+  'eae79254-fc88-42a8-9a4d-d505873c9143';
+export const LAST_MESSAGE_FOR_PEOPLE_ON_MESSAGE_FIELD_UNIVERSAL_IDENTIFIER =
+  '4531f49a-3379-4691-9d24-74aa95d90575';
 export const LAST_MEETING_FIELD_UNIVERSAL_IDENTIFIER =
   'c8882287-f638-4a96-a235-1819e793e373';
 export const LAST_MEETING_FOR_PEOPLE_ON_CALENDAR_EVENT_FIELD_UNIVERSAL_IDENTIFIER =

@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.13.0
+
+- Count messages from any channel, not only email. Messages synced by an app channel such as LinkedIn or WhatsApp now set Last contact, Last outbound, Last inbound, Last contact by and Last contact item on people, and Last contact on their companies and opportunities. Last email still only points to emails.
+- Add a Last message column on people, pointing to the most recent LinkedIn, WhatsApp or other app channel message. "Add columns" in the settings now adds it to All People too.
+- Listen to `messageParticipant.created` too. App channels can create a participant already linked to a person, which never fired the `personId` update the app relied on, so those messages were missed.
+- Take a message's direction and team member from its channel when no participant is a team member, which is how app channel messages are stored.
+- Read message channel associations, which the app role can now read.
+- Run the backfill once on an upgrade to 1.13.0, so messages already synced from LinkedIn, WhatsApp and other app channels are counted.
+
 ## 1.12.0
 
 - Add an "Add columns" button to the app settings. It opens Ask AI with a prefilled prompt to show the last-contact columns on the All People, All Companies and All Opportunities views, skipping any of those views that do not exist. Companies and Opportunities get Last contact and Last contact item; People get Last contact, Last outbound, Last inbound, Last contact by, Last email and Last meeting.

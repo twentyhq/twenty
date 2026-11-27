@@ -19,7 +19,8 @@ export default defineField({
   type: FieldType.MORPH_RELATION,
   name: 'lastContactItemMessage',
   label: 'Last contact item',
-  description: 'The email or meeting that was the most recent contact.',
+  description:
+    'The email, message or meeting that was the most recent contact.',
   icon: 'IconMessage',
   isNullable: true,
   morphId: LAST_CONTACT_ITEM_MORPH_ID,

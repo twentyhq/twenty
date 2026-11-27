@@ -38,6 +38,8 @@ describe('default role', () => {
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.message.universalIdentifier,
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageParticipant
         .universalIdentifier,
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageChannelMessageAssociation
+        .universalIdentifier,
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEvent.universalIdentifier,
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventParticipant
         .universalIdentifier,
@@ -50,6 +52,6 @@ describe('default role', () => {
       });
     }
 
-    expect(defaultRole.config?.objectPermissions).toHaveLength(7);
+    expect(defaultRole.config?.objectPermissions).toHaveLength(8);
   });
 });

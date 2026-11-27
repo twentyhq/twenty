@@ -2,22 +2,28 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { chunk } from 'src/utils/chunk';
+import {
+  buildMessageInteraction,
+  MESSAGE_SELECTION,
+  type MessageNode,
+  type MessageParticipantNode,
+} from 'src/utils/collect-message-interactions';
 import { executeWithRetry } from 'src/utils/execute-with-retry';
+import { type InteractionKind } from 'src/utils/update-person-last-contact';
 
 const PAGE_SIZE = 200;
 
 type EmailInteraction = {
   personId: string;
   messageId: string;
-  receivedAt: string;
+  message: MessageNode;
 };
 type MeetingInteraction = {
   personId: string;
   calendarEventId: string;
   startsAt: string;
 };
-type MessageMemberInfo = { ownerId: string; fromIsMember: boolean };
-type ContactItem = { kind: 'email' | 'meeting'; id: string };
+type ContactItem = { kind: InteractionKind; id: string };
 
 export type PersonUpdateData = Record<string, string | null>;
 
@@ -28,6 +34,7 @@ export type PersonAgg = {
   lastOutboundAt?: string;
   lastInboundAt?: string;
   lastEmail?: { at: string; id: string };
+  lastMessage?: { at: string; id: string };
   lastMeeting?: { at: string; id: string };
 };
 
@@ -53,7 +60,7 @@ const collectEmailInteractions = async (
               node: {
                 id: true,
                 personId: true,
-                message: { id: true, receivedAt: true, isDraft: true },
+                message: { id: true, ...MESSAGE_SELECTION },
               },
             },
             pageInfo: { hasNextPage: true, endCursor: true },
@@ -62,18 +69,12 @@ const collectEmailInteractions = async (
       );
 
       for (const edge of messageParticipants?.edges ?? []) {
-        const { personId, message } = edge.node;
-        if (
-          isDefined(personId) &&
-          isDefined(message?.id) &&
-          isDefined(message.receivedAt) &&
-          !message.isDraft
-        ) {
-          interactions.push({
-            personId,
-            messageId: message.id,
-            receivedAt: message.receivedAt,
-          });
+        const { personId, message } = edge.node as {
+          personId?: string | null;
+          message?: (MessageNode & { id?: string | null }) | null;
+        };
+        if (isDefined(personId) && isDefined(message?.id)) {
+          interactions.push({ personId, messageId: message.id, message });
         }
       }
 
@@ -143,11 +144,11 @@ const collectMeetingInteractions = async (
   return interactions;
 };
 
-const collectMessageMemberInfo = async (
+const collectTeamMemberParticipants = async (
   client: CoreApiClient,
   messageIds: string[],
-): Promise<Map<string, MessageMemberInfo>> => {
-  const infoByMessageId = new Map<string, MessageMemberInfo>();
+): Promise<Map<string, MessageParticipantNode[]>> => {
+  const participantsByMessageId = new Map<string, MessageParticipantNode[]>();
 
   for (const ids of chunk(messageIds, PAGE_SIZE)) {
     let after: string | undefined;
@@ -173,19 +174,15 @@ const collectMessageMemberInfo = async (
       );
 
       for (const edge of messageParticipants?.edges ?? []) {
-        const { messageId, role, workspaceMemberId } = edge.node;
-        if (!messageId || !workspaceMemberId) {
+        const participant = edge.node as MessageParticipantNode;
+        const messageId = participant.messageId;
+        if (!messageId) {
           continue;
         }
-        const info = infoByMessageId.get(messageId) ?? {
-          ownerId: workspaceMemberId,
-          fromIsMember: false,
-        };
-        if (role === 'FROM') {
-          info.ownerId = workspaceMemberId;
-          info.fromIsMember = true;
-        }
-        infoByMessageId.set(messageId, info);
+        participantsByMessageId.set(messageId, [
+          ...(participantsByMessageId.get(messageId) ?? []),
+          participant,
+        ]);
       }
 
       after = messageParticipants?.pageInfo.hasNextPage
@@ -194,7 +191,7 @@ const collectMessageMemberInfo = async (
     } while (after);
   }
 
-  return infoByMessageId;
+  return participantsByMessageId;
 };
 
 const collectCalendarOwners = async (
@@ -250,16 +247,32 @@ const collectCalendarOwners = async (
   return ownerByCalendarEventId;
 };
 
-const foldEmail = (
+const foldMessage = (
   agg: PersonAgg,
-  receivedAt: string,
-  messageId: string,
-  info: MessageMemberInfo | undefined,
+  email: EmailInteraction,
+  participants: MessageParticipantNode[],
 ): void => {
-  if (!agg.lastEmail || receivedAt > agg.lastEmail.at) {
-    agg.lastEmail = { at: receivedAt, id: messageId };
+  const interaction = buildMessageInteraction(email.message, participants);
+
+  if (!interaction) {
+    return;
   }
-  if (info?.fromIsMember) {
+
+  const { receivedAt } = interaction;
+
+  if (
+    interaction.kind === 'email' &&
+    (!agg.lastEmail || receivedAt > agg.lastEmail.at)
+  ) {
+    agg.lastEmail = { at: receivedAt, id: email.messageId };
+  }
+  if (
+    interaction.kind === 'message' &&
+    (!agg.lastMessage || receivedAt > agg.lastMessage.at)
+  ) {
+    agg.lastMessage = { at: receivedAt, id: email.messageId };
+  }
+  if (interaction.direction === 'outbound') {
     if (!agg.lastOutboundAt || receivedAt > agg.lastOutboundAt) {
       agg.lastOutboundAt = receivedAt;
     }
@@ -268,8 +281,8 @@ const foldEmail = (
   }
   if (!agg.lastContactAt || receivedAt > agg.lastContactAt) {
     agg.lastContactAt = receivedAt;
-    agg.lastContactById = info?.ownerId ?? null;
-    agg.item = { kind: 'email', id: messageId };
+    agg.lastContactById = interaction.workspaceMemberId;
+    agg.item = { kind: interaction.kind, id: email.messageId };
   }
 };
 
@@ -295,9 +308,6 @@ const foldMeeting = (
   }
 };
 
-// Aggregates every email and meeting interaction of the given people into one
-// last-contact snapshot per person, resolving the owning team member and the
-// inbound/outbound direction from the message and calendar participants.
 export const buildPersonAggregates = async (
   client: CoreApiClient,
   personIds: string[],
@@ -318,10 +328,12 @@ export const buildPersonAggregates = async (
     ...new Set(meetings.map((meeting) => meeting.calendarEventId)),
   ];
 
-  const [messageMemberInfo, calendarOwners] = await Promise.all([
-    collectMessageMemberInfo(client, messageIds),
-    collectCalendarOwners(client, calendarEventIds),
-  ]);
+  const [teamMemberParticipantsByMessageId, calendarOwners] = await Promise.all(
+    [
+      collectTeamMemberParticipants(client, messageIds),
+      collectCalendarOwners(client, calendarEventIds),
+    ],
+  );
 
   const aggFor = (personId: string): PersonAgg => {
     const existing = aggByPersonId.get(personId);
@@ -334,11 +346,10 @@ export const buildPersonAggregates = async (
   };
 
   for (const email of emails) {
-    foldEmail(
+    foldMessage(
       aggFor(email.personId),
-      email.receivedAt,
-      email.messageId,
-      messageMemberInfo.get(email.messageId),
+      email,
+      teamMemberParticipantsByMessageId.get(email.messageId) ?? [],
     );
   }
   for (const meeting of meetings) {
@@ -361,8 +372,10 @@ export const buildPersonUpdateData = (
   lastOutboundAt: agg?.lastOutboundAt ?? null,
   lastInboundAt: agg?.lastInboundAt ?? null,
   lastEmailId: agg?.lastEmail?.id ?? null,
+  lastMessageId: agg?.lastMessage?.id ?? null,
   lastMeetingId: agg?.lastMeeting?.id ?? null,
-  lastContactItemMessageId: agg?.item?.kind === 'email' ? agg.item.id : null,
+  lastContactItemMessageId:
+    isDefined(agg?.item) && agg.item.kind !== 'meeting' ? agg.item.id : null,
   lastContactItemCalendarEventId:
     agg?.item?.kind === 'meeting' ? agg.item.id : null,
 });

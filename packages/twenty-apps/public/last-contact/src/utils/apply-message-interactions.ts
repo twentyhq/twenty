@@ -9,7 +9,29 @@ export type MessageParticipantLink = {
   messageId: string;
 };
 
-export const applyEmailInteractions = async (
+export type MessageParticipantEventRecord = {
+  personId?: string | null;
+  messageId?: string | null;
+};
+
+export const applyMessageParticipantEvents = async (
+  client: CoreApiClient,
+  events: { properties: { after: MessageParticipantEventRecord } }[],
+): Promise<void> => {
+  const linkByKey = new Map<string, MessageParticipantLink>();
+
+  for (const event of events) {
+    const { personId, messageId } = event.properties.after;
+
+    if (personId && messageId) {
+      linkByKey.set(`${personId}:${messageId}`, { personId, messageId });
+    }
+  }
+
+  await applyMessageInteractions(client, [...linkByKey.values()]);
+};
+
+export const applyMessageInteractions = async (
   client: CoreApiClient,
   links: MessageParticipantLink[],
 ): Promise<void> => {
@@ -33,7 +55,7 @@ export const applyEmailInteractions = async (
     }
 
     const interaction: Interaction = {
-      kind: 'email',
+      kind: message.kind,
       occurredAt: message.receivedAt,
       itemId: messageId,
       workspaceMemberId: message.workspaceMemberId,
