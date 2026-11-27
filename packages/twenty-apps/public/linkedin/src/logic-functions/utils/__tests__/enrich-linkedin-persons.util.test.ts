@@ -4,6 +4,7 @@ const mocks = vi.hoisted(() => ({
   kvStore: new Map<string, unknown>(),
   query: vi.fn(),
   mutation: vi.fn(),
+  clientOptions: [] as { fetch?: unknown }[],
   getUnipileUserProfile: vi.fn(),
 }));
 
@@ -18,6 +19,10 @@ vi.mock('twenty-sdk/logic-function', () => ({
 
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: class {
+    constructor(options: { fetch?: unknown }) {
+      mocks.clientOptions.push(options);
+    }
+
     query = mocks.query;
     mutation = mocks.mutation;
   },
@@ -62,6 +67,7 @@ const getUpdatedData = () =>
 describe('enrichLinkedinPersons', () => {
   beforeEach(() => {
     mocks.kvStore.clear();
+    mocks.clientOptions.length = 0;
     mocks.query.mockReset();
     mocks.mutation.mockReset().mockResolvedValue({ updatePeople: [] });
     mocks.getUnipileUserProfile.mockReset().mockResolvedValue({
@@ -99,6 +105,57 @@ describe('enrichLinkedinPersons', () => {
       { emails: { primaryEmail: 'priya@acme.com' } },
       { phones: { primaryPhoneNumber: '+33 6 12 34 56 78' } },
     ]);
+  });
+
+  it('keeps a value a member types while the profile is looked up', async () => {
+    mockPerson({ jobTitle: null, emails: null, phones: null });
+
+    await enrich();
+
+    expect(
+      mocks.mutation.mock.calls.map(
+        ([mutation]) => mutation.updatePeople.__args.filter.and[1],
+      ),
+    ).toEqual([
+      { or: [{ jobTitle: { is: 'NULL' } }, { jobTitle: { eq: '' } }] },
+      {
+        or: [
+          { emails: { primaryEmail: { is: 'NULL' } } },
+          { emails: { primaryEmail: { eq: '' } } },
+        ],
+      },
+      {
+        or: [
+          { phones: { primaryPhoneNumber: { is: 'NULL' } } },
+          { phones: { primaryPhoneNumber: { eq: '' } } },
+        ],
+      },
+    ]);
+  });
+
+  it('bounds every Twenty call by the deadline', async () => {
+    mockPerson({ jobTitle: null, emails: null, phones: null });
+
+    await enrich();
+
+    expect(mocks.clientOptions).toHaveLength(4);
+    expect(
+      mocks.clientOptions.every(
+        (options) => typeof options.fetch === 'function',
+      ),
+    ).toBe(true);
+  });
+
+  it('skips the lookup when every field is already filled', async () => {
+    mockPerson({
+      jobTitle: 'VP Sales',
+      emails: { primaryEmail: 'priya@acme.com' },
+      phones: { primaryPhoneNumber: '612345678' },
+    });
+
+    await enrich();
+
+    expect(mocks.getUnipileUserProfile).not.toHaveBeenCalled();
   });
 
   it('looks each person up only once', async () => {

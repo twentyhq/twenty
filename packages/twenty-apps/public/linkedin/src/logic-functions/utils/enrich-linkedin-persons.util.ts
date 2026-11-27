@@ -21,10 +21,43 @@ type EnrichablePersonRecord = {
 const getLinkedinEnrichedPersonKey = (personId: string) =>
   `linkedin-enriched-person:${personId}`;
 
-const findEnrichablePersons = async (
-  personIds: string[],
-): Promise<Map<string, EnrichablePersonRecord>> => {
-  const { people } = await new CoreApiClient({ runAs: 'application' }).query({
+const EMPTY_JOB_TITLE_FILTER = {
+  or: [{ jobTitle: { is: 'NULL' as const } }, { jobTitle: { eq: '' } }],
+};
+
+const EMPTY_EMAIL_FILTER = {
+  or: [
+    { emails: { primaryEmail: { is: 'NULL' as const } } },
+    { emails: { primaryEmail: { eq: '' } } },
+  ],
+};
+
+const EMPTY_PHONE_FILTER = {
+  or: [
+    { phones: { primaryPhoneNumber: { is: 'NULL' as const } } },
+    { phones: { primaryPhoneNumber: { eq: '' } } },
+  ],
+};
+
+const createDeadlineBoundFetch =
+  (deadlineAtMs: number) =>
+  (input: RequestInfo | URL, init?: RequestInit): Promise<Response> =>
+    fetch(input, {
+      ...init,
+      signal: AbortSignal.timeout(Math.max(deadlineAtMs - Date.now(), 1)),
+    });
+
+const findEnrichablePersons = async ({
+  personIds,
+  deadlineAtMs,
+}: {
+  personIds: string[];
+  deadlineAtMs: number;
+}): Promise<Map<string, EnrichablePersonRecord>> => {
+  const { people } = await new CoreApiClient({
+    runAs: 'application',
+    fetch: createDeadlineBoundFetch(deadlineAtMs),
+  }).query({
     people: {
       __args: { filter: { id: { in: personIds } }, first: personIds.length },
       edges: {
@@ -46,20 +79,31 @@ const findEnrichablePersons = async (
   );
 };
 
-// Emails are unique and phones are validated: either can be rejected, never at the cost of the other fields
-const updatePersonOrWarn = async ({
+// The empty filter keeps a value a member typed during the lookup.
+// Emails are unique and phones validated, so each field is set alone.
+const setEmptyPersonFieldOrWarn = async ({
   personId,
   field,
+  emptyFieldFilter,
   data,
+  deadlineAtMs,
 }: {
   personId: string;
   field: string;
+  emptyFieldFilter: Record<string, unknown>;
   data: Record<string, unknown>;
+  deadlineAtMs: number;
 }): Promise<void> => {
   try {
-    await new CoreApiClient({ runAs: 'application' }).mutation({
+    await new CoreApiClient({
+      runAs: 'application',
+      fetch: createDeadlineBoundFetch(deadlineAtMs),
+    }).mutation({
       updatePeople: {
-        __args: { filter: { id: { eq: personId } }, data },
+        __args: {
+          filter: { and: [{ id: { eq: personId } }, emptyFieldFilter] },
+          data,
+        },
         id: true,
       },
     });
@@ -69,6 +113,11 @@ const updatePersonOrWarn = async ({
     );
   }
 };
+
+const hasEmptyEnrichableField = (person: EnrichablePersonRecord): boolean =>
+  !isNonEmptyString(person.jobTitle) ||
+  !isNonEmptyString(person.emails?.primaryEmail) ||
+  !isNonEmptyString(person.phones?.primaryPhoneNumber);
 
 const enrichPerson = async ({
   unipileAccountId,
@@ -95,18 +144,22 @@ const enrichPerson = async ({
   );
 
   if (isDefined(jobTitle) && !isNonEmptyString(person.jobTitle)) {
-    await updatePersonOrWarn({
+    await setEmptyPersonFieldOrWarn({
       personId: person.id,
       field: 'job title',
+      emptyFieldFilter: EMPTY_JOB_TITLE_FILTER,
       data: { jobTitle },
+      deadlineAtMs,
     });
   }
 
   if (isDefined(email) && !isNonEmptyString(person.emails?.primaryEmail)) {
-    await updatePersonOrWarn({
+    await setEmptyPersonFieldOrWarn({
       personId: person.id,
       field: 'email',
+      emptyFieldFilter: EMPTY_EMAIL_FILTER,
       data: { emails: { primaryEmail: email } },
+      deadlineAtMs,
     });
   }
 
@@ -114,10 +167,12 @@ const enrichPerson = async ({
     isDefined(phoneNumber) &&
     !isNonEmptyString(person.phones?.primaryPhoneNumber)
   ) {
-    await updatePersonOrWarn({
+    await setEmptyPersonFieldOrWarn({
       personId: person.id,
       field: 'phone',
+      emptyFieldFilter: EMPTY_PHONE_FILTER,
       data: { phones: { primaryPhoneNumber: phoneNumber } },
+      deadlineAtMs,
     });
   }
 
@@ -126,7 +181,6 @@ const enrichPerson = async ({
   console.log(`[linkedin] enriched person ${person.id} from LinkedIn`);
 };
 
-// Fills only empty fields, once per person, and never fails the sync it runs in
 export const enrichLinkedinPersons = async ({
   unipileAccountId,
   counterparts,
@@ -159,14 +213,15 @@ export const enrichLinkedinPersons = async ({
       return;
     }
 
-    const personById = await findEnrichablePersons([
-      ...counterpartByPersonId.keys(),
-    ]);
+    const personById = await findEnrichablePersons({
+      personIds: [...counterpartByPersonId.keys()],
+      deadlineAtMs,
+    });
 
     for (const [personId, counterpart] of counterpartByPersonId) {
       const person = personById.get(personId);
 
-      if (!isDefined(person)) {
+      if (!isDefined(person) || !hasEmptyEnrichableField(person)) {
         continue;
       }
 
