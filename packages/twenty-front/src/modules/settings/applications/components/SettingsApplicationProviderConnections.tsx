@@ -2,6 +2,7 @@ import { SettingsAppPreferencesConnectionsTable } from '@/settings/app-preferenc
 import { SettingsApplicationConnectCard } from '@/settings/app-preferences/components/SettingsApplicationConnectCard';
 import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
 import { SettingsApplicationAddConnectionButton } from '@/settings/applications/components/SettingsApplicationAddConnectionButton';
+import { canAddConnectionProviderConnection } from '@/settings/applications/utils/canAddConnectionProviderConnection';
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -40,8 +41,11 @@ export const SettingsApplicationProviderConnections = ({
           reconnectRedirectLocation={redirectLocation}
         />
         {canStartAuthorization &&
-          (connectionProvider.allowMultipleConnections ||
-            !isNonEmptyArray(connections)) && (
+          canAddConnectionProviderConnection({
+            allowMultipleConnections:
+              connectionProvider.allowMultipleConnections,
+            connectionCount: connections.length,
+          }) && (
             <SettingsApplicationAddConnectionButton
               applicationId={applicationId}
               connectionProviderName={connectionProvider.name}

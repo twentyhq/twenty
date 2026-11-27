@@ -267,21 +267,27 @@ export class ConnectionProviderConnectedAccountService {
       });
     };
 
-    const singleConnectionLockKey = `app-single-connection:${workspaceId}:${provider.id}${scope === 'USER' ? `:${userWorkspaceId}` : ''}`;
+    const createWithinConnectionLimit = async () => {
+      if (provider.allowMultipleConnections) {
+        return createConnectedAccount();
+      }
 
-    const connectedAccount = provider.allowMultipleConnections
-      ? await createConnectedAccount()
-      : await this.cacheLockService.withLock(async () => {
-          await this.assertCanAddConnectionOrThrow({
-            provider,
-            workspaceId,
-            userWorkspaceId,
-            scope,
-            reconnectingConnectedAccountId,
-          });
+      const singleConnectionLockKey = `app-single-connection:${workspaceId}:${provider.id}${scope === 'USER' ? `:${userWorkspaceId}` : ''}`;
 
-          return createConnectedAccount();
-        }, singleConnectionLockKey);
+      return this.cacheLockService.withLock(async () => {
+        await this.assertCanAddConnectionOrThrow({
+          provider,
+          workspaceId,
+          userWorkspaceId,
+          scope,
+          reconnectingConnectedAccountId,
+        });
+
+        return createConnectedAccount();
+      }, singleConnectionLockKey);
+    };
+
+    const connectedAccount = await createWithinConnectionLimit();
 
     this.emitConnectionChanged(connectedAccount);
 
