@@ -206,4 +206,30 @@ describe('WidgetActionMessageCompose', () => {
     });
     expect(openComposerWithConnectedAccount).not.toHaveBeenCalled();
   });
+
+  it('still offers to connect an email account when only app channels can send', async () => {
+    const user = userEvent.setup();
+
+    mockConversationStartChannels = [
+      {
+        messageChannelId: 'channel-linkedin',
+        label: 'Tim on LinkedIn',
+        provider: ConnectedAccountProvider.APP,
+        applicationId: 'application-linkedin',
+      },
+    ];
+
+    renderAction([imapWithoutSmtpAccount]);
+
+    await user.click(screen.getByRole('button', { name: 'New message' }));
+
+    expect(screen.getAllByRole('menuitem')).toHaveLength(2);
+
+    await user.click(
+      screen.getByRole('menuitem', { name: /Connect an email account/ }),
+    );
+
+    expect(openComposer).toHaveBeenCalledTimes(1);
+    expect(openStartAppConversationInSidePanel).not.toHaveBeenCalled();
+  });
 });

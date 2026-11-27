@@ -32,6 +32,7 @@ import { getEmailRecipientsError } from 'src/engine/core-modules/email/utils/get
 import { parseCommaSeparatedEmails } from 'src/engine/core-modules/email/utils/parse-comma-separated-emails.util';
 import { FileEmailAttachmentService } from 'src/engine/core-modules/file/file-email-attachment/services/file-email-attachment.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import { isConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-usable-by-caller.util';
 import {
   type SendAppChannelMessageAttachmentInput,
   type SendAppChannelMessageEmailInput,
@@ -162,37 +163,76 @@ export class ApplicationMessageSendService {
     private readonly cacheStorageService: CacheStorageService,
   ) {}
 
-  async canStartConversation({
-    messageChannel,
+  async findStartableMessageChannelIds({
+    messageChannels,
+    userWorkspaceId,
     workspaceId,
   }: {
-    messageChannel: Pick<
+    messageChannels: Pick<
       MessageChannelEntity,
-      'type' | 'connectedAccountId' | 'messagingProviderUniversalIdentifier'
-    >;
+      | 'id'
+      | 'type'
+      | 'isSyncEnabled'
+      | 'connectedAccountId'
+      | 'messagingProviderUniversalIdentifier'
+    >[];
+    userWorkspaceId: string;
     workspaceId: string;
-  }): Promise<boolean> {
-    if (messageChannel.type !== MessageChannelType.APP) {
-      return false;
-    }
+  }): Promise<Set<string>> {
+    const candidateChannels = messageChannels.filter(
+      (messageChannel) =>
+        messageChannel.type === MessageChannelType.APP &&
+        messageChannel.isSyncEnabled,
+    );
 
-    const connectedAccount =
-      await this.connectedAccountMetadataService.findById({
-        id: messageChannel.connectedAccountId,
+    const connectedAccounts =
+      await this.connectedAccountMetadataService.findByIds({
+        ids: [
+          ...new Set(
+            candidateChannels.map(
+              (messageChannel) => messageChannel.connectedAccountId,
+            ),
+          ),
+        ],
         workspaceId,
       });
-    const connectionProviderId = connectedAccount?.connectionProviderId;
+    const connectedAccountsById = new Map(
+      connectedAccounts.map((connectedAccount) => [
+        connectedAccount.id,
+        connectedAccount,
+      ]),
+    );
 
-    if (!isDefined(connectionProviderId)) {
-      return false;
+    const startableMessageChannelIds = new Set<string>();
+
+    for (const messageChannel of candidateChannels) {
+      const connectedAccount = connectedAccountsById.get(
+        messageChannel.connectedAccountId,
+      );
+
+      if (
+        !isDefined(connectedAccount) ||
+        !isDefined(connectedAccount.applicationId) ||
+        !isDefined(connectedAccount.connectionProviderId) ||
+        !isConnectedAccountUsableByCaller({ connectedAccount, userWorkspaceId })
+      ) {
+        continue;
+      }
+
+      const canStartConversation =
+        await this.messagingProviderMessageSenderService.canStartConversation({
+          messagingProviderUniversalIdentifier:
+            messageChannel.messagingProviderUniversalIdentifier,
+          connectionProviderId: connectedAccount.connectionProviderId,
+          workspaceId,
+        });
+
+      if (canStartConversation) {
+        startableMessageChannelIds.add(messageChannel.id);
+      }
     }
 
-    return this.messagingProviderMessageSenderService.canStartConversation({
-      messagingProviderUniversalIdentifier:
-        messageChannel.messagingProviderUniversalIdentifier,
-      connectionProviderId,
-      workspaceId,
-    });
+    return startableMessageChannelIds;
   }
 
   async send({

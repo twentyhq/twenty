@@ -1,29 +1,24 @@
-import { useQuery } from '@apollo/client/react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { MessageChannelType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { myConnectedAccountsState } from '@/accounts/states/myConnectedAccountsState';
 import { type ConversationStartMessageChannel } from '@/activities/emails/types/ConversationStartMessageChannel';
 import { isApplicationConnectionReconnectNeeded } from '@/settings/applications/utils/isApplicationConnectionReconnectNeeded';
+import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import {
-  MessageChannelType,
-  MyConversationStartMessageChannelsDocument,
-} from '~/generated-metadata/graphql';
 
 export const useConversationStartMessageChannels = ({
   isSkipped = false,
 }: { isSkipped?: boolean } = {}): ConversationStartMessageChannel[] => {
   const myConnectedAccounts = useAtomStateValue(myConnectedAccountsState);
-  const { data } = useQuery(MyConversationStartMessageChannelsDocument, {
-    skip: isSkipped,
-  });
+  const { channels } = useMyMessageChannels(undefined, { skip: isSkipped });
 
   if (isSkipped) {
     return [];
   }
 
-  return (data?.myMessageChannels ?? []).flatMap((messageChannel) => {
+  return channels.flatMap((messageChannel) => {
     const connectedAccount = myConnectedAccounts?.find(
       ({ id }) => id === messageChannel.connectedAccountId,
     );

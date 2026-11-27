@@ -1,6 +1,7 @@
 import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
 import {
   Args,
+  Context,
   Int,
   Mutation,
   Parent,
@@ -8,6 +9,7 @@ import {
   ResolveField,
 } from '@nestjs/graphql';
 
+import DataLoader from 'dataloader';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -87,6 +89,11 @@ const EMAIL_GROUP_CHANNEL_ACCESS_POLICY: AccessPolicy = {
 @MetadataResolver(() => MessageChannelDTO)
 @UseFilters(AuthGraphqlApiExceptionFilter)
 export class MessageChannelResolver {
+  private readonly startableChannelLoadersByRequest = new WeakMap<
+    object,
+    DataLoader<MessageChannelDTO, boolean, string>
+  >();
+
   constructor(
     private readonly messageChannelMetadataService: MessageChannelMetadataService,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
@@ -114,11 +121,56 @@ export class MessageChannelResolver {
   async canStartConversation(
     @Parent() messageChannel: MessageChannelDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @Context() context: object,
+    @AuthUserWorkspaceId({ allowUndefined: true }) userWorkspaceId?: string,
   ): Promise<boolean> {
-    return this.applicationMessageSendService.canStartConversation({
-      messageChannel,
+    if (!isDefined(userWorkspaceId)) {
+      return false;
+    }
+
+    return this.findStartableChannelLoader({
+      context,
+      userWorkspaceId,
       workspaceId: workspace.id,
-    });
+    }).load(messageChannel);
+  }
+
+  private findStartableChannelLoader({
+    context,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    context: object;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): DataLoader<MessageChannelDTO, boolean, string> {
+    const existingLoader = this.startableChannelLoadersByRequest.get(context);
+
+    if (isDefined(existingLoader)) {
+      return existingLoader;
+    }
+
+    const loader = new DataLoader<MessageChannelDTO, boolean, string>(
+      async (messageChannels) => {
+        const startableMessageChannelIds =
+          await this.applicationMessageSendService.findStartableMessageChannelIds(
+            {
+              messageChannels: [...messageChannels],
+              userWorkspaceId,
+              workspaceId,
+            },
+          );
+
+        return messageChannels.map(({ id }) =>
+          startableMessageChannelIds.has(id),
+        );
+      },
+      { cacheKeyFn: ({ id }) => id },
+    );
+
+    this.startableChannelLoadersByRequest.set(context, loader);
+
+    return loader;
   }
 
   @ResolveField('connectedAccount', () => ConnectedAccountPublicDTO, {

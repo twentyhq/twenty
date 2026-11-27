@@ -15,7 +15,7 @@ import { useLingui } from '@lingui/react/macro';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { IconPlus } from 'twenty-ui/icon';
+import { IconAt, IconPlus } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { MessageChannelType } from '~/generated/graphql';
 
@@ -77,9 +77,9 @@ export const WidgetActionMessageCompose = () => {
         align="end"
         aria-label={t`Send from`}
       >
-        {isNonEmptyArray(senderAccounts) && (
-          <Dropdown.Section>
-            {senderAccounts.map((connectedAccount) => (
+        <Dropdown.Section>
+          {isNonEmptyArray(senderAccounts) ? (
+            senderAccounts.map((connectedAccount) => (
               <Dropdown.ActionItem
                 key={connectedAccount.id}
                 startIcon={
@@ -97,11 +97,14 @@ export const WidgetActionMessageCompose = () => {
               >
                 {connectedAccount.handle}
               </Dropdown.ActionItem>
-            ))}
-          </Dropdown.Section>
-        )}
-        {isNonEmptyArray(senderAccounts) &&
-          isNonEmptyArray(conversationStartChannels) && <Dropdown.Separator />}
+            ))
+          ) : (
+            <Dropdown.ActionItem startIcon={<IconAt />} onClick={openComposer}>
+              {t`Connect an email account`}
+            </Dropdown.ActionItem>
+          )}
+        </Dropdown.Section>
+        {isNonEmptyArray(conversationStartChannels) && <Dropdown.Separator />}
         {isNonEmptyArray(conversationStartChannels) && (
           <Dropdown.Section>
             {conversationStartChannels.map((conversationStartChannel) => (

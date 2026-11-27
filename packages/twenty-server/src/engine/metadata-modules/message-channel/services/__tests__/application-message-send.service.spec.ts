@@ -1,3 +1,5 @@
+import { MessageChannelType } from 'twenty-shared/types';
+
 import { type Repository } from 'typeorm';
 
 import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -297,5 +299,135 @@ describe('ApplicationMessageSendService', () => {
         ],
       }),
     );
+  });
+});
+
+describe('ApplicationMessageSendService findStartableMessageChannelIds', () => {
+  const USER_WORKSPACE_ID = 'user-workspace-1';
+
+  const anAppChannel = (
+    overrides: Partial<MessageChannelEntity> = {},
+  ): MessageChannelEntity =>
+    ({
+      id: 'channel-1',
+      type: MessageChannelType.APP,
+      isSyncEnabled: true,
+      connectedAccountId: 'connected-account-1',
+      messagingProviderUniversalIdentifier: 'provider-1',
+      ...overrides,
+    }) as MessageChannelEntity;
+
+  const anAppAccount = (overrides: Record<string, unknown> = {}) => ({
+    id: 'connected-account-1',
+    applicationId: 'application-1',
+    connectionProviderId: 'connection-provider-1',
+    scope: 'USER',
+    userWorkspaceId: USER_WORKSPACE_ID,
+    ...overrides,
+  });
+
+  const buildService = (connectedAccounts: unknown[]) => {
+    const findByIds = jest.fn().mockResolvedValue(connectedAccounts);
+    const canStartConversation = jest.fn().mockResolvedValue(true);
+
+    const service = new ApplicationMessageSendService(
+      {} as unknown as Repository<MessageChannelEntity>,
+      { findByIds } as unknown as ConnectedAccountMetadataService,
+      {
+        canStartConversation,
+      } as unknown as MessagingProviderMessageSenderService,
+      {} as unknown as ApplicationMessageIngestionService,
+      {} as unknown as ApplicationMessageSendAttachmentsService,
+      {} as unknown as FileEmailAttachmentService,
+      {} as unknown as WorkspaceOrmManager,
+      {} as unknown as ApplicationThreadLatestMessagesService,
+      {} as unknown as WorkspaceCacheService,
+      {} as unknown as CacheLockService,
+      {} as unknown as CacheStorageService,
+    );
+
+    return { service, findByIds, canStartConversation };
+  };
+
+  it('loads the connected accounts of every channel in one query', async () => {
+    const { service, findByIds } = buildService([
+      anAppAccount(),
+      anAppAccount({ id: 'connected-account-2' }),
+    ]);
+
+    const startableMessageChannelIds =
+      await service.findStartableMessageChannelIds({
+        messageChannels: [
+          anAppChannel(),
+          anAppChannel({
+            id: 'channel-2',
+            connectedAccountId: 'connected-account-2',
+          }),
+        ],
+        userWorkspaceId: USER_WORKSPACE_ID,
+        workspaceId: 'workspace-1',
+      });
+
+    expect(findByIds).toHaveBeenCalledTimes(1);
+    expect(findByIds).toHaveBeenCalledWith({
+      ids: ['connected-account-1', 'connected-account-2'],
+      workspaceId: 'workspace-1',
+    });
+    expect([...startableMessageChannelIds]).toEqual(['channel-1', 'channel-2']);
+  });
+
+  it.each([
+    [
+      'sync is disabled',
+      anAppChannel({ isSyncEnabled: false }),
+      anAppAccount(),
+    ],
+    [
+      'the account belongs to another member',
+      anAppChannel(),
+      anAppAccount({ userWorkspaceId: 'user-workspace-2' }),
+    ],
+    [
+      'the account is not an application connection',
+      anAppChannel(),
+      anAppAccount({ connectionProviderId: null }),
+    ],
+    [
+      'the channel is not an app channel',
+      anAppChannel({ type: MessageChannelType.EMAIL }),
+      anAppAccount(),
+    ],
+  ])(
+    'excludes a channel the send mutation would refuse when %s',
+    async (_reason, messageChannel, connectedAccount) => {
+      const { service, canStartConversation } = buildService([
+        connectedAccount,
+      ]);
+
+      const startableMessageChannelIds =
+        await service.findStartableMessageChannelIds({
+          messageChannels: [messageChannel],
+          userWorkspaceId: USER_WORKSPACE_ID,
+          workspaceId: 'workspace-1',
+        });
+
+      expect(startableMessageChannelIds.size).toBe(0);
+      expect(canStartConversation).not.toHaveBeenCalled();
+    },
+  );
+
+  it('includes a workspace-shared account the caller can use', async () => {
+    const { service } = buildService([
+      anAppAccount({ scope: 'WORKSPACE', userWorkspaceId: 'user-workspace-2' }),
+    ]);
+
+    const startableMessageChannelIds =
+      await service.findStartableMessageChannelIds({
+        messageChannels: [anAppChannel()],
+        userWorkspaceId: USER_WORKSPACE_ID,
+        workspaceId: 'workspace-1',
+      });
+
+    expect([...startableMessageChannelIds]).toEqual(['channel-1']);
   });
 });

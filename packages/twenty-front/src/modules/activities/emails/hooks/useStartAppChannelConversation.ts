@@ -32,9 +32,13 @@ export const useStartAppChannelConversation = () => {
       },
     });
 
-    await apolloCoreClient
-      .refetchQueries({ include: [getTimelineThreadsFromObjectRecord] })
-      .catch(() => undefined);
+    try {
+      await apolloCoreClient.refetchQueries({
+        include: [getTimelineThreadsFromObjectRecord],
+      });
+    } catch {
+      // the message is already delivered, a stale timeline must not report the send as failed
+    }
 
     return data?.startAppChannelConversation.messageThreadId ?? null;
   };
