@@ -208,6 +208,8 @@ const FrontComponentRendererContent = ({
     useQuery(GetApplicationSdkClientChecksumsDocument, {
       variables: { applicationId },
       skip: !usesSdkClient,
+      // Reuses FrontComponentApplicationPrefetchEffect's result; updates arrive via useOnApplicationSdkClientChecksumsUpdated.
+      fetchPolicy: 'cache-first',
     });
 
   useOnApplicationSdkClientChecksumsUpdated({

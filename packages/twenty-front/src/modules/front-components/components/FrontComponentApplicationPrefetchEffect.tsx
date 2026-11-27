@@ -30,8 +30,7 @@ export const FrontComponentApplicationPrefetchEffect = ({
       return;
     }
 
-    // Warms the token and Apollo caches while FindOneFrontComponent is in flight;
-    // the renderer awaits the same requests and reports their errors.
+    // The renderer retries and reports failures.
     loadFrontComponentApplicationTokenPair(applicationId).catch(
       () => undefined,
     );
