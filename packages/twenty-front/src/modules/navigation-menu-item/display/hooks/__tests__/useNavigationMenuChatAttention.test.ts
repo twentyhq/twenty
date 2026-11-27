@@ -124,6 +124,29 @@ describe('useNavigationMenuChatAttention', () => {
     expect(result.current.getTabChatAttention(null)).toBeNull();
   });
 
+  it('reports a chat needing input even when no tab holds a chat section', () => {
+    jest.mocked(useNavigationMenuItemsData).mockReturnValue({
+      navigationMenuItems: [],
+      workspaceNavigationMenuItems: [],
+      currentWorkspaceMemberId: undefined,
+      currentUserWorkspaceId: undefined,
+    });
+    mockSummary({ needsInputThreadCount: 1 });
+
+    const { result } = renderHook(() => useNavigationMenuChatAttention());
+
+    expect(result.current.hasChatNeedingInput).toBe(true);
+    expect(result.current.getTabChatAttention(null)).toBeNull();
+  });
+
+  it('does not report an unread chat as needing input', () => {
+    mockSummary({ hasUnreadMentionThread: true, unreadOpenThreadCount: 1 });
+
+    const { result } = renderHook(() => useNavigationMenuChatAttention());
+
+    expect(result.current.hasChatNeedingInput).toBe(false);
+  });
+
   it('flags an unread mention as unread', () => {
     mockSummary({ hasUnreadMentionThread: true, unreadOpenThreadCount: 1 });
 
@@ -164,6 +187,7 @@ describe('useNavigationMenuChatAttention', () => {
     const { result } = renderHook(() => useNavigationMenuChatAttention());
 
     expect(result.current.chatAttention).toBe('needs-input');
+    expect(result.current.hasChatNeedingInput).toBe(false);
     expect(result.current.getTabChatAttention(null)).toBeNull();
   });
 });

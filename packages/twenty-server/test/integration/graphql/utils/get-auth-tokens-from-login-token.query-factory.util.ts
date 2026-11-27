@@ -21,10 +21,6 @@ export const getAuthTokensFromLoginTokenQueryFactory = ({
               token
               expiresAt
             }
-            refreshToken {
-              token
-              expiresAt
-            }
           }
         }
       }

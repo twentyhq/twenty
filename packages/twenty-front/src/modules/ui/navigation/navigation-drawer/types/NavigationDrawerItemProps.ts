@@ -9,6 +9,7 @@ export type NavigationDrawerItemProps = {
   className?: string;
   label: string;
   secondaryLabel?: string;
+  accessibleSecondaryLabel?: string;
   indentationLevel?: NavigationDrawerItemIndentationLevel;
   subItemState?: NavigationDrawerSubItemState;
   subItemIndentation?: 'default' | 'compact';

@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { addMilliseconds } from 'date-fns';
-import ms from 'ms';
-import { type EntityManager, Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
+import { IsNull, MoreThan, Repository } from 'typeorm';
 
 import {
   AppTokenEntity,
@@ -13,19 +12,15 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
 import { type RefreshTokenJwtPayload } from 'src/engine/core-modules/auth/types/refresh-token-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
-import { isRevokedRefreshTokenStillRenewable } from 'src/engine/core-modules/auth/utils/is-revoked-refresh-token-still-renewable.util';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 
 @Injectable()
 export class RefreshTokenService {
   constructor(
     private readonly jwtWrapperService: JwtWrapperService,
-    private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     @InjectRepository(UserEntity)
@@ -33,10 +28,6 @@ export class RefreshTokenService {
   ) {}
 
   async verifyRefreshToken(refreshToken: string) {
-    const reuseGracePeriod = this.twentyConfigService.get(
-      'REFRESH_TOKEN_REUSE_GRACE_PERIOD',
-    );
-
     await this.jwtWrapperService.verifyJwtToken(refreshToken);
     const jwtPayload =
       this.jwtWrapperService.decode<RefreshTokenJwtPayload>(refreshToken);
@@ -57,11 +48,14 @@ export class RefreshTokenService {
 
     const token = await this.appTokenRepository.findOneBy({
       id: jwtPayload.jti,
+      type: AppTokenType.RefreshToken,
+      deletedAt: IsNull(),
+      expiresAt: MoreThan(new Date()),
     });
 
     if (!token) {
       throw new AuthException(
-        "This refresh token doesn't exist",
+        "This refresh token doesn't exist or has expired",
         AuthExceptionCode.INVALID_INPUT,
       );
     }
@@ -77,27 +71,11 @@ export class RefreshTokenService {
       );
     }
 
-    if (token.revokedAt) {
-      const isStillRenewable = isRevokedRefreshTokenStillRenewable({
-        revokedAt: token.revokedAt,
-        revokedReason: token.context?.revokedReason,
-        reuseGracePeriod,
-        now: new Date(),
-      });
-
-      if (!isStillRenewable) {
-        // Reject the stale token but don't revoke all tokens — the most
-        // common cause is a lost renewal response, not actual token theft.
-        throw new AuthException(
-          'This refresh token has been revoked.',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
-
-      // Token was revoked recently (within grace period). This is expected
-      // when concurrent requests (e.g. two browser tabs) race to refresh
-      // at the same time. Allow it but don't reset the original revokedAt
-      // timestamp so the grace window stays anchored and cannot be extended.
+    if (isDefined(token.revokedAt)) {
+      throw new AuthException(
+        'This refresh token has been revoked.',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
     }
 
     return {
@@ -109,48 +87,5 @@ export class RefreshTokenService {
       impersonatorUserWorkspaceId: jwtPayload.impersonatorUserWorkspaceId,
       impersonatedUserWorkspaceId: jwtPayload.impersonatedUserWorkspaceId,
     };
-  }
-
-  async generateRefreshToken(
-    payload: Omit<RefreshTokenJwtPayload, 'type' | 'sub' | 'jti'>,
-    isImpersonationToken: boolean = false,
-    entityManager?: EntityManager,
-  ): Promise<AuthToken> {
-    const expiresIn = isImpersonationToken
-      ? '1d'
-      : this.twentyConfigService.get('REFRESH_TOKEN_EXPIRES_IN');
-
-    if (!expiresIn) {
-      throw new AuthException(
-        'Expiration time for access token is not set',
-        AuthExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    }
-
-    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
-
-    const appTokenRepository =
-      entityManager?.getRepository(AppTokenEntity) ?? this.appTokenRepository;
-
-    const refreshToken = appTokenRepository.create({
-      ...payload,
-      expiresAt,
-      type: AppTokenType.RefreshToken,
-    });
-
-    await appTokenRepository.save(refreshToken);
-
-    const jwtPayload: RefreshTokenJwtPayload = {
-      ...payload,
-      sub: payload.userId,
-      type: JwtTokenTypeEnum.REFRESH,
-    };
-
-    const token = await this.jwtWrapperService.signAsyncOrThrow(jwtPayload, {
-      expiresIn,
-      jwtid: refreshToken.id,
-    });
-
-    return { token, expiresAt };
   }
 }
