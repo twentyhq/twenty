@@ -1332,7 +1332,6 @@ export interface ClientConfig {
     enterpriseInstanceType: Scalars['String']
     frontDomain: Scalars['String']
     isAttachmentPreviewEnabled: Scalars['Boolean']
-    isBookCallOnboardingStepEnabled: Scalars['Boolean']
     isClickHouseConfigured: Scalars['Boolean']
     isCloudflareIntegrationEnabled: Scalars['Boolean']
     isCompanyEnrichmentEnabled: Scalars['Boolean']
@@ -1682,7 +1681,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_ADMIN_CHANNEL_WRITE_ACCESS_RESTORED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' | 'IS_FORMULA_FIELD_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_INBOX_OBJECT_NAMING_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_LOOKUP_COLUMNS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED'
+export type FeatureFlagKey = 'IS_ADMIN_CHANNEL_WRITE_ACCESS_RESTORED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' | 'IS_FORMULA_FIELD_ENABLED' | 'IS_INBOX_OBJECT_NAMING_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_LOOKUP_COLUMNS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -2497,7 +2496,6 @@ export interface Mutation {
     claimApplicationRegistrationOwnership: ApplicationRegistration
     completeAppTarballUpload: ApplicationRegistration
     completeApplicationFileUploads: CompleteApplicationFileUploadsResult
-    completeBookCallOnboardingStep: OnboardingStepSuccess
     completeFileUpload: FileWithSignedUrl
     completeNewWorkspaceLogoUpload: FileWithSignedUrl
     completeWorkspaceLogoUpload: FileWithSignedUrl
@@ -2988,7 +2986,7 @@ export interface ObjectRecordsPermissions {
 
 
 /** Onboarding status */
-export type OnboardingStatus = 'BOOK_CALL' | 'COMPLETED' | 'INVITE_TEAM' | 'PLAN_REQUIRED' | 'PROFILE_CREATION' | 'SYNC_EMAIL' | 'WORKSPACE_ACTIVATION'
+export type OnboardingStatus = 'COMPLETED' | 'INVITE_TEAM' | 'PLAN_REQUIRED' | 'PROFILE_CREATION' | 'SYNC_EMAIL' | 'WORKSPACE_ACTIVATION'
 
 export interface OnboardingStepNavigation {
     /** Onboarding status the user landed on */
@@ -4559,7 +4557,6 @@ export type WorkspaceCompanyEnrichmentOutcome = 'matched' | 'transientError' | '
 
 export interface WorkspaceCompanyEnrichmentResult {
     enrichment?: Scalars['JSON']
-    isBookCallOnboardingStepPending: Scalars['Boolean']
     outcome: WorkspaceCompanyEnrichmentOutcome
     personEnrichment?: Scalars['JSON']
     personOutcome: WorkspacePersonEnrichmentOutcome
@@ -6050,7 +6047,6 @@ export interface ClientConfigGenqlSelection{
     enterpriseInstanceType?: boolean | number
     frontDomain?: boolean | number
     isAttachmentPreviewEnabled?: boolean | number
-    isBookCallOnboardingStepEnabled?: boolean | number
     isClickHouseConfigured?: boolean | number
     isCloudflareIntegrationEnabled?: boolean | number
     isCompanyEnrichmentEnabled?: boolean | number
@@ -7462,7 +7458,6 @@ export interface MutationGenqlSelection{
     claimApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     completeAppTarballUpload?: (ApplicationRegistrationGenqlSelection & { __args: {fileId: Scalars['UUID']} })
     completeApplicationFileUploads?: (CompleteApplicationFileUploadsResultGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['String'], fileIds: Scalars['UUID'][]} })
-    completeBookCallOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {hasBookedCall: Scalars['Boolean'], isAutoSkipped: Scalars['Boolean']} })
     completeFileUpload?: (FileWithSignedUrlGenqlSelection & { __args: {fileId: Scalars['String']} })
     completeNewWorkspaceLogoUpload?: (FileWithSignedUrlGenqlSelection & { __args: {fileId: Scalars['String'], workspaceId: Scalars['String']} })
     completeWorkspaceLogoUpload?: (FileWithSignedUrlGenqlSelection & { __args: {fileId: Scalars['String']} })
@@ -9969,7 +9964,6 @@ export interface WorkspaceAiStatsGenqlSelection{
 
 export interface WorkspaceCompanyEnrichmentResultGenqlSelection{
     enrichment?: boolean | number
-    isBookCallOnboardingStepPending?: boolean | number
     outcome?: boolean | number
     personEnrichment?: boolean | number
     personOutcome?: boolean | number
@@ -13538,7 +13532,6 @@ export const enumFeatureFlagKey = {
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
    IS_CUSTOMIZABLE_SIDEBAR_ENABLED: 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' as const,
    IS_FORMULA_FIELD_ENABLED: 'IS_FORMULA_FIELD_ENABLED' as const,
-   IS_GETTING_STARTED_ENABLED: 'IS_GETTING_STARTED_ENABLED' as const,
    IS_INBOX_OBJECT_NAMING_ENABLED: 'IS_INBOX_OBJECT_NAMING_ENABLED' as const,
    IS_INTERNAL_IMPORT_COLUMN_ENABLED: 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' as const,
    IS_LOOKUP_COLUMNS_ENABLED: 'IS_LOOKUP_COLUMNS_ENABLED' as const,
@@ -13792,7 +13785,6 @@ export const enumObjectRecordGroupByDateGranularity = {
 }
 
 export const enumOnboardingStatus = {
-   BOOK_CALL: 'BOOK_CALL' as const,
    COMPLETED: 'COMPLETED' as const,
    INVITE_TEAM: 'INVITE_TEAM' as const,
    PLAN_REQUIRED: 'PLAN_REQUIRED' as const,
