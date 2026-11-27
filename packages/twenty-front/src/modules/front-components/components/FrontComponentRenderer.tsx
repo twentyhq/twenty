@@ -1,3 +1,4 @@
+import { FrontComponentApplicationPrefetchEffect } from '@/front-components/components/FrontComponentApplicationPrefetchEffect';
 import { FrontComponentApplicationTokenPairEffect } from '@/front-components/components/FrontComponentApplicationTokenPairEffect';
 import { FrontComponentLoadErrorToastEffect } from '@/front-components/components/FrontComponentLoadErrorToastEffect';
 import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
@@ -87,6 +88,9 @@ export const FrontComponentRenderer = ({
 
   return (
     <>
+      <FrontComponentApplicationPrefetchEffect
+        frontComponentId={frontComponentId}
+      />
       <FrontComponentLoadErrorToastEffect errorMessage={error?.message} />
       {loading && loadingFallback}
       {!loading &&
