@@ -1,5 +1,7 @@
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
+import { SETTINGS_SEARCH_OBJECT_LABEL_TITLE } from '@/settings/search/constants/SettingsSearchObjectLabelTitle';
 import { type SettingsSearchDestination } from '@/settings/search/types/SettingsSearchDestination';
 import { type SettingsSearchRouteHandle } from '@/settings/search/types/SettingsSearchRouteHandle';
 import { type SettingsSearchRouteMetadata } from '@/settings/search/types/SettingsSearchRouteMetadata';
@@ -7,6 +9,7 @@ import { getAvailableSettingsTabs } from '@/settings/utils/getAvailableSettingsT
 import { isSettingsRouteAccessible } from '@/settings/utils/isSettingsRouteAccessible';
 import { type I18n } from '@lingui/core';
 import { isValidElement, type ComponentProps } from 'react';
+import { generatePath } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { type PermissionFlagType } from '~/generated-metadata/graphql';
@@ -19,11 +22,19 @@ type SettingsSearchRoute = {
   guards: SettingsRouteGuard[];
 };
 
+type SettingsSearchObject = Pick<
+  EnrichedObjectMetadataItem,
+  'namePlural' | 'labelPlural' | 'labelSingular'
+>;
+
 export type SettingsSearchAvailability = {
   permissionFlagMap: Record<PermissionFlagType, boolean>;
   featureFlagsMap: Record<string, boolean>;
   isBillingEnabled: boolean;
+  objectMetadataItems: SettingsSearchObject[];
 };
+
+const OBJECT_PATH_PARAMETER = ':objectNamePlural';
 
 const getRouteGuard = (
   routeObject: WorkspaceRouteObject,
@@ -106,7 +117,18 @@ export const getSettingsSearchDestinations = ({
     routes.map((route) => [route.path, route.metadata]),
   );
 
-  const getBreadcrumbs = (metadata: SettingsSearchRouteMetadata): string[] => {
+  const getTitle = (
+    { title }: SettingsSearchRouteMetadata,
+    objectMetadataItem: SettingsSearchObject | undefined,
+  ) =>
+    title === SETTINGS_SEARCH_OBJECT_LABEL_TITLE
+      ? (objectMetadataItem?.labelPlural ?? '')
+      : i18n._(title);
+
+  const getBreadcrumbs = (
+    metadata: SettingsSearchRouteMetadata,
+    objectMetadataItem: SettingsSearchObject | undefined,
+  ): string[] => {
     if ('section' in metadata) {
       return [i18n._(metadata.section)];
     }
@@ -114,35 +136,60 @@ export const getSettingsSearchDestinations = ({
     const parentMetadata = metadataByPath.get(metadata.parentPath);
 
     return isDefined(parentMetadata)
-      ? [...getBreadcrumbs(parentMetadata), i18n._(parentMetadata.title)]
+      ? [
+          ...getBreadcrumbs(parentMetadata, objectMetadataItem),
+          getTitle(parentMetadata, objectMetadataItem),
+        ]
       : [];
+  };
+
+  const getPathObjects = (path: SettingsPath) => {
+    if (path.includes(OBJECT_PATH_PARAMETER)) {
+      return availability.objectMetadataItems;
+    }
+
+    return path.includes(':') ? [] : [undefined];
   };
 
   return routes
     .filter((route) => isRouteAvailable({ route, availability }))
-    .flatMap(({ path, metadata }) => {
-      const title = i18n._(metadata.title);
-      const breadcrumbs = getBreadcrumbs(metadata);
-      const tabs = getAvailableSettingsTabs({
-        tabs: metadata.tabs ?? [],
-        permissionFlagMap: availability.permissionFlagMap,
-      });
+    .flatMap(({ path, metadata }) =>
+      getPathObjects(path).flatMap((objectMetadataItem) => {
+        const pagePath = isDefined(objectMetadataItem)
+          ? generatePath(getSettingsPath(path), {
+              objectNamePlural: objectMetadataItem.namePlural,
+            })
+          : getSettingsPath(path);
+        const title = getTitle(metadata, objectMetadataItem);
+        const breadcrumbs = getBreadcrumbs(metadata, objectMetadataItem);
+        const isObjectPage =
+          metadata.title === SETTINGS_SEARCH_OBJECT_LABEL_TITLE;
+        const tabs = getAvailableSettingsTabs({
+          tabs: metadata.tabs ?? [],
+          permissionFlagMap: availability.permissionFlagMap,
+        });
 
-      return [
-        {
-          id: `settings-search-${path}`,
-          path: getSettingsPath(path),
-          title,
-          breadcrumbs,
-          keywords: (metadata.keywords ?? []).map((keyword) => i18n._(keyword)),
-        },
-        ...tabs.map((tab) => ({
-          id: `settings-search-${path}#${tab.id}`,
-          path: getSettingsPath(path, undefined, undefined, tab.id),
-          title: i18n._(tab.title),
-          breadcrumbs: [...breadcrumbs, title],
-          keywords: [],
-        })),
-      ];
-    });
+        return [
+          {
+            id: `settings-search-${pagePath}`,
+            path: pagePath,
+            title,
+            breadcrumbs,
+            keywords: [
+              ...(metadata.keywords ?? []).map((keyword) => i18n._(keyword)),
+              ...(isObjectPage && isDefined(objectMetadataItem)
+                ? [objectMetadataItem.labelSingular]
+                : []),
+            ],
+          },
+          ...tabs.map((tab) => ({
+            id: `settings-search-${pagePath}#${tab.id}`,
+            path: `${pagePath}#${tab.id}`,
+            title: i18n._(tab.title),
+            breadcrumbs: [...breadcrumbs, title],
+            keywords: [],
+          })),
+        ];
+      }),
+    );
 };

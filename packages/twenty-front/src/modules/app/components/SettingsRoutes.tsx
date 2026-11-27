@@ -18,6 +18,7 @@ import { SettingsLegacyAccountsRedirect } from '@/settings/app-preferences/compo
 import { APP_PREFERENCES_PATH_BY_LEGACY_ACCOUNTS_PATH } from '@/settings/app-preferences/constants/AppPreferencesPathByLegacyAccountsPath';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
+import { SETTINGS_SEARCH_OBJECT_LABEL_TITLE } from '@/settings/search/constants/SettingsSearchObjectLabelTitle';
 import { type SettingsSearchRouteHandle } from '@/settings/search/types/SettingsSearchRouteHandle';
 import { type SettingsSearchRouteMetadata } from '@/settings/search/types/SettingsSearchRouteMetadata';
 import { msg } from '@lingui/core/macro';
@@ -1203,7 +1204,13 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.ObjectDetail}
         element={<SettingsObjectDetailPage />}
-        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
+        handle={buildSettingsSearchRouteHandle({
+          handle: MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE,
+          settingsSearch: {
+            title: SETTINGS_SEARCH_OBJECT_LABEL_TITLE,
+            parentPath: SettingsPath.Objects,
+          },
+        })}
       />
       <Route
         path={SettingsPath.NewObject}
@@ -1241,17 +1248,38 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.ObjectTranslations}
         element={<SettingsObjectTranslations />}
-        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
+        handle={buildSettingsSearchRouteHandle({
+          handle: MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE,
+          settingsSearch: {
+            title: msg`Translations`,
+            parentPath: SettingsPath.ObjectDetail,
+            keywords: [msg`Edit translations`],
+          },
+        })}
       />
       <Route
         path={SettingsPath.ObjectSearch}
         element={<SettingsObjectSearch />}
-        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
+        handle={buildSettingsSearchRouteHandle({
+          handle: MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE,
+          settingsSearch: {
+            title: msg`Search`,
+            parentPath: SettingsPath.ObjectDetail,
+            keywords: [msg`Configure search`],
+          },
+        })}
       />
       <Route
         path={SettingsPath.ObjectIndexes}
         element={<SettingsObjectIndexes />}
-        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
+        handle={buildSettingsSearchRouteHandle({
+          handle: MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE,
+          settingsSearch: {
+            title: msg`Indexes`,
+            parentPath: SettingsPath.ObjectDetail,
+            keywords: [msg`Manage indexes`],
+          },
+        })}
       />
       <Route
         path={SettingsPath.ObjectFieldTranslations}
