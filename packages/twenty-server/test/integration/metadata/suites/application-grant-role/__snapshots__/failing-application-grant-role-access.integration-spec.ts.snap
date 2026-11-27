@@ -44,6 +44,17 @@ exports[`Applications acting with their grant role should fail should refuse an 
 }
 `;
 
+exports[`Applications acting with their grant role should fail should refuse an Admin member creating an agent turn, where creating is disabled 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission: records of "agentTurn" are not writable through the API",
+}
+`;
+
 exports[`Applications acting with their grant role should fail should refuse an Admin member destroying a record of a confined application object, where destroying is disabled 1`] = `
 {
   "extensions": {
@@ -56,6 +67,17 @@ exports[`Applications acting with their grant role should fail should refuse an 
 `;
 
 exports[`Applications acting with their grant role should fail should refuse an OAuth-only application acting alone reading a company 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+}
+`;
+
+exports[`Applications acting with their grant role should fail should refuse twenty-standard, which has no role, acting for an Admin member reading a company 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
