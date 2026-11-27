@@ -4,10 +4,10 @@ import { type FieldPermission } from '~/generated-metadata/graphql';
 const buildFieldPermission = ({
   id,
   rowLevelPermissionPredicateGroupId,
-}: {
-  id: string;
-  rowLevelPermissionPredicateGroupId?: string | null;
-}): FieldPermission => ({
+}: Pick<
+  FieldPermission,
+  'id' | 'rowLevelPermissionPredicateGroupId'
+>): FieldPermission => ({
   id,
   roleId: 'role-id',
   objectMetadataId: 'object-id',
