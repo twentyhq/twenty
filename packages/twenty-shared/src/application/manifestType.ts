@@ -6,6 +6,7 @@ import { type AgentManifest } from './agentManifestType';
 import { type ApplicationManifest } from './applicationType';
 import { type AssetManifest } from './assetManifestType';
 import { type ConnectionProviderManifest } from './connectionProviderManifestType';
+import { type EventManifest } from './eventManifestType';
 import { type FieldManifest } from './fieldManifestType';
 import {
   type CommandMenuItemManifest,
@@ -50,6 +51,7 @@ export type Manifest = {
   roles: LegacyCompliantRoleManifest[];
   skills: SkillManifest[];
   agents: AgentManifest[];
+  events?: EventManifest[];
   connectionProviders?: ConnectionProviderManifest[];
   messagingProviders?: MessagingProviderManifest[];
   mcpServers?: McpServerManifest[];

@@ -9,6 +9,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     ],
     "commandMenuItems": [],
     "connectionProviders": [],
+    "events": [],
     "fields": [],
     "frontComponents": [],
     "indexes": [],
@@ -62,6 +63,7 @@ The scripts invoke that local build directly, so the SDK binary cannot shadow it
     },
     "commandMenuItems": [],
     "connectionProviders": [],
+    "events": [],
     "fields": [],
     "frontComponents": [],
     "indexes": [],
@@ -144,6 +146,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     ],
     "commandMenuItems": [],
     "connectionProviders": [],
+    "events": [],
     "fields": [],
     "frontComponents": [
       "my.front-component.tsx",
@@ -189,6 +192,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     },
     "commandMenuItems": [],
     "connectionProviders": [],
+    "events": [],
     "fields": [],
     "frontComponents": [
       {
@@ -303,6 +307,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     ],
     "commandMenuItems": [],
     "connectionProviders": [],
+    "events": [],
     "fields": [
       "src/fields/company-can-receive-postcards.field.ts",
       "src/fields/post-card-category.field.ts",
@@ -602,6 +607,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     },
     "commandMenuItems": [],
     "connectionProviders": [],
+    "events": [],
     "fields": [
       {
         "description": "Priority level for the post card (1-10)",
@@ -1421,6 +1427,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     ],
     "commandMenuItems": [],
     "connectionProviders": [],
+    "events": [],
     "fields": [],
     "frontComponents": [
       "src/counter.front-component.tsx",
@@ -1472,6 +1479,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     },
     "commandMenuItems": [],
     "connectionProviders": [],
+    "events": [],
     "fields": [],
     "frontComponents": [
       {

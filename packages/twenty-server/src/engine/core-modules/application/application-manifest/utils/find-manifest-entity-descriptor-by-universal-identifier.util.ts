@@ -96,6 +96,11 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
         (connectionProvider) => connectionProvider.displayName,
       ),
   },
+  eventMetadata: {
+    entityKind: 'event',
+    getCandidates: (manifest) =>
+      toCandidates(manifest.events, (event) => event.label),
+  },
   messagingProvider: {
     entityKind: 'messaging provider',
     getCandidates: (manifest) =>

@@ -104,6 +104,12 @@ export { ai, type GenerateInput } from '@/sdk/logic-function/ai/ai';
 export type { GenerateResult } from 'twenty-shared/application';
 export type { AiRunScope } from 'twenty-shared/ai';
 
+export { emitEvent } from '@/sdk/logic-function/events/emit-event';
+export type {
+  EmitEventInput,
+  EmitEventResult,
+} from 'twenty-shared/application';
+
 export { sendInboxMessage } from '@/sdk/inbox/send-inbox-message';
 export { inboxMention } from '@/sdk/inbox/mentions/inbox-mention';
 export { inboxReferenceRecord } from '@/sdk/inbox/mentions/inbox-reference-record';
