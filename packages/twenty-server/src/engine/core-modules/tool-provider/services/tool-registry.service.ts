@@ -15,6 +15,7 @@ import { type ToolRetrievalOptions } from 'src/engine/core-modules/tool-provider
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
+import { addChatReferencesToToolOutput } from 'src/engine/core-modules/tool-provider/output-transforms/add-chat-references-to-tool-output.util';
 import { compactToolOutput } from 'src/engine/core-modules/tool-provider/output-transforms/compact-tool-output.util';
 import { normalizeToolOutputToJsonValues } from 'src/engine/core-modules/tool-provider/output-transforms/normalize-tool-output-to-json-values.util';
 import { type DatabaseCrudOperation } from 'src/engine/core-modules/tool-provider/constants/database-crud-operation.const';
@@ -25,6 +26,7 @@ import { type ToolCatalogOptions } from 'src/engine/core-modules/tool-provider/t
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
+import { type ToolOutputTransformOptions } from 'src/engine/core-modules/tool-provider/types/tool-output-transform-options.type';
 import { buildToolExecutionFailure } from 'src/engine/core-modules/tool-provider/utils/build-tool-execution-failure.util';
 import { findDatabaseCrudToolIndexEntry } from 'src/engine/core-modules/tool-provider/utils/find-database-crud-tool-index-entry.util';
 import { findSimilarToolNames } from 'src/engine/core-modules/tool-provider/utils/find-similar-tool-names.util';
@@ -148,14 +150,9 @@ export class ToolRegistryService {
   hydrateToolSet(
     descriptors: ToolDescriptor[],
     context: ToolProviderContext,
-    options?: {
-      compactOutput?: boolean;
-      spillLargeOutput?: boolean;
-    },
+    options?: ToolOutputTransformOptions,
   ): ToolSet {
     const toolSet: ToolSet = {};
-    const compactOutput = options?.compactOutput ?? false;
-    const spillLargeOutput = options?.spillLargeOutput ?? false;
 
     for (const descriptor of descriptors) {
       const schema = descriptor.inputSchema as Record<string, unknown>;
@@ -169,19 +166,12 @@ export class ToolRegistryService {
           context,
         );
 
-        const compacted = compactOutput
-          ? (compactToolOutput(result) as ToolOutput)
-          : result;
-
-        const inlined = spillLargeOutput
-          ? await this.toolOutputSpillService.spillIfTooLarge(
-              compacted,
-              { workspaceId: context.workspaceId },
-              { toolName: descriptor.name },
-            )
-          : compacted;
-
-        return normalizeToolOutputToJsonValues(inlined);
+        return this.transformToolOutput({
+          output: result,
+          toolName: descriptor.name,
+          workspaceId: context.workspaceId,
+          options,
+        });
       };
 
       toolSet[descriptor.name] = {
@@ -224,10 +214,7 @@ export class ToolRegistryService {
   async getToolsByName(
     names: string[],
     context: ToolContext,
-    options?: {
-      compactOutput?: boolean;
-      spillLargeOutput?: boolean;
-    },
+    options?: ToolOutputTransformOptions,
   ): Promise<ToolSet> {
     const fullContext = this.buildContextFromToolContext(context);
 
@@ -248,10 +235,7 @@ export class ToolRegistryService {
         inputSchema: schemas.get(entry.name)!,
       }));
 
-    return this.hydrateToolSet(descriptors, fullContext, {
-      compactOutput: options?.compactOutput,
-      spillLargeOutput: options?.spillLargeOutput,
-    });
+    return this.hydrateToolSet(descriptors, fullContext, options);
   }
 
   async getToolInfo(
@@ -343,7 +327,7 @@ export class ToolRegistryService {
     toolName: string,
     args: Record<string, unknown> | undefined,
     context: ToolContext,
-    options?: { compactOutput?: boolean; spillLargeOutput?: boolean },
+    options?: ToolOutputTransformOptions,
   ): Promise<ToolOutput> {
     return this.executeOrBuildFailure({
       toolName,
@@ -440,7 +424,7 @@ export class ToolRegistryService {
     entry: ToolIndexEntry;
     args: Record<string, unknown> | undefined;
     fullContext: ToolProviderContext;
-    options?: { compactOutput?: boolean; spillLargeOutput?: boolean };
+    options?: ToolOutputTransformOptions;
   }): Promise<ToolOutput> {
     const result = await this.toolExecutorService.dispatch(
       entry,
@@ -448,15 +432,38 @@ export class ToolRegistryService {
       fullContext,
     );
 
+    return this.transformToolOutput({
+      output: result,
+      toolName: entry.name,
+      workspaceId: fullContext.workspaceId,
+      options,
+    });
+  }
+
+  private async transformToolOutput({
+    output,
+    toolName,
+    workspaceId,
+    options,
+  }: {
+    output: ToolOutput;
+    toolName: string;
+    workspaceId: string;
+    options?: ToolOutputTransformOptions;
+  }): Promise<ToolOutput> {
+    const withChatReferences = options?.shouldAddChatReferences
+      ? addChatReferencesToToolOutput(output)
+      : output;
+
     const compacted = options?.compactOutput
-      ? (compactToolOutput(result) as ToolOutput)
-      : result;
+      ? (compactToolOutput(withChatReferences) as ToolOutput)
+      : withChatReferences;
 
     const inlined = options?.spillLargeOutput
       ? await this.toolOutputSpillService.spillIfTooLarge(
           compacted,
-          { workspaceId: fullContext.workspaceId },
-          { toolName: entry.name },
+          { workspaceId },
+          { toolName },
         )
       : compacted;
 

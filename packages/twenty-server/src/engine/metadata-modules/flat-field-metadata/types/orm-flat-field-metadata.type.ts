@@ -14,6 +14,7 @@ export const ORM_FLAT_FIELD_METADATA_KEYS = [
   'defaultValue',
   'fieldMetadataOptionUniversalIdentifiers',
   'settings',
+  'formula',
   'isNullable',
   'isUnique',
   'relationTargetFieldMetadataId',

@@ -13,6 +13,8 @@ const RELATION_UNSUPPORTED_COMPARED_PROPERTIES: Record<string, string> = {
     'RELATION and MORPH_RELATION are listed in FIELD_METADATA_TYPES_WITHOUT_DEFAULT_VALUE, so both sides of a comparison are always null',
   options:
     'options exist for RATING, SELECT and MULTI_SELECT only, so both sides of a comparison are always null',
+  formula:
+    'validateFlatFieldMetadataFormula refuses a formula on a type outside FORMULA_FIELD_METADATA_TYPES, so both sides of a comparison are always null',
   isUnique:
     'isUnique is derived from the single field unique indexes a relation never has, so the stored value is always false',
   isSearchable:

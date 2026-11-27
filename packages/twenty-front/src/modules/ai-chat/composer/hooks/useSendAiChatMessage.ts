@@ -8,6 +8,7 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai-chat/composer/constants/AiChatRestoreEditorContentEventName';
 import { useOpenNewAiChatAsDirectMessage } from '@/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage';
 import { useSendAiChatMessageToThread } from '@/ai-chat/composer/hooks/useSendAiChatMessageToThread';
+import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/composer/states/aiChatComposerAttachmentsFamilyState';
 import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/composer/states/aiChatComposerNewThreadRecipientsFamilyState';
 import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/composer/states/aiChatComposerUploadingFilesFamilyState';
 import { type AiChatRestoreEditorContentEventDetail } from '@/ai-chat/composer/types/AiChatRestoreEditorContentEventDetail';
@@ -131,27 +132,28 @@ export const useSendAiChatMessage = () => {
         });
 
       if (isDefined(directMessageWorkspaceMemberId)) {
-        const directMessageThreadId = await openNewAiChatAsDirectMessage({
+        const directMessage = await openNewAiChatAsDirectMessage({
           newChatThreadId: threadId,
           workspaceMemberId: directMessageWorkspaceMemberId,
           serializedDraft: serializedContentToSend,
         });
 
-        if (!isDefined(directMessageThreadId)) {
+        if (!isDefined(directMessage)) {
           return;
         }
 
         if (isAiChatInstanceShowingThread({ store, instanceId, threadId })) {
-          onThreadChange(directMessageThreadId);
+          onThreadChange(directMessage.directMessageThreadId);
         }
 
         await sendAiChatMessageToThread({
-          threadId: directMessageThreadId,
+          threadId: directMessage.directMessageThreadId,
           isNewChat: false,
           isDirectMessage: true,
           newThreadRecipients: undefined,
           serializedContentToSend,
           contentToSend,
+          attachments: directMessage.attachments,
           participantMentions: [],
           initialRecipients: [],
           isAssistantMentioned: false,
@@ -167,7 +169,7 @@ export const useSendAiChatMessage = () => {
         aiChatComposerUploadingFilesFamilyState.atomFamily({ threadId }),
       );
 
-      if (!isDirectMessage && aiChatComposerUploadingFiles.length > 0) {
+      if (aiChatComposerUploadingFiles.length > 0) {
         enqueueToast({
           status: 'error',
           children: t`Wait for the attachments to finish uploading.`,
@@ -189,6 +191,13 @@ export const useSendAiChatMessage = () => {
         null,
       );
 
+      const attachmentsAtom = aiChatComposerAttachmentsFamilyState.atomFamily({
+        threadId,
+      });
+      const attachments = store.get(attachmentsAtom);
+
+      store.set(attachmentsAtom, []);
+
       dispatchBrowserEvent<AiChatRestoreEditorContentEventDetail>(
         AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
         { threadId, content: '' },
@@ -201,6 +210,7 @@ export const useSendAiChatMessage = () => {
         newThreadRecipients,
         serializedContentToSend,
         contentToSend,
+        attachments,
         participantMentions,
         initialRecipients,
         isAssistantMentioned,

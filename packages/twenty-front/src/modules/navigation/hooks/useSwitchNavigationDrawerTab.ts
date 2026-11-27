@@ -167,5 +167,9 @@ export const useSwitchNavigationDrawerTab = () => {
     }
   };
 
-  return { switchNavigationDrawerTab, switchToNavigationMenuTab };
+  return {
+    switchNavigationDrawerTab,
+    switchToNavigationMenu,
+    switchToNavigationMenuTab,
+  };
 };

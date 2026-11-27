@@ -5,13 +5,15 @@ import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { ChatMessageTime } from '@/chat/components/ChatMessageTime';
+import { CHAT_MESSAGE_HEADER_BOTTOM_MARGIN } from '@/chat/constants/ChatMessageHeaderBottomMargin';
+import { CHAT_MESSAGE_HEADER_HEIGHT } from '@/chat/constants/ChatMessageHeaderHeight';
 
 const StyledHeader = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  height: ${themeCssVariables.spacing[4]};
-  margin-bottom: ${themeCssVariables.spacing[3]};
+  height: ${CHAT_MESSAGE_HEADER_HEIGHT};
+  margin-bottom: ${CHAT_MESSAGE_HEADER_BOTTOM_MARGIN};
   min-width: 0;
 `;
 

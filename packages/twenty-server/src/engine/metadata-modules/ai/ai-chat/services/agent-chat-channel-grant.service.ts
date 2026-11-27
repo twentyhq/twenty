@@ -21,6 +21,7 @@ import { acquireAgentChatChannelGrantLocksForThreadWriteOrThrow } from 'src/engi
 import { acquireAgentChatChannelGrantLocks } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks.util';
 import { buildAgentChatChannelRuleGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-rule-grants.util';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
+import { InboxObjectNamesResolverService } from 'src/engine/metadata-modules/ai/ai-history/services/inbox-object-names-resolver.service';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
@@ -45,6 +46,7 @@ export class AgentChatChannelGrantService {
     private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly workspaceQueueService: MessageQueueService,
+    private readonly inboxObjectNamesResolverService: InboxObjectNamesResolverService,
   ) {}
 
   async enqueueChannelGrantsRewrite(
@@ -157,9 +159,11 @@ export class AgentChatChannelGrantService {
       return;
     }
 
+    const { agentChatThread: threadObjectName } =
+      await this.inboxObjectNamesResolverService.resolve(workspaceId);
     const threadRepository =
       transactionScope.getRepositoryWithoutPermissionChecks<AgentChatThreadWorkspaceEntity>(
-        'agentChatThread',
+        threadObjectName,
         { shouldSkipEventEmission: true },
       );
 

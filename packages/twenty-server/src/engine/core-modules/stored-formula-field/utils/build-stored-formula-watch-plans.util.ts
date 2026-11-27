@@ -1,7 +1,7 @@
 import {
-  getFieldMetadataFormulaBindings,
   getFieldMetadataFormulaEvaluation,
   isDefined,
+  listFieldMetadataFormulaFieldNodes,
 } from 'twenty-shared/utils';
 
 import {
@@ -72,7 +72,7 @@ export const buildStoredFormulaWatchPlans = ({
 
     return plan;
   };
-  const findBoundFlatFieldMetadata = (universalIdentifier?: string) =>
+  const findFlatFieldMetadata = (universalIdentifier?: string) =>
     isDefined(universalIdentifier)
       ? findFlatEntityByUniversalIdentifier({
           flatEntityMaps: flatFieldMetadataMaps,
@@ -80,34 +80,37 @@ export const buildStoredFormulaWatchPlans = ({
         })
       : undefined;
 
-  for (const { objectMetadataId, settings } of Object.values(
+  for (const { objectMetadataId, formula } of Object.values(
     flatFieldMetadataMaps.byUniversalIdentifier,
   ).filter(isDefined)) {
-    if (getFieldMetadataFormulaEvaluation({ settings }) !== 'STORED') {
+    if (getFieldMetadataFormulaEvaluation({ formula }) !== 'STORED') {
       continue;
     }
 
-    const bindings = getFieldMetadataFormulaBindings({ settings }) ?? {};
     const watchedOwnFieldNames = (watchedOwnFieldNamesByObjectMetadataId[
       objectMetadataId
     ] ??= new Set());
 
-    for (const [path, universalIdentifier] of Object.entries(bindings)) {
-      const [rootSegment, memberSegment] = path.split('.');
-      const rootFlatFieldMetadata = findBoundFlatFieldMetadata(
-        bindings[rootSegment ?? ''],
+    for (const {
+      fieldUniversalIdentifier,
+      relationFieldUniversalIdentifier,
+    } of listFieldMetadataFormulaFieldNodes({ formula })) {
+      const readFlatFieldMetadata = findFlatFieldMetadata(
+        fieldUniversalIdentifier,
       );
+      const relationFlatFieldMetadata = isDefined(
+        relationFieldUniversalIdentifier,
+      )
+        ? findFlatFieldMetadata(relationFieldUniversalIdentifier)
+        : readFlatFieldMetadata;
+      const readFieldName = isDefined(relationFieldUniversalIdentifier)
+        ? readFlatFieldMetadata?.name
+        : undefined;
       const aggregatedRelation = resolveFormulaAggregatedRelation({
-        relationFlatFieldMetadata: rootFlatFieldMetadata,
+        relationFlatFieldMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       });
-      const lookedUpRelation = resolveFormulaLookedUpRelation({
-        relationFlatFieldMetadata: rootFlatFieldMetadata,
-        flatObjectMetadataMaps,
-      });
-      const boundFieldName =
-        findBoundFlatFieldMetadata(universalIdentifier)?.name;
 
       if (isDefined(aggregatedRelation)) {
         const plan = getOrCreateWatchPlan({
@@ -118,36 +121,36 @@ export const buildStoredFormulaWatchPlans = ({
           joinColumnName: aggregatedRelation.joinColumnName,
         });
 
-        plan.watchedFieldNames.add(aggregatedRelation.joinColumnName);
-
-        if (isDefined(memberSegment) && isDefined(boundFieldName)) {
-          plan.watchedFieldNames.add(boundFieldName);
-        }
+        [aggregatedRelation.joinColumnName, readFieldName]
+          .filter(isDefined)
+          .forEach((fieldName) => plan.watchedFieldNames.add(fieldName));
 
         continue;
       }
 
-      if (isDefined(memberSegment)) {
-        if (isDefined(lookedUpRelation) && isDefined(boundFieldName)) {
-          getOrCreateWatchPlan({
-            kind: 'lookedUp',
-            watchedObjectMetadataId:
-              lookedUpRelation.parentFlatObjectMetadata.id,
-            objectMetadataId,
-            joinColumnName: lookedUpRelation.joinColumnName,
-          }).watchedFieldNames.add(boundFieldName);
-        }
+      const lookedUpRelation = resolveFormulaLookedUpRelation({
+        relationFlatFieldMetadata,
+        flatObjectMetadataMaps,
+      });
 
-        continue;
+      if (isDefined(relationFlatFieldMetadata)) {
+        watchedOwnFieldNames.add(relationFlatFieldMetadata.name);
       }
 
-      if (isDefined(boundFieldName)) {
-        watchedOwnFieldNames.add(boundFieldName);
+      if (!isDefined(lookedUpRelation)) {
+        continue;
       }
 
       // Update events may name a changed relation by its join column only
-      if (isDefined(lookedUpRelation)) {
-        watchedOwnFieldNames.add(lookedUpRelation.joinColumnName);
+      watchedOwnFieldNames.add(lookedUpRelation.joinColumnName);
+
+      if (isDefined(readFieldName)) {
+        getOrCreateWatchPlan({
+          kind: 'lookedUp',
+          watchedObjectMetadataId: lookedUpRelation.parentFlatObjectMetadata.id,
+          objectMetadataId,
+          joinColumnName: lookedUpRelation.joinColumnName,
+        }).watchedFieldNames.add(readFieldName);
       }
     }
   }

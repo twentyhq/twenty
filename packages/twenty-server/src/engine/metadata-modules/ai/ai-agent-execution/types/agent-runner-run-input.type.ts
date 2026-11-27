@@ -21,7 +21,7 @@ export type AgentRunnerRunInput = {
   // what the run is asked and who asked it; absent when the run continues its conversation without a new message
   prompt: {
     messages: RunAgentMessage[];
-    senderUserWorkspaceId: string | null;
+    senderWorkspaceMemberId: string | null;
     senderApplicationId: string | null;
   } | null;
   executionContext: AgentRunExecutionContext;

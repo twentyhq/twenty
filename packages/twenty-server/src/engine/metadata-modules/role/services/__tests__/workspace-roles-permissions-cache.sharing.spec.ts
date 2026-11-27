@@ -16,7 +16,17 @@ const compute = ({
   return service.computeForCache({
     workspaceId: 'workspace',
     rows: {
-      role: [{ id: 'role', canAccessAllTools, canUpdateAllSettings }],
+      role: [
+        {
+          id: 'role',
+          canAccessAllTools,
+          canUpdateAllSettings,
+          canReadAllObjectRecords: true,
+          canUpdateAllObjectRecords: true,
+          canSoftDeleteAllObjectRecords: true,
+          canDestroyAllObjectRecords: true,
+        },
+      ],
       objectMetadata: [
         {
           id: 'thread',

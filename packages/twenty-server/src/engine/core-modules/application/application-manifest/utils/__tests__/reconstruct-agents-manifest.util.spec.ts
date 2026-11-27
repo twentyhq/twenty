@@ -2,6 +2,7 @@ import {
   type AgentManifest,
   getRoleTargetUniversalIdentifier,
 } from 'twenty-shared/application';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { fromAgentManifestToUniversalFlatRoleTarget } from 'src/engine/core-modules/application/application-manifest/converters/from-agent-manifest-to-universal-flat-role-target.util';
 import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-role.util';
@@ -12,8 +13,11 @@ import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/a
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 const APP_ID = 'application-id';
 const STANDARD_APP_ID = 'standard-application-id';
@@ -383,4 +387,105 @@ describe('reconstructAgentsManifest', () => {
       });
     },
   );
+});
+
+describe('reconstructAgentsManifest trigger conditions', () => {
+  const CONDITION_AGENT_UNIVERSAL_IDENTIFIER =
+    '30000000-0000-4000-8000-00000000000b';
+  const CONDITION_TRIGGER_ID = '50000000-0000-4000-8000-000000000002';
+
+  const buildConditionMaps = (conditionTree: object): AllFlatEntityMaps => {
+    const maps = buildMaps({
+      agents: [
+        buildFlatAgent(CONDITION_AGENT_UNIVERSAL_IDENTIFIER, {
+          triggers: [
+            {
+              id: CONDITION_TRIGGER_ID,
+              type: 'DATABASE_EVENT',
+              settings: { eventName: 'company.updated', conditionTree },
+              isActive: true,
+              instructions: null,
+            },
+          ],
+        }),
+      ],
+    });
+
+    addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
+      flatEntity: getFlatObjectMetadataMock({
+        id: 'company-id',
+        universalIdentifier: 'company',
+        nameSingular: 'company',
+        fieldIds: ['employees-id'],
+      }),
+      flatEntityMapsToMutate: maps.flatObjectMetadataMaps,
+    });
+    addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
+      flatEntity: getFlatFieldMetadataMock({
+        id: 'employees-id',
+        universalIdentifier: 'employees',
+        objectMetadataId: 'company-id',
+        objectMetadataUniversalIdentifier: 'company',
+        type: FieldMetadataType.NUMBER,
+        name: 'headcount',
+      }),
+      flatEntityMapsToMutate: maps.flatFieldMetadataMaps,
+    });
+
+    return maps;
+  };
+
+  const reconstruct = (conditionTree: object) => {
+    const maps = buildConditionMaps(conditionTree);
+
+    return reconstructAgentsManifest({
+      applicationAllFlatEntityMaps: maps,
+      allFlatEntityMaps: maps,
+      resolvableRoleUniversalIdentifiers: new Set(),
+    });
+  };
+
+  it('should export a condition printed with the current field names', () => {
+    const { agents: conditionAgents } = reconstruct({
+      type: 'COMPARISON',
+      operator: 'GREATER_THAN',
+      left: { type: 'FIELD', fieldUniversalIdentifier: 'employees' },
+      right: { type: 'LITERAL', value: 100 },
+    });
+
+    expect(conditionAgents).toMatchObject([
+      {
+        triggers: [
+          {
+            universalIdentifier: CONDITION_TRIGGER_ID,
+            settings: {
+              eventName: 'company.updated',
+              condition: 'headcount > 100',
+            },
+          },
+        ],
+      },
+    ]);
+    expect(conditionAgents[0].triggers?.[0].settings).not.toHaveProperty(
+      'conditionTree',
+    );
+  });
+
+  it('should not export a condition reading a field that is gone', () => {
+    const { agents: conditionAgents, coverage: conditionCoverage } =
+      reconstruct({
+        type: 'FUNCTION_CALL',
+        functionName: 'isDefined',
+        arguments: [{ type: 'FIELD', fieldUniversalIdentifier: 'deleted' }],
+      });
+
+    expect(conditionAgents).toEqual([]);
+    expect(conditionCoverage).toEqual([
+      expect.objectContaining({
+        universalIdentifier: CONDITION_AGENT_UNIVERSAL_IDENTIFIER,
+        status: ApplicationExportCoverageStatus.UNSUPPORTED,
+        reason: expect.stringMatching(/missingField_deleted/),
+      }),
+    ]);
+  });
 });

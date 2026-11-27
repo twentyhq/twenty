@@ -1,31 +1,29 @@
-import { useLingui } from '@lingui/react/macro';
-import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
+import { styled } from '@linaria/react';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 
-import { NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT } from '@/navigation-menu-item/common/constants/NavigationMenuSectionVisibleItemLimit';
-import { isNavigationMenuSectionShowingAllItemsFamilyState } from '@/navigation-menu-item/common/states/isNavigationMenuSectionShowingAllItemsFamilyState';
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
 import { useNavigationMenuContainerItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuContainerItems';
+import { getNavigationMenuSectionNavigationSectionId } from '@/navigation-menu-item/display/utils/getNavigationMenuSectionNavigationSectionId';
+import { getNavigationSectionVisibleItems } from '@/navigation-menu-item/display/utils/getNavigationSectionVisibleItems';
 import { NavigationMenuItemSection } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemSection';
 import { StyledNavigationMenuItemSectionContentGapOffset } from '@/navigation-menu-item/display/sections/components/StyledNavigationMenuItemSectionContentGapOffset';
 import { WorkspaceSectionListReadOnly } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListReadOnly';
-import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { NavigationMenuSectionSeeMore } from '@/navigation-menu-item/display/sections/components/NavigationMenuSectionSeeMore';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
-import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
+
+const StyledSectionContextMenuTarget = styled.div`
+  display: contents;
+`;
 
 type NavigationMenuSectionProps = {
-  section: Pick<NamedNavigationMenuItem, 'id' | 'name'>;
+  section: Pick<NamedNavigationMenuItem, 'id' | 'name' | 'visibleItemLimit'>;
 };
 
 export const NavigationMenuSection = ({
   section,
 }: NavigationMenuSectionProps) => {
-  const { t } = useLingui();
-  const [isShowingAllItems, setIsShowingAllItems] = useAtomFamilyState(
-    isNavigationMenuSectionShowingAllItemsFamilyState,
-    section.id,
-  );
   const { isNavigationSectionOpen, toggleNavigationSection } =
-    useNavigationSection(`navigation-menu-section-${section.id}`);
+    useNavigationSection(getNavigationMenuSectionNavigationSectionId(section));
   const { topLevelItems, folderChildrenById } = useNavigationMenuContainerItems(
     section.id,
   );
@@ -34,39 +32,47 @@ export const NavigationMenuSection = ({
     return null;
   }
 
-  const hasHiddenItems =
-    topLevelItems.length > NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT;
-
-  const displayedItems =
-    hasHiddenItems && !isShowingAllItems
-      ? topLevelItems.slice(0, NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT)
-      : topLevelItems;
+  const { visibleItems, hiddenItems, hasHiddenItems } =
+    getNavigationSectionVisibleItems({
+      items: topLevelItems,
+      visibleItemLimit: section.visibleItemLimit,
+    });
+  const folderCount = topLevelItems.filter(
+    (item) => item.type === NavigationMenuItemType.FOLDER,
+  ).length;
 
   return (
-    <NavigationMenuItemSection
-      title={section.name}
-      isOpen={isNavigationSectionOpen}
-      onToggle={() => toggleNavigationSection()}
-      contentWrapper={(children) => (
-        <StyledNavigationMenuItemSectionContentGapOffset>
-          {children}
-        </StyledNavigationMenuItemSectionContentGapOffset>
-      )}
+    <StyledSectionContextMenuTarget
+      data-navigation-menu-section-id={section.id}
     >
-      <WorkspaceSectionListReadOnly
-        filteredItems={displayedItems}
-        folderChildrenById={folderChildrenById}
-      />
-      {hasHiddenItems && (
-        <NavigationDrawerItem
-          label={isShowingAllItems ? t`See less` : t`See more`}
-          Icon={isShowingAllItems ? IconChevronUp : IconChevronDown}
-          variant="tertiary"
-          preventCollapseOnMobile
-          triggerEvent="CLICK"
-          onClick={() => setIsShowingAllItems(!isShowingAllItems)}
+      <NavigationMenuItemSection
+        title={section.name}
+        isOpen={isNavigationSectionOpen}
+        onToggle={() => toggleNavigationSection()}
+        contentWrapper={(children) => (
+          <StyledNavigationMenuItemSectionContentGapOffset>
+            {children}
+          </StyledNavigationMenuItemSectionContentGapOffset>
+        )}
+      >
+        <WorkspaceSectionListReadOnly
+          filteredItems={visibleItems}
+          folderChildrenById={folderChildrenById}
+          folderCount={folderCount}
         />
-      )}
-    </NavigationMenuItemSection>
+        {hasHiddenItems && (
+          <NavigationMenuSectionSeeMore
+            sectionId={section.id}
+            hiddenItems={
+              <WorkspaceSectionListReadOnly
+                filteredItems={hiddenItems}
+                folderChildrenById={folderChildrenById}
+                folderCount={folderCount}
+              />
+            }
+          />
+        )}
+      </NavigationMenuItemSection>
+    </StyledSectionContextMenuTarget>
   );
 };

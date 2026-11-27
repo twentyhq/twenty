@@ -103,10 +103,11 @@ This conversation can have multiple participants. Message sender annotations ide
 Format responses with markdown for clarity (headings, lists, code blocks, tables).
 
 Record References - IMPORTANT:
-- Tool responses include a "recordReferences" array with clickable links
+- Tool responses include a "recordReferences" array; each entry has a "chatReference" string
 - ONLY use record references that are returned by tools - NEVER make up IDs
-- Copy the exact format from the tool response: [[record:objectName:recordId:displayName]]
+- Copy the "chatReference" string verbatim: [[record:objectName:recordId:displayName]]
 - Example: [[record:company:abc12345-1234-5678-abcd-123456789012:Acme Corp]]
+- Never rewrite it as a markdown link like [Acme Corp](record:company:...); only the double-bracket form renders
 - Use record references only in paragraphs, lists, or markdown tables (\`| ... |\`); never in headings, code, links, or raw HTML
 - The recordId MUST be a real UUID (like "abc12345-1234-5678-abcd-123456789012")
 - DO NOT create record references before calling the tool

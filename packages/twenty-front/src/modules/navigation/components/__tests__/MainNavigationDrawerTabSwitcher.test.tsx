@@ -191,6 +191,7 @@ describe('MainNavigationDrawerTabSwitcher', () => {
       .mockReturnValue(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     jest.mocked(useSwitchNavigationDrawerTab).mockReturnValue({
       switchNavigationDrawerTab: mockSwitchNavigationDrawerTab,
+      switchToNavigationMenu: jest.fn(),
       switchToNavigationMenuTab: mockSwitchToNavigationMenuTab,
     });
     jest.mocked(useWorkspaceNavigationMenuContainers).mockReturnValue([]);
@@ -304,6 +305,60 @@ describe('MainNavigationDrawerTabSwitcher', () => {
     expect(
       screen.queryByRole('group', { name: 'Navigation modes' }),
     ).not.toBeInTheDocument();
+  });
+
+  it('hides the bottom tabs when only one tab is visible outside edit mode', () => {
+    jest.mocked(useNavigationDrawerTabs).mockReturnValue([
+      {
+        Icon: IconHome,
+        label: 'Home',
+        tab: NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
+      },
+    ]);
+
+    renderTabSwitcher({ isPinnedToBottom: true });
+
+    expect(
+      screen.queryByRole('group', { name: 'Navigation modes' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('keeps the bottom tabs when only one tab is visible in edit mode', () => {
+    jest.mocked(useNavigationDrawerTabs).mockReturnValue([
+      {
+        Icon: IconHome,
+        label: 'Home',
+        tab: NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
+      },
+    ]);
+
+    renderTabSwitcher({
+      isPinnedToBottom: true,
+      isLayoutCustomizationModeEnabled: true,
+    });
+
+    expect(
+      screen.getByRole('group', { name: 'Navigation modes' }),
+    ).toBeInTheDocument();
+  });
+
+  it('keeps the bottom tabs when a sidebar tab is visible next to Home', () => {
+    jest.mocked(useNavigationDrawerTabs).mockReturnValue([
+      {
+        Icon: IconHome,
+        label: 'Home',
+        tab: NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
+      },
+    ]);
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+
+    renderTabSwitcher({ isPinnedToBottom: true });
+
+    expect(
+      screen.getByRole('group', { name: 'Navigation modes' }),
+    ).toBeInTheDocument();
   });
 
   it('opens a sidebar tab from its button', async () => {

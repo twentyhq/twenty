@@ -34,5 +34,6 @@ export const buildSearchVectorFlatFieldMetadataForCustomObject = ({
     createdAt: now,
     updatedAt: now,
     universalSettings: null,
+    formula: null,
   };
 };

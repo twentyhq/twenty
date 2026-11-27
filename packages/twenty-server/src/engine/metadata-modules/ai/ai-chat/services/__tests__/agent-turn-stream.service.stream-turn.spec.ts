@@ -79,10 +79,14 @@ const streamPartsWithoutClaim = ({
   service,
   parts = REPLY_PARTS,
   streamChannelId,
+  isBackgroundRun = true,
+  canEndWithToolsOnly = false,
 }: {
   service: AgentTurnStreamService;
   parts?: Record<string, unknown>[];
   streamChannelId?: string;
+  isBackgroundRun?: boolean;
+  canEndWithToolsOnly?: boolean;
 }) =>
   service.streamTurn({
     workspaceId: 'workspace-id',
@@ -106,7 +110,8 @@ const streamPartsWithoutClaim = ({
       },
     }),
     completeTurn: async () => ({ modelId: 'model-id', stopReason: null }),
-    isBackgroundRun: true,
+    isBackgroundRun,
+    canEndWithToolsOnly,
   });
 
 const expectFailureRecordedOnce = (finish: jest.Mock) => {
@@ -284,6 +289,65 @@ describe('AgentTurnStreamService streamTurn usage', () => {
       outputTokens: 8,
       conversationSize: 120,
     });
+  });
+});
+
+describe('AgentTurnStreamService streamTurn of a chat turn that only ran tools', () => {
+  const buildToolsOnlyParts = (finishReason: string) => [
+    { type: 'start' },
+    { type: 'start-step', request: {}, warnings: [] },
+    {
+      type: 'tool-call',
+      toolCallId: 'call-1',
+      toolName: 'update_record',
+      input: {},
+    },
+    {
+      type: 'tool-result',
+      toolCallId: 'call-1',
+      toolName: 'update_record',
+      input: {},
+      output: { success: true },
+    },
+    { type: 'finish', finishReason, totalUsage: {} },
+  ];
+
+  it('completes the turn when the model ended it after its tools', async () => {
+    const finish = jest.fn().mockResolvedValue(true);
+    const service = await buildService({ finish });
+
+    await streamPartsWithoutClaim({
+      service,
+      isBackgroundRun: false,
+      canEndWithToolsOnly: true,
+      parts: buildToolsOnlyParts('stop'),
+    });
+
+    expect(finish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        status: AgentTurnStatus.COMPLETED,
+        error: null,
+      }),
+    );
+  });
+
+  it('fails the turn when the step limit stopped the model mid tool calls', async () => {
+    const finish = jest.fn().mockResolvedValue(true);
+    const service = await buildService({ finish });
+
+    await streamPartsWithoutClaim({
+      service,
+      isBackgroundRun: false,
+      canEndWithToolsOnly: true,
+      parts: buildToolsOnlyParts('tool-calls'),
+    });
+
+    expect(finish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        status: AgentTurnStatus.FAILED,
+        error: expect.objectContaining({ code: 'NO_TEXT' }),
+      }),
+    );
   });
 });
 

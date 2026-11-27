@@ -6,14 +6,28 @@ import { AgentChatThreadCreateManyPostQueryHook } from 'src/engine/metadata-modu
 import { AgentChatThreadCreateOnePostQueryHook } from 'src/engine/metadata-modules/ai/ai-chat/query-hooks/agent-chat-thread-create-one.post-query.hook';
 import { AgentChatThreadDeleteManyPostQueryHook } from 'src/engine/metadata-modules/ai/ai-chat/query-hooks/agent-chat-thread-delete-many.post-query.hook';
 import { AgentChatThreadDeleteOnePostQueryHook } from 'src/engine/metadata-modules/ai/ai-chat/query-hooks/agent-chat-thread-delete-one.post-query.hook';
+import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
+import { InboxThreadCreateManyPostQueryHook } from 'src/engine/metadata-modules/ai/ai-chat/query-hooks/inbox-thread-create-many.post-query.hook';
+import { InboxThreadCreateOnePostQueryHook } from 'src/engine/metadata-modules/ai/ai-chat/query-hooks/inbox-thread-create-one.post-query.hook';
+import { InboxThreadDeleteManyPostQueryHook } from 'src/engine/metadata-modules/ai/ai-chat/query-hooks/inbox-thread-delete-many.post-query.hook';
+import { InboxThreadDeleteOnePostQueryHook } from 'src/engine/metadata-modules/ai/ai-chat/query-hooks/inbox-thread-delete-one.post-query.hook';
 
 @Module({
-  imports: [AgentChatThreadLifecycleModule, AgentChatThreadModule],
+  imports: [
+    AgentChatThreadLifecycleModule,
+    AgentChatThreadModule,
+    AgentHistoryModule,
+  ],
   providers: [
+    // TODO(@bosiraphael): remove the four AgentChatThread hooks with IS_INBOX_OBJECT_NAMING_ENABLED
     AgentChatThreadCreateOnePostQueryHook,
     AgentChatThreadCreateManyPostQueryHook,
     AgentChatThreadDeleteOnePostQueryHook,
     AgentChatThreadDeleteManyPostQueryHook,
+    InboxThreadCreateOnePostQueryHook,
+    InboxThreadCreateManyPostQueryHook,
+    InboxThreadDeleteOnePostQueryHook,
+    InboxThreadDeleteManyPostQueryHook,
   ],
 })
 export class AgentChatThreadQueryHookModule {}
