@@ -1,4 +1,5 @@
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
+import { useApplicationsWithPreferences } from '@/settings/app-preferences/hooks/useApplicationsWithPreferences';
 import { formatQueueJobProgressLabel } from '@/queue-job/utils/formatQueueJobProgressLabel';
 import { isOAuthOnlyApplication } from '@/settings/applications/utils/isOAuthOnlyApplication';
 import { SettingsApplicationConnectedMembersSection } from '@/settings/applications/components/SettingsApplicationConnectedMembersSection';
@@ -15,7 +16,12 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { IconArrowUp, IconInfoCircle, IconShoppingBag } from 'twenty-ui/icon';
+import {
+  IconArrowUp,
+  IconInfoCircle,
+  IconShoppingBag,
+  IconUser,
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/components/layout';
 import {
@@ -83,6 +89,19 @@ export const SettingsApplicationDetailGeneralTab = ({
     PermissionFlagType.APPLICATIONS,
   );
 
+  const canAccessApplicationPreferences = useHasPermissionFlag(
+    PermissionFlagType.CONNECTED_ACCOUNTS,
+  );
+
+  const { applicationsWithPreferences } = useApplicationsWithPreferences();
+
+  const hasApplicationPreferences =
+    canAccessApplicationPreferences &&
+    applicationsWithPreferences.some(
+      (applicationWithPreferences) =>
+        applicationWithPreferences.application.id === application.id,
+    );
+
   const { content, error: contentError } = useInstalledApplicationContent({
     applicationId: application.id,
   });
@@ -118,6 +137,23 @@ export const SettingsApplicationDetailGeneralTab = ({
             {isMarketplaceApplication
               ? t`View in marketplace`
               : t`See app page`}
+          </Button>,
+        ]
+      : []),
+    ...(hasApplicationPreferences
+      ? [
+          <Button
+            key="preferences"
+            startIcon={<IconUser />}
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              navigateSettings(SettingsPath.AppPreferencesApp, {
+                applicationId: application.id,
+              })
+            }
+          >
+            {t`Open app preferences`}
           </Button>,
         ]
       : []),

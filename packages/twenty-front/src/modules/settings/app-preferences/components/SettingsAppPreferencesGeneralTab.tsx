@@ -2,8 +2,15 @@ import { SettingsAppPreferencesConnectionsTab } from '@/settings/app-preferences
 import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
 import { useApplicationOverview } from '@/settings/applications/hooks/useApplicationOverview';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useLingui } from '@lingui/react/macro';
+import { SettingsPath } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
+import { IconSettings } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type SettingsAppPreferencesGeneralTabProps = {
   application: ApplicationWithPreferences['application'];
@@ -18,6 +25,13 @@ export const SettingsAppPreferencesGeneralTab = ({
   connectionProviders,
   settingsMenuItems,
 }: SettingsAppPreferencesGeneralTabProps) => {
+  const { t } = useLingui();
+  const navigateSettings = useNavigateSettings();
+
+  const canManageApplications = useHasPermissionFlag(
+    PermissionFlagType.APPLICATIONS,
+  );
+
   const { description, coverImageUrl } = useApplicationOverview({
     application,
   });
@@ -30,6 +44,25 @@ export const SettingsAppPreferencesGeneralTab = ({
           displayName={displayName}
           description={description}
           coverImageUrl={coverImageUrl}
+          actions={
+            canManageApplications
+              ? [
+                  <Button
+                    key="workspace-settings"
+                    startIcon={<IconSettings />}
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      navigateSettings(SettingsPath.ApplicationDetail, {
+                        applicationId: application.id,
+                      })
+                    }
+                  >
+                    {t`Open workspace settings`}
+                  </Button>,
+                ]
+              : undefined
+          }
         />
       </Section.Root>
       {isNonEmptyArray(connectionProviders) && (
