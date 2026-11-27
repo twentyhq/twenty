@@ -23,7 +23,6 @@ import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/obj
 import {
   PermissionsException,
   PermissionsExceptionCode,
-  PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
 
 @Injectable()
@@ -56,7 +55,7 @@ export class CommonCreateOneQueryRunnerService extends CommonRecordQueryRunnerSe
 
     if (!isDefined(createdRecord)) {
       throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
+        'Record was created but the caller cannot read it',
         PermissionsExceptionCode.PERMISSION_DENIED,
       );
     }
