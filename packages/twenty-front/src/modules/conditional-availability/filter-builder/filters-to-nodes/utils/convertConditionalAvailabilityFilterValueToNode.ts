@@ -11,7 +11,7 @@ export const convertConditionalAvailabilityFilterValueToNode = ({
   value,
 }: {
   filter: ConditionalAvailabilityFilter;
-  value: string;
+  value: ExpressionLiteralNode['value'];
 }): ExpressionLiteralNode | ExpressionVariableNode => {
   if (
     'field' in filter &&

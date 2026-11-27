@@ -6,7 +6,7 @@ export const getConditionalAvailabilityFilterComparisonOperator = ({
   operator,
 }: {
   operator: ConditionalAvailabilityFilterOperator;
-}): Extract<ExpressionComparisonOperator, 'EQUAL' | 'NOT_EQUAL'> => {
+}): ExpressionComparisonOperator => {
   switch (operator) {
     case 'is':
     case 'isAnyOf':
@@ -14,6 +14,10 @@ export const getConditionalAvailabilityFilterComparisonOperator = ({
     case 'isNot':
     case 'isNoneOf':
       return 'NOT_EQUAL';
+    case 'greaterThanOrEqual':
+      return 'GREATER_THAN_OR_EQUAL';
+    case 'lessThanOrEqual':
+      return 'LESS_THAN_OR_EQUAL';
     default:
       return assertUnreachable(operator);
   }

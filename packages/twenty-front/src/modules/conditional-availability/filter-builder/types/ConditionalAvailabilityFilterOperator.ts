@@ -2,4 +2,6 @@ export type ConditionalAvailabilityFilterOperator =
   | 'is'
   | 'isNot'
   | 'isAnyOf'
-  | 'isNoneOf';
+  | 'isNoneOf'
+  | 'greaterThanOrEqual'
+  | 'lessThanOrEqual';

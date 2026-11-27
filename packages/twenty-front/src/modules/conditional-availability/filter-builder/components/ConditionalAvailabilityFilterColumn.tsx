@@ -1,4 +1,5 @@
 import { ConditionalAvailabilityFilterFieldSelect } from '@/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterFieldSelect';
+import { ConditionalAvailabilityFilterFieldValueInput } from '@/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterFieldValueInput';
 import { ConditionalAvailabilityFilterLogicalOperatorCell } from '@/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterLogicalOperatorCell';
 import { ConditionalAvailabilityFilterOperatorSelect } from '@/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterOperatorSelect';
 import { ConditionalAvailabilityFilterOptionsDropdown } from '@/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterOptionsDropdown';
@@ -7,8 +8,10 @@ import { useConditionalAvailabilityFilterBuilderContextOrThrow } from '@/conditi
 import { type ConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilter';
 import { type ConditionalAvailabilityFilterField } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterField';
 import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterGroup';
+import { findConditionalAvailabilityFilterField } from '@/conditional-availability/filter-builder/utils/findConditionalAvailabilityFilterField';
 import { AdvancedFilterSidePanelColumn } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelColumn';
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
@@ -33,6 +36,11 @@ export const ConditionalAvailabilityFilterColumn = ({
 }: ConditionalAvailabilityFilterColumnProps) => {
   const { readonly } = useConditionalAvailabilityFilterBuilderContextOrThrow();
 
+  const selectedField = findConditionalAvailabilityFilterField({
+    filterFields,
+    filter,
+  });
+
   return (
     <AdvancedFilterSidePanelColumn>
       <StyledContainer>
@@ -50,11 +58,23 @@ export const ConditionalAvailabilityFilterColumn = ({
         filterFields={filterFields}
         filter={filter}
       />
-      <ConditionalAvailabilityFilterOperatorSelect filter={filter} />
-      <ConditionalAvailabilityFilterValueInput
+      <ConditionalAvailabilityFilterOperatorSelect
         filterFields={filterFields}
         filter={filter}
       />
+      {isDefined(selectedField) && 'field' in selectedField ? (
+        <ConditionalAvailabilityFilterFieldValueInput
+          key={selectedField.key}
+          filterFields={filterFields}
+          filter={filter}
+          type={selectedField.type}
+        />
+      ) : (
+        <ConditionalAvailabilityFilterValueInput
+          filterFields={filterFields}
+          filter={filter}
+        />
+      )}
     </AdvancedFilterSidePanelColumn>
   );
 };

@@ -12,6 +12,7 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isString } from '@sniptt/guards';
 import { useState } from 'react';
 import {
   assertUnreachable,
@@ -56,6 +57,8 @@ export const ConditionalAvailabilityFilterValueInput = ({
   const { updateConditionalAvailabilityFilterSettings } =
     useUpdateConditionalAvailabilityFilterSettings();
   const [searchValue, setSearchValue] = useState('');
+
+  const values = filter.values.filter(isString);
 
   const canHoldSeveralValues =
     canConditionalAvailabilityFilterOperatorHoldSeveralValues({
@@ -113,7 +116,7 @@ export const ConditionalAvailabilityFilterValueInput = ({
     unknownValueLabel ??
     value;
 
-  const hasValues = isNonEmptyArray(filter.values);
+  const hasValues = isNonEmptyArray(values);
 
   const control = (
     <StyledControlContainer
@@ -123,7 +126,7 @@ export const ConditionalAvailabilityFilterValueInput = ({
     >
       {hasValues ? (
         <StyledChips>
-          {filter.values.map((value) => (
+          {values.map((value) => (
             <Chip key={value} variant="soft">
               {getValueLabel(value)}
             </Chip>
@@ -142,7 +145,7 @@ export const ConditionalAvailabilityFilterValueInput = ({
     return control;
   }
 
-  const unknownValueOptions: SelectOption<string>[] = filter.values
+  const unknownValueOptions: SelectOption<string>[] = values
     .filter((value) => !options.some((option) => option.value === value))
     .map((value) => ({ value, label: getValueLabel(value) }));
 
@@ -153,13 +156,16 @@ export const ConditionalAvailabilityFilterValueInput = ({
       normalizeSearchText(option.label).includes(normalizedSearchValue),
   );
 
-  const handleValuesChange = (values: string[]) => {
+  const handleValuesChange = (nextValues: string[]) => {
     updateConditionalAvailabilityFilterSettings(
       (currentConditionalAvailabilityFilterGroup) =>
         updateConditionalAvailabilityFilter({
           filterGroup: currentConditionalAvailabilityFilterGroup,
           filterId: filter.id,
-          update: (filterToUpdate) => ({ ...filterToUpdate, values }),
+          update: (filterToUpdate) => ({
+            ...filterToUpdate,
+            values: nextValues,
+          }),
         }),
     );
   };
@@ -192,7 +198,7 @@ export const ConditionalAvailabilityFilterValueInput = ({
         <Dropdown.SelectionGroup
           aria-label={placeholder}
           multiple
-          value={filter.values}
+          value={values}
           onValueChange={handleValuesChange}
         >
           {optionItems}
@@ -203,7 +209,7 @@ export const ConditionalAvailabilityFilterValueInput = ({
     return (
       <Dropdown.SelectionGroup
         aria-label={placeholder}
-        value={filter.values[0] ?? null}
+        value={values[0] ?? null}
         onValueChange={handleSingleValueChange}
       >
         {optionItems}

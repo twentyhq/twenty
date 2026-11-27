@@ -1,3 +1,4 @@
+import { type ConditionalAvailabilityFilterFieldType } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterFieldType';
 import { type ConditionalAvailabilityFilterVariable } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterVariable';
 import { type MessageDescriptor } from '@lingui/core';
 import { type ExpressionFieldNode } from 'twenty-shared/expression';
@@ -12,6 +13,7 @@ export type ConditionalAvailabilityFilterField = {
   | {
       key: string;
       field: ExpressionFieldNode;
+      type: ConditionalAvailabilityFilterFieldType;
       label: string;
       objectLabelSingular: string;
     }

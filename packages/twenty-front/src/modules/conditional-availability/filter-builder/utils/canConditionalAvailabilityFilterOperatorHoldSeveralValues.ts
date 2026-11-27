@@ -9,6 +9,8 @@ export const canConditionalAvailabilityFilterOperatorHoldSeveralValues = ({
   switch (operator) {
     case 'is':
     case 'isNot':
+    case 'greaterThanOrEqual':
+    case 'lessThanOrEqual':
       return false;
     case 'isAnyOf':
     case 'isNoneOf':

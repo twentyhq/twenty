@@ -16,6 +16,10 @@ export const getConditionalAvailabilityFilterOperatorLabel = ({
       return t`Is any of`;
     case 'isNoneOf':
       return t`Is none of`;
+    case 'greaterThanOrEqual':
+      return t`Greater than or equal`;
+    case 'lessThanOrEqual':
+      return t`Less than or equal`;
     default:
       return assertUnreachable(operator);
   }

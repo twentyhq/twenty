@@ -14,7 +14,14 @@ export const getConditionalAvailabilityFilterOperators = ({
   ...ConditionalAvailabilityFilterOperator[],
 ] => {
   if ('field' in filter) {
-    return ['is', 'isNot', 'isAnyOf', 'isNoneOf'];
+    return [
+      'is',
+      'isNot',
+      'isAnyOf',
+      'isNoneOf',
+      'greaterThanOrEqual',
+      'lessThanOrEqual',
+    ];
   }
 
   return getConditionalAvailabilityFilterVariableOperators({
