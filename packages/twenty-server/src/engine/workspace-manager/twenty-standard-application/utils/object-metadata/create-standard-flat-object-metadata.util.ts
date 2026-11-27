@@ -28,6 +28,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         universalIdentifier:
           STANDARD_OBJECTS.agentChatThread.universalIdentifier,
         nameSingular: 'agentChatThread',
+        openRecordIn: ObjectOpenRecordIn.RECORD_PAGE,
         namePlural: 'agentChatThreads',
         labelSingular: i18nLabel(
           msg({
