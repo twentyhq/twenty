@@ -137,9 +137,7 @@ it('ships the export map needed to compile another component against the uploade
 });
 
 it('shares React DOM with react-dom/client and leaves an installed Twenty UI to each component', async () => {
-  const appPath = await mkdtemp(
-    join(tmpdir(), 'app-shared-dependencies-'),
-  );
+  const appPath = await mkdtemp(join(tmpdir(), 'app-shared-dependencies-'));
   try {
     await symlink(
       join(MINIMAL_APP_PATH, '../../../../node_modules'),
