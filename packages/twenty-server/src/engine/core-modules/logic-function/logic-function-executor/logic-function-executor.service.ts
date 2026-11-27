@@ -34,7 +34,6 @@ import { ApplicationStopService } from 'src/engine/core-modules/application/appl
 import { UserApplicationVariableValueService } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.service';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { type FlatApplicationVariableMaps } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable-maps.type';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -144,7 +143,6 @@ export class LogicFunctionExecutorService {
     private readonly usageQuotaAdmissionService: UsageQuotaAdmissionService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
-    private readonly applicationService: ApplicationService,
     private readonly applicationStopService: ApplicationStopService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     @InjectRepository(WorkspaceEntity)
@@ -695,15 +693,9 @@ export class LogicFunctionExecutorService {
       return undefined;
     }
 
-    const primaryPublicDomain =
-      await this.applicationService.findPrimaryPublicDomainName({
-        applicationId: flatApplication.id,
-        workspaceId,
-      });
-
-    return this.workspaceDomainsService.buildPublicFunctionBaseUrl({
-      workspace,
-      primaryPublicDomain,
+    return this.workspaceDomainsService.buildApplicationFunctionsBaseUrl({
+      workspace: { id: workspaceId, subdomain: workspace.subdomain },
+      flatApplication,
     });
   }
 

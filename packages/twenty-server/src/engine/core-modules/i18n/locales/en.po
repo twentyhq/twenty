@@ -15525,6 +15525,11 @@ msgstr "This domain is already registered."
 msgid "This domain is already taken."
 msgstr "This domain is already taken."
 
+#. js-lingui-id: IBjn2S
+#: src/engine/core-modules/public-domain/public-domain.exception.ts
+msgid "This domain is used by Twenty itself and cannot be a public domain."
+msgstr "This domain is used by Twenty itself and cannot be a public domain."
+
 #. js-lingui-id: Ukfndw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This draft is being updated. Try again."
