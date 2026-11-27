@@ -99,10 +99,7 @@ export class FilesFieldSync {
       );
 
       for (const filesField of filesFields) {
-        const existingFilesValue = (readFilesValue({
-          record: existingRecord,
-          field: filesField,
-        }) ?? []) as FileItem[];
+        const existingFilesValue = this.readFiles(existingRecord, filesField);
 
         const diff = this.validateAndComputeFilesFieldDiff(
           entity as Record<string, unknown>,
@@ -169,10 +166,7 @@ export class FilesFieldSync {
     const existingRecord = existingRecords[0];
 
     for (const filesField of filesFields) {
-      const existingFilesValue = (readFilesValue({
-        record: existingRecord,
-        field: filesField,
-      }) ?? []) as FileItem[];
+      const existingFilesValue = this.readFiles(existingRecord, filesField);
 
       const diff = this.validateAndComputeFilesFieldDiff(
         updatePayload as Record<string, unknown>,
@@ -257,10 +251,7 @@ export class FilesFieldSync {
         : undefined;
 
       for (const filesField of filesFields) {
-        const existingFilesValue = (readFilesValue({
-          record: existingRecord,
-          field: filesField,
-        }) ?? []) as FileItem[];
+        const existingFilesValue = this.readFiles(existingRecord, filesField);
 
         const diff = this.validateAndComputeFilesFieldDiff(
           entity as Record<string, unknown>,
@@ -433,11 +424,11 @@ export class FilesFieldSync {
       objectMetadata.id,
     );
 
-    const updatedEntities = this.updateEntitiesWithEnrichedFilesFieldValues(
+    const updatedEntities = this.updateEntitiesWithEnrichedFilesFieldValues({
       entities,
       filesFieldDiffByEntityIndex,
-      this.getFilesFields(objectMetadata.id),
-    );
+      filesFields: this.getFilesFields(objectMetadata.id),
+    });
 
     return {
       entities: updatedEntities,
@@ -638,11 +629,15 @@ export class FilesFieldSync {
 
   private updateEntitiesWithEnrichedFilesFieldValues<
     Entity extends ObjectLiteral,
-  >(
-    entities: QueryDeepPartialEntity<Entity>[],
-    filesFieldDiffByEntityIndex: FilesFieldDiffByEntityIndex,
-    filesFields: OrmFlatFieldMetadata[],
-  ): QueryDeepPartialEntity<Entity>[] {
+  >({
+    entities,
+    filesFieldDiffByEntityIndex,
+    filesFields,
+  }: {
+    entities: QueryDeepPartialEntity<Entity>[];
+    filesFieldDiffByEntityIndex: FilesFieldDiffByEntityIndex;
+    filesFields: OrmFlatFieldMetadata[];
+  }): QueryDeepPartialEntity<Entity>[] {
     return entities.map((entity, index) => {
       const entityDiffs = filesFieldDiffByEntityIndex[index];
 
@@ -659,10 +654,7 @@ export class FilesFieldSync {
           continue;
         }
 
-        const currentFiles = (readFilesValue({
-          record: updatedEntity,
-          field: filesField,
-        }) ?? []) as FileItem[];
+        const currentFiles = this.readFiles(updatedEntity, filesField);
 
         const toAddMap = new Map(diff.toAdd.map((file) => [file.fileId, file]));
         const toUpdateMap = new Map(
@@ -685,6 +677,13 @@ export class FilesFieldSync {
 
       return updatedEntity as QueryDeepPartialEntity<Entity>;
     });
+  }
+
+  private readFiles(
+    record: Record<string, unknown> | null | undefined,
+    filesField: OrmFlatFieldMetadata,
+  ): FileItem[] {
+    return (readFilesValue({ record, field: filesField }) ?? []) as FileItem[];
   }
 
   private isPayloadTouchingFilesFields(

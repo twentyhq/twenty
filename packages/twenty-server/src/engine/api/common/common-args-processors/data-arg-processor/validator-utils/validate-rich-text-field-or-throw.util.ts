@@ -141,7 +141,11 @@ export const validateRichTextFieldOrThrow = (
         validateTipTapFieldOrThrow(subFieldValue, `${fieldName}.${subField}`);
         break;
       case 'files':
-        validateFilesFieldOrThrow(subFieldValue, `${fieldName}.${subField}`);
+        validateFilesFieldOrThrow(
+          subFieldValue,
+          `${fieldName}.${subField}`,
+          null,
+        );
         break;
       default:
         throw new CommonQueryRunnerException(

@@ -27,7 +27,7 @@ export const filesFieldSchema = z.array(fileItemSchema);
 export const validateFilesFieldOrThrow = (
   value: unknown,
   fieldName: string,
-  settings?: FieldMetadataSettingsMapping[FieldMetadataType.FILES],
+  settings: FieldMetadataSettingsMapping[FieldMetadataType.FILES] | null,
 ): FileInput[] | null => {
   if (isNull(value)) {
     return null;
