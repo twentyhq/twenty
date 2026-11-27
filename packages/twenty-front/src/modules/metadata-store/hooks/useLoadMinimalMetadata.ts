@@ -90,6 +90,7 @@ export const useLoadMinimalMetadata = () => {
       !staleEntityKeys.includes('navigationMenuItems') &&
       navigationMenuItemsEntry.current.some(
         (navigationMenuItem) =>
+          !('universalIdentifier' in navigationMenuItem) ||
           !isDefined(navigationMenuItem.universalIdentifier),
       )
     ) {

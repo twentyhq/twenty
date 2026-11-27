@@ -28,7 +28,7 @@ const FIND_MINIMAL_METADATA_QUERY = gql`
         key
         objectMetadataId
         position
-        visibility
+        isPrivate
         isActive
       }
       objectViewsHashes {
@@ -125,7 +125,7 @@ describe('minimalMetadata', () => {
         type: expect.any(String),
         objectMetadataId: expect.any(String),
         position: expect.any(Number),
-        visibility: expect.any(String),
+        isPrivate: expect.any(Boolean),
         isActive: expect.any(Boolean),
       });
     }

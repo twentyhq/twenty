@@ -18,12 +18,8 @@ import { type CollectionHashDTO } from 'src/engine/metadata-modules/minimal-meta
 import { MinimalMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-metadata.dto';
 import { MinimalObjectMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-object-metadata.dto';
 import { MinimalViewDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-view.dto';
+import { VIEW_CONTENT_HASH_BY_VIEW_ID_CACHE_KEY_NAMES } from 'src/engine/metadata-modules/minimal-metadata/constants/view-content-hash-by-view-id-cache-key-names.constant';
 import { computeObjectViewsHashes } from 'src/engine/metadata-modules/minimal-metadata/utils/compute-object-views-hashes.util';
-import {
-  computeViewContentHashByViewId,
-  VIEW_CONTENT_FLAT_ENTITY_MAPS_KEYS,
-  type ViewContentFlatEntityMaps,
-} from 'src/engine/metadata-modules/minimal-metadata/utils/compute-view-content-hash-by-view-id.util';
 import { getWorkspaceCustomApplicationUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/overrides/utils/get-workspace-custom-application-universal-identifier-or-throw.util';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
@@ -47,18 +43,8 @@ const flatMapsKeyToMetadataName = (
     : undefined;
 };
 
-type MemoizedViewContentHashes = {
-  viewContentFlatEntityMaps: ViewContentFlatEntityMaps;
-  viewContentHashByViewId: Map<string, string>;
-};
-
 @Injectable()
 export class MinimalMetadataService {
-  private readonly viewContentHashesByFlatViewMaps = new WeakMap<
-    ViewContentFlatEntityMaps['flatViewMaps'],
-    MemoizedViewContentHashes
-  >();
-
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly i18nService: I18nService,
@@ -78,14 +64,16 @@ export class MinimalMetadataService {
       {
         flatObjectMetadataMaps,
         flatApplicationMaps,
-        ...viewContentFlatEntityMaps
+        flatViewMaps,
+        ...viewContentHashByViewIdMapsByCacheKeyName
       },
       cacheHashes,
     ] = await Promise.all([
       this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatApplicationMaps',
         'flatObjectMetadataMaps',
-        ...VIEW_CONTENT_FLAT_ENTITY_MAPS_KEYS,
+        'flatViewMaps',
+        ...VIEW_CONTENT_HASH_BY_VIEW_ID_CACHE_KEY_NAMES,
       ]),
       this.workspaceCacheService.getCacheHashes(
         workspaceId,
@@ -167,9 +155,7 @@ export class MinimalMetadataService {
         };
       });
 
-    const availableFlatViews = Object.values(
-      viewContentFlatEntityMaps.flatViewMaps.byUniversalIdentifier,
-    )
+    const availableFlatViews = Object.values(flatViewMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter((flatView) => flatView.workspaceId === workspaceId)
       .filter((flatView) => isViewVisibleToCaller({ view: flatView }));
@@ -183,9 +169,11 @@ export class MinimalMetadataService {
 
     const objectViewsHashes = computeObjectViewsHashes({
       flatViews: availableFlatViews,
-      viewContentHashByViewId: this.getViewContentHashByViewId(
-        viewContentFlatEntityMaps,
-      ),
+      viewContentHashByViewIdMaps:
+        VIEW_CONTENT_HASH_BY_VIEW_ID_CACHE_KEY_NAMES.map(
+          (cacheKeyName) =>
+            viewContentHashByViewIdMapsByCacheKeyName[cacheKeyName],
+        ),
     });
 
     return {
@@ -194,37 +182,6 @@ export class MinimalMetadataService {
       objectViewsHashes,
       collectionHashes,
     };
-  }
-
-  private getViewContentHashByViewId(
-    viewContentFlatEntityMaps: ViewContentFlatEntityMaps,
-  ): Map<string, string> {
-    const memoized = this.viewContentHashesByFlatViewMaps.get(
-      viewContentFlatEntityMaps.flatViewMaps,
-    );
-
-    const isMemoizedForSameMaps =
-      isDefined(memoized) &&
-      VIEW_CONTENT_FLAT_ENTITY_MAPS_KEYS.every(
-        (flatMapsKey) =>
-          memoized.viewContentFlatEntityMaps[flatMapsKey] ===
-          viewContentFlatEntityMaps[flatMapsKey],
-      );
-
-    if (isMemoizedForSameMaps) {
-      return memoized.viewContentHashByViewId;
-    }
-
-    const viewContentHashByViewId = computeViewContentHashByViewId(
-      viewContentFlatEntityMaps,
-    );
-
-    this.viewContentHashesByFlatViewMaps.set(
-      viewContentFlatEntityMaps.flatViewMaps,
-      { viewContentFlatEntityMaps, viewContentHashByViewId },
-    );
-
-    return viewContentHashByViewId;
   }
 
   private async buildMinimalViews({

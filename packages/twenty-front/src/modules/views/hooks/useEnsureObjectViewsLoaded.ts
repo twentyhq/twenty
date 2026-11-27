@@ -1,7 +1,7 @@
 import { useLoadObjectViews } from '@/metadata-store/hooks/useLoadObjectViews';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { objectViewsHashesState } from '@/metadata-store/states/objectViewsHashesState';
-import { isObjectViewsLoadNeeded } from '@/metadata-store/utils/isObjectViewsLoadNeeded';
+import { getObjectMetadataIdsWithViewsToLoad } from '@/metadata-store/utils/getObjectMetadataIdsWithViewsToLoad';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -17,15 +17,12 @@ export const useEnsureObjectViewsLoaded = (
 
   const objectMetadataIdsToLoad =
     metadataStore.status === 'up-to-date'
-      ? [...new Set(objectMetadataIds.filter(isNonEmptyString))].filter(
-          (objectMetadataId) =>
-            isObjectViewsLoadNeeded({
-              objectMetadataId,
-              loadedViewHashByObjectMetadataId:
-                metadataStore.loadedViewHashByObjectMetadataId,
-              objectViewsHashes,
-            }),
-        )
+      ? getObjectMetadataIdsWithViewsToLoad({
+          objectMetadataIds,
+          loadedViewHashByObjectMetadataId:
+            metadataStore.loadedViewHashByObjectMetadataId,
+          objectViewsHashes,
+        })
       : [];
 
   const objectMetadataIdsToLoadKey = objectMetadataIdsToLoad.join(',');

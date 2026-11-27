@@ -23,7 +23,7 @@ export const FIND_MINIMAL_METADATA = gql`
         key
         objectMetadataId
         position
-        visibility
+        isPrivate
         isActive
       }
       objectViewsHashes {

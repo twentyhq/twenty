@@ -4,8 +4,8 @@ import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { objectViewsHashesState } from '@/metadata-store/states/objectViewsHashesState';
 import { getExpectedObjectViewsHash } from '@/metadata-store/utils/getExpectedObjectViewsHash';
 import { getViewMetadataSlice } from '@/metadata-store/utils/getViewMetadataSlice';
+import { getViewMetadataSliceFromViews } from '@/metadata-store/utils/getViewMetadataSliceFromViews';
 import { replaceObjectViewsInViewMetadataSlice } from '@/metadata-store/utils/replaceObjectViewsInViewMetadataSlice';
-import { splitViewWithRelated } from '@/metadata-store/utils/splitViewWithRelated';
 import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -49,29 +49,19 @@ export const useLoadObjectViews = () => {
             fetchPolicy: 'network-only',
           })
           .then((result) => {
-            const {
-              flatViews,
-              flatViewFields,
-              flatViewFilters,
-              flatViewSorts,
-              flatViewGroups,
-              flatViewFilterGroups,
-              flatViewFieldGroups,
-            } = splitViewWithRelated(result.data?.getViews ?? []);
+            if (!isDefined(result.data)) {
+              throw new Error(
+                `Failed to load views of object ${objectMetadataId}`,
+              );
+            }
 
             replaceViewMetadataSliceDraft(
               replaceObjectViewsInViewMetadataSlice({
                 objectMetadataId,
                 currentSlice: getViewMetadataSlice(store),
-                fetchedObjectSlice: {
-                  views: flatViews,
-                  viewFields: flatViewFields,
-                  viewFilters: flatViewFilters,
-                  viewSorts: flatViewSorts,
-                  viewGroups: flatViewGroups,
-                  viewFilterGroups: flatViewFilterGroups,
-                  viewFieldGroups: flatViewFieldGroups,
-                },
+                fetchedObjectSlice: getViewMetadataSliceFromViews(
+                  result.data.getViews,
+                ),
               }),
             );
 

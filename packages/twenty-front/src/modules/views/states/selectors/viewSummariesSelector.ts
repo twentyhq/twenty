@@ -32,7 +32,7 @@ export const viewSummariesSelector = createAtomSelector<ViewSummary[]>({
         key: view.key,
         objectMetadataId: view.objectMetadataId,
         position: view.position,
-        visibility: view.visibility,
+        isPrivate: view.isPrivate,
         isActive: view.isActive,
       }));
   },

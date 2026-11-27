@@ -10,6 +10,6 @@ export type ViewSummary = Pick<
   | 'key'
   | 'objectMetadataId'
   | 'position'
-  | 'visibility'
+  | 'isPrivate'
   | 'isActive'
 >;

@@ -24,7 +24,7 @@ const MINIMAL_METADATA_QUERY = `
         key
         objectMetadataId
         position
-        visibility
+        isPrivate
         isActive
       }
       objectViewsHashes {

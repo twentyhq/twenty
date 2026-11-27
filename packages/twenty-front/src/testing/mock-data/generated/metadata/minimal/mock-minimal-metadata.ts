@@ -305,7 +305,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "e810b473-155d-423f-8e0a-9c1bb95acb96",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -317,7 +317,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "adbffcd0-bb69-408a-bbd1-1ee7264689d5",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -329,7 +329,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": null,
       "objectMetadataId": "057951b6-46e0-4ae9-956a-b3b72f2cf800",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -341,7 +341,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "2dfdc710-c2c7-4453-b4cc-c7bed9b49fb3",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -353,7 +353,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "29a80d39-c931-4ed2-8ae7-8eac638f7f95",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -365,7 +365,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "2e0d7477-8143-4d8f-bc36-2b4f92cbd101",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -377,7 +377,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "d493b617-19c8-4cbb-a50f-c084e4b9f276",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -389,7 +389,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": null,
       "objectMetadataId": "d493b617-19c8-4cbb-a50f-c084e4b9f276",
       "position": 2,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -401,7 +401,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "254e79a9-80e6-4841-b22c-2d67b04d97d6",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -413,7 +413,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "34ac72b8-0aaa-4c01-b8a8-8390415fdf8a",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -425,7 +425,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": null,
       "objectMetadataId": "34ac72b8-0aaa-4c01-b8a8-8390415fdf8a",
       "position": 2,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -437,7 +437,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": null,
       "objectMetadataId": "34ac72b8-0aaa-4c01-b8a8-8390415fdf8a",
       "position": 1,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -449,7 +449,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "61d7672d-5c4f-42e1-812e-99eb0a2565de",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -461,7 +461,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "e2e2a576-9631-4bba-8a15-88a3dc4d84a1",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -473,7 +473,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "bcdaa361-9ee6-4c8e-81c2-711fd330e5b2",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -485,7 +485,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "f7d73428-92b5-46e1-9b2f-6c079f743ab2",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -497,7 +497,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "1365b607-7ba1-4a6a-9c32-3f284b77de7f",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -509,7 +509,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "cd9f8eee-25e6-497b-9dcc-29c5071d8493",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -521,7 +521,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "5fd99bf8-8a88-4bed-aa6c-8ff34e43b0d0",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -533,7 +533,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "057951b6-46e0-4ae9-956a-b3b72f2cf800",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -545,7 +545,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "713c3680-8982-49e3-b7dc-8d6002ac13aa",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -557,7 +557,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "6cafc7d5-9a81-4f0e-8cdc-a28cb4987bac",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -569,7 +569,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": null,
       "objectMetadataId": "4646d650-bc55-42f2-9544-4c804c6616a0",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -581,7 +581,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "0f6e48ff-3948-44f7-9b25-154899a9a684",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -593,7 +593,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "4397cb61-4bcc-49f8-b024-739b74ed9928",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -605,7 +605,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "3d3605e7-f61c-4abe-9886-a485b4450bf9",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -617,7 +617,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "9b374f59-ccba-4cfe-8f1f-0725332c4a13",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -629,7 +629,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "7db07e5a-4476-4a4f-ba75-6de6597689aa",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -641,7 +641,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "6a48ae9e-2964-48b4-90cd-abef2f7eac30",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -653,7 +653,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": null,
       "objectMetadataId": "6934bd29-d89d-479e-8b32-f4f3a9af19b6",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -665,7 +665,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": null,
       "objectMetadataId": "9b374f59-ccba-4cfe-8f1f-0725332c4a13",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -677,7 +677,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "6934bd29-d89d-479e-8b32-f4f3a9af19b6",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -689,7 +689,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "89c57180-083a-47b6-bfb7-ec51b3a87eae",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -701,7 +701,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": null,
       "objectMetadataId": "4397cb61-4bcc-49f8-b024-739b74ed9928",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     },
     {
@@ -713,7 +713,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "key": "INDEX",
       "objectMetadataId": "4646d650-bc55-42f2-9544-4c804c6616a0",
       "position": 0,
-      "visibility": "WORKSPACE",
+      "isPrivate": false,
       "isActive": true
     }
   ],

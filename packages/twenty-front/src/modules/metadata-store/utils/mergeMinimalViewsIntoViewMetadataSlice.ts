@@ -26,7 +26,6 @@ export const mergeMinimalViewsIntoViewMetadataSlice = ({
       ? currentViewsById.get(minimalView.id)
       : undefined;
 
-    // Views of objects not loaded yet only hold the minimal fields; their full selectors stay empty
     return { ...loadedView, ...minimalViewProperties } as FlatView;
   });
 

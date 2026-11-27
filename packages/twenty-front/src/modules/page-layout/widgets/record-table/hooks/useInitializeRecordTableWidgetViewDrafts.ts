@@ -2,7 +2,7 @@ import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutIn
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { recordTableWidgetViewPersistedComponentState } from '@/page-layout/states/recordTableWidgetViewPersistedComponentState';
-import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
+import { getWidgetViewObjectMetadataIds } from '@/page-layout/utils/getWidgetViewObjectMetadataIds';
 import { buildMissingRecordTableWidgetViewDraftSnapshots } from '@/page-layout/widgets/record-table/utils/buildMissingRecordTableWidgetViewDraftSnapshots';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -25,18 +25,13 @@ export const useInitializeRecordTableWidgetViewDrafts = () => {
   const views = useAtomStateValue(viewsSelector);
   const viewSummaries = useAtomStateValue(viewSummariesSelector);
 
-  const widgetViewIds = isPageLayoutInEditMode
-    ? new Set(
-        pageLayoutDraft.tabs
-          .flatMap((tab) => tab.widgets)
-          .map((widget) => getWidgetConfigurationViewId(widget.configuration)),
-      )
-    : new Set<string | null>();
-
   useEnsureObjectViewsLoaded(
-    viewSummaries
-      .filter((viewSummary) => widgetViewIds.has(viewSummary.id))
-      .map((viewSummary) => viewSummary.objectMetadataId),
+    getWidgetViewObjectMetadataIds({
+      widgets: isPageLayoutInEditMode
+        ? pageLayoutDraft.tabs.flatMap((tab) => tab.widgets)
+        : [],
+      viewSummaries,
+    }),
   );
 
   const recordTableWidgetViewDraftState = useAtomComponentStateCallbackState(
