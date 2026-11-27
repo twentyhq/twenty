@@ -6,4 +6,5 @@ export const DEFAULT_LINKEDIN_SETTINGS: LinkedinSettings = {
   contactAutoCreationPolicy: 'SENT',
   isNameMatchingEnabled: true,
   areChatsMarkedAsRead: false,
+  isPersonEnrichmentEnabled: true,
 };

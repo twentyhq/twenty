@@ -29,6 +29,7 @@ import { LinkedinConnectionSelect } from 'src/front-components/components/Linked
 import { LinkedinContactAutoCreationSection } from 'src/front-components/components/LinkedinContactAutoCreationSection';
 import { LinkedinImportSection } from 'src/front-components/components/LinkedinImportSection';
 import { LinkedinPeopleMatchingSection } from 'src/front-components/components/LinkedinPeopleMatchingSection';
+import { LinkedinPersonEnrichmentSection } from 'src/front-components/components/LinkedinPersonEnrichmentSection';
 import { LinkedinSettingsSkeleton } from 'src/front-components/components/LinkedinSettingsSkeleton';
 import { LinkedinReadStatusSection } from 'src/front-components/components/LinkedinReadStatusSection';
 import { LinkedinVisibilitySection } from 'src/front-components/components/LinkedinVisibilitySection';
@@ -317,6 +318,14 @@ export const LinkedinSettings = () => {
               isNameMatchingEnabled={view.settings.isNameMatchingEnabled}
               onChange={(isNameMatchingEnabled) =>
                 handleSettingsChange({ isNameMatchingEnabled })
+              }
+            />
+            <LinkedinPersonEnrichmentSection
+              isPersonEnrichmentEnabled={
+                view.settings.isPersonEnrichmentEnabled
+              }
+              onChange={(isPersonEnrichmentEnabled) =>
+                handleSettingsChange({ isPersonEnrichmentEnabled })
               }
             />
             <LinkedinReadStatusSection

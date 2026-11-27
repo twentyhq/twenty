@@ -91,6 +91,7 @@ describe('linkedinUpdateSettingsHandler', () => {
           contactAutoCreationPolicy: 'NONE',
           isNameMatchingEnabled: true,
           areChatsMarkedAsRead: false,
+          isPersonEnrichmentEnabled: true,
           visibility: 'METADATA',
         },
       }),

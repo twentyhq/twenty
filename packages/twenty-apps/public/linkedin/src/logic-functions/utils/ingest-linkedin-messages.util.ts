@@ -10,6 +10,7 @@ import { INGEST_MESSAGES_MAX_BATCH_SIZE } from 'src/constants/ingest-messages-ma
 import { buildLinkedinChatSubject } from 'src/logic-functions/utils/build-linkedin-chat-subject.util';
 import { buildLinkedinProfileHandle } from 'src/logic-functions/utils/build-linkedin-profile-handle.util';
 import { createLinkedinPerson } from 'src/logic-functions/utils/create-linkedin-person.util';
+import { enrichLinkedinPersons } from 'src/logic-functions/utils/enrich-linkedin-persons.util';
 import { hasPersonNamedLikeLinkedinUser } from 'src/logic-functions/utils/has-person-named-like-linkedin-user.util';
 import { importLinkedinMessageAttachments } from 'src/logic-functions/utils/import-linkedin-message-attachments.util';
 import { isLinkedinContactCreationAllowed } from 'src/logic-functions/utils/is-linkedin-contact-creation-allowed.util';
@@ -342,6 +343,15 @@ export const ingestLinkedinMessages = async ({
     personIdByHandle: chatPersons.personIdByHandle,
     deadlineAtMs: attachmentDeadlineAtMs,
   });
+
+  if (settings.isPersonEnrichmentEnabled) {
+    await enrichLinkedinPersons({
+      unipileAccountId,
+      counterparts: chatPersons.counterparts,
+      personIdByHandle: chatPersons.personIdByHandle,
+      deadlineAtMs: attachmentDeadlineAtMs,
+    });
+  }
 
   return {
     ...ingestResult,

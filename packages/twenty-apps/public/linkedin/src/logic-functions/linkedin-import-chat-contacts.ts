@@ -13,6 +13,7 @@ import { LINKEDIN_IMPORT_CHAT_CONTACTS_UNIVERSAL_IDENTIFIER } from 'src/constant
 import { type LinkedinHistoryImportChatJobResult } from 'src/logic-functions/types/linkedin-history-import-chat-job-result.type';
 import { type LinkedinImportChatContactsJobPayload } from 'src/logic-functions/types/linkedin-import-chat-contacts-job-payload.type';
 import { createLinkedinCounterpartResolver } from 'src/logic-functions/utils/create-linkedin-counterpart-resolver.util';
+import { enrichLinkedinPersons } from 'src/logic-functions/utils/enrich-linkedin-persons.util';
 import { finishLinkedinHistoryImportChat } from 'src/logic-functions/utils/finish-linkedin-history-import-chat.util';
 import { getActiveLinkedinHistoryImportState } from 'src/logic-functions/utils/get-active-linkedin-history-import-state.util';
 import { getLinkedinChatCounterparts } from 'src/logic-functions/utils/get-linkedin-chat-counterparts.util';
@@ -117,6 +118,15 @@ const importChatContacts = async ({
     personIdByHandle: chatPersons.personIdByHandle,
     deadlineAtMs,
   });
+
+  if (settings.isPersonEnrichmentEnabled) {
+    await enrichLinkedinPersons({
+      unipileAccountId,
+      counterparts: chatPersons.counterparts,
+      personIdByHandle: chatPersons.personIdByHandle,
+      deadlineAtMs,
+    });
+  }
 
   console.log(
     `${logPrefix}: ${chatPersons.matchedPersonCount} people matched, ${chatPersons.createdPersonCount} people created`,
