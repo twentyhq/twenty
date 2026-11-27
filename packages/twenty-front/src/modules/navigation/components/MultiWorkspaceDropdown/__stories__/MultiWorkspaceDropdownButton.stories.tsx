@@ -237,10 +237,15 @@ export const SettingsDisabledWhileEditingLayout: Story = {
     const canvas = within(canvasElement.ownerDocument.body);
 
     await userEvent.click(canvas.getByTestId('workspace-dropdown'));
+    const settings = await canvas.findByRole('menuitem', { name: 'Settings' });
 
+    expect(settings).toHaveAttribute('aria-disabled', 'true');
+    await userEvent.hover(settings);
     expect(
-      await canvas.findByRole('menuitem', { name: 'Settings' }),
-    ).toBeDisabled();
+      await canvas.findByText('Finish editing the layout to open Settings'),
+    ).toBeVisible();
+    await userEvent.click(settings);
+    expect(canvas.getByRole('menu', { name: 'Twenty' })).toBeVisible();
     await userEvent.keyboard('{Escape}');
   },
 };
