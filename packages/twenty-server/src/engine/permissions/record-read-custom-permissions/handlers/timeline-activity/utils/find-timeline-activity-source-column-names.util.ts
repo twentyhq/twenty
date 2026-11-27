@@ -8,7 +8,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-export const findTimelineActivitySubjectColumnNames = ({
+export const findTimelineActivitySourceColumnNames = ({
   timelineActivityFlatObjectMetadata,
   flatFieldMetadataMaps,
 }: {

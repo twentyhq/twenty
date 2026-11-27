@@ -57,9 +57,9 @@ export class RecordReadCustomPermissionsService implements OnModuleInit {
     }
   }
 
-  public async restrictRecords({
+  public async applyToRecords({
     objectNameSingular,
-    ...recordRestrictionInput
+    ...recordsInput
   }: RecordReadCustomPermissionRecordsInput & {
     objectNameSingular: string;
   }): Promise<void> {
@@ -67,19 +67,19 @@ export class RecordReadCustomPermissionsService implements OnModuleInit {
       !RECORD_READ_CUSTOM_PERMISSION_OBJECT_NAME_SINGULARS.has(
         objectNameSingular,
       ) ||
-      !isNonEmptyArray(recordRestrictionInput.records)
+      !isNonEmptyArray(recordsInput.records)
     ) {
       return;
     }
 
-    await this.findHandlerOrThrow(objectNameSingular).restrictRecords(
-      recordRestrictionInput,
+    await this.findHandlerOrThrow(objectNameSingular).applyToRecords(
+      recordsInput,
     );
   }
 
-  public async restrictEvents<TEvent extends ObjectRecordEvent>({
+  public async applyToEvents<TEvent extends ObjectRecordEvent>({
     objectNameSingular,
-    ...eventRestrictionInput
+    ...eventsInput
   }: RecordReadCustomPermissionEventsInput<TEvent> & {
     objectNameSingular: string;
   }): Promise<TEvent[]> {
@@ -87,18 +87,18 @@ export class RecordReadCustomPermissionsService implements OnModuleInit {
       !RECORD_READ_CUSTOM_PERMISSION_OBJECT_NAME_SINGULARS.has(
         objectNameSingular,
       ) ||
-      !isNonEmptyArray(eventRestrictionInput.events)
+      !isNonEmptyArray(eventsInput.events)
     ) {
-      return eventRestrictionInput.events;
+      return eventsInput.events;
     }
 
     const handler = this.findHandlerOrThrow(objectNameSingular);
 
-    if (!isDefined(handler.restrictEvents)) {
-      return eventRestrictionInput.events;
+    if (!isDefined(handler.applyToEvents)) {
+      return eventsInput.events;
     }
 
-    return handler.restrictEvents(eventRestrictionInput);
+    return handler.applyToEvents(eventsInput);
   }
 
   private findHandlerOrThrow(

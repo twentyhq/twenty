@@ -109,7 +109,7 @@ export class RecordEventPermissionsReadService {
       metadataMaps,
     });
 
-    return this.recordReadCustomPermissionsService.restrictEvents({
+    return this.recordReadCustomPermissionsService.applyToEvents({
       objectNameSingular: eventBatch.objectMetadata.nameSingular,
       events: eventsWithoutUnreadableFields,
       permissionsPrincipals: principals,

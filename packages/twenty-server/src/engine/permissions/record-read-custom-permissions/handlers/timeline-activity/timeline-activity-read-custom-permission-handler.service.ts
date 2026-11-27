@@ -23,13 +23,13 @@ import { PrincipalPermissionsReadService } from 'src/engine/permissions/principa
 import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { buildIsTimelineActivityRecordReadable } from 'src/engine/permissions/record-read-custom-permissions/handlers/timeline-activity/utils/build-is-timeline-activity-record-readable.util';
-import { findTimelineActivitySubjectColumnNames } from 'src/engine/permissions/record-read-custom-permissions/handlers/timeline-activity/utils/find-timeline-activity-subject-column-names.util';
-import { omitRestrictedFieldsFromTimelineActivityEvent } from 'src/engine/permissions/record-read-custom-permissions/handlers/timeline-activity/utils/omit-restricted-fields-from-timeline-activity-event.util';
+import { buildIsTimelineActivitySourceRecordReadable } from 'src/engine/permissions/record-read-custom-permissions/handlers/timeline-activity/utils/build-is-timeline-activity-source-record-readable.util';
+import { findTimelineActivitySourceColumnNames } from 'src/engine/permissions/record-read-custom-permissions/handlers/timeline-activity/utils/find-timeline-activity-source-column-names.util';
+import { omitUnreadableFieldsFromTimelineActivityEvent } from 'src/engine/permissions/record-read-custom-permissions/handlers/timeline-activity/utils/omit-unreadable-fields-from-timeline-activity-event.util';
 import {
-  type IsTimelineActivityRecordReadable,
-  omitRestrictedFieldsFromTimelineActivity,
-} from 'src/engine/permissions/record-read-custom-permissions/handlers/timeline-activity/utils/omit-restricted-fields-from-timeline-activity.util';
+  type IsTimelineActivitySourceRecordReadable,
+  omitUnreadableFieldsFromTimelineActivityProperties,
+} from 'src/engine/permissions/record-read-custom-permissions/handlers/timeline-activity/utils/omit-unreadable-fields-from-timeline-activity-properties.util';
 
 @Injectable()
 @RecordReadCustomPermissionHandler('timelineActivity')
@@ -40,7 +40,7 @@ export class TimelineActivityReadCustomPermissionHandlerService implements Recor
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
-  public async restrictRecords({
+  public async applyToRecords({
     records,
     authContext,
     recordReadRestrictions,
@@ -55,8 +55,8 @@ export class TimelineActivityReadCustomPermissionHandlerService implements Recor
       return;
     }
 
-    const subjectColumnsByTimelineActivityId =
-      await this.findSubjectColumnsByTimelineActivityId({
+    const sourceColumnsByTimelineActivityId =
+      await this.findSourceColumnsByTimelineActivityId({
         workspaceId: authContext.workspace.id,
         timelineActivityIds: timelineActivities
           .map(({ id }) => id)
@@ -65,26 +65,28 @@ export class TimelineActivityReadCustomPermissionHandlerService implements Recor
         flatFieldMetadataMaps,
       });
 
-    const isRecordReadable = await this.buildIsRecordReadableForCaller({
-      authContext,
-      timelineActivities: [...subjectColumnsByTimelineActivityId.values()],
-      flatObjectMetadataMaps,
-    });
+    const isSourceRecordReadable =
+      await this.buildIsSourceRecordReadableForAuthContext({
+        authContext,
+        timelineActivities: [...sourceColumnsByTimelineActivityId.values()],
+        flatObjectMetadataMaps,
+      });
 
     for (const timelineActivity of timelineActivities) {
-      timelineActivity.properties = omitRestrictedFieldsFromTimelineActivity({
-        properties: timelineActivity.properties,
-        timelineActivity:
-          subjectColumnsByTimelineActivityId.get(timelineActivity.id) ?? {},
-        recordReadRestrictions,
-        isRecordReadable,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      });
+      timelineActivity.properties =
+        omitUnreadableFieldsFromTimelineActivityProperties({
+          properties: timelineActivity.properties,
+          timelineActivity:
+            sourceColumnsByTimelineActivityId.get(timelineActivity.id) ?? {},
+          recordReadRestrictions,
+          isSourceRecordReadable,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        });
     }
   }
 
-  public async restrictEvents<TEvent extends ObjectRecordEvent>({
+  public async applyToEvents<TEvent extends ObjectRecordEvent>({
     events,
     permissionsPrincipals,
     recordReadRestrictions,
@@ -98,24 +100,25 @@ export class TimelineActivityReadCustomPermissionHandlerService implements Recor
       ].filter(isPlainObject),
     );
 
-    const isRecordReadable = await this.buildIsRecordReadable({
-      timelineActivities: timelineActivitySnapshots,
-      permissionsPrincipals,
-      flatObjectMetadataMaps,
-    });
+    const isSourceRecordReadable =
+      await this.buildIsSourceRecordReadableForPrincipals({
+        timelineActivities: timelineActivitySnapshots,
+        permissionsPrincipals,
+        flatObjectMetadataMaps,
+      });
 
     return events.map((event) =>
-      omitRestrictedFieldsFromTimelineActivityEvent({
+      omitUnreadableFieldsFromTimelineActivityEvent({
         event,
         recordReadRestrictions,
-        isRecordReadable,
+        isSourceRecordReadable,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       }),
     );
   }
 
-  private async buildIsRecordReadableForCaller({
+  private async buildIsSourceRecordReadableForAuthContext({
     authContext,
     timelineActivities,
     flatObjectMetadataMaps,
@@ -123,12 +126,12 @@ export class TimelineActivityReadCustomPermissionHandlerService implements Recor
     authContext: WorkspaceAuthContext;
     timelineActivities: Record<string, unknown>[];
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  }): Promise<IsTimelineActivityRecordReadable> {
+  }): Promise<IsTimelineActivitySourceRecordReadable> {
     if (isSystemAuthContext(authContext)) {
       return () => true;
     }
 
-    return this.buildIsRecordReadable({
+    return this.buildIsSourceRecordReadableForPrincipals({
       timelineActivities,
       permissionsPrincipals:
         await this.principalPermissionsReadService.resolvePermissionsPrincipals(
@@ -138,7 +141,7 @@ export class TimelineActivityReadCustomPermissionHandlerService implements Recor
     });
   }
 
-  private async buildIsRecordReadable({
+  private async buildIsSourceRecordReadableForPrincipals({
     timelineActivities,
     permissionsPrincipals,
     flatObjectMetadataMaps,
@@ -146,12 +149,12 @@ export class TimelineActivityReadCustomPermissionHandlerService implements Recor
     timelineActivities: Record<string, unknown>[];
     permissionsPrincipals: PermissionsPrincipalsWithRolesContext | undefined;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  }): Promise<IsTimelineActivityRecordReadable> {
+  }): Promise<IsTimelineActivitySourceRecordReadable> {
     if (!isDefined(permissionsPrincipals)) {
       return () => false;
     }
 
-    return buildIsTimelineActivityRecordReadable({
+    return buildIsTimelineActivitySourceRecordReadable({
       timelineActivities,
       flatObjectMetadataMaps,
       filterReadableRecordIds: ({ objectMetadataId, recordIds }) =>
@@ -164,7 +167,7 @@ export class TimelineActivityReadCustomPermissionHandlerService implements Recor
     });
   }
 
-  private async findSubjectColumnsByTimelineActivityId({
+  private async findSourceColumnsByTimelineActivityId({
     workspaceId,
     timelineActivityIds,
     flatObjectMetadataMaps,
@@ -197,7 +200,7 @@ export class TimelineActivityReadCustomPermissionHandlerService implements Recor
             .find({
               select: [
                 'id',
-                ...findTimelineActivitySubjectColumnNames({
+                ...findTimelineActivitySourceColumnNames({
                   timelineActivityFlatObjectMetadata,
                   flatFieldMetadataMaps,
                 }),

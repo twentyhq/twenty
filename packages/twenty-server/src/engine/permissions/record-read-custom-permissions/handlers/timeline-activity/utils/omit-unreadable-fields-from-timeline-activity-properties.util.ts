@@ -47,23 +47,23 @@ const getObjectByTargetColumnName = (
   return objectByTargetColumnName;
 };
 
-export type IsTimelineActivityRecordReadable = (recordReference: {
+export type IsTimelineActivitySourceRecordReadable = (recordReference: {
   objectMetadataId: string;
   recordId: string;
 }) => boolean;
 
-type TimelineActivitySubject = {
+type TimelineActivitySourceRecord = {
   flatObjectMetadata: Pick<FlatObjectMetadata, 'id' | 'fieldIds'>;
   recordId: string | undefined;
 };
 
-export const resolveTimelineActivitySubject = ({
+export const resolveTimelineActivitySourceRecord = ({
   timelineActivity,
   flatObjectMetadataMaps,
 }: {
   timelineActivity: Record<string, unknown>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-}): TimelineActivitySubject | undefined => {
+}): TimelineActivitySourceRecord | undefined => {
   if (!('linkedObjectMetadataId' in timelineActivity)) {
     return undefined;
   }
@@ -102,19 +102,22 @@ export const resolveTimelineActivitySubject = ({
 };
 
 const buildReadableFieldNames = ({
-  subject: { flatObjectMetadata, recordId },
+  sourceRecord: { flatObjectMetadata, recordId },
   recordReadRestrictions,
-  isRecordReadable,
+  isSourceRecordReadable,
   flatFieldMetadataMaps,
 }: {
-  subject: TimelineActivitySubject;
+  sourceRecord: TimelineActivitySourceRecord;
   recordReadRestrictions: RecordReadRestrictions;
-  isRecordReadable: IsTimelineActivityRecordReadable;
+  isSourceRecordReadable: IsTimelineActivitySourceRecordReadable;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): Set<string> => {
   if (
     !isDefined(recordId) ||
-    !isRecordReadable({ objectMetadataId: flatObjectMetadata.id, recordId })
+    !isSourceRecordReadable({
+      objectMetadataId: flatObjectMetadata.id,
+      recordId,
+    })
   ) {
     return new Set();
   }
@@ -138,18 +141,18 @@ const buildReadableFieldNames = ({
   );
 };
 
-export const omitRestrictedFieldsFromTimelineActivity = ({
+export const omitUnreadableFieldsFromTimelineActivityProperties = ({
   properties,
   timelineActivity,
   recordReadRestrictions,
-  isRecordReadable,
+  isSourceRecordReadable,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
   properties: unknown;
   timelineActivity: Record<string, unknown>;
   recordReadRestrictions: RecordReadRestrictions;
-  isRecordReadable: IsTimelineActivityRecordReadable;
+  isSourceRecordReadable: IsTimelineActivitySourceRecordReadable;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): Record<string, unknown> | null => {
@@ -157,16 +160,16 @@ export const omitRestrictedFieldsFromTimelineActivity = ({
     return null;
   }
 
-  const subject = resolveTimelineActivitySubject({
+  const sourceRecord = resolveTimelineActivitySourceRecord({
     timelineActivity,
     flatObjectMetadataMaps,
   });
 
-  const readableFieldNames = isDefined(subject)
+  const readableFieldNames = isDefined(sourceRecord)
     ? buildReadableFieldNames({
-        subject,
+        sourceRecord,
         recordReadRestrictions,
-        isRecordReadable,
+        isSourceRecordReadable,
         flatFieldMetadataMaps,
       })
     : new Set<string>();

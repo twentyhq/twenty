@@ -328,7 +328,7 @@ export abstract class CommonBaseQueryRunnerService<
       selection,
     });
 
-    await this.commonRecordReadCustomPermissionsService.restrictRecords({
+    await this.commonRecordReadCustomPermissionsService.applyToRecords({
       records: this.getResultRecords(resultWithGetters),
       flatObjectMetadata,
       selection,

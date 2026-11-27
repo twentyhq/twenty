@@ -27,10 +27,10 @@ export type RecordReadCustomPermissionEventsInput<
 };
 
 export type RecordReadCustomPermissionHandlerService = {
-  restrictRecords: (
+  applyToRecords: (
     input: RecordReadCustomPermissionRecordsInput,
   ) => Promise<void>;
-  restrictEvents?: <TEvent extends ObjectRecordEvent>(
+  applyToEvents?: <TEvent extends ObjectRecordEvent>(
     input: RecordReadCustomPermissionEventsInput<TEvent>,
   ) => Promise<TEvent[]>;
 };

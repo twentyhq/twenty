@@ -13,7 +13,7 @@ export class CommonRecordReadCustomPermissionsService {
     private readonly recordReadCustomPermissionsService: RecordReadCustomPermissionsService,
   ) {}
 
-  public async restrictRecords({
+  public async applyToRecords({
     records,
     flatObjectMetadata,
     selection,
@@ -42,7 +42,7 @@ export class CommonRecordReadCustomPermissionsService {
       objectNameSingular,
       collectedRecords,
     ] of recordsByObjectNameSingular) {
-      await this.recordReadCustomPermissionsService.restrictRecords({
+      await this.recordReadCustomPermissionsService.applyToRecords({
         objectNameSingular,
         records: collectedRecords,
         authContext,

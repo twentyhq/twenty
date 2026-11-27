@@ -31,7 +31,7 @@ export class MessageReadCustomPermissionHandlerService implements RecordReadCust
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
   ) {}
 
-  public async restrictRecords({
+  public async applyToRecords({
     records,
     authContext,
   }: {

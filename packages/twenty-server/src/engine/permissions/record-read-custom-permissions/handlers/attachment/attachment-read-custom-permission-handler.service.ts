@@ -28,7 +28,7 @@ export class AttachmentReadCustomPermissionHandlerService implements RecordReadC
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  public async restrictRecords({
+  public async applyToRecords({
     records,
     authContext,
   }: {

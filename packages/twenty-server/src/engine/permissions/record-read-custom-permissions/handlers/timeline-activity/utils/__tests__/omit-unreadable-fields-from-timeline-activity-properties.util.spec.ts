@@ -10,8 +10,8 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { buildRecordReadRestrictions } from 'src/engine/permissions/internal/role/utils/build-record-read-restrictions.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
-import { omitRestrictedFieldsFromTimelineActivityEvent } from 'src/engine/permissions/record-read-custom-permissions/handlers/timeline-activity/utils/omit-restricted-fields-from-timeline-activity-event.util';
-import { omitRestrictedFieldsFromTimelineActivity } from 'src/engine/permissions/record-read-custom-permissions/handlers/timeline-activity/utils/omit-restricted-fields-from-timeline-activity.util';
+import { omitUnreadableFieldsFromTimelineActivityEvent } from 'src/engine/permissions/record-read-custom-permissions/handlers/timeline-activity/utils/omit-unreadable-fields-from-timeline-activity-event.util';
+import { omitUnreadableFieldsFromTimelineActivityProperties } from 'src/engine/permissions/record-read-custom-permissions/handlers/timeline-activity/utils/omit-unreadable-fields-from-timeline-activity-properties.util';
 
 const PERSON_OBJECT = getFlatObjectMetadataMock({
   id: 'person-object-id',
@@ -106,7 +106,7 @@ type TimelineActivityFixture = {
   properties: Record<string, unknown>;
 };
 
-const omitRestrictedFields = ({
+const omitUnreadableFields = ({
   timelineActivity,
   recordsPermissions = PERSON_JOB_TITLE_DENIED,
   unreadableRecordIds = [],
@@ -115,19 +115,20 @@ const omitRestrictedFields = ({
   recordsPermissions?: Pick<RoleRecordsPermissions, 'objects'>;
   unreadableRecordIds?: string[];
 }) =>
-  omitRestrictedFieldsFromTimelineActivity({
+  omitUnreadableFieldsFromTimelineActivityProperties({
     properties: timelineActivity.properties,
     timelineActivity,
     recordReadRestrictions: buildRecordReadRestrictions({ recordsPermissions }),
-    isRecordReadable: ({ recordId }) => !unreadableRecordIds.includes(recordId),
+    isSourceRecordReadable: ({ recordId }) =>
+      !unreadableRecordIds.includes(recordId),
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   });
 
-describe('omitRestrictedFieldsFromTimelineActivity', () => {
+describe('omitUnreadableFieldsFromTimelineActivityProperties', () => {
   it('should keep the readable fields of the target object', () => {
     expect(
-      omitRestrictedFields({
+      omitUnreadableFields({
         timelineActivity: {
           linkedObjectMetadataId: null,
           targetPersonId: 'person-id',
@@ -139,7 +140,7 @@ describe('omitRestrictedFieldsFromTimelineActivity', () => {
 
   it('should keep the readable fields of the linked object', () => {
     expect(
-      omitRestrictedFields({
+      omitUnreadableFields({
         timelineActivity: {
           linkedObjectMetadataId: NOTE_OBJECT.id,
           linkedRecordId: 'note-id',
@@ -152,7 +153,7 @@ describe('omitRestrictedFieldsFromTimelineActivity', () => {
 
   it('should keep no field of a target record the role cannot read', () => {
     expect(
-      omitRestrictedFields({
+      omitUnreadableFields({
         timelineActivity: {
           linkedObjectMetadataId: null,
           targetPersonId: 'person-id',
@@ -165,7 +166,7 @@ describe('omitRestrictedFieldsFromTimelineActivity', () => {
 
   it('should keep no field of a linked record the role cannot read', () => {
     expect(
-      omitRestrictedFields({
+      omitUnreadableFields({
         timelineActivity: {
           linkedObjectMetadataId: NOTE_OBJECT.id,
           linkedRecordId: 'note-id',
@@ -179,7 +180,7 @@ describe('omitRestrictedFieldsFromTimelineActivity', () => {
 
   it('should keep no field when the linked record id is missing', () => {
     expect(
-      omitRestrictedFields({
+      omitUnreadableFields({
         timelineActivity: {
           linkedObjectMetadataId: NOTE_OBJECT.id,
           targetPersonId: 'person-id',
@@ -191,13 +192,13 @@ describe('omitRestrictedFieldsFromTimelineActivity', () => {
 
   it('should keep no field when the activity object cannot be found', () => {
     expect(
-      omitRestrictedFields({ timelineActivity: { properties: DIFF } }),
+      omitUnreadableFields({ timelineActivity: { properties: DIFF } }),
     ).toEqual({ diff: {} });
   });
 
-  it('should keep no field when the activity has no subject column', () => {
+  it('should keep no field when the activity has no sourceRecord column', () => {
     expect(
-      omitRestrictedFields({
+      omitUnreadableFields({
         timelineActivity: { targetPersonId: 'person-id', properties: DIFF },
       }),
     ).toEqual({ diff: {} });
@@ -211,7 +212,7 @@ type TimelineActivityRecord = {
   properties: Record<string, unknown>;
 };
 
-describe('omitRestrictedFieldsFromTimelineActivityEvent', () => {
+describe('omitUnreadableFieldsFromTimelineActivityEvent', () => {
   it('should omit restricted fields from properties in the records and in the diff', () => {
     const before: TimelineActivityRecord = {
       id: 'activity-id',
@@ -237,12 +238,12 @@ describe('omitRestrictedFieldsFromTimelineActivityEvent', () => {
     const readableDiff = { diff: { city: { before: 'Paris', after: 'Lyon' } } };
 
     expect(
-      omitRestrictedFieldsFromTimelineActivityEvent({
+      omitUnreadableFieldsFromTimelineActivityEvent({
         event,
         recordReadRestrictions: buildRecordReadRestrictions({
           recordsPermissions: PERSON_JOB_TITLE_DENIED,
         }),
-        isRecordReadable: () => true,
+        isSourceRecordReadable: () => true,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       }).properties,

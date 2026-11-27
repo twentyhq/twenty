@@ -3,11 +3,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
-  type IsTimelineActivityRecordReadable,
-  resolveTimelineActivitySubject,
-} from 'src/engine/permissions/record-read-custom-permissions/handlers/timeline-activity/utils/omit-restricted-fields-from-timeline-activity.util';
+  type IsTimelineActivitySourceRecordReadable,
+  resolveTimelineActivitySourceRecord,
+} from 'src/engine/permissions/record-read-custom-permissions/handlers/timeline-activity/utils/omit-unreadable-fields-from-timeline-activity-properties.util';
 
-export const buildIsTimelineActivityRecordReadable = async ({
+export const buildIsTimelineActivitySourceRecordReadable = async ({
   timelineActivities,
   flatObjectMetadataMaps,
   filterReadableRecordIds,
@@ -18,25 +18,28 @@ export const buildIsTimelineActivityRecordReadable = async ({
     objectMetadataId: string;
     recordIds: string[];
   }) => Promise<Set<string>>;
-}): Promise<IsTimelineActivityRecordReadable> => {
+}): Promise<IsTimelineActivitySourceRecordReadable> => {
   const recordIdsByObjectMetadataId = new Map<string, Set<string>>();
 
   for (const timelineActivity of timelineActivities) {
-    const subject = resolveTimelineActivitySubject({
+    const sourceRecord = resolveTimelineActivitySourceRecord({
       timelineActivity,
       flatObjectMetadataMaps,
     });
 
-    if (!isDefined(subject?.recordId)) {
+    if (!isDefined(sourceRecord?.recordId)) {
       continue;
     }
 
     const recordIds =
-      recordIdsByObjectMetadataId.get(subject.flatObjectMetadata.id) ??
+      recordIdsByObjectMetadataId.get(sourceRecord.flatObjectMetadata.id) ??
       new Set<string>();
 
-    recordIds.add(subject.recordId.toLowerCase());
-    recordIdsByObjectMetadataId.set(subject.flatObjectMetadata.id, recordIds);
+    recordIds.add(sourceRecord.recordId.toLowerCase());
+    recordIdsByObjectMetadataId.set(
+      sourceRecord.flatObjectMetadata.id,
+      recordIds,
+    );
   }
 
   const readableRecordIdsByObjectMetadataId = new Map(

@@ -30,7 +30,7 @@ export class CalendarEventReadCustomPermissionHandlerService implements RecordRe
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
   ) {}
 
-  public async restrictRecords({
+  public async applyToRecords({
     records,
     authContext,
   }: {
