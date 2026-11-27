@@ -3,7 +3,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
   ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME,
-  LIST_THREAD_MEMBERS_TOOL_NAME,
   REACT_TO_MESSAGE_TOOL_NAME,
 } from 'twenty-shared/ai';
 import { z } from 'zod';
@@ -155,12 +154,6 @@ const buildToolDisplayMessage = ({
         loadingLabel: t`Reacting with ${emoji}`,
       });
     }
-    case LIST_THREAD_MEMBERS_TOOL_NAME:
-      return pickStatusLabel({
-        isFinished,
-        completedLabel: t`Listed conversation members`,
-        loadingLabel: t`Listing conversation members`,
-      });
     default:
       return buildToolStatusMessageByCategory({
         toolName,

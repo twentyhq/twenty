@@ -15,16 +15,14 @@ describe('buildThreadMembersSection', () => {
     expect(section).toContain(
       '"reference":"[[record:workspaceMember:member-1:Etienne Ops Jouan]]"',
     );
-    expect(section).not.toContain('list_thread_members');
+    expect(section).not.toContain('more are not listed');
   });
 
-  it('lists the first 20 and points to the listing tool for the rest', () => {
+  it('lists the first 20 and counts the rest', () => {
     const section = buildThreadMembersSection(buildMembers(27));
 
     expect(section).toContain('"name":"Member 19"');
     expect(section).not.toContain('"name":"Member 20"');
-    expect(section).toContain(
-      '7 more are not listed: call `list_thread_members`',
-    );
+    expect(section).toContain('7 more are not listed.');
   });
 });

@@ -6,7 +6,6 @@ import {
   ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME,
   COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
   type ExtendedUIMessage,
-  LIST_THREAD_MEMBERS_TOOL_NAME,
   REACT_TO_MESSAGE_TOOL_NAME,
 } from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
@@ -30,7 +29,6 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-turn.service';
 import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/replace-unsupported-file-parts.util';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
-import { AGENT_CHAT_THREAD_MEMBERS_PROMPT_LIMIT } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-members-page-size.constant';
 import { AGENT_CHAT_KEEPALIVE_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-keepalive-interval-ms.constant';
 import { AI_CHAT_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-excluded-tool-names.const';
 import { AI_CHAT_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-stream-function-id.constant';
@@ -39,7 +37,6 @@ import { AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID } from 'src/engine/metadata-
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentChatMessageReactionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-message-reaction.service';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
-import { createListThreadMembersTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/list-thread-members.tool';
 import { createReactToMessageTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/react-to-message.tool';
 import { createCompleteWorkspaceSetupTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
 import { type AgentChatThreadMember } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-member.type';
@@ -208,7 +205,6 @@ export class ChatExecutionService {
       messages,
       browsingContext,
       toolContext,
-      threadMembers,
     });
     const { isWorkspaceSetupThread } = executionProfile.toolset;
     const { isWorkspaceSetupKickoffTurn } = executionProfile;
@@ -335,7 +331,6 @@ export class ChatExecutionService {
     messages,
     browsingContext,
     toolContext,
-    threadMembers,
   }: {
     thread: Pick<AgentChatThreadWorkspaceEntity, 'id' | 'conversationType'>;
     workspace: Pick<WorkspaceEntity, 'id' | 'aiChatAssistantProfile'>;
@@ -343,7 +338,6 @@ export class ChatExecutionService {
     messages: ExtendedUIMessage[];
     browsingContext: BrowsingContextType | null;
     toolContext: ToolContext;
-    threadMembers: AgentChatThreadMember[];
   }): Promise<ChatExecutionProfile> {
     const workspaceId = workspace.id;
     const isAiChatInboxEnabled = await this.featureFlagService.isFeatureEnabled(
@@ -423,12 +417,6 @@ export class ChatExecutionService {
                       agentId: null,
                     }),
                 }),
-              }
-            : {}),
-          ...(threadMembers.length > AGENT_CHAT_THREAD_MEMBERS_PROMPT_LIMIT
-            ? {
-                [LIST_THREAD_MEMBERS_TOOL_NAME]:
-                  createListThreadMembersTool(threadMembers),
               }
             : {}),
         },
