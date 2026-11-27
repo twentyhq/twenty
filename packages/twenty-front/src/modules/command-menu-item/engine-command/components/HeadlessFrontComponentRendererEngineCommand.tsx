@@ -1,16 +1,11 @@
-import { Suspense, lazy } from 'react';
+import { LazyFrontComponentRenderer } from '@/front-components/components/LazyFrontComponentRenderer';
+import { Suspense } from 'react';
 
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
 import { isHeadlessFrontComponentCommandContextApi } from '@/command-menu-item/engine-command/utils/isHeadlessFrontComponentCommandContextApi';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { doNotTranslate } from 'twenty-shared/i18n';
-
-const FrontComponentRenderer = lazy(() =>
-  import('@/front-components/components/FrontComponentRenderer').then(
-    (module) => ({ default: module.FrontComponentRenderer }),
-  ),
-);
 
 export const HeadlessFrontComponentRendererEngineCommand = () => {
   const commandMenuItemId = useAvailableComponentInstanceIdOrThrow(
@@ -31,7 +26,7 @@ export const HeadlessFrontComponentRendererEngineCommand = () => {
 
   return (
     <Suspense fallback={null}>
-      <FrontComponentRenderer
+      <LazyFrontComponentRenderer
         frontComponentId={context.frontComponentId}
         commandMenuItemId={commandMenuItemId}
         selectedRecordIds={selectedRecordIds}

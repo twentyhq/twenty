@@ -1,16 +1,11 @@
+import { LazyFrontComponentRenderer } from '@/front-components/components/LazyFrontComponentRenderer';
 import { styled } from '@linaria/react';
-import { Suspense, lazy } from 'react';
+import { Suspense } from 'react';
 import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { FrontComponentSkeletonLoader } from '@/front-components/components/FrontComponentSkeletonLoader';
 import { useLingui } from '@lingui/react/macro';
-
-const FrontComponentRenderer = lazy(() =>
-  import('@/front-components/components/FrontComponentRenderer').then(
-    (module) => ({ default: module.FrontComponentRenderer }),
-  ),
-);
 
 const StyledPreviewFrame = styled.div`
   background: ${themeCssVariables.background.primary};
@@ -68,7 +63,7 @@ export const SettingsApplicationFrontComponentPreviewTab = ({
         ) : (
           <StyledRendererContainer>
             <Suspense fallback={<FrontComponentSkeletonLoader />}>
-              <FrontComponentRenderer
+              <LazyFrontComponentRenderer
                 frontComponentId={frontComponentId}
                 loadingFallback={<FrontComponentSkeletonLoader />}
               />

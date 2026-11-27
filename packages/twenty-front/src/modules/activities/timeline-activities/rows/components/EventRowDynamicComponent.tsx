@@ -1,18 +1,13 @@
+import { LazyFrontComponentRenderer } from '@/front-components/components/LazyFrontComponentRenderer';
 import { type EventRowDynamicComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
 import { EventCard } from '@/activities/timeline-activities/rows/components/EventCard';
 import { EventCardToggleButton } from '@/activities/timeline-activities/rows/components/EventCardToggleButton';
 import { EventRowGenericLinked } from '@/activities/timeline-activities/rows/generic/components/EventRowGenericLinked';
 import { EventRowMainObject } from '@/activities/timeline-activities/rows/main-object/components/EventRowMainObject';
 import { styled } from '@linaria/react';
-import { lazy, Suspense, useState } from 'react';
+import { Suspense, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
-
-const FrontComponentRenderer = lazy(() =>
-  import('@/front-components/components/FrontComponentRenderer').then(
-    (module) => ({ default: module.FrontComponentRenderer }),
-  ),
-);
 
 const StyledContainer = styled.div`
   display: flex;
@@ -85,7 +80,7 @@ export const EventRowDynamicComponent = ({
                 authorFullName={authorFullName}
               />
             ) : (
-              <FrontComponentRenderer
+              <LazyFrontComponentRenderer
                 frontComponentId={renderer.frontComponentId}
                 timelineActivityId={event.id}
                 objectNameSingular={mainObjectMetadataItem.nameSingular}

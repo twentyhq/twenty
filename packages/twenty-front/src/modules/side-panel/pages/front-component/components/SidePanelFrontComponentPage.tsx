@@ -1,16 +1,11 @@
-import { Suspense, lazy } from 'react';
+import { LazyFrontComponentRenderer } from '@/front-components/components/LazyFrontComponentRenderer';
+import { Suspense } from 'react';
 
 import { FrontComponentSkeletonLoader } from '@/front-components/components/FrontComponentSkeletonLoader';
 import { viewableFrontComponentIdComponentState } from '@/side-panel/pages/front-component/states/viewableFrontComponentIdComponentState';
 import { viewableFrontComponentRecordContextComponentState } from '@/side-panel/pages/front-component/states/viewableFrontComponentRecordContextComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
-
-const FrontComponentRenderer = lazy(() =>
-  import('@/front-components/components/FrontComponentRenderer').then(
-    (module) => ({ default: module.FrontComponentRenderer }),
-  ),
-);
 
 export const SidePanelFrontComponentPage = () => {
   const viewableFrontComponentId = useAtomComponentStateValue(
@@ -27,7 +22,7 @@ export const SidePanelFrontComponentPage = () => {
 
   return (
     <Suspense fallback={<FrontComponentSkeletonLoader />}>
-      <FrontComponentRenderer
+      <LazyFrontComponentRenderer
         frontComponentId={viewableFrontComponentId}
         selectedRecordIds={
           viewableFrontComponentRecordContext?.selectedRecordIds
