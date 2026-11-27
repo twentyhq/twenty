@@ -86,20 +86,27 @@ export const AiChatToolCallApprovalArgumentsCard = ({
     (template === 'recordCreate' || template === 'recordUpdate') &&
     isDefined(objectNameSingular);
 
+  const getHeader = () => {
+    if (isWaitingForFrontComponent) {
+      return { title: '', summary: undefined };
+    }
+
+    if (!isDefined(approvalCard)) {
+      return { title: proposal.toolLabel, summary: proposal.summary };
+    }
+
+    return {
+      title: approvalCard.title ?? proposal.toolLabel,
+      summary: approvalCard.subtitle,
+    };
+  };
+
+  const header = getHeader();
+
   return (
     <AiChatToolCallApprovalCardLayout
-      title={
-        isWaitingForFrontComponent
-          ? ''
-          : (approvalCard?.title ?? proposal.toolLabel)
-      }
-      summary={
-        isWaitingForFrontComponent
-          ? undefined
-          : isDefined(approvalCard)
-            ? approvalCard.subtitle
-            : proposal.summary
-      }
+      title={header.title}
+      summary={header.summary}
       approval={approval}
       actions={
         !isWaitingForFrontComponent && (
