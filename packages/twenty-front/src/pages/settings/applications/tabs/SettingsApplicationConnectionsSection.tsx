@@ -56,6 +56,7 @@ export const SettingsApplicationConnectionsSection = ({
           <SettingsApplicationConnectionProviderSection
             key={provider.id}
             providerDisplayName={provider.displayName}
+            providerLogoUrl={provider.logoUrl}
             description={t`Manage connections used by this app to call ${provider.displayName}.`}
             shouldShowMissingCredentialsBanner={!canStartAuthorization}
           >

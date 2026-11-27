@@ -1,7 +1,9 @@
 import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
-import { SettingsApplicationConnectionProviderLogo } from '@/settings/applications/components/SettingsApplicationConnectionProviderLogo';
 import { useStartAppConnection } from '@/settings/applications/hooks/useStartAppConnection';
 import { SettingsCard } from '@/settings/components/SettingsCard';
+import { isNonEmptyString } from '@sniptt/guards';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type SettingsApplicationConnectCardProps = {
   applicationId: string;
@@ -24,9 +26,16 @@ export const SettingsApplicationConnectCard = ({
   return (
     <SettingsCard
       Icon={
-        <SettingsApplicationConnectionProviderLogo
-          connectionProvider={connectionProvider}
-        />
+        isNonEmptyString(connectionProvider.logoUrl) ? (
+          <Avatar
+            shape="square"
+            variant="outline"
+            size="md"
+            src={getAbsoluteImageUrl(connectionProvider.logoUrl)}
+            name={connectionProvider.displayName}
+            imageProps={{ alt: connectionProvider.displayName }}
+          />
+        ) : undefined
       }
       title={title}
       onClick={() =>
