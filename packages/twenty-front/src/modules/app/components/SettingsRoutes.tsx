@@ -18,7 +18,6 @@ import { SettingsLegacyAccountsRedirect } from '@/settings/app-preferences/compo
 import { APP_PREFERENCES_PATH_BY_LEGACY_ACCOUNTS_PATH } from '@/settings/app-preferences/constants/AppPreferencesPathByLegacyAccountsPath';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { SETTINGS_SEARCH_OBJECT_LABEL_TITLE } from '@/settings/search/constants/SettingsSearchObjectLabelTitle';
 import { type SettingsSearchRouteHandle } from '@/settings/search/types/SettingsSearchRouteHandle';
 import { type SettingsSearchRouteMetadata } from '@/settings/search/types/SettingsSearchRouteMetadata';
 import { msg } from '@lingui/core/macro';
@@ -1207,7 +1206,6 @@ const createSettingsRouteElements = ({
         handle={buildSettingsSearchRouteHandle({
           handle: MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE,
           settingsSearch: {
-            title: SETTINGS_SEARCH_OBJECT_LABEL_TITLE,
             isExpandedPerObject: true,
             parentPath: SettingsPath.Objects,
           },
