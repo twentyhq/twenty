@@ -22,6 +22,11 @@ jest.mock('@/ai-chat/composer/components/AiChatStandaloneError', () => ({
 jest.mock('@/ai-chat/tool-calls/components/AiChatPendingAskGate', () => ({
   AiChatPendingAskGate: ({ children }: { children: ReactNode }) => children,
 }));
+jest.mock('@/ai-chat/usage/components/AiChatContextUsageButton', () => ({
+  AiChatContextUsageButton: () => (
+    <button type="button">Context and usage</button>
+  ),
+}));
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
     <I18nProvider i18n={i18n}>
@@ -64,6 +69,22 @@ describe('Shared conversation composer', () => {
       expect(useAiChatEditor).not.toHaveBeenCalled();
     },
   );
+  it('lets a shared viewer open the chat details', () => {
+    setAiChatThreadPermissions({
+      store: jotaiStore,
+      threadId: 'shared-thread',
+      permissions: {
+        canRead: true,
+        canUpdate: false,
+        canDelete: false,
+        canSoftDelete: false,
+      },
+    });
+    render(<AiChatEditorSection />, { wrapper: Wrapper });
+    expect(
+      screen.getByRole('button', { name: 'Context and usage' }),
+    ).toBeVisible();
+  });
   it('shows unavailable rather than loading after access is revoked in either chat surface', () => {
     setAiChatThreadPermissions({
       store: jotaiStore,

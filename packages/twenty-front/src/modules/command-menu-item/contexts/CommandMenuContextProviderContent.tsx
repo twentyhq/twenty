@@ -31,6 +31,11 @@ import {
 } from 'twenty-shared/types';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
 
+const INBOX_HEADER_UNPINNED_COMMANDS = new Set<EngineComponentKey>([
+  EngineComponentKey.ADD_TO_FAVORITES,
+  EngineComponentKey.REMOVE_FROM_FAVORITES,
+]);
+
 const WORKSPACE_DEFINITION_COMMANDS = new Set<EngineComponentKey>([
   EngineComponentKey.ADD_TO_FAVORITES,
   EngineComponentKey.REMOVE_FROM_FAVORITES,
@@ -155,9 +160,11 @@ export const CommandMenuContextProviderContent = ({
           {
             ...item,
             isPinned:
-              item.isPinned ||
-              (isInboxHeader &&
-                item.engineComponentKey === EngineComponentKey.SHARE_RECORD),
+              item.isPinned &&
+              !(
+                isInboxHeader &&
+                INBOX_HEADER_UNPINNED_COMMANDS.has(item.engineComponentKey)
+              ),
           },
           commandMenuContextApiForAvailability,
         ),

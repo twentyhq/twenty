@@ -1,13 +1,10 @@
 import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/display/constants/PinnedCommandMenuItemsGap';
 import { commandMenuPinnedInlineLayoutFamilyState } from '@/command-menu-item/display/states/commandMenuPinnedInlineLayoutFamilyState';
 import { type PinnedCommandMenuItemsLayoutKey } from '@/command-menu-item/display/types/PinnedCommandMenuItemsLayoutKey';
-import { getCommandMenuItemButtonHotKey } from '@/command-menu-item/display/utils/getCommandMenuItemButtonHotKey';
-import { getPinnedCommandMenuItemWidthKey } from '@/command-menu-item/display/utils/getPinnedCommandMenuItemWidthKey';
 import { getVisibleCommandMenuItemCountForContainerWidth } from '@/command-menu-item/display/utils/getVisibleCommandMenuItemCountForContainerWidth';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { isNumber } from '@sniptt/guards';
 import { useCallback, useMemo } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 type ElementDimensions = {
@@ -33,45 +30,28 @@ export const usePinnedCommandMenuItemsInlineLayout = ({
   const effectiveContainerWidth =
     containerWidth ?? commandMenuPinnedInlineLayout.containerWidth;
 
-  const getVisiblePinnedCommandMenuItemCount = (shouldShowHotKeys: boolean) => {
-    const widthKeysInDisplayOrder = pinnedCommandMenuItems.map((item) =>
-      getPinnedCommandMenuItemWidthKey({
-        commandMenuItemId: item.id,
-        shouldShowHotKey:
-          shouldShowHotKeys || !isDefined(getCommandMenuItemButtonHotKey(item)),
-      }),
+  const commandMenuItemIdsInDisplayOrder = pinnedCommandMenuItems.map(
+    ({ id }) => id,
+  );
+  const isLayoutKnown =
+    effectiveContainerWidth > 0 &&
+    commandMenuItemIdsInDisplayOrder.every((commandMenuItemId) =>
+      isNumber(
+        commandMenuPinnedInlineLayout.commandMenuItemWidthsByKey[
+          commandMenuItemId
+        ],
+      ),
     );
-    const isLayoutKnown =
-      effectiveContainerWidth > 0 &&
-      widthKeysInDisplayOrder.every((widthKey) =>
-        isNumber(
-          commandMenuPinnedInlineLayout.commandMenuItemWidthsByKey[widthKey],
-        ),
-      );
 
-    return isLayoutKnown
-      ? getVisibleCommandMenuItemCountForContainerWidth({
-          commandMenuItemKeysInDisplayOrder: widthKeysInDisplayOrder,
-          commandMenuItemWidthsByKey:
-            commandMenuPinnedInlineLayout.commandMenuItemWidthsByKey,
-          commandMenuItemsContainerWidth: effectiveContainerWidth,
-          commandMenuItemsGapWidth: PINNED_COMMAND_MENU_ITEMS_GAP,
-        })
-      : 0;
-  };
-
-  const visiblePinnedCommandMenuItemCountWithHotKeys =
-    getVisiblePinnedCommandMenuItemCount(true);
-  const visiblePinnedCommandMenuItemCountWithoutHotKeys =
-    getVisiblePinnedCommandMenuItemCount(false);
-
-  const shouldShowHotKeys =
-    visiblePinnedCommandMenuItemCountWithHotKeys >=
-    visiblePinnedCommandMenuItemCountWithoutHotKeys;
-
-  const visiblePinnedCommandMenuItemCount = shouldShowHotKeys
-    ? visiblePinnedCommandMenuItemCountWithHotKeys
-    : visiblePinnedCommandMenuItemCountWithoutHotKeys;
+  const visiblePinnedCommandMenuItemCount = isLayoutKnown
+    ? getVisibleCommandMenuItemCountForContainerWidth({
+        commandMenuItemKeysInDisplayOrder: commandMenuItemIdsInDisplayOrder,
+        commandMenuItemWidthsByKey:
+          commandMenuPinnedInlineLayout.commandMenuItemWidthsByKey,
+        commandMenuItemsContainerWidth: effectiveContainerWidth,
+        commandMenuItemsGapWidth: PINNED_COMMAND_MENU_ITEMS_GAP,
+      })
+    : 0;
 
   const pinnedInlineCommandMenuItems = useMemo(
     () => pinnedCommandMenuItems.slice(0, visiblePinnedCommandMenuItemCount),
@@ -122,7 +102,6 @@ export const usePinnedCommandMenuItemsInlineLayout = ({
   return {
     pinnedInlineCommandMenuItems,
     pinnedOverflowCommandMenuItems,
-    shouldShowHotKeys,
     onContainerDimensionChange,
     onCommandMenuItemDimensionChange,
   };

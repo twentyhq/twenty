@@ -37,7 +37,7 @@ export const useObjectRecordSearchRecords = ({
 
   const apolloCoreClient = useApolloCoreClient();
 
-  const { data, dataState, loading, error, previousData } = useQuery(
+  const { data, dataState, loading, error, previousData, fetchMore } = useQuery(
     SearchDocument,
     {
       skip:
@@ -65,10 +65,40 @@ export const useObjectRecordSearchRecords = ({
     [effectiveData],
   );
 
+  const pageInfo = effectiveData?.search?.pageInfo;
+  const hasNextPage = pageInfo?.hasNextPage ?? false;
+
+  const fetchMoreRecords = async () => {
+    if (!hasNextPage || isWaitingForData) {
+      return;
+    }
+
+    await fetchMore({
+      variables: { after: pageInfo?.endCursor },
+      updateQuery: (previousResult, { fetchMoreResult }) => {
+        if (!isDefined(fetchMoreResult)) {
+          return previousResult;
+        }
+
+        return {
+          ...fetchMoreResult,
+          search: {
+            ...fetchMoreResult.search,
+            edges: [
+              ...previousResult.search.edges,
+              ...fetchMoreResult.search.edges,
+            ],
+          },
+        };
+      },
+    });
+  };
+
   return {
     searchRecords,
-    hasNextPage: effectiveData?.search?.pageInfo?.hasNextPage ?? false,
     loading: isWaitingForData,
     error,
+    hasNextPage,
+    fetchMoreRecords,
   };
 };

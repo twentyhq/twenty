@@ -5,6 +5,7 @@ import {
   type Placement,
   safePolygon,
   shift,
+  size,
   useClick,
   useDismiss,
   useFloating,
@@ -14,23 +15,32 @@ import {
   useRole,
 } from '@floating-ui/react';
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 type UseAiChatHoverCardParams = {
   placement: Placement;
   role: 'tooltip' | 'dialog';
   onOpen?: () => void;
+  shouldStayOpen?: boolean;
+  boundary?: Element | null;
 };
 
 export const useAiChatHoverCard = ({
   placement,
   role,
   onOpen,
+  shouldStayOpen,
+  boundary,
 }: UseAiChatHoverCardParams) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
     onOpenChange: (open) => {
+      if (!open && shouldStayOpen) {
+        return;
+      }
+
       setIsOpen(open);
 
       if (open) {
@@ -38,7 +48,21 @@ export const useAiChatHoverCard = ({
       }
     },
     placement,
-    middleware: [offset(8), flip(), shift({ padding: 8 })],
+    middleware: [
+      offset(8),
+      flip(),
+      ...(isDefined(boundary)
+        ? [
+            shift({ boundary }),
+            size({
+              boundary,
+              apply: ({ availableWidth, elements }) => {
+                elements.floating.style.maxWidth = `${availableWidth}px`;
+              },
+            }),
+          ]
+        : [shift({ padding: 8 })]),
+    ],
     whileElementsMounted: autoUpdate,
   });
 
@@ -52,6 +76,7 @@ export const useAiChatHoverCard = ({
 
   return {
     isOpen,
+    close: () => setIsOpen(false),
     context,
     refs,
     floatingStyles,

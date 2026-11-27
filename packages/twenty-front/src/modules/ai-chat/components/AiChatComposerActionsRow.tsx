@@ -1,8 +1,9 @@
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiModelTierDropdown } from '@/ai-chat/components/AiModelTierDropdown';
+import { AiChatComposerActionsRowContext } from '@/ai-chat/contexts/AiChatComposerActionsRowContext';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -39,10 +40,16 @@ export const AiChatComposerActionsRow = ({
   isModelPickerHidden = false,
 }: AiChatComposerActionsRowProps) => {
   const aiModels = useAtomStateValue(aiModelsState);
+  const [actionsRowElement, setActionsRowElement] =
+    useState<HTMLDivElement | null>(null);
 
   return (
-    <StyledActionsRow>
-      <StyledLeftActions>{leftActions}</StyledLeftActions>
+    <StyledActionsRow ref={setActionsRowElement}>
+      <StyledLeftActions>
+        <AiChatComposerActionsRowContext.Provider value={actionsRowElement}>
+          {leftActions}
+        </AiChatComposerActionsRowContext.Provider>
+      </StyledLeftActions>
       <StyledRightActions>
         {!isModelPickerHidden && (
           <AiModelTierDropdown

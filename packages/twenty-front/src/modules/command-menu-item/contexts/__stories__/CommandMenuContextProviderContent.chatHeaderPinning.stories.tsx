@@ -18,17 +18,17 @@ import { EngineComponentKey } from '~/generated-metadata/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { mockedCommandMenuItems } from '~/testing/mock-data/generated/metadata/command-menu-items/mock-command-menu-items-data';
 
-const SharePinState = () => {
+const PinStates = () => {
   const { commandMenuItems } = useContext(CommandMenuContext);
 
   return commandMenuItems.map((item) => (
     <Badge key={item.id}>
-      {item.isPinned ? 'Pinned share' : 'Unpinned share'}
+      {`${item.engineComponentKey} ${item.isPinned ? 'pinned' : 'unpinned'}`}
     </Badge>
   ));
 };
 
-const CHAT_SHARING_CONTEXT_API: CommandMenuContextApi = {
+const CHAT_CONTEXT_API: CommandMenuContextApi = {
   ...EMPTY_COMMAND_MENU_CONTEXT_API,
   pageType: ContextStorePageType.Record,
   numberOfSelectedRecords: 1,
@@ -41,25 +41,34 @@ const CHAT_SHARING_CONTEXT_API: CommandMenuContextApi = {
 };
 
 const meta: Meta<typeof CommandMenuContextProviderContent> = {
-  title: 'Modules/CommandMenu/CommandMenuContextProviderContent/ChatSharing',
+  title: 'Modules/CommandMenu/CommandMenuContextProviderContent/ChatHeaderPinning',
   component: CommandMenuContextProviderContent,
   decorators: [MemoryRouterDecorator],
   args: {
     displayType: 'button',
     containerType: CommandMenuItemContainerType.ShowPageHeader,
     isInPreviewMode: false,
-    commandMenuContextApi: CHAT_SHARING_CONTEXT_API,
-    children: <SharePinState />,
+    commandMenuContextApi: CHAT_CONTEXT_API,
+    children: <PinStates />,
   },
-  beforeEach: ({ parameters }) => {
+  beforeEach: () => {
     jotaiStore.set(metadataStoreState.atomFamily('commandMenuItems'), {
       current: [
         {
           ...mockedCommandMenuItems[0],
+          id: 'share',
           engineComponentKey: EngineComponentKey.SHARE_RECORD,
           isPinned: false,
-          conditionalAvailabilityExpression:
-            parameters.isSharingAvailable === false ? 'false' : null,
+          conditionalAvailabilityExpression: null,
+          conditionalPinnedExpression: null,
+          availabilityObjectMetadataId: null,
+        },
+        {
+          ...mockedCommandMenuItems[0],
+          id: 'add-to-favorites',
+          engineComponentKey: EngineComponentKey.ADD_TO_FAVORITES,
+          isPinned: true,
+          conditionalAvailabilityExpression: null,
           conditionalPinnedExpression: null,
           availabilityObjectMetadataId: null,
         },
@@ -74,61 +83,47 @@ export default meta;
 
 type Story = StoryObj<typeof CommandMenuContextProviderContent>;
 
-const expectUnpinnedShare: Story['play'] = async ({ canvasElement }) => {
-  const canvas = within(canvasElement);
+const expectPinStates =
+  ({ isFavoritesPinned }: { isFavoritesPinned: boolean }): Story['play'] =>
+  async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
 
-  expect(canvas.getByText('Unpinned share')).toBeVisible();
-  expect(canvas.queryByText('Pinned share')).not.toBeInTheDocument();
-};
+    expect(canvas.getByText('SHARE_RECORD unpinned')).toBeVisible();
+    expect(
+      canvas.getByText(
+        `ADD_TO_FAVORITES ${isFavoritesPinned ? 'pinned' : 'unpinned'}`,
+      ),
+    ).toBeVisible();
+  };
 
 export const InboxHeader: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    expect(canvas.getAllByText('Pinned share')).toHaveLength(1);
-    expect(canvas.queryByText('Unpinned share')).not.toBeInTheDocument();
-  },
-};
-
-export const UnavailableSharing: Story = {
-  parameters: { isSharingAvailable: false },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    expect(canvas.queryByText('Pinned share')).not.toBeInTheDocument();
-    expect(canvas.queryByText('Unpinned share')).not.toBeInTheDocument();
-  },
+  play: expectPinStates({ isFavoritesPinned: false }),
 };
 
 export const CompanyHeader: Story = {
   args: {
     commandMenuContextApi: {
-      ...CHAT_SHARING_CONTEXT_API,
+      ...CHAT_CONTEXT_API,
       objectMetadataItem: {
         id: 'company-object',
         nameSingular: StandardObjectNameSingular.Company,
       },
     },
   },
-  play: expectUnpinnedShare,
+  play: expectPinStates({ isFavoritesPinned: true }),
 };
 
 export const SidePanelFooter: Story = {
   args: { containerType: CommandMenuItemContainerType.SidePanelFooter },
-  play: expectUnpinnedShare,
-};
-
-export const CommandMenuList: Story = {
-  args: { containerType: CommandMenuItemContainerType.CommandMenuList },
-  play: expectUnpinnedShare,
+  play: expectPinStates({ isFavoritesPinned: true }),
 };
 
 export const InboxDisabled: Story = {
   args: {
     commandMenuContextApi: {
-      ...CHAT_SHARING_CONTEXT_API,
+      ...CHAT_CONTEXT_API,
       featureFlags: { IS_AI_CHAT_INBOX_ENABLED: false },
     },
   },
-  play: expectUnpinnedShare,
+  play: expectPinStates({ isFavoritesPinned: true }),
 };

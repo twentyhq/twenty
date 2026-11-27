@@ -29,6 +29,8 @@ import { SidePanelSnoozeAiChatPage } from '@/side-panel/pages/snooze-ai-chat/com
 import { SidePanelAddAiChatParticipantsPage } from '@/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage';
 import { SidePanelAiChatParticipantsPage } from '@/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPage';
 import { SidePanelAssignAiChatPage } from '@/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage';
+import { SidePanelLinkAiChatToRecordsPage } from '@/side-panel/pages/link-ai-chat-to-records/components/SidePanelLinkAiChatToRecordsPage';
+import { SidePanelMoveAiChatToChannelPage } from '@/side-panel/pages/move-ai-chat-to-channel/components/SidePanelMoveAiChatToChannelPage';
 import { SidePanelFrontComponentPage } from '@/side-panel/pages/front-component/components/SidePanelFrontComponentPage';
 import { SidePanelDashboardChartSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardChartSettings';
 import { SidePanelDashboardIframeSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardIframeSettings';
@@ -142,5 +144,7 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
     SidePanelPages.AddAiChatParticipants,
     <SidePanelAddAiChatParticipantsPage />,
   ],
+  [SidePanelPages.MoveAiChatToChannel, <SidePanelMoveAiChatToChannelPage />],
+  [SidePanelPages.LinkAiChatToRecords, <SidePanelLinkAiChatToRecordsPage />],
   [SidePanelPages.EditColumn, <SidePanelEditColumnPage />],
 ]);

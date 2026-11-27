@@ -20,8 +20,9 @@ describe('navigation record search empty state', () => {
     jest.mocked(useObjectRecordSearchRecords).mockReturnValue({
       loading: false,
       searchRecords: [],
-      hasNextPage: false,
       error: undefined,
+      hasNextPage: false,
+      fetchMoreRecords: jest.fn(),
     });
   });
   afterEach(() => jest.useRealTimers());
@@ -70,6 +71,7 @@ describe('navigation record search duplicates', () => {
         },
       ],
       error: undefined,
+      fetchMoreRecords: jest.fn(),
     });
     const existingItem: NavigationMenuItem = {
       id: 'navigation-ivan',

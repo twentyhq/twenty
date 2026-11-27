@@ -3,7 +3,7 @@ import { formatAiChatTokens } from '@/ai-chat/usage/utils/formatAiChatTokens';
 import { FloatingPortal, useTransitionStyles } from '@floating-ui/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { type ComponentProps, useContext, useState } from 'react';
 import { useReducedMotion } from 'framer-motion';
 import { isDefined } from 'twenty-shared/utils';
 import { MetricRow } from 'twenty-ui/components/data-display';
@@ -14,6 +14,8 @@ import { IconWindow, IconGauge, IconUser } from 'twenty-ui/icon';
 import { Separator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
+import { AiChatComposerActionsRowContext } from '@/ai-chat/contexts/AiChatComposerActionsRowContext';
+import { AiChatContextChatDetails } from '@/ai-chat/usage/components/AiChatContextChatDetails';
 import { AiChatContextUsageDetails } from '@/ai-chat/usage/components/AiChatContextUsageDetails';
 import { AiChatUsageMetricRow } from '@/ai-chat/usage/components/AiChatUsageMetricRow';
 import { useAiChatHoverCard } from '@/ai-chat/hooks/useAiChatHoverCard';
@@ -30,6 +32,11 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { formatNumber } from '@/localization/utils/formatNumber';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
+const StyledCard = styled(StyledInformationCard)`
+  container-type: inline-size;
+  width: 400px;
+`;
+
 const StyledFooter = styled.div`
   display: flex;
   justify-content: flex-end;
@@ -44,8 +51,13 @@ export const AiChatContextUsageButton = () => {
 
   const [showDetails, setShowDetails] = useState(false);
 
+  const [isOverflowOpen, setIsOverflowOpen] = useState(false);
+
+  const composerActionsRow = useContext(AiChatComposerActionsRowContext);
+
   const {
     isOpen,
+    close,
     context,
     refs,
     floatingStyles,
@@ -54,8 +66,38 @@ export const AiChatContextUsageButton = () => {
   } = useAiChatHoverCard({
     placement: 'top-start',
     role: 'dialog',
-    onOpen: () => setShowDetails(false),
+    onOpen: () => {
+      setIsOverflowOpen(false);
+      setShowDetails(false);
+    },
+    shouldStayOpen: isOverflowOpen,
+    boundary: composerActionsRow,
   });
+
+  const closeCard = () => {
+    setIsOverflowOpen(false);
+    close();
+  };
+
+  const handleOverflowOpenChange: ComponentProps<
+    typeof AiChatContextChatDetails
+  >['onOverflowOpenChange'] = (nextOpen, eventDetails) => {
+    setIsOverflowOpen(nextOpen);
+
+    const target = eventDetails.event.target;
+    const isPressInsideCard =
+      target instanceof Node &&
+      ((refs.floating.current?.contains(target) ?? false) ||
+        (refs.domReference.current?.contains(target) ?? false));
+
+    if (
+      !nextOpen &&
+      eventDetails.reason === 'outside-press' &&
+      !isPressInsideCard
+    ) {
+      closeCard();
+    }
+  };
 
   const { threadId } = useAiChatInstanceOrThrow();
 
@@ -151,13 +193,17 @@ export const AiChatContextUsageButton = () => {
       </LightIconButton>
       {isMounted && (
         <FloatingPortal>
-          <StyledInformationCard
+          <StyledCard
             ref={refs.setFloating}
             style={{ ...floatingStyles, ...transitionStyles }}
             aria-label={t`Context and usage`}
             // oxlint-disable-next-line react/jsx-props-no-spreading
             {...getFloatingProps()}
           >
+            <AiChatContextChatDetails
+              onOverflowOpenChange={handleOverflowOpenChange}
+              onRecordOpen={closeCard}
+            />
             <MetricRow
               startIcon={<IconWindow size={theme.icon.size.sm} />}
               progress={percentage}
@@ -208,7 +254,7 @@ export const AiChatContextUsageButton = () => {
                 </StyledFooter>
               </>
             )}
-          </StyledInformationCard>
+          </StyledCard>
         </FloatingPortal>
       )}
     </>

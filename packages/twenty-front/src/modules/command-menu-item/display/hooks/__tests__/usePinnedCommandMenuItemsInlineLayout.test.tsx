@@ -4,7 +4,6 @@ import { type ReactNode } from 'react';
 
 import { usePinnedCommandMenuItemsInlineLayout } from '@/command-menu-item/display/hooks/usePinnedCommandMenuItemsInlineLayout';
 import { commandMenuPinnedInlineLayoutFamilyState } from '@/command-menu-item/display/states/commandMenuPinnedInlineLayoutFamilyState';
-import { getPinnedCommandMenuItemWidthKey } from '@/command-menu-item/display/utils/getPinnedCommandMenuItemWidthKey';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -51,24 +50,7 @@ const buildPinnedCommandMenuItem = ({
 const SNOOZE = buildPinnedCommandMenuItem({ id: 'snooze', hotKeys: ['H'] });
 const DONE = buildPinnedCommandMenuItem({ id: 'done', hotKeys: ['E'] });
 
-const ITEM_WIDTHS = {
-  [getPinnedCommandMenuItemWidthKey({
-    commandMenuItemId: 'snooze',
-    shouldShowHotKey: true,
-  })]: 100,
-  [getPinnedCommandMenuItemWidthKey({
-    commandMenuItemId: 'snooze',
-    shouldShowHotKey: false,
-  })]: 80,
-  [getPinnedCommandMenuItemWidthKey({
-    commandMenuItemId: 'done',
-    shouldShowHotKey: true,
-  })]: 90,
-  [getPinnedCommandMenuItemWidthKey({
-    commandMenuItemId: 'done',
-    shouldShowHotKey: false,
-  })]: 70,
-};
+const ITEM_WIDTHS = { snooze: 100, done: 90 };
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
@@ -95,25 +77,16 @@ describe('usePinnedCommandMenuItemsInlineLayout', () => {
     resetJotaiStore();
   });
 
-  it('shows hot keys when every button fits with them', () => {
+  it('shows every button that fits', () => {
     const layout = renderLayout(200);
 
-    expect(layout.shouldShowHotKeys).toBe(true);
-    expect(layout.pinnedInlineCommandMenuItems).toEqual([SNOOZE, DONE]);
-  });
-
-  it('drops the hot keys before dropping a button', () => {
-    const layout = renderLayout(160);
-
-    expect(layout.shouldShowHotKeys).toBe(false);
     expect(layout.pinnedInlineCommandMenuItems).toEqual([SNOOZE, DONE]);
     expect(layout.pinnedOverflowCommandMenuItems).toEqual([]);
   });
 
-  it('keeps the hot keys when dropping them would not save a button', () => {
+  it('moves the buttons that do not fit to the overflow', () => {
     const layout = renderLayout(120);
 
-    expect(layout.shouldShowHotKeys).toBe(true);
     expect(layout.pinnedInlineCommandMenuItems).toEqual([SNOOZE]);
     expect(layout.pinnedOverflowCommandMenuItems).toEqual([DONE]);
   });

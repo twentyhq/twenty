@@ -9,7 +9,6 @@ type AiChatThreadPageContentProps = {
   headerActions?: ReactNode;
   headerTitle?: ReactNode;
   headerTitlePrefix?: ReactNode;
-  headerTitleAccessory?: ReactNode;
 };
 
 export const AiChatThreadPageContent = ({
@@ -17,7 +16,6 @@ export const AiChatThreadPageContent = ({
   headerActions,
   headerTitle,
   headerTitlePrefix,
-  headerTitleAccessory,
 }: AiChatThreadPageContentProps) => {
   const inboxNamesByLegacyName = useAtomStateValue(
     inboxNamesByLegacyNameSelector,
@@ -32,7 +30,6 @@ export const AiChatThreadPageContent = ({
       headerActions={headerActions}
       headerTitle={headerTitle}
       headerTitlePrefix={headerTitlePrefix}
-      headerTitleAccessory={headerTitleAccessory}
       headerTitleMode="record-title"
       isRecordIdentifierBarHidden
     />

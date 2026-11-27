@@ -38,6 +38,7 @@ import { EditDashboardSingleRecordCommand } from '@/command-menu-item/engine-com
 import { SaveDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/SaveDashboardSingleRecordCommand';
 import { ReplyToEmailThreadCommand } from '@/command-menu-item/engine-command/record/single-record/message-thread/components/ReplyToEmailThreadCommand';
 import { ManageAiChatParticipantsCommand } from '@/command-menu-item/engine-command/record/components/ManageAiChatParticipantsCommand';
+import { OpenAiChatThreadPageCommand } from '@/command-menu-item/engine-command/record/components/OpenAiChatThreadPageCommand';
 import { InboxThreadInboxCommand } from '@/command-menu-item/engine-command/record/components/InboxThreadInboxCommand';
 import { ShareRecordCommand } from '@/command-menu-item/engine-command/record/components/ShareRecordCommand';
 import { SeeWorkflowWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/SeeWorkflowWorkflowRunSingleRecordCommand';
@@ -297,6 +298,12 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   ),
   [EngineComponentKey.MANAGE_AI_CHAT_PARTICIPANTS]: (
     <ManageAiChatParticipantsCommand />
+  ),
+  [EngineComponentKey.MOVE_AI_CHAT_TO_CHANNEL]: (
+    <OpenAiChatThreadPageCommand page={SidePanelPages.MoveAiChatToChannel} />
+  ),
+  [EngineComponentKey.LINK_AI_CHAT_TO_RECORDS]: (
+    <OpenAiChatThreadPageCommand page={SidePanelPages.LinkAiChatToRecords} />
   ),
   [EngineComponentKey.COMPOSE_EMAIL]: <ComposeEmailCommand />,
   [EngineComponentKey.COMPOSE_CAMPAIGN]: <ComposeCampaignCommand />,
