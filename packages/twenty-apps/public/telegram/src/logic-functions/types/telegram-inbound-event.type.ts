@@ -13,7 +13,6 @@ export type TelegramInboundEvent =
     }
   | {
       kind: 'FEEDBACK';
-      chatId: number;
       user: TelegramUser;
       callbackQueryId: string;
       requestId: string;

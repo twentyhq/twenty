@@ -35,6 +35,17 @@ describe('installing or upgrading the Telegram app', () => {
     ]);
   });
 
+  it('fails when Telegram refuses the webhook, so the job is retried', async () => {
+    vi.unstubAllGlobals();
+    stubTelegramApi({
+      failures: {
+        setWebhook: [{ error_code: 429, description: 'Too Many Requests' }],
+      },
+    });
+
+    await expect(telegramPostInstallHandler()).rejects.toThrow();
+  });
+
   it('leaves the webhook alone while the bot is not configured', async () => {
     vi.stubEnv('TELEGRAM_BOT_TOKEN', '');
 

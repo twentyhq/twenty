@@ -46,7 +46,6 @@ export const parseTelegramUpdate = (
   ) {
     return {
       kind: 'FEEDBACK',
-      chatId: callbackQuery.from.id,
       user: callbackQuery.from,
       callbackQueryId: callbackQuery.id,
       requestId: feedbackMatch[2],

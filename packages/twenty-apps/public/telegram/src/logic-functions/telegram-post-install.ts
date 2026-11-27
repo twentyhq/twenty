@@ -11,18 +11,14 @@ export const telegramPostInstallHandler = async (): Promise<void> => {
     return;
   }
 
-  await ensureTelegramWebhook(botCredentials.credentials).catch(
-    (error: unknown) => {
-      console.warn('[telegram] could not register the webhook', error);
-    },
-  );
+  await ensureTelegramWebhook(botCredentials.credentials);
 };
 
 export default definePostInstallLogicFunction({
   universalIdentifier: TELEGRAM_POST_INSTALL_UNIVERSAL_IDENTIFIER,
   name: 'telegram-post-install',
   description:
-    'Runs when the app is installed or upgraded. Registers the webhook again when the bot is configured, so Telegram sends the update types this version handles without a member having to start a new connection.',
+    'Runs when the app is installed or upgraded. Registers the webhook again when the bot is configured, so Telegram sends the update types this version handles without a member having to start a new connection. Fails when Telegram refuses, so the job is retried.',
   timeoutSeconds: 30,
   shouldRunOnVersionUpgrade: true,
   shouldRunSynchronously: false,

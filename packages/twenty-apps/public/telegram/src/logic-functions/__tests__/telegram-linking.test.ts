@@ -341,6 +341,28 @@ describe('connecting a Telegram account', () => {
     );
   });
 
+  it('answers a rating tapped by an account no workspace claims', async () => {
+    const { resolved } = await deliver({
+      callback_query: {
+        id: 'callback-1',
+        from: TELEGRAM_USER,
+        data: 'feedback:POSITIVE:request-1',
+      },
+    });
+
+    expect(resolved).toEqual(
+      new Response(
+        {
+          method: 'answerCallbackQuery',
+          callback_query_id: 'callback-1',
+          text: TELEGRAM_NOT_CONNECTED_TEXT,
+        },
+        { headers: { 'content-type': 'application/json' } },
+      ),
+    );
+    expect(telegramCalls).toEqual([]);
+  });
+
   it('removes the link without replying when the user blocks the bot', async () => {
     await deliver(buildMessageUpdate(`/start ${(await startLink()).token}`));
 

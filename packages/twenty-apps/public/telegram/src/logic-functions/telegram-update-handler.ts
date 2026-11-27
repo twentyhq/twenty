@@ -56,6 +56,28 @@ export const telegramUpdateHandler = async (
     return { outcome: 'DISCONNECTED' };
   }
 
+  if (event.kind === 'FEEDBACK') {
+    const isSaved = await saveTelegramAssistantFeedback({
+      client,
+      id: event.requestId,
+      telegramUserId,
+      feedback: event.feedback,
+    });
+
+    await callTelegramApiOrThrow({
+      botToken,
+      method: 'answerCallbackQuery',
+      params: {
+        callback_query_id: event.callbackQueryId,
+        text: isSaved
+          ? TELEGRAM_FEEDBACK_SAVED_TEXT
+          : TELEGRAM_FEEDBACK_NOT_SAVED_TEXT,
+      },
+    });
+
+    return { outcome: isSaved ? 'FEEDBACK_SAVED' : 'FEEDBACK_NOT_SAVED' };
+  }
+
   const reply = (text: string) =>
     sendTelegramMessage({ botToken, chatId: event.chatId, text });
 
@@ -77,28 +99,6 @@ export const telegramUpdateHandler = async (
     await reply(TELEGRAM_DISCONNECTED_TEXT);
 
     return { outcome: 'DISCONNECTED' };
-  }
-
-  if (event.kind === 'FEEDBACK') {
-    const isSaved = await saveTelegramAssistantFeedback({
-      client,
-      id: event.requestId,
-      telegramUserId,
-      feedback: event.feedback,
-    });
-
-    await callTelegramApiOrThrow({
-      botToken,
-      method: 'answerCallbackQuery',
-      params: {
-        callback_query_id: event.callbackQueryId,
-        text: isSaved
-          ? TELEGRAM_FEEDBACK_SAVED_TEXT
-          : TELEGRAM_FEEDBACK_NOT_SAVED_TEXT,
-      },
-    });
-
-    return { outcome: isSaved ? 'FEEDBACK_SAVED' : 'FEEDBACK_NOT_SAVED' };
   }
 
   const links = await findTelegramUserLinks({

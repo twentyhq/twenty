@@ -55,7 +55,6 @@ describe('parseTelegramUpdate', () => {
       }),
     ).toEqual({
       kind: 'FEEDBACK',
-      chatId: 42,
       user: USER,
       callbackQueryId: 'callback-1',
       requestId: '8f4e2c1a-0b7d-4c3e-9a51-6d2f8b0c7e14',
