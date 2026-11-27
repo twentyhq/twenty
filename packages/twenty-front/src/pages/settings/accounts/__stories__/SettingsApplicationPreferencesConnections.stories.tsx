@@ -22,6 +22,7 @@ import {
   LINEAR_RECONNECT_NEEDED_ACCOUNT_ID,
   MOCKED_TRANSIENT_TOKEN,
   generateTransientToken,
+  limitLinearToSingleConnection,
   unconfigureLinearClientCredentials,
 } from '~/pages/settings/accounts/__stories__/mockedLinearApplicationPreferences';
 import { clickAndCaptureOAuthRedirect } from '~/pages/settings/accounts/__stories__/clickAndCaptureOAuthRedirect';
@@ -226,6 +227,23 @@ export const RowRemoveDeletesTheConnection: Story = {
       ).not.toBeInTheDocument(),
     );
     expect(canvas.getByText('Work Linear')).toBeVisible();
+  },
+};
+
+export const SingleConnectionProviderHidesAddConnection: Story = {
+  beforeEach: async () => {
+    await seedApplicationPreferencesStory();
+    limitLinearToSingleConnection();
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText('Work Linear', undefined, { timeout: 3000 }),
+    ).toBeVisible();
+    expect(
+      canvas.queryByRole('button', { name: 'Add connection' }),
+    ).not.toBeInTheDocument();
   },
 };
 

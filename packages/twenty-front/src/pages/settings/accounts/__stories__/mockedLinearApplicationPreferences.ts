@@ -24,6 +24,12 @@ export const unconfigureLinearClientCredentials = () => {
   isLinearClientCredentialsConfigured = false;
 };
 
+let isLinearMultipleConnectionsAllowed = true;
+
+export const limitLinearToSingleConnection = () => {
+  isLinearMultipleConnectionsAllowed = false;
+};
+
 export const LINEAR_INSTALLED_APPLICATION = {
   id: LINEAR_APPLICATION_ID,
   universalIdentifier: LINEAR_APPLICATION_ID,
@@ -42,7 +48,7 @@ const buildLinearConnectionProvider = () => ({
   name: 'linear',
   displayName: 'Linear',
   scope: 'USER',
-  allowMultipleConnections: true,
+  allowMultipleConnections: isLinearMultipleConnectionsAllowed,
   logoUrl: null,
   oauth: {
     __typename: 'ApplicationConnectionProviderOAuthConfig',
@@ -114,7 +120,9 @@ export const LINEAR_CONNECTED_ACCOUNTS_GRAPHQL_HANDLER = graphql.query(
       data: {
         myConnectedAccounts: withoutDeletedAccounts([
           ...CONNECTED_ACCOUNTS,
-          ...LINEAR_CONNECTED_ACCOUNTS,
+          ...(isLinearMultipleConnectionsAllowed
+            ? LINEAR_CONNECTED_ACCOUNTS
+            : LINEAR_CONNECTED_ACCOUNTS.slice(0, 1)),
         ]),
       },
     }),
@@ -141,5 +149,6 @@ export const GENERATE_TRANSIENT_TOKEN_GRAPHQL_HANDLER = graphql.mutation(
 
 export const resetLinearApplicationPreferencesMocks = () => {
   isLinearClientCredentialsConfigured = true;
+  isLinearMultipleConnectionsAllowed = true;
   generateTransientToken.mockClear();
 };

@@ -269,7 +269,6 @@ export class ConnectionProviderConnectedAccountService {
 
     const singleConnectionLockKey = `app-single-connection:${workspaceId}:${provider.id}${scope === 'USER' ? `:${userWorkspaceId}` : ''}`;
 
-    // The lock makes the existence check and the insert atomic across concurrent flows.
     const connectedAccount = provider.allowMultipleConnections
       ? await createConnectedAccount()
       : await this.cacheLockService.withLock(async () => {
