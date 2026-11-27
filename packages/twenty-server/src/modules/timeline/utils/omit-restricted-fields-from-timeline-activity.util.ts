@@ -81,14 +81,14 @@ export const resolveTimelineActivitySubject = ({
       flatEntityMaps: flatObjectMetadataMaps,
     });
 
-    return isDefined(flatObjectMetadata)
-      ? {
-          flatObjectMetadata,
-          recordId: isNonEmptyString(linkedRecordId)
-            ? linkedRecordId
-            : undefined,
-        }
-      : undefined;
+    if (!isDefined(flatObjectMetadata)) {
+      return undefined;
+    }
+
+    return {
+      flatObjectMetadata,
+      recordId: isNonEmptyString(linkedRecordId) ? linkedRecordId : undefined,
+    };
   }
 
   const objectByTargetColumnName = getObjectByTargetColumnName(
