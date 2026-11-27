@@ -89,16 +89,15 @@ export class MinimalMetadataService {
       flatObjectMetadataMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter(
-        (flatObjectMetadata) =>
-          resolveEffectiveFlatEntityProperty({
-            metadataName: 'objectMetadata',
-            flatEntity: flatObjectMetadata,
-            property: 'isActive',
-            authorContext: {
-              workspaceCustomApplicationUniversalIdentifier,
-            },
-          }) === true,
+      .filter((flatObjectMetadata) =>
+        resolveEffectiveFlatEntityProperty({
+          metadataName: 'objectMetadata',
+          flatEntity: flatObjectMetadata,
+          property: 'isActive',
+          authorContext: {
+            workspaceCustomApplicationUniversalIdentifier,
+          },
+        }),
       )
       .map((flatObjectMetadata) => {
         const isStandardApp = belongsToTwentyStandardApp(flatObjectMetadata);
