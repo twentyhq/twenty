@@ -1,2 +1,2 @@
 export const ADD_ALLOW_MULTIPLE_CONNECTIONS_TO_CONNECTION_PROVIDER_UPGRADE_COMMAND_NAME =
-  '2.66.0_AddAllowMultipleConnectionsToConnectionProviderFastInstanceCommand_1795812489121';
+  '2.66.0_AddAllowMultipleConnectionsToConnectionProviderFastInstanceCommand_1795863795282';

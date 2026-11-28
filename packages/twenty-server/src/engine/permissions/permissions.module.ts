@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { DiscoveryModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AccessGroupPropagationProgressReadService } from 'src/engine/permissions/access-group-propagation-progress-read.service';
@@ -11,6 +12,7 @@ import { RecordEventPermissionsReadService } from 'src/engine/permissions/record
 import { RecordAccessGroupWriteService } from 'src/engine/permissions/record-access-group-write.service';
 import { RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
 import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
+import { RecordReadCustomPermissionsService } from 'src/engine/permissions/record-read-custom-permissions/record-read-custom-permissions.service';
 import { RecordSharingReadService } from 'src/engine/permissions/record-share/services/record-sharing-read.service';
 import { RecordSharingPermissionsService } from 'src/engine/permissions/record-sharing-permissions.service';
 import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
@@ -26,6 +28,7 @@ import { PermissionsMetricsModule } from 'src/engine/permissions/internal/metric
 
 @Module({
   imports: [
+    DiscoveryModule,
     AccessGroupComputationModule,
     AccessGroupReadModule,
     ApplicationGrantRoleLookupModule,
@@ -45,6 +48,7 @@ import { PermissionsMetricsModule } from 'src/engine/permissions/internal/metric
     RecordEventPermissionsReadService,
     RecordFieldPermissionsReadService,
     RecordPermissionsReadService,
+    RecordReadCustomPermissionsService,
     RecordSharingPermissionsService,
     RecordSharingReadService,
     RolePermissionsService,
@@ -58,6 +62,7 @@ import { PermissionsMetricsModule } from 'src/engine/permissions/internal/metric
     RecordEventPermissionsReadService,
     RecordFieldPermissionsReadService,
     RecordPermissionsReadService,
+    RecordReadCustomPermissionsService,
     RecordSharingPermissionsService,
     RecordSharingReadService,
     RolePermissionsService,

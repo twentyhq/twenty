@@ -6225,6 +6225,11 @@ msgstr "Plik"
 msgid "File {fileId} is already associated with a permanent files field. Please re-upload the file."
 msgstr "Plik {fileId} jest już powiązany z trwałym polem plików. Prześlij plik ponownie."
 
+#. js-lingui-id: SsAfxz
+#: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
+msgid "File {fileId} is listed more than once. Please re-upload the file."
+msgstr ""
+
 #. js-lingui-id: xiXoMW
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
 msgid "File {fileId} upload has not been completed. Please retry the upload."

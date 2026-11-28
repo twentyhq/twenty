@@ -437,6 +437,10 @@ export class UserWorkspaceService {
         ),
       ]);
     }
+
+    await this.workspaceCacheService.flush(workspaceId, [
+      'flatWorkspaceMemberMaps',
+    ]);
   }
 
   async findAvailableWorkspacesByEmail(email: string) {

@@ -355,7 +355,8 @@ import { AddNavigationMenuItemVisibleItemLimitFastInstanceCommand } from 'src/da
 import { BackfillRecentChatsSectionVisibleItemLimitSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795772818031-backfill-recent-chats-section-visible-item-limit';
 import { AddEventMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-66/2-66-instance-command-fast-1795792442166-add-event-metadata';
 import { AddStartConversationLogicFunctionToMessagingProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-66/2-66-instance-command-fast-1795809856924-add-start-conversation-logic-function-to-messaging-provider';
-import { AddAllowMultipleConnectionsToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-66/2-66-instance-command-fast-1795812489121-add-allow-multiple-connections-to-connection-provider';
+import { DropValidationRuleExpressionAndBindingsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-66/2-66-instance-command-fast-1795859275327-drop-validation-rule-expression-and-bindings';
+import { AddAllowMultipleConnectionsToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-66/2-66-instance-command-fast-1795863795282-add-allow-multiple-connections-to-connection-provider';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -713,5 +714,6 @@ export const INSTANCE_COMMANDS = [
   BackfillRecentChatsSectionVisibleItemLimitSlowInstanceCommand,
   AddEventMetadataFastInstanceCommand,
   AddStartConversationLogicFunctionToMessagingProviderFastInstanceCommand,
+  DropValidationRuleExpressionAndBindingsFastInstanceCommand,
   AddAllowMultipleConnectionsToConnectionProviderFastInstanceCommand,
 ];

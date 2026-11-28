@@ -6225,6 +6225,11 @@ msgstr "파일"
 msgid "File {fileId} is already associated with a permanent files field. Please re-upload the file."
 msgstr "파일 {fileId}은(는) 이미 영구 파일 필드에 연결되어 있습니다. 파일을 다시 업로드해 주세요."
 
+#. js-lingui-id: SsAfxz
+#: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
+msgid "File {fileId} is listed more than once. Please re-upload the file."
+msgstr ""
+
 #. js-lingui-id: xiXoMW
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
 msgid "File {fileId} upload has not been completed. Please retry the upload."

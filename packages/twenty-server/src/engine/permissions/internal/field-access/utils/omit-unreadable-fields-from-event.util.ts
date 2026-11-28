@@ -6,11 +6,9 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { type UnreadableFieldsOnMatchingRecords } from 'src/engine/permissions/internal/field-access/types/unreadable-fields-on-matching-records.type';
 import { findUnreadableFieldMetadataIdsOnRecords } from 'src/engine/permissions/internal/field-access/utils/find-unreadable-field-metadata-ids-on-records.util';
-import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { filterFieldNamesInEventProperties } from 'src/engine/permissions/utils/filter-field-names-in-event-properties.util';
 import { getFieldNamesInEventProperties } from 'src/engine/permissions/utils/get-field-names-in-event-properties.util';
-import { omitRestrictedFieldsFromTimelineActivityEvent } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity-event.util';
 
 const omitFieldNamesFromEvent = <TEvent extends ObjectRecordEvent>({
   event,
@@ -41,14 +39,12 @@ export const omitUnreadableFieldsFromEvent = <
   event,
   objectMetadata,
   recordsPermissions,
-  recordReadRestrictions,
   metadataMaps,
   unreadableFieldsOnMatchingRecords,
 }: {
   event: TEvent;
   objectMetadata: FlatObjectMetadata;
   recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
-  recordReadRestrictions: RecordReadRestrictions;
   metadataMaps: PermissionsMetadataMaps;
   unreadableFieldsOnMatchingRecords: UnreadableFieldsOnMatchingRecords[];
 }): TEvent => {
@@ -79,19 +75,8 @@ export const omitUnreadableFieldsFromEvent = <
         : [];
     }),
   );
-  const eventWithoutUnreadableFields = omitFieldNamesFromEvent({
+  return omitFieldNamesFromEvent({
     event,
     fieldNames: unreadableFieldNames,
-  });
-
-  if (objectMetadata.nameSingular !== 'timelineActivity') {
-    return eventWithoutUnreadableFields;
-  }
-
-  return omitRestrictedFieldsFromTimelineActivityEvent({
-    event: eventWithoutUnreadableFields,
-    recordReadRestrictions,
-    flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
-    flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
   });
 };

@@ -442,7 +442,7 @@ describePermissionTestWorkspace({
       const metadataMaps =
         await getAppProviderByClassName<RecordAccessGroupMetadataMapsService>(
           'RecordAccessGroupMetadataMapsService',
-        ).findAfterEvictingLocalCache(workspace.workspaceId);
+        ).findAfterMarkingLocalCacheStale(workspace.workspaceId);
 
       expect(
         findAccessGroupValueLookups({
