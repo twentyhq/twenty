@@ -115,7 +115,7 @@ const MARK_MODEL_FILL = 0.7;
 // The mask the rings and apps pass behind takes this share of the logo:
 // the logo floats and drifts, the mask stays put, so it keeps to the
 // least the logo covers and never shows past its edges.
-const MARK_MASK_SHARE = 0.88;
+const MARK_MASK_SHARE = 0.95;
 // An app's logo on screen, where it passes in front: 12% larger than the
 // 28 / 34px it had.
 const APP_PX = { base: 31, md: 38 } as const;
