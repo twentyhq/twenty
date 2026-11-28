@@ -4,11 +4,12 @@ import { kv } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { LINKEDIN_ENRICHMENT_DAILY_PROFILE_LOOKUP_LIMIT } from 'src/constants/linkedin-enrichment-daily-profile-lookup-limit.constant';
+import { createDeadlineBoundFetch } from 'src/logic-functions/utils/create-deadline-bound-fetch.util';
 import { buildLinkedinPersonEnrichment } from 'src/logic-functions/utils/build-linkedin-person-enrichment.util';
 import { getLinkedinEnrichedPersonKey } from 'src/logic-functions/utils/get-linkedin-enriched-person-key.util';
 import { consumeLinkedinProfileLookupOrThrow } from 'src/logic-functions/utils/consume-linkedin-profile-lookup-or-throw.util';
 import { isTransientLinkedinError } from 'src/logic-functions/utils/is-transient-linkedin-error.util';
-import { getUnipileUserProfile } from 'src/unipile/utils/get-unipile-user-profile.util';
+import { getUnipileUser } from 'src/unipile/utils/get-unipile-user.util';
 
 type EnrichablePersonRecord = {
   id: string;
@@ -34,14 +35,6 @@ const EMPTY_PHONE_FILTER = {
     { phones: { primaryPhoneNumber: { eq: '' } } },
   ],
 };
-
-const createDeadlineBoundFetch =
-  (deadlineAtMs: number) =>
-  (input: RequestInfo | URL, init?: RequestInit): Promise<Response> =>
-    fetch(input, {
-      ...init,
-      signal: AbortSignal.timeout(Math.max(deadlineAtMs - Date.now(), 1)),
-    });
 
 const findEnrichablePerson = async ({
   personId,
@@ -72,8 +65,7 @@ const findEnrichablePerson = async ({
   )[0];
 };
 
-// The empty filter keeps a value a member typed during the lookup.
-// Emails are unique and phones validated, so each field is set alone.
+// Set one field per update, filtered on it being empty, to keep member edits and isolate validation errors
 const setEmptyPersonFieldOrWarn = async ({
   personId,
   field,
@@ -152,10 +144,11 @@ export const enrichLinkedinPerson = async ({
   });
 
   const { jobTitle, email, phoneNumber } = buildLinkedinPersonEnrichment(
-    await getUnipileUserProfile({
+    await getUnipileUser({
       accountId: unipileAccountId,
       userId: providerUserId,
       deadlineAtMs,
+      withSections: ['linkedin_experience_preview'],
     }),
   );
 

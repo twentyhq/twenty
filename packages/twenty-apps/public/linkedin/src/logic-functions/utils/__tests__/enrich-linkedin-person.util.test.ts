@@ -1,12 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const mocks = vi.hoisted(() => ({
-  kvStore: new Map<string, unknown>(),
-  query: vi.fn(),
-  mutation: vi.fn(),
-  clientOptions: [] as { fetch?: unknown }[],
-  getUnipileUserProfile: vi.fn(),
-}));
+const mocks = vi.hoisted(() => {
+  const clientOptions: { fetch?: unknown }[] = [];
+
+  return {
+    kvStore: new Map<string, unknown>(),
+    query: vi.fn(),
+    mutation: vi.fn(),
+    clientOptions,
+    getUnipileUser: vi.fn(),
+  };
+});
 
 vi.mock('twenty-sdk/logic-function', () => ({
   kv: {
@@ -28,8 +32,8 @@ vi.mock('twenty-client-sdk/core', () => ({
   },
 }));
 
-vi.mock('src/unipile/utils/get-unipile-user-profile.util', () => ({
-  getUnipileUserProfile: mocks.getUnipileUserProfile,
+vi.mock('src/unipile/utils/get-unipile-user.util', () => ({
+  getUnipileUser: mocks.getUnipileUser,
 }));
 
 const { enrichLinkedinPerson } =
@@ -64,7 +68,7 @@ describe('enrichLinkedinPerson', () => {
     mocks.clientOptions.length = 0;
     mocks.query.mockReset();
     mocks.mutation.mockReset().mockResolvedValue({ updatePeople: [] });
-    mocks.getUnipileUserProfile.mockReset().mockResolvedValue({
+    mocks.getUnipileUser.mockReset().mockResolvedValue({
       id: 'priya-provider-id',
       display_name: 'Priya Shah',
       emails: ['priya@acme.com'],
@@ -161,7 +165,7 @@ describe('enrichLinkedinPerson', () => {
 
     await enrich();
 
-    expect(mocks.getUnipileUserProfile).not.toHaveBeenCalled();
+    expect(mocks.getUnipileUser).not.toHaveBeenCalled();
   });
 
   it('looks each person up only once', async () => {
@@ -170,7 +174,7 @@ describe('enrichLinkedinPerson', () => {
     await enrich();
     await enrich();
 
-    expect(mocks.getUnipileUserProfile).toHaveBeenCalledTimes(1);
+    expect(mocks.getUnipileUser).toHaveBeenCalledTimes(1);
   });
 
   it('leaves the person to a later sync once its share of the daily lookups is used', async () => {
@@ -182,7 +186,7 @@ describe('enrichLinkedinPerson', () => {
 
     await expect(enrich()).rejects.toBeInstanceOf(UnipileRateLimitError);
 
-    expect(mocks.getUnipileUserProfile).not.toHaveBeenCalled();
+    expect(mocks.getUnipileUser).not.toHaveBeenCalled();
     expect(mocks.kvStore.has('linkedin-enriched-person:priya-id')).toBe(false);
   });
 });

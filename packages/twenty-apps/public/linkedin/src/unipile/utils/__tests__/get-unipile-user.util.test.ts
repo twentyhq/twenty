@@ -12,10 +12,10 @@ vi.mock('src/unipile/utils/get-unipile-request-options.util', () => ({
   getUnipileRequestOptions: () => ({ auth: 'key', throwOnError: true }),
 }));
 
-const { getUnipileUserProfile } =
-  await import('src/unipile/utils/get-unipile-user-profile.util');
+const { getUnipileUser } =
+  await import('src/unipile/utils/get-unipile-user.util');
 
-describe('getUnipileUserProfile', () => {
+describe('getUnipileUser', () => {
   beforeEach(() => {
     mocks.getUserProfile.mockReset();
   });
@@ -29,7 +29,7 @@ describe('getUnipileUserProfile', () => {
     );
 
     await expect(
-      getUnipileUserProfile({
+      getUnipileUser({
         accountId: 'acc_1',
         userId: 'priya-provider-id',
         deadlineAtMs: Date.now() + 50,
