@@ -45,12 +45,9 @@ import {
   LoggerDriverType,
   type TwentyLogLevel,
 } from 'src/engine/core-modules/logger/interfaces';
-import { type MeterDriver } from 'src/engine/core-modules/metrics/types/meter-driver.type';
+import { MeterDriver } from 'src/engine/core-modules/metrics/types/meter-driver.type';
 import { MeterTemporality } from 'src/engine/core-modules/metrics/types/meter-temporality.type';
-import { CastToLogLevelArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-log-level-array.decorator';
-import { CastToMeterDriverArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-meter-driver.decorator';
 import { CastToPositiveNumber } from 'src/engine/core-modules/twenty-config/decorators/cast-to-positive-number.decorator';
-import { CastToTypeORMLogLevelArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-typeorm-log-level-array.decorator';
 import { CastToUpperSnakeCase } from 'src/engine/core-modules/twenty-config/decorators/cast-to-upper-snake-case.decorator';
 import { ConfigVariablesMetadata } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { IsAWSRegion } from 'src/engine/core-modules/twenty-config/decorators/is-aws-region.decorator';
@@ -1027,7 +1024,6 @@ export class ConfigVariables {
     type: ConfigVariableType.ARRAY,
     options: ['query', 'schema', 'error', 'warn', 'info', 'log', 'migration'],
   })
-  @CastToTypeORMLogLevelArray()
   @IsOptional()
   TYPEORM_LOGGING: LoggerOptions = ['error'];
 
@@ -1353,7 +1349,6 @@ export class ConfigVariables {
     options: ['log', 'error', 'warn', 'debug', 'verbose', 'performance'],
     isEnvOnly: true,
   })
-  @CastToLogLevelArray()
   @IsOptional()
   LOG_LEVELS: TwentyLogLevel[] = ['log', 'error', 'warn', 'performance'];
 
@@ -1361,10 +1356,9 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.LOGGING,
     description: 'Driver used for collect metrics (OpenTelemetry or Console)',
     type: ConfigVariableType.ARRAY,
-    options: ['OpenTelemetry', 'Console'],
+    options: Object.values(MeterDriver),
     isEnvOnly: true,
   })
-  @CastToMeterDriverArray()
   @IsOptional()
   METER_DRIVER: MeterDriver[] = [];
 
