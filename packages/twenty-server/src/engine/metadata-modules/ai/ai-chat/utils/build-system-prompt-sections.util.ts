@@ -9,6 +9,7 @@ import { buildToolCatalogSection } from 'src/engine/core-modules/tool-provider/u
 import { CHAT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-chat/constants/chat-system-prompts.const';
 import { buildReferencedSkillsSection } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-referenced-skills-section.util';
 import { buildSkillCatalogSection } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-skill-catalog-section.util';
+import { buildThreadMembersSection } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-thread-members-section.util';
 import { buildUploadedFilesSection } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-uploaded-files-section.util';
 import { buildUserContextSection } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-user-context-section.util';
 import { buildWorkspaceInstructionsSection } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-instructions-section.util';
@@ -26,6 +27,7 @@ export const buildSystemPromptSections = ({
   uploadedFilesContext,
   workspaceInstructions,
   userContext,
+  threadMembers,
   userWorkspaceId,
   workspaceId,
   isWorkspaceSetupThread = false,
@@ -99,6 +101,11 @@ export const buildSystemPromptSections = ({
       title: 'Participants',
       content: CHAT_SYSTEM_PROMPTS.MULTIPLE_PARTICIPANTS(userWorkspaceId),
     },
+    isDefined(threadMembers) &&
+      threadMembers.length > 1 && {
+        title: 'Thread Members',
+        content: buildThreadMembersSection(threadMembers),
+      },
   ];
 
   return sections.filter((section) => section !== false);

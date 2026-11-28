@@ -39,9 +39,11 @@ import { AgentChatMessageReactionService } from 'src/engine/metadata-modules/ai/
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
 import { createReactToMessageTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/react-to-message.tool';
 import { createCompleteWorkspaceSetupTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
+import { type AgentChatThreadMember } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-member.type';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
 import { type AgentChatAuthorizedConversation } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-authorized-conversation.type';
 import { type UploadedFileReference } from 'src/engine/metadata-modules/ai/ai-chat/types/uploaded-file-reference.type';
+import { buildAgentChatThreadMembers } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-members.util';
 import { buildFullSystemPrompt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-full-system-prompt.util';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
 import { collectReferencedSkillIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-referenced-skill-ids.util';
@@ -65,6 +67,7 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type ChatExecutionOptions = {
   workspace: WorkspaceEntity;
@@ -123,6 +126,7 @@ export class ChatExecutionService {
     private readonly agentChatMessageReactionService: AgentChatMessageReactionService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly agentTurnService: AgentTurnService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async streamChat({
@@ -185,6 +189,14 @@ export class ChatExecutionService {
       resolveExecutionContext,
     };
 
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatWorkspaceMemberMaps',
+      ]);
+    const threadMembers = buildAgentChatThreadMembers({
+      thread,
+      workspaceMemberById: flatWorkspaceMemberMaps.byId,
+    });
     const executionProfile = await this.buildExecutionProfile({
       thread,
       workspace,
@@ -215,6 +227,7 @@ export class ChatExecutionService {
             modelConfig,
             browsingContext: executionProfile.browsingContext,
             workspaceMemberId: authContext.workspaceMemberId,
+            threadMembers,
             timezone: userContext.timezone,
             hasFileTools: executionProfile.hasFileTools,
           },
@@ -263,6 +276,7 @@ export class ChatExecutionService {
             workspaceInstructions:
               workspace.aiAdditionalInstructions ?? undefined,
             userContext,
+            threadMembers,
             userWorkspaceId,
             workspaceId: workspace.id,
             isWorkspaceSetupThread,
@@ -426,6 +440,7 @@ export class ChatExecutionService {
     modelConfig,
     browsingContext,
     workspaceMemberId,
+    threadMembers,
     timezone,
     hasFileTools,
   }: {
@@ -434,6 +449,7 @@ export class ChatExecutionService {
     modelConfig: AiModelConfig;
     browsingContext: BrowsingContextType | null;
     workspaceMemberId: string;
+    threadMembers: AgentChatThreadMember[];
     timezone: string | null;
     hasFileTools: boolean;
   }): {
@@ -471,6 +487,12 @@ export class ChatExecutionService {
         injectChatMessageSenders({
           messages: processedMessages,
           currentWorkspaceMemberId: workspaceMemberId,
+          workspaceMemberNameById: new Map(
+            threadMembers.map((member) => [
+              member.workspaceMemberId,
+              member.name,
+            ]),
+          ),
         }),
         timezone,
       ),
