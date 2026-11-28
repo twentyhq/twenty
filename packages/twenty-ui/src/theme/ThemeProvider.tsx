@@ -4,6 +4,7 @@ import React from 'react';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { computeThemeFromCss } from './internal/computeThemeFromCss';
+import { getAccentCssVariables } from './internal/getAccentCssVariables';
 import { getThemeContext } from './internal/getThemeContext';
 import { getThemeScopeContext } from './internal/getThemeScopeContext';
 import { resolveExplicitTheme } from './internal/resolveExplicitTheme';
@@ -22,6 +23,7 @@ const applyColorSchemeClass = (colorScheme: 'light' | 'dark') => {
 export const ThemeProvider = ({
   children,
   colorScheme,
+  accentColor,
   applyToRoot = true,
   overrides,
   className,
@@ -58,6 +60,32 @@ export const ThemeProvider = ({
   const overridesKey = isDefined(overrides) ? JSON.stringify(overrides) : '';
 
   React.useLayoutEffect(() => {
+    if (
+      typeof document === 'undefined' ||
+      isScoped ||
+      !isDefined(accentColor)
+    ) {
+      return;
+    }
+
+    const rootStyle = document.documentElement.style;
+    const accentCssVariables = getAccentCssVariables({
+      accentColor,
+      colorScheme,
+    });
+
+    for (const [cssVariable, value] of Object.entries(accentCssVariables)) {
+      rootStyle.setProperty(cssVariable, value);
+    }
+
+    return () => {
+      for (const cssVariable of Object.keys(accentCssVariables)) {
+        rootStyle.removeProperty(cssVariable);
+      }
+    };
+  }, [accentColor, colorScheme, isScoped]);
+
+  React.useLayoutEffect(() => {
     if (applyToRoot) {
       applyColorSchemeClass(colorScheme);
     }
@@ -71,7 +99,14 @@ export const ThemeProvider = ({
     }
 
     setScopeContainer(isScoped ? wrapperRef.current : null);
-  }, [colorScheme, applyToRoot, isScoped, overridesKey, hasExplicitTheme]);
+  }, [
+    colorScheme,
+    accentColor,
+    applyToRoot,
+    isScoped,
+    overridesKey,
+    hasExplicitTheme,
+  ]);
 
   // The interface scale preference is consumed by the root zoom rule in the
   // app stylesheet through --t-scale-user, which only reads from the html
@@ -109,7 +144,12 @@ export const ThemeProvider = ({
     );
   }
 
-  const overridesStyle = (overrides ?? {}) as React.CSSProperties;
+  const scopeStyle = {
+    ...(isDefined(accentColor)
+      ? getAccentCssVariables({ accentColor, colorScheme })
+      : {}),
+    ...overrides,
+  } as React.CSSProperties;
 
   return (
     <ThemeContext.Provider value={contextValue}>
@@ -117,7 +157,7 @@ export const ThemeProvider = ({
         <div
           ref={wrapperRef}
           className={clsx(applyToRoot ? undefined : colorScheme, className)}
-          style={{ display: 'contents', ...overridesStyle }}
+          style={{ display: 'contents', ...scopeStyle }}
         >
           {children}
         </div>

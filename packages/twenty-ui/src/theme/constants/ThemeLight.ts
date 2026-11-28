@@ -97,6 +97,7 @@ export const THEME_LIGHT = {
     accent10: 'color(display-p3 0.234 0.343 0.801)',
     accent11: 'color(display-p3 0.256 0.354 0.755)',
     accent12: 'color(display-p3 0.133 0.175 0.348)',
+    transparent: '#0047f112',
   },
   background: {
     noisy: 'var(--t-background-noisy)',
