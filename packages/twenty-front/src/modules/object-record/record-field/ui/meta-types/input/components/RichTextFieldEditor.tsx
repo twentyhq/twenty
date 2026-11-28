@@ -1,26 +1,25 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useAtom, useStore } from 'jotai';
 
-import { type Attachment } from '@/activities/files/types/Attachment';
-import { useAttachmentSync } from '@/activities/files/hooks/useAttachmentSync';
-import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
-import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
 import { AdvancedTextEditorBlockHandle } from '@/advanced-text-editor/components/AdvancedTextEditorBlockHandle';
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { type UploadErrorHandler } from '@/advanced-text-editor/types/UploadErrorHandler';
 import { getStorableEditorDocument } from '@/advanced-text-editor/utils/getStorableEditorDocument';
 import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeJsonContentAsAdvancedTextEditorDocument';
+import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RICH_TEXT_FIELD_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/object-record/record-field/ui/meta-types/input/constants/RichTextFieldEditorGlobalHotkeysConfig';
 import { RICH_TEXT_FIELD_EDITOR_PROFILE } from '@/object-record/record-field/ui/meta-types/input/constants/RichTextFieldEditorProfile';
-import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import {
+  type FieldFilesValue,
+  type FieldRichTextValue,
+} from '@/object-record/record-field/ui/types/FieldMetadata';
+import { computeRichTextFieldFilesToPersist } from '@/object-record/record-field/ui/utils/computeRichTextFieldFilesToPersist';
 import { getRichTextFieldSerializedContent } from '@/object-record/record-field/ui/utils/getRichTextFieldSerializedContent';
 import { stripRichTextFileUrlTokens } from '@/object-record/record-field/ui/utils/stripRichTextFileUrlTokens';
 import { useRecordSeededDraft } from '@/object-record/record-seeded-draft/hooks/useRecordSeededDraft';
@@ -33,10 +32,11 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { styled } from '@linaria/react';
 import { type Editor } from '@tiptap/core';
 import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { useDebouncedCallback } from 'use-debounce';
 import { useLingui } from '@lingui/react/macro';
+import { FileFolder } from '~/generated-metadata/graphql';
 
 const StyledEditorContainer = styled.div`
   box-sizing: border-box;
@@ -50,7 +50,7 @@ type RichTextFieldEditorProps = {
   recordId: string;
   objectNameSingular: string;
   fieldName: string;
-  onPersistBody?: (tiptap: string) => void;
+  onPersistBody?: (richTextValue: FieldRichTextValue) => void;
   onFocus?: () => void;
   onBlur?: () => void;
   editorRef?: React.MutableRefObject<Editor | null>;
@@ -93,34 +93,42 @@ export const RichTextFieldEditor = ({
 
   const focusId = `${recordId}-${fieldName}`;
 
-  const attachmentTargetFieldIdName = getActivityTargetObjectFieldIdName({
-    nameSingular: objectNameSingular,
-  });
+  const fieldValue: FieldRichTextValue | undefined = recordInStore?.[fieldName];
 
-  const { records: attachments } = useFindManyRecords<Attachment>({
-    objectNameSingular: StandardObjectNameSingular.Attachment,
-    filter: {
-      [attachmentTargetFieldIdName]: {
-        eq: recordId,
-      },
-    },
-  });
+  const [uploadedFiles, setUploadedFiles] = useState<
+    Pick<FieldFilesValue, 'fileId' | 'label'>[]
+  >([]);
+  // The local body value written on each edit has no files: the list the server last sent is kept here.
+  const [listedFiles, setListedFiles] = useState<FieldFilesValue[]>([]);
+  const listedFilesInStore = fieldValue?.files;
 
-  const { syncAttachments } = useAttachmentSync(attachments);
+  if (isDefined(listedFilesInStore) && listedFilesInStore !== listedFiles) {
+    setListedFiles(listedFilesInStore);
+  }
 
-  const { uploadAttachmentFile } = useUploadAttachmentFile();
+  const { uploadFile } = useDirectFileUpload();
 
   const { searchMentionRecords } = useMentionSearch();
 
   const { enqueueToast } = useToast();
 
   const handleUploadFile = async (file: File) => {
-    const { attachmentAbsoluteURL } = await uploadAttachmentFile(file, {
-      id: recordId,
-      targetObjectNameSingular: objectNameSingular,
+    assertIsDefinedOrThrow(
+      fieldMetadataItem,
+      new Error(t`Field "${fieldName}" not found`),
+    );
+
+    const uploadedFile = await uploadFile(file, {
+      fileFolder: FileFolder.FilesField,
+      fieldMetadataId: fieldMetadataItem.id,
     });
 
-    return { url: attachmentAbsoluteURL };
+    setUploadedFiles((currentUploadedFiles) => [
+      ...currentUploadedFiles,
+      { fileId: uploadedFile.id, label: file.name },
+    ]);
+
+    return { url: uploadedFile.url };
   };
 
   const handleUploadFileError: UploadErrorHandler = ({ file }) => {
@@ -129,8 +137,6 @@ export const RichTextFieldEditor = ({
       children: t`Failed to upload "${file.name}"`,
     });
   };
-
-  const fieldValue: FieldRichTextValue | undefined = recordInStore?.[fieldName];
 
   const { updateDraft, markDirty, flush, draftResyncKey } =
     useRecordSeededDraft({
@@ -146,26 +152,32 @@ export const RichTextFieldEditor = ({
           return;
         }
 
+        const files = computeRichTextFieldFilesToPersist({
+          listedFiles,
+          uploadedFiles,
+          serializedDocument: tiptap,
+        });
+        const richTextValue: FieldRichTextValue = {
+          blocknote: null,
+          markdown: null,
+          tiptap,
+          ...(isDefined(files) && { files }),
+        };
+
         if (onPersistBody) {
-          onPersistBody(tiptap);
+          onPersistBody(richTextValue);
           return;
         }
 
         updateOneRecord({
           idToUpdate: recordId,
           objectNameSingular,
-          updateOneRecordInput: {
-            [fieldName]: {
-              blocknote: null,
-              markdown: null,
-              tiptap,
-            },
-          },
+          updateOneRecordInput: { [fieldName]: richTextValue },
         });
       },
     });
 
-  const handleBodyChange = async (newSerializedDocument: string) => {
+  const handleBodyChange = (newSerializedDocument: string) => {
     const oldRecord = store.get(recordStoreFamilyState.atomFamily(recordId));
     const oldFieldValue: FieldRichTextValue | undefined =
       oldRecord?.[fieldName];
@@ -174,7 +186,6 @@ export const RichTextFieldEditor = ({
       markdown: null,
       tiptap: newSerializedDocument,
     };
-
     store.set(
       recordStoreFamilyState.atomFamily(recordId),
       (prev: typeof oldRecord) => ({
@@ -194,13 +205,7 @@ export const RichTextFieldEditor = ({
       objectMetadataItem,
     });
 
-    // Only after capturing the pre-edit body: persisting rewrites the record, so the diff would miss removed attachments.
     updateDraft({ tiptap: stripRichTextFileUrlTokens(newSerializedDocument) });
-
-    await syncAttachments(
-      newSerializedDocument,
-      getRichTextFieldSerializedContent(oldFieldValue),
-    );
   };
 
   const handleBodyChangeDebounced = useDebouncedCallback(handleBodyChange, 500);

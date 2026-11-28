@@ -543,6 +543,17 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         isFilterable: false,
         isIncludedInUniqueConstraint: false,
       },
+      {
+        subFieldName:
+          COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.RICH_TEXT]
+            .files,
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.RICH_TEXT]
+            .files,
+        isImportable: false,
+        isFilterable: false,
+        isIncludedInUniqueConstraint: false,
+      },
     ],
     exampleValues: doNotTranslate([
       {

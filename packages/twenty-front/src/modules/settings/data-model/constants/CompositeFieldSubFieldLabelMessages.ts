@@ -52,5 +52,6 @@ export const COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES: {
     blocknote: msg`BlockNote`,
     markdown: msg`Markdown`,
     tiptap: msg`TipTap`,
+    files: msg`Files`,
   },
 };

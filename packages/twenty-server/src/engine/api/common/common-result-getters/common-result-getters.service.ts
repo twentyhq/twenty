@@ -55,7 +55,7 @@ export class CommonResultGettersService {
   private objectHandlers: Map<string, QueryResultGetterHandlerInterface>;
   private fieldHandlers: Map<
     FieldMetadataType,
-    QueryResultGetterHandlerInterface
+    QueryResultGetterHandlerInterface[]
   >;
 
   constructor(private readonly fileUrlService: FileUrlService) {
@@ -73,17 +73,21 @@ export class CommonResultGettersService {
   }
 
   private initializeFieldHandlers() {
+    const filesFieldHandler = new FilesFieldQueryResultGetterHandler(
+      this.fileUrlService,
+    );
+
     this.fieldHandlers = new Map<
       FieldMetadataType,
-      QueryResultGetterHandlerInterface
+      QueryResultGetterHandlerInterface[]
     >([
-      [
-        FieldMetadataType.FILES,
-        new FilesFieldQueryResultGetterHandler(this.fileUrlService),
-      ],
+      [FieldMetadataType.FILES, [filesFieldHandler]],
       [
         FieldMetadataType.RICH_TEXT,
-        new RichTextFieldQueryResultGetterHandler(this.fileUrlService),
+        [
+          filesFieldHandler,
+          new RichTextFieldQueryResultGetterHandler(this.fileUrlService),
+        ],
       ],
     ]);
   }
@@ -163,11 +167,10 @@ export class CommonResultGettersService {
       .filter(isDefined);
 
     const fieldHandlers = new Set(
-      recordFieldMetadataList
-        .map((recordFieldMetadata) =>
-          this.fieldHandlers.get(recordFieldMetadata.type),
-        )
-        .filter(isDefined),
+      recordFieldMetadataList.flatMap(
+        (recordFieldMetadata) =>
+          this.fieldHandlers.get(recordFieldMetadata.type) ?? [],
+      ),
     );
 
     const handlers = [
