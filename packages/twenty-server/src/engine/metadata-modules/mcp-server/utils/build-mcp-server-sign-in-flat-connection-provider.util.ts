@@ -43,6 +43,7 @@ export const buildMcpServerSignInFlatConnectionProvider = ({
     identifyAccountLogicFunctionUniversalIdentifier: null,
     onConnectLogicFunctionUniversalIdentifier: null,
     onDisconnectLogicFunctionUniversalIdentifier: null,
+    checkConnectionLogicFunctionUniversalIdentifier: null,
     createdAt: now,
     updatedAt: now,
   };

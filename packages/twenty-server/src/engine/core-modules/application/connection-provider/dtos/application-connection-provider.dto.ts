@@ -44,6 +44,9 @@ export class ApplicationConnectionProviderDTO {
 
   logo: string | null;
 
+  @Field()
+  hasConnectionCheck: boolean;
+
   @Field(() => ApplicationConnectionProviderOAuthConfigDTO, { nullable: true })
   oauth: ApplicationConnectionProviderOAuthConfigDTO | null;
 }

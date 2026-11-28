@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import {
   type AuthorizeConnectionPayload,
+  type CheckConnectionPayload,
   type ConnectionCallbackPayload,
   type IdentifiedAccount,
   type IdentifyAccountPayload,
@@ -39,7 +40,8 @@ type ConnectionLifecycleHook =
   | 'authorize'
   | 'callback'
   | 'onConnect'
-  | 'onDisconnect';
+  | 'onDisconnect'
+  | 'checkConnection';
 
 type ConnectionFlowHook = Extract<
   ConnectionLifecycleHook,
@@ -63,6 +65,8 @@ const MISSING_LOGIC_FUNCTION_EXCEPTION_CODE_BY_HOOK: Record<
     ConnectionProviderExceptionCode.ON_CONNECT_LOGIC_FUNCTION_NOT_FOUND,
   onDisconnect:
     ConnectionProviderExceptionCode.ON_DISCONNECT_LOGIC_FUNCTION_NOT_FOUND,
+  checkConnection:
+    ConnectionProviderExceptionCode.CHECK_CONNECTION_LOGIC_FUNCTION_NOT_FOUND,
 };
 
 const FAILED_LOGIC_FUNCTION_EXCEPTION_CODE_BY_CONNECTION_FLOW_HOOK: Record<
@@ -341,6 +345,66 @@ export class ConnectionProviderLifecycleHookService {
         );
       }
     });
+  }
+
+  // Runs as the member viewing the connection, so the app sees it with their access.
+  // A failing check reads as unknown rather than surfacing an error.
+  async runCheckConnection({
+    provider,
+    workspaceId,
+    connectedAccountId,
+    userId,
+    userWorkspaceId,
+  }: {
+    provider: Pick<
+      ConnectionProviderEntity,
+      | 'id'
+      | 'name'
+      | 'applicationId'
+      | 'checkConnectionLogicFunctionUniversalIdentifier'
+    >;
+    workspaceId: string;
+    connectedAccountId: string;
+    userId: string;
+    userWorkspaceId: string;
+  }): Promise<LogicFunctionExecuteResult['data'] | undefined> {
+    try {
+      const logicFunction = await this.resolveLogicFunction({
+        hook: 'checkConnection',
+        logicFunctionUniversalIdentifier:
+          provider.checkConnectionLogicFunctionUniversalIdentifier,
+        provider,
+        workspaceId,
+      });
+
+      if (!isDefined(logicFunction)) {
+        return undefined;
+      }
+
+      const payload: CheckConnectionPayload = {
+        connectionProviderId: provider.id,
+        connectionProviderName: provider.name,
+        connectedAccountId,
+      };
+
+      const executionResult = await this.logicFunctionExecutorService.execute({
+        logicFunctionId: logicFunction.id,
+        workspaceId,
+        payload,
+        userId,
+        userWorkspaceId,
+      });
+
+      return isDefined(executionResult.error)
+        ? undefined
+        : executionResult.data;
+    } catch (error) {
+      this.exceptionHandlerService.captureExceptions([error], {
+        workspace: { id: workspaceId },
+      });
+
+      return undefined;
+    }
   }
 
   private async executeConnectionFlowHook({

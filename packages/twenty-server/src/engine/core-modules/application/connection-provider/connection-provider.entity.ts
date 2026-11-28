@@ -18,6 +18,7 @@ import {
 } from 'typeorm';
 
 import { ADD_OAUTH_DISCOVERY_TO_CONNECTION_PROVIDER_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-59/add-oauth-discovery-to-connection-provider-upgrade-command-name.constant';
+import { ADD_CHECK_CONNECTION_LOGIC_FUNCTION_TO_CONNECTION_PROVIDER_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-66/add-check-connection-logic-function-to-connection-provider-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
@@ -99,6 +100,13 @@ export class ConnectionProviderEntity
       '2.27.0_AddOnDisconnectLogicFunctionToConnectionProviderFastInstanceCommand_1785810340935',
   })
   onDisconnectLogicFunctionUniversalIdentifier: string | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_CHECK_CONNECTION_LOGIC_FUNCTION_TO_CONNECTION_PROVIDER_UPGRADE_COMMAND_NAME,
+  })
+  checkConnectionLogicFunctionUniversalIdentifier: string | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

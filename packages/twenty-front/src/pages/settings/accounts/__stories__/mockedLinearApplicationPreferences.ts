@@ -43,6 +43,7 @@ const buildLinearConnectionProvider = () => ({
   displayName: 'Linear',
   scope: 'USER',
   logoUrl: null,
+  hasConnectionCheck: false,
   oauth: {
     __typename: 'ApplicationConnectionProviderOAuthConfig',
     scopes: ['read'],

@@ -1423,6 +1423,9 @@ export default {
             "displayName": [
                 4
             ],
+            "hasConnectionCheck": [
+                1
+            ],
             "id": [
                 576
             ],
@@ -9233,6 +9236,15 @@ export default {
                 83,
                 {
                     "applicationId": [
+                        576,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "runConnectionCheck": [
+                83,
+                {
+                    "connectedAccountId": [
                         576,
                         "UUID!"
                     ]

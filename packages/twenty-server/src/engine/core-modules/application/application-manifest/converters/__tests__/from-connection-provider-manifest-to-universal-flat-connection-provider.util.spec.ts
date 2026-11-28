@@ -57,6 +57,7 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
       identifyAccountLogicFunctionUniversalIdentifier: null,
       onConnectLogicFunctionUniversalIdentifier: null,
       onDisconnectLogicFunctionUniversalIdentifier: null,
+      checkConnectionLogicFunctionUniversalIdentifier: null,
       createdAt: NOW,
       updatedAt: NOW,
     });
@@ -197,6 +198,24 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
 
     expect(result.onDisconnectLogicFunctionUniversalIdentifier).toBe(
       onDisconnectLogicFunctionUniversalIdentifier,
+    );
+  });
+
+  it('copies checkConnectionLogicFunctionUniversalIdentifier into the flat field when provided', () => {
+    const checkConnectionLogicFunctionUniversalIdentifier =
+      'e3e3e3e3-e3e3-4e3e-e3e3-e3e3e3e3e3e3';
+
+    const result =
+      fromConnectionProviderManifestToUniversalFlatConnectionProvider({
+        connectionProviderManifest: buildManifest({
+          checkConnectionLogicFunctionUniversalIdentifier,
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+    expect(result.checkConnectionLogicFunctionUniversalIdentifier).toBe(
+      checkConnectionLogicFunctionUniversalIdentifier,
     );
   });
 

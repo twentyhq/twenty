@@ -99,6 +99,7 @@ const FATHOM_CONNECTION_PROVIDER = {
   displayName: 'Fathom',
   scope: 'USER',
   logoUrl: null,
+  hasConnectionCheck: false,
   oauth: {
     __typename: 'ApplicationConnectionProviderOAuthConfig',
     scopes: ['read'],

@@ -30,6 +30,7 @@ const connectionProvidersHandler = graphql.query(
             displayName: 'Demo Service',
             scope: 'USER',
             logoUrl: null,
+            hasConnectionCheck: false,
             oauth: null,
           },
         ],

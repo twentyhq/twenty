@@ -1,0 +1,2 @@
+export const ADD_CHECK_CONNECTION_LOGIC_FUNCTION_TO_CONNECTION_PROVIDER_UPGRADE_COMMAND_NAME =
+  '2.66.0_AddCheckConnectionLogicFunctionToConnectionProviderFastInstanceCommand_1795859320621';

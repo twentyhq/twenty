@@ -39,6 +39,7 @@ const buildProvider = (
   identifyAccountLogicFunctionUniversalIdentifier: null,
   onConnectLogicFunctionUniversalIdentifier: null,
   onDisconnectLogicFunctionUniversalIdentifier: null,
+  checkConnectionLogicFunctionUniversalIdentifier: null,
   createdAt: now,
   updatedAt: now,
 });

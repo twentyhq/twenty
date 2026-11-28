@@ -19,5 +19,6 @@ export type FrontendApplicationConnectionProvider = {
   displayName: string;
   scope: ConnectionProviderScope;
   logoUrl: string | null;
+  hasConnectionCheck: boolean;
   oauth: FrontendApplicationConnectionProviderOAuthConfig | null;
 };

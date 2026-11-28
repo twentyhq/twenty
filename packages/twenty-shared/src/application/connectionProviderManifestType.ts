@@ -12,6 +12,7 @@ type ConnectionProviderManifestBase = SyncableEntityOptions & {
   identifyAccountLogicFunctionUniversalIdentifier?: string;
   onConnectLogicFunctionUniversalIdentifier?: string;
   onDisconnectLogicFunctionUniversalIdentifier?: string;
+  checkConnectionLogicFunctionUniversalIdentifier?: string;
   /** @deprecated Use `identifyAccountLogicFunctionUniversalIdentifier` instead. */
   identifyAccountLogicFunction?: SyncableEntityOptions;
   /** @deprecated Use `onConnectLogicFunctionUniversalIdentifier` instead. */

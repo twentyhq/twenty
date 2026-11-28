@@ -8,6 +8,7 @@ type ConnectionProviderLogicFunctionHook =
   | 'identifyAccount'
   | 'onConnect'
   | 'onDisconnect'
+  | 'checkConnection'
   | 'authorize'
   | 'callback';
 
@@ -43,6 +44,11 @@ export const getConnectionProviderManifestLogicFunctionReferences = (
       hook: 'onDisconnect',
       universalIdentifier:
         normalizedConnectionProvider.onDisconnectLogicFunctionUniversalIdentifier,
+    },
+    {
+      hook: 'checkConnection',
+      universalIdentifier:
+        normalizedConnectionProvider.checkConnectionLogicFunctionUniversalIdentifier,
     },
     {
       hook: 'authorize',

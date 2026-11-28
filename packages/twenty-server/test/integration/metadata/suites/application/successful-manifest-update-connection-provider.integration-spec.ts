@@ -86,6 +86,7 @@ describe('Manifest update - connection providers', () => {
       identifyAccountLogicFunctionUniversalIdentifier: null,
       onConnectLogicFunctionUniversalIdentifier: null,
       onDisconnectLogicFunctionUniversalIdentifier: null,
+      checkConnectionLogicFunctionUniversalIdentifier: null,
     });
   }, 60000);
 

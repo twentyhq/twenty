@@ -2,6 +2,7 @@ import { SettingsAppPreferencesConnectionsTable } from '@/settings/app-preferenc
 import { SettingsApplicationConnectCard } from '@/settings/app-preferences/components/SettingsApplicationConnectCard';
 import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
 import { SettingsApplicationAddConnectionButton } from '@/settings/applications/components/SettingsApplicationAddConnectionButton';
+import { SettingsApplicationConnectionChecks } from '@/settings/applications/components/SettingsApplicationConnectionChecks';
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -9,7 +10,7 @@ type SettingsApplicationProviderConnectionsProps = {
   applicationId: string;
   connectionProvider: Pick<
     ApplicationWithPreferences['connectionProviders'][number],
-    'name' | 'type' | 'displayName' | 'logoUrl'
+    'name' | 'type' | 'displayName' | 'logoUrl' | 'hasConnectionCheck'
   >;
   connections: ConnectedAccount[];
   canStartAuthorization: boolean;
@@ -30,6 +31,10 @@ export const SettingsApplicationProviderConnections = ({
   if (isLoading || isNonEmptyArray(connections)) {
     return (
       <>
+        <SettingsApplicationConnectionChecks
+          connections={connections}
+          hasConnectionCheck={connectionProvider.hasConnectionCheck}
+        />
         <SettingsAppPreferencesConnectionsTable
           applicationId={applicationId}
           connectionProviderName={connectionProvider.name}

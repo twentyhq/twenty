@@ -656,6 +656,7 @@ type ApplicationConnectedMemberCount {
 type ApplicationConnectionProvider {
   applicationId: String!
   displayName: String!
+  hasConnectionCheck: Boolean!
   id: UUID!
   logoUrl: String
   name: String!
@@ -3809,6 +3810,7 @@ type Mutation {
   rotateApplicationRegistrationClientSecret(id: String!): RotateClientSecret!
   runAgent(input: RunAgentInput!): RunAgentResult!
   runApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
+  runConnectionCheck(connectedAccountId: UUID!): ApplicationHealthCheckResult
   runMyApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
   saveImapSmtpCaldavAccount(connectionParameters: EmailAccountConnectionParameters!, handle: String!, id: UUID): ImapSmtpCaldavConnectionSuccess!
   sendAppChannelMessage(input: SendAppChannelMessageInput!): SendAppChannelMessageOutput!

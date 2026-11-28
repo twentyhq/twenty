@@ -16,6 +16,7 @@ type ConnectionProviderRow = {
   identifyAccountLogicFunctionUniversalIdentifier: string | null;
   onConnectLogicFunctionUniversalIdentifier: string | null;
   onDisconnectLogicFunctionUniversalIdentifier: string | null;
+  checkConnectionLogicFunctionUniversalIdentifier: string | null;
 };
 
 export const findConnectionProvidersByApplication = async (
@@ -26,7 +27,8 @@ export const findConnectionProvidersByApplication = async (
             cp."workspaceId", cp.name, cp."displayName", cp.type, cp.scope,
             cp."oauthConfig", cp."identifyAccountLogicFunctionUniversalIdentifier",
             cp."onConnectLogicFunctionUniversalIdentifier",
-            cp."onDisconnectLogicFunctionUniversalIdentifier"
+            cp."onDisconnectLogicFunctionUniversalIdentifier",
+            cp."checkConnectionLogicFunctionUniversalIdentifier"
        FROM core."connectionProvider" cp
        JOIN core."application" app ON app.id = cp."applicationId"
       WHERE app."universalIdentifier" = $1

@@ -54,6 +54,8 @@ export type { AppConnection } from '@/sdk/logic-function/connections/types/app-c
 export type {
   AuthorizeConnectionPayload,
   AuthorizeConnectionResult,
+  CheckConnectionPayload,
+  CheckConnectionResult,
   ConnectionCallbackPayload,
   ConnectionCallbackResult,
   IdentifyAccountPayload,

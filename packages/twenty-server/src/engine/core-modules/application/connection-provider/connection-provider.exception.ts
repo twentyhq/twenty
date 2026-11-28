@@ -37,6 +37,8 @@ const getConnectionProviderExceptionUserFriendlyMessage = (
       return msg`The logic function to run on disconnect was not found.`;
     case ConnectionProviderExceptionCode.ON_DISCONNECT_LOGIC_FUNCTION_FAILED:
       return msg`The logic function to run on disconnect failed.`;
+    case ConnectionProviderExceptionCode.CHECK_CONNECTION_LOGIC_FUNCTION_NOT_FOUND:
+      return msg`The logic function that checks the connection was not found.`;
     case ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_NOT_FOUND:
       return msg`The logic function that identifies the connected account was not found.`;
     case ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_FAILED:

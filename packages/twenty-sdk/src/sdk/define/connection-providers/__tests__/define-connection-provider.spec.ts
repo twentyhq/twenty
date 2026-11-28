@@ -132,6 +132,31 @@ describe('defineConnectionProvider', () => {
     },
   );
 
+  it('accepts a valid checkConnectionLogicFunctionUniversalIdentifier', () => {
+    const result = defineConnectionProvider({
+      ...baseValidConfig,
+      checkConnectionLogicFunctionUniversalIdentifier:
+        'b648f87b-1d26-4961-b974-0908fd991064',
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.config.checkConnectionLogicFunctionUniversalIdentifier).toBe(
+      'b648f87b-1d26-4961-b974-0908fd991064',
+    );
+  });
+
+  it('rejects a non-UUID checkConnectionLogicFunctionUniversalIdentifier', () => {
+    const result = defineConnectionProvider({
+      ...baseValidConfig,
+      checkConnectionLogicFunctionUniversalIdentifier: 'not-a-uuid',
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual([
+      'Connection provider checkConnectionLogicFunctionUniversalIdentifier "not-a-uuid" must be the UUID universalIdentifier of a logic function in this app.',
+    ]);
+  });
+
   describe('oauth-discovery type', () => {
     const baseOAuthDiscoveryConfig = {
       universalIdentifier: '99fcd8e8-fbb1-4d2c-bc16-7c61ef3ebbbc',

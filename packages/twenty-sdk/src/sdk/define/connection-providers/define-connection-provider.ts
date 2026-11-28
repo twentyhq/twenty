@@ -18,16 +18,17 @@ const SUPPORTED_TYPES = [
   'api-key',
 ] as const;
 
-type ConnectionProviderLogicFunctionKey = Extract<
+type ConnectionProviderLogicFunctionReferenceKey = Extract<
   keyof ConnectionProviderManifest,
-  `${string}LogicFunction`
+  `${string}LogicFunctionUniversalIdentifier`
 >;
 
-const LOGIC_FUNCTION_KEYS = [
-  'identifyAccountLogicFunction',
-  'onConnectLogicFunction',
-  'onDisconnectLogicFunction',
-] as const satisfies readonly ConnectionProviderLogicFunctionKey[];
+const LOGIC_FUNCTION_REFERENCE_KEYS = [
+  'identifyAccountLogicFunctionUniversalIdentifier',
+  'onConnectLogicFunctionUniversalIdentifier',
+  'onDisconnectLogicFunctionUniversalIdentifier',
+  'checkConnectionLogicFunctionUniversalIdentifier',
+] as const satisfies readonly ConnectionProviderLogicFunctionReferenceKey[];
 
 const CUSTOM_LOGIC_FUNCTION_KEYS = [
   'authorizeLogicFunction',
@@ -99,12 +100,11 @@ export const defineConnectionProvider: DefineEntity<
     errors.push('Connection provider must have a displayName');
   }
 
-  for (const logicFunctionKey of LOGIC_FUNCTION_KEYS) {
-    const universalIdentifier =
-      normalizedConfig[`${logicFunctionKey}UniversalIdentifier`];
+  for (const logicFunctionReferenceKey of LOGIC_FUNCTION_REFERENCE_KEYS) {
+    const universalIdentifier = normalizedConfig[logicFunctionReferenceKey];
     const referenceError = isDefined(universalIdentifier)
       ? getInvalidLogicFunctionReferenceError({
-          path: logicFunctionKey,
+          path: logicFunctionReferenceKey.replace(/UniversalIdentifier$/, ''),
           universalIdentifier,
         })
       : null;

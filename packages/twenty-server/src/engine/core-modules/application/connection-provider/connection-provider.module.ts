@@ -18,6 +18,9 @@ import { ConnectionProviderDiscoveredOAuthClientService } from 'src/engine/core-
 import { DiscoveredOAuthClientDriver } from 'src/engine/core-modules/application/connection-provider/oauth-client/drivers/discovered-oauth-client.driver';
 import { ManifestOAuthClientDriver } from 'src/engine/core-modules/application/connection-provider/oauth-client/drivers/manifest-oauth-client.driver';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
+import { ConnectionCheckResolver } from 'src/engine/core-modules/application/connection-provider/connection-check.resolver';
+import { ConnectionCheckService } from 'src/engine/core-modules/application/connection-provider/connection-check.service';
+import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
@@ -62,6 +65,7 @@ import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
     WorkspaceCacheModule,
     PermissionsModule,
     BillingModule,
+    ThrottlerModule,
   ],
   providers: [
     provideWorkspaceScopedRepository(ConnectionProviderEntity),
@@ -81,6 +85,8 @@ import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
     ConnectionProviderLifecycleHookService,
     ApplicationConnectionProviderResolver,
     ConnectionProviderApiKeyResolver,
+    ConnectionCheckService,
+    ConnectionCheckResolver,
     provideWorkspaceScopedRepository(ApplicationEntity),
   ],
   exports: [

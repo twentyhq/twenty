@@ -81,6 +81,10 @@ export type {
   BillableOperationManifest,
   BillableOperations,
 } from './billableOperationsType';
+export type {
+  CheckConnectionPayload,
+  CheckConnectionResult,
+} from './checkConnectionType';
 export type { ConnectionProviderManifest } from './connectionProviderManifestType';
 export type { ConnectionProviderScope } from './connectionProviderScopeType';
 export type { ConnectionProviderType } from './connectionProviderType';

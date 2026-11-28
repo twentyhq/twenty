@@ -94,6 +94,9 @@ export const fromConnectionProviderManifestToUniversalFlatConnectionProvider =
         normalizedManifest.onConnectLogicFunctionUniversalIdentifier ?? null,
       onDisconnectLogicFunctionUniversalIdentifier:
         normalizedManifest.onDisconnectLogicFunctionUniversalIdentifier ?? null,
+      checkConnectionLogicFunctionUniversalIdentifier:
+        normalizedManifest.checkConnectionLogicFunctionUniversalIdentifier ??
+        null,
       createdAt: now,
       updatedAt: now,
     };

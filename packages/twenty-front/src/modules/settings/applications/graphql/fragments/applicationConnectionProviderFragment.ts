@@ -9,6 +9,7 @@ export const APPLICATION_CONNECTION_PROVIDER_FRAGMENT = gql`
     displayName
     scope
     logoUrl
+    hasConnectionCheck
     oauth {
       scopes
       isClientCredentialsConfigured

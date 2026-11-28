@@ -704,6 +704,7 @@ export type ApplicationConnectionProvider = {
   __typename?: 'ApplicationConnectionProvider';
   applicationId: Scalars['String']['output'];
   displayName: Scalars['String']['output'];
+  hasConnectionCheck: Scalars['Boolean']['output'];
   id: Scalars['UUID']['output'];
   logoUrl?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
@@ -3999,6 +4000,7 @@ export type Mutation = {
   rotateApplicationRegistrationClientSecret: RotateClientSecret;
   runAgent: RunAgentResult;
   runApplicationHealthCheck?: Maybe<ApplicationHealthCheckResult>;
+  runConnectionCheck?: Maybe<ApplicationHealthCheckResult>;
   runMyApplicationHealthCheck?: Maybe<ApplicationHealthCheckResult>;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   sendAppChannelMessage: SendAppChannelMessageOutput;
@@ -5074,6 +5076,11 @@ export type MutationRunAgentArgs = {
 
 export type MutationRunApplicationHealthCheckArgs = {
   applicationId: Scalars['UUID']['input'];
+};
+
+
+export type MutationRunConnectionCheckArgs = {
+  connectedAccountId: Scalars['UUID']['input'];
 };
 
 

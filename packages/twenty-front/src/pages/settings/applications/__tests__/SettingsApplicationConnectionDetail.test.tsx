@@ -135,6 +135,7 @@ describe('SettingsApplicationConnectionDetail', () => {
           displayName: 'Google Calendar',
           scope: 'WORKSPACE',
           logoUrl: null,
+          hasConnectionCheck: false,
           oauth: {
             scopes: ['calendar.readonly'],
             isClientCredentialsConfigured: true,

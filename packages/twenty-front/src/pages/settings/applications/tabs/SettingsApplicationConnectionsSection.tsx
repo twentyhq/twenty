@@ -5,6 +5,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 
 import { SettingsApplicationAddConnectionButton } from '@/settings/applications/components/SettingsApplicationAddConnectionButton';
 import { SettingsApplicationConnectionProviderSection } from '@/settings/applications/components/SettingsApplicationConnectionProviderSection';
+import { SettingsApplicationConnectionChecks } from '@/settings/applications/components/SettingsApplicationConnectionChecks';
 import { SettingsApplicationConnectionName } from '@/settings/applications/components/SettingsApplicationConnectionName';
 import { SettingsApplicationConnectionStatus } from '@/settings/applications/components/SettingsApplicationConnectionStatus';
 import { SettingsApplicationConnectionTableRows } from '@/settings/applications/components/SettingsApplicationConnectionTableRows';
@@ -60,6 +61,10 @@ export const SettingsApplicationConnectionsSection = ({
             description={t`Manage connections used by this app to call ${provider.displayName}.`}
             shouldShowMissingCredentialsBanner={!canStartAuthorization}
           >
+            <SettingsApplicationConnectionChecks
+              connections={providerConnections}
+              hasConnectionCheck={provider.hasConnectionCheck}
+            />
             {providerConnections.length > 0 && (
               <Table>
                 <TableRow

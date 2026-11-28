@@ -256,6 +256,9 @@ export class ConnectionProviderService {
       displayName: provider.displayName,
       scope: provider.scope,
       logo: provider.logo,
+      hasConnectionCheck: isDefined(
+        provider.checkConnectionLogicFunctionUniversalIdentifier,
+      ),
       oauth:
         provider.type === 'oauth' && isDefined(provider.oauthConfig)
           ? {

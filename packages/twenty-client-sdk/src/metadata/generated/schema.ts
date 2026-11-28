@@ -527,6 +527,7 @@ export interface ApplicationConnectedMemberCount {
 export interface ApplicationConnectionProvider {
     applicationId: Scalars['String']
     displayName: Scalars['String']
+    hasConnectionCheck: Scalars['Boolean']
     id: Scalars['UUID']
     logoUrl?: Scalars['String']
     name: Scalars['String']
@@ -2680,6 +2681,7 @@ export interface Mutation {
     rotateApplicationRegistrationClientSecret: RotateClientSecret
     runAgent: RunAgentResult
     runApplicationHealthCheck?: ApplicationHealthCheckResult
+    runConnectionCheck?: ApplicationHealthCheckResult
     runMyApplicationHealthCheck?: ApplicationHealthCheckResult
     saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess
     sendAppChannelMessage: SendAppChannelMessageOutput
@@ -5213,6 +5215,7 @@ export interface ApplicationConnectedMemberCountGenqlSelection{
 export interface ApplicationConnectionProviderGenqlSelection{
     applicationId?: boolean | number
     displayName?: boolean | number
+    hasConnectionCheck?: boolean | number
     id?: boolean | number
     logoUrl?: boolean | number
     name?: boolean | number
@@ -7655,6 +7658,7 @@ export interface MutationGenqlSelection{
     rotateApplicationRegistrationClientSecret?: (RotateClientSecretGenqlSelection & { __args: {id: Scalars['String']} })
     runAgent?: (RunAgentResultGenqlSelection & { __args: {input: RunAgentInput} })
     runApplicationHealthCheck?: (ApplicationHealthCheckResultGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
+    runConnectionCheck?: (ApplicationHealthCheckResultGenqlSelection & { __args: {connectedAccountId: Scalars['UUID']} })
     runMyApplicationHealthCheck?: (ApplicationHealthCheckResultGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     saveImapSmtpCaldavAccount?: (ImapSmtpCaldavConnectionSuccessGenqlSelection & { __args: {connectionParameters: EmailAccountConnectionParameters, handle: Scalars['String'], id?: (Scalars['UUID'] | null)} })
     sendAppChannelMessage?: (SendAppChannelMessageOutputGenqlSelection & { __args: {input: SendAppChannelMessageInput} })
