@@ -244,14 +244,14 @@ export class ConnectionProviderConnectedAccountService {
     }
 
     const createConnectedAccount = async () => {
-      const existingCount = await this.connectedAccountRepository.count({
-        where: { connectionProviderId: provider.id, workspaceId },
-      });
+      const name =
+        identifiedAccount?.name ??
+        (await this.buildDefaultConnectedAccountName({ provider, workspaceId }));
 
       const created = this.connectedAccountRepository.create({
         ...sharedFields,
         handle: handle ?? (await this.resolveHandle({ idToken: null, userId })),
-        name: `${provider.displayName} #${existingCount + 1}`,
+        name,
         scope,
         provider: ConnectedAccountProvider.APP,
         workspaceId,
@@ -292,6 +292,20 @@ export class ConnectionProviderConnectedAccountService {
     this.emitConnectionChanged(connectedAccount);
 
     return connectedAccount;
+  }
+
+  private async buildDefaultConnectedAccountName({
+    provider,
+    workspaceId,
+  }: {
+    provider: Pick<ConnectionProviderEntity, 'id' | 'displayName'>;
+    workspaceId: string;
+  }): Promise<string> {
+    const existingCount = await this.connectedAccountRepository.count({
+      where: { connectionProviderId: provider.id, workspaceId },
+    });
+
+    return `${provider.displayName} #${existingCount + 1}`;
   }
 
   private async chargeThenPersist({

@@ -1,0 +1,85 @@
+---
+title: الأحداث (بيتا)
+description: عرّف أحداث تطبيقك الخاصة وأطلقها من دوال المنطق.
+---
+
+## نظرة عامة
+
+**الحدث** هو شيء يعرّفه تطبيقك مرة واحدة ويطلقه من دالة منطق في كل مرة يحدث فيها.
+
+<Note>
+**بيتا.** يمكن تعريف الأحداث وإطلاقها، ويتحقق Twenty من كل واقعة مقابل تعريفها. لا يتلقى أي شيء واقعة حتى الآن: من المخطط التسليم الفوري والتخزين وإطلاق دوال المنطق أو الوكلاء أو سير العمل من الأحداث.
+</Note>
+
+## تعريف حدث
+
+يصف الحدث خصائصه بتنسيق المخطط نفسه الخاص بـ `inputSchema` لمشغّل الأداة: مخطط كائن، مع `type: 'record'` و`objectUniversalIdentifier` للإشارة إلى سجل.
+
+```ts src/events/message-added.event.ts
+import { defineEvent } from 'twenty-sdk/define';
+
+import { CONVERSATION_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/conversation.object';
+
+export const MESSAGE_ADDED_EVENT_UNIVERSAL_IDENTIFIER =
+  '3c1d2a4b-5e6f-4a7b-8c9d-0e1f2a3b4c5d';
+
+export default defineEvent({
+  universalIdentifier: MESSAGE_ADDED_EVENT_UNIVERSAL_IDENTIFIER,
+  name: 'messageAdded',
+  label: 'Message added',
+  schema: {
+    type: 'object',
+    properties: {
+      conversationId: {
+        type: 'record',
+        objectUniversalIdentifier: CONVERSATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      },
+      messageId: { type: 'string', format: 'uuid' },
+      text: { type: 'string' },
+    },
+    required: ['conversationId', 'messageId'],
+  },
+});
+```
+
+`name` وأسماء الخصائص بصيغة camelCase. اسم الحدث فريد ضمن تطبيقك. الأسماء المنقوطة محجوزة للأحداث التي يطلقها Twenty نفسه.
+
+الخصائص مسطحة: تُرفض الكائنات والمصفوفات المتداخلة.
+
+| مخطط الخاصية                                    | القيمة المقبولة                                               |
+| ----------------------------------------------- | ------------------------------------------------------------- |
+| `{ type: 'string' }`                            | نص                                                            |
+| `{ type: 'string', format: 'date-time' }`       | سلسلة نصية بتنسيق ISO 8601                                    |
+| `{ type: 'string', format: 'uuid' }`            | سلسلة نصية UUID                                               |
+| `{ type: 'number' }`                            | رقم منتهٍ                                                     |
+| `{ type: 'integer' }`                           | عدد صحيح                                                      |
+| `{ type: 'boolean' }`                           | قيمة منطقية                                                   |
+| `{ type: 'record', objectUniversalIdentifier }` | UUID لسجل لهذا الكائن (أي كائن، بما في ذلك الكائنات القياسية) |
+| `{}` (بدون `type`)                              | أي قيمة JSON                                                  |
+
+يتم التحقق من `enum` و`minimum` و`maximum` أيضًا. يوثّق `label` و`description` خاصيةً.
+
+## إصدار
+
+```ts src/logic-functions/handlers/post-message-handler.ts
+import { emitEvent } from 'twenty-sdk/logic-function';
+
+const { id, occurredAt } = await emitEvent({
+  event: 'messageAdded',
+  id: `message-added-${messageId}`,
+  properties: { conversationId, messageId, text },
+});
+```
+
+سمِّ الحدث باستخدام `event` أو باستخدام `eventUniversalIdentifier: MESSAGE_ADDED_EVENT_UNIVERSAL_IDENTIFIER`، وليس كليهما. في كلتا الحالتين، لا يمكن إصدار سوى الأحداث التي يعلن عنها تطبيقك.
+
+`id` اختياري. عيّنه عندما قد تصدر دالة منطقية يُعاد تنفيذها الواقعة نفسها مرتين، لكي يحمل الإصداران معرّفًا واحدًا نفسه. يتبع القواعد نفسها الخاصة بـ `jobId` لمهمة في الخلفية: أحرف وأرقام و`_` و`.` و`-`، بحد أقصى 128 حرفًا. بدونه، ينشئ Twenty معرّفًا.
+
+يتحقق الخادم من الخصائص مقابل المخطط ويرفض أي شيء غير مُعلن عنه أو بنوع غير صحيح. يعيد معرّف `id` للواقعة ووقت تسجيلها.
+
+## الحدود
+
+| الحد            | القيمة      |
+| --------------- | ----------- |
+| الخصائص لكل حدث | 50          |
+| حمولة الواقعة   | 32 كيلوبايت |

@@ -322,6 +322,52 @@ export const linkedinMarkThreadAsReadHandler = async ({
 
 Când proprietarul contului canalului deschide unul dintre firele sale de discuție, Twenty apelează mutația `markAppChannelThreadAsRead`, care rulează funcția dvs. cu `messagingProviderName`, `connectedAccountId`, `messageChannelId` și `threadExternalId` al conversației. Valoarea sa returnată este ignorată. Membrii cu care este partajat doar contul nu îl declanșează niciodată, iar apelurile pentru același membru și același fir sunt omise timp de 30 de secunde, astfel încât redeschiderea unei conversații nu vă apelează din nou furnizorul. Apelul este efectuat cu cele mai bune eforturi: firul se deschide indiferent de ce face funcția dvs. Un furnizor fără `markThreadAsReadLogicFunctionUniversalIdentifier` nu este apelat niciodată. Necesită `"engines": { "twenty": ">=2.59.0" }`.
 
+## Inițierea conversațiilor
+
+Un furnizor de mesagerie poate declara, de asemenea, un `startConversationLogicFunctionUniversalIdentifier`. Membrii primesc apoi o intrare „Mesaj nou” pentru canal într-o înregistrare Persoană, iar primul mesaj pe care îl scriu acolo începe o conversație nouă cu acea persoană:
+
+```ts src/messaging-providers/linkedin-messaging.ts
+export default defineMessagingProvider({
+  // ...
+  sendMessageLogicFunctionUniversalIdentifier: 'f7d4b5e6-9a8c-4d0e-1f2a-3b4c5d6e7f80',
+  startConversationLogicFunctionUniversalIdentifier: '0c1d2e3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f',
+});
+```
+
+Mutația `startAppChannelConversation` preia canalul, `personId`, textul și o `idempotencyKey` și rulează funcția:
+
+```ts src/logic-functions/handlers/linkedin-start-conversation-handler.ts
+import {
+  type StartAppConversationPayload,
+  type StartAppConversationResult,
+} from 'twenty-sdk/logic-function';
+
+export const linkedinStartConversationHandler = async ({
+  connectedAccountId,
+  recipients: [recipient],
+  text,
+}: StartAppConversationPayload): Promise<StartAppConversationResult> => {
+  const profile = await resolveLinkedinProfile(recipient);
+  const started = await startLinkedinChat({
+    connectedAccountId,
+    profileId: profile.id,
+    text,
+  });
+
+  return {
+    externalId: started.messageId,
+    threadExternalId: started.chatId,
+    recipients: [{ personId: recipient.personId, handle: profile.url }],
+  };
+};
+```
+
+Fiecare destinatar include `personId`, `displayName` și `handle` pe care persoana îl are deja pe acest canal atunci când Twenty cunoaște unul din mesajele anterioare sau `null`. Identificați dvs. persoana la furnizor atunci când este `null`, de exemplu dintr-un câmp al înregistrării Persoană.
+
+Returnați `externalId` al mesajului trimis și `threadExternalId` al noii conversații, folosind același ID de fir pe care îl utilizează ingestia, astfel încât mesajele ulterioare să ajungă în același fir. Returnați `handle` al fiecărui destinatar în `recipients`, cu excepția cazului în care payload-ul îl conținea deja: Twenty înregistrează mesajul ca mesaj trimis de la canal către acel handle, îl asociază cu Persoana și deschide noul fir. Răspunsurile sunt apoi trimise prin funcția dvs. `sendMessageLogicFunctionUniversalIdentifier`, ca de obicei.
+
+Reîncercările, idempotența și eșecurile se comportă la fel ca pentru [răspunsuri](#sending-replies), fiind asociate persoanei în locul firului. Un canal al cărui furnizor nu are `startConversationLogicFunctionUniversalIdentifier` sau care folosește stilul de conversație `'email'` respinge mutația, iar intrarea "Mesaj nou" listează numai canalele care pot iniția conversații. Necesită `"engines": { "twenty": ">=2.66.0" }`.
+
 ## Listarea și actualizarea canalelor
 
 ```ts
@@ -521,7 +567,7 @@ export const linkedinDisconnectHandler = async (payload: {
 ## Ce nu face un canal
 
 * **Nu este interogat.** Conducta de import a Twenty interoghează furnizorii de căsuțe poștale printr-un cron. Canalele aplicației acceptă doar push: nimic nu preia date în numele dvs., așadar aplicația dvs. este responsabilă pentru introducerea mesajelor, printr-o rută webhook sau o funcție logică cron.
-* **Nu inițiază conversații.** Răspunsurile sunt trimise către un fir de discuție existent printr-un [furnizor de mesagerie](#sending-replies); un prim mesaj către o persoană nouă trebuie inițiat din aplicația dvs.
+* **Nu inițiază conversații de unul singur.** Răspunsurile merg către un fir existent prin intermediul unui [furnizor de mesagerie](#sending-replies); un prim mesaj către o persoană nouă necesită un [`startConversationLogicFunctionUniversalIdentifier`](#starting-conversations) la furnizor.
 * **Rezolvă contacte numai printr-un câmp declarat.** Fără unul, Twenty nu poate determina cui aparține un URN LinkedIn, așadar canalele aplicației [asociază participanții explicit la importare](#resolve-the-person-yourself).
 * **Nu creează contacte.** Crearea automată a Twenty derivă persoane și companii din domenii de e-mail, ceea ce nu are sens pentru majoritatea furnizorilor, astfel încât este dezactivată pentru canalele aplicațiilor. Creați chiar dvs. Persoana, apoi transmiteți `personId`.
 

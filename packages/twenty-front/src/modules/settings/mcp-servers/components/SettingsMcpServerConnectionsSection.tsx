@@ -28,7 +28,6 @@ export const SettingsMcpServerConnectionsSection = ({
   return (
     <SettingsApplicationConnectionProviderSection
       providerDisplayName={connectionProvider.displayName}
-      providerLogoUrl={connectionProvider.logoUrl}
       description={t`Connect your own ${connectionProvider.displayName} account for this server to use on your behalf.`}
       shouldShowMissingCredentialsBanner={!canStartAuthorization}
     >

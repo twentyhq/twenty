@@ -27,8 +27,8 @@ export default defineConnectionProvider({
   name: 'linear',
   displayName: 'Linear',
   icon: 'IconBrandLinear',
-  // Optional: a logo bundled in your app's public/ folder, shown next to the
-  // provider in the app's General tab.
+  // Optional: a logo bundled in your app's public/ folder, shown on the
+  // "Connect with" row.
   logo: 'public/linear-logomark.svg',
   type: 'oauth',
   scope: 'WORKSPACE',
@@ -93,7 +93,7 @@ Key points:
 - `displayName` shows in the app's General tab and in the AI tool list.
 - `scope` decides who connects: `'WORKSPACE'` (the default) for connections shared with the whole workspace, `'USER'` for connections each member makes for themselves. See "Workspace or personal connections" below.
 - `allowMultipleConnections` (default `true`) — set it to `false` when the service only makes sense with one account: each member (for a `USER` provider) or the workspace (for a `WORKSPACE` provider) can then hold a single connection. The **Add connection** button is hidden once it exists, and the server refuses a second one; reconnecting the existing connection still works. Requires `"engines": { "twenty": ">=2.66.0" }`.
-- `logo` is a path to an asset bundled in your app's `public/` folder, served through the app's public assets. When omitted, the General tab falls back to a placeholder built from `displayName`.
+- `logo` is a path to an asset bundled in your app's `public/` folder, served through the app's public assets. It is shown on the "Connect with" row; when omitted, the row shows no logo.
 - `clientIdVariable` / `clientSecretVariable` are **names**, not values — they must match keys declared in `defineApplication.serverVariables`. The actual `client_id` and `client_secret` are entered by the server admin through the app registration UI, never committed to your repo.
 - Use `serverVariables` (not `applicationVariables`) — OAuth credentials are server-wide and one OAuth app per Twenty server.
 - Until both `serverVariables` are filled in, the app's General tab shows a "needs server admin" hint and the "Add connection" button is disabled.
@@ -254,6 +254,7 @@ The callback returns:
 | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | `externalAccountId` | The service's id for the account. A later callback for the same id and member updates that connection instead of adding a second one.          |
 | `handle`            | Optional label shown for the connection. Defaults to the member's email.                                                                       |
+| `name`              | Optional name given to the connection when it is created, such as the connected user's full name. Defaults to `<displayName> #<n>`.            |
 | `accessToken`       | Optional per-account token, stored encrypted and returned by `getConnection`. Leave it out when your app calls the service with its own key. |
 
 Both functions run while the member waits on a redirect, so their timeout is capped at 10 seconds. A failure or an invalid return aborts the connection: nothing is saved and the on-connect logic function does not run. The on-connect logic function runs when a connection is created, reconnected or restored, not again when the service reports an account that is already connected. The state expires after an hour, so a notification arriving later is refused. Services commonly retry notifications: a repeat for an account already connected updates that connection, so returning the same account again is safe.
@@ -307,11 +308,13 @@ type IdentifyAccountPayload = {
 type IdentifyAccountResult = {
   externalAccountId: string | null; // non-empty, at most 512 characters; null opts out
   handle?: string; // non-empty when present
+  name?: string; // non-empty when present
 };
 ```
 
 - `externalAccountId` must be stable for the life of the upstream account (a team id, an organization id, a user id), never a name the user can change. Twenty trims it and stores it on the connection on first connect.
 - `handle`, when returned, replaces the handle Twenty would otherwise derive (the OIDC `id_token` email, or the connecting user's email). Return something a user recognizes, such as the Slack workspace name.
+- `name`, when returned, names the connection when it is created, instead of `<displayName> #<n>`. A reconnect keeps the existing name. `name`, here and in the custom callback result, ships with Twenty 2.66.0: if your app returns it, declare `"engines": { "twenty": ">=2.66.0" }` in its `package.json`.
 - Return `{ externalAccountId: null }` when the provider has no stable id to offer. Twenty then behaves as if no identify function were declared: no id is stored, a reconnect clears any id stored earlier, and reconnects are not checked. A bare `null` or a missing return is treated as an error, so a handler that forgets to return cannot silently disable the check.
 - If the function throws, times out, or returns anything else, the connection is **not** saved and the user lands back on the settings page with an error. Throw only when you genuinely cannot identify the account.
 
