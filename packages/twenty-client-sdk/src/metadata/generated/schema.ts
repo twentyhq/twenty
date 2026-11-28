@@ -2058,6 +2058,18 @@ export interface InitiateTwoFactorAuthenticationProvisioning {
     __typename: 'InitiateTwoFactorAuthenticationProvisioning'
 }
 
+export type InteractiveConnectionAction = 'CANCEL' | 'POLL' | 'SUBMIT'
+
+export type InteractiveConnectionStatus = 'CANCELLED' | 'CONNECTED' | 'IN_PROGRESS'
+
+export interface InteractiveConnectionStep {
+    connectedAccountId?: Scalars['UUID']
+    flowId?: Scalars['UUID']
+    screen?: Scalars['JSON']
+    status: InteractiveConnectionStatus
+    __typename: 'InteractiveConnectionStep'
+}
+
 export interface InvalidatePassword {
     /** Boolean that confirms query was dispatched */
     success: Scalars['Boolean']
@@ -2509,6 +2521,7 @@ export interface Mutation {
     completeWorkspaceLogoUpload: FileWithSignedUrl
     completeWorkspaceMemberProfilePictureUpload: FileWithSignedUrl
     connectApplicationWithApiKey: Scalars['UUID']
+    continueInteractiveConnection: InteractiveConnectionStep
     createAgentChatChannel: AgentChatChannel
     createApiKey: ApiKey
     createAppMessageChannel: MessageChannel
@@ -2704,6 +2717,7 @@ export interface Mutation {
     snoozeAgentChatThreadInChannel: Scalars['Boolean']
     startAppChannelConversation: SendAppChannelMessageOutput
     startChannelSync: ChannelSyncSuccess
+    startInteractiveConnection: InteractiveConnectionStep
     startWorkspaceSetupChat: StartWorkspaceSetupChatResult
     stopAgentChatStream: Scalars['Boolean']
     stopGenerate: Scalars['Boolean']
@@ -6181,6 +6195,8 @@ export interface ConnectedImapSmtpCaldavAccountGenqlSelection{
 
 export interface ConnectionParametersInput {connectionSecurity?: (EmailConnectionSecurity | null),host: Scalars['String'],password?: (Scalars['String'] | null),port: Scalars['Float'],username?: (Scalars['String'] | null)}
 
+export interface ContinueInteractiveConnectionInput {action: InteractiveConnectionAction,flowId: Scalars['UUID'],values?: (Scalars['JSON'] | null)}
+
 export interface CreateAgentChatChannelInput {color?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),name: Scalars['String'],roleIds: Scalars['UUID'][]}
 
 export interface CreateAgentInput {avatarColor?: (Scalars['String'] | null),avatarShape?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isPrivate?: (Scalars['Boolean'] | null),label: Scalars['String'],modelConfiguration?: (Scalars['JSON'] | null),modelId: Scalars['String'],name?: (Scalars['String'] | null),prompt: Scalars['String'],responseFormat?: (Scalars['JSON'] | null),roleId?: (Scalars['UUID'] | null),triggers?: (Scalars['JSON'][] | null)}
@@ -7023,6 +7039,15 @@ export interface InitiateTwoFactorAuthenticationProvisioningGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface InteractiveConnectionStepGenqlSelection{
+    connectedAccountId?: boolean | number
+    flowId?: boolean | number
+    screen?: boolean | number
+    status?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface InvalidatePasswordGenqlSelection{
     /** Boolean that confirms query was dispatched */
     success?: boolean | number
@@ -7484,6 +7509,7 @@ export interface MutationGenqlSelection{
     completeWorkspaceLogoUpload?: (FileWithSignedUrlGenqlSelection & { __args: {fileId: Scalars['String']} })
     completeWorkspaceMemberProfilePictureUpload?: (FileWithSignedUrlGenqlSelection & { __args: {fileId: Scalars['String']} })
     connectApplicationWithApiKey?: { __args: {input: ConnectApplicationWithApiKeyInput} }
+    continueInteractiveConnection?: (InteractiveConnectionStepGenqlSelection & { __args: {input: ContinueInteractiveConnectionInput} })
     createAgentChatChannel?: (AgentChatChannelGenqlSelection & { __args: {input: CreateAgentChatChannelInput} })
     createApiKey?: (ApiKeyGenqlSelection & { __args: {input: CreateApiKeyInput} })
     createAppMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: CreateAppMessageChannelInput} })
@@ -7679,6 +7705,7 @@ export interface MutationGenqlSelection{
     snoozeAgentChatThreadInChannel?: { __args: {snoozedUntil: Scalars['DateTime'], threadId: Scalars['UUID']} }
     startAppChannelConversation?: (SendAppChannelMessageOutputGenqlSelection & { __args: {input: StartAppChannelConversationInput} })
     startChannelSync?: (ChannelSyncSuccessGenqlSelection & { __args: {connectedAccountId: Scalars['UUID']} })
+    startInteractiveConnection?: (InteractiveConnectionStepGenqlSelection & { __args: {input: StartInteractiveConnectionInput} })
     startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null), personContext?: (Scalars['JSON'] | null)} })
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
     stopGenerate?: { __args: {input: StopGenerateInput} }
@@ -8925,6 +8952,8 @@ export interface StandaloneRichTextConfigurationGenqlSelection{
 }
 
 export interface StartAppChannelConversationInput {idempotencyKey: Scalars['UUID'],messageChannelId: Scalars['UUID'],personId: Scalars['UUID'],text: Scalars['String']}
+
+export interface StartInteractiveConnectionInput {applicationId: Scalars['UUID'],providerName: Scalars['String'],reconnectingConnectedAccountId?: (Scalars['UUID'] | null)}
 
 export interface StartWorkspaceSetupChatResultGenqlSelection{
     outcome?: boolean | number
@@ -11613,6 +11642,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const InteractiveConnectionStep_possibleTypes: string[] = ['InteractiveConnectionStep']
+    export const isInteractiveConnectionStep = (obj?: { __typename?: any } | null): obj is InteractiveConnectionStep => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isInteractiveConnectionStep"')
+      return InteractiveConnectionStep_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const InvalidatePassword_possibleTypes: string[] = ['InvalidatePassword']
     export const isInvalidatePassword = (obj?: { __typename?: any } | null): obj is InvalidatePassword => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isInvalidatePassword"')
@@ -13667,6 +13704,18 @@ export const enumIdentityProviderType = {
 export const enumIndexType = {
    BTREE: 'BTREE' as const,
    GIN: 'GIN' as const
+}
+
+export const enumInteractiveConnectionAction = {
+   CANCEL: 'CANCEL' as const,
+   POLL: 'POLL' as const,
+   SUBMIT: 'SUBMIT' as const
+}
+
+export const enumInteractiveConnectionStatus = {
+   CANCELLED: 'CANCELLED' as const,
+   CONNECTED: 'CONNECTED' as const,
+   IN_PROGRESS: 'IN_PROGRESS' as const
 }
 
 export const enumJobState = {

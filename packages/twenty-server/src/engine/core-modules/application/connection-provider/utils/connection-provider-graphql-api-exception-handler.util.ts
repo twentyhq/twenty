@@ -20,6 +20,7 @@ export const connectionProviderGraphqlApiExceptionHandler = (error: Error) => {
       case ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_NOT_FOUND:
       case ConnectionProviderExceptionCode.AUTHORIZE_LOGIC_FUNCTION_NOT_FOUND:
       case ConnectionProviderExceptionCode.CALLBACK_LOGIC_FUNCTION_NOT_FOUND:
+      case ConnectionProviderExceptionCode.STEP_LOGIC_FUNCTION_NOT_FOUND:
         throw new NotFoundError(error);
       case ConnectionProviderExceptionCode.FORBIDDEN:
         throw new ForbiddenError(error);
@@ -31,6 +32,7 @@ export const connectionProviderGraphqlApiExceptionHandler = (error: Error) => {
       case ConnectionProviderExceptionCode.API_KEY_NOT_VERIFIED:
       case ConnectionProviderExceptionCode.API_KEY_MISSING:
       case ConnectionProviderExceptionCode.APPLICATION_CHARGE_DECLINED:
+      case ConnectionProviderExceptionCode.INTERACTIVE_CONNECTION_EXPIRED:
         throw new UserInputError(error);
       case ConnectionProviderExceptionCode.CLIENT_CREDENTIALS_NOT_CONFIGURED:
       case ConnectionProviderExceptionCode.TOKEN_EXCHANGE_FAILED:
@@ -39,6 +41,7 @@ export const connectionProviderGraphqlApiExceptionHandler = (error: Error) => {
       case ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_FAILED:
       case ConnectionProviderExceptionCode.AUTHORIZE_LOGIC_FUNCTION_FAILED:
       case ConnectionProviderExceptionCode.CALLBACK_LOGIC_FUNCTION_FAILED:
+      case ConnectionProviderExceptionCode.STEP_LOGIC_FUNCTION_FAILED:
         throw new InternalServerError(error);
       default: {
         return assertUnreachable(error.code);

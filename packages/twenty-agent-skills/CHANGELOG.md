@@ -10,6 +10,7 @@ Entries reference the canonical skills (`create-app`, `develop-app`, `manage-app
 
 ### Changed
 
+- `develop-app`: documented `interactive` connection providers, whose sign-in screens Twenty renders from an app step logic function.
 - `develop-app`: documented `toolCalls` on `sendInboxMessage`, for an inbox message that ends on several actions, and marked `toolCall` deprecated.
 - `develop-app`: documented computed `formula` fields on the app data model.
 - `develop-app`: documented `cronTriggerSettings.spreadMs` for spreading crons across workspaces, the `enqueueJobs` `limiter` option and the `scheduledAt` job field.

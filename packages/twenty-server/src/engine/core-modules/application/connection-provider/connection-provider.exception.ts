@@ -51,6 +51,12 @@ const getConnectionProviderExceptionUserFriendlyMessage = (
       return msg`The logic function that completes the connection was not found.`;
     case ConnectionProviderExceptionCode.CALLBACK_LOGIC_FUNCTION_FAILED:
       return msg`We could not complete the connection. Please try again.`;
+    case ConnectionProviderExceptionCode.STEP_LOGIC_FUNCTION_NOT_FOUND:
+      return msg`The logic function that runs the connection steps was not found.`;
+    case ConnectionProviderExceptionCode.STEP_LOGIC_FUNCTION_FAILED:
+      return msg`We could not continue the connection. Please try again.`;
+    case ConnectionProviderExceptionCode.INTERACTIVE_CONNECTION_EXPIRED:
+      return msg`This connection attempt expired. Please start again.`;
     case ConnectionProviderExceptionCode.API_KEY_NOT_VERIFIED:
       return msg`We could not verify this key. Check it, or try again later if the service is down.`;
     case ConnectionProviderExceptionCode.API_KEY_MISSING:

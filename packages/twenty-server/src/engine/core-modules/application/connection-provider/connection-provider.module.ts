@@ -9,6 +9,10 @@ import { ConnectionProviderAuthorizationStateService } from 'src/engine/core-mod
 import { ConnectionProviderConnectedAccountService } from 'src/engine/core-modules/application/connection-provider/connection-provider-connected-account.service';
 import { ConnectionProviderFlowCookieService } from 'src/engine/core-modules/application/connection-provider/connection-provider-flow-cookie.service';
 import { ConnectionProviderCustomFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-custom-flow.service';
+import { ConnectionProviderReportedAccountService } from 'src/engine/core-modules/application/connection-provider/connection-provider-reported-account.service';
+import { ConnectionProviderInteractiveFlowSessionService } from 'src/engine/core-modules/application/connection-provider/connection-provider-interactive-flow-session.service';
+import { ConnectionProviderInteractiveFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-interactive-flow.service';
+import { ConnectionProviderInteractiveResolver } from 'src/engine/core-modules/application/connection-provider/connection-provider-interactive.resolver';
 import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
 import { ConnectionProviderOAuthClientService } from 'src/engine/core-modules/application/connection-provider/oauth-client/connection-provider-oauth-client.service';
@@ -74,13 +78,17 @@ import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
     ConnectionProviderService,
     ConnectionProviderAuthorizationStateService,
     ConnectionProviderConnectedAccountService,
+    ConnectionProviderReportedAccountService,
     ConnectionProviderOAuthFlowService,
     ConnectionProviderCustomFlowService,
     ConnectionProviderApiKeyFlowService,
+    ConnectionProviderInteractiveFlowSessionService,
+    ConnectionProviderInteractiveFlowService,
     ConnectionProviderFlowCookieService,
     ConnectionProviderLifecycleHookService,
     ApplicationConnectionProviderResolver,
     ConnectionProviderApiKeyResolver,
+    ConnectionProviderInteractiveResolver,
     provideWorkspaceScopedRepository(ApplicationEntity),
   ],
   exports: [

@@ -36,6 +36,7 @@ const buildProvider = (
   oauthConfig: null,
   customConfig: null,
   oauthDiscoveryConfig: null,
+  interactiveConfig: null,
   identifyAccountLogicFunctionUniversalIdentifier: null,
   onConnectLogicFunctionUniversalIdentifier: null,
   onDisconnectLogicFunctionUniversalIdentifier: null,

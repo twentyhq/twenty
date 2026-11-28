@@ -5,6 +5,8 @@ import {
   type ConnectionCallbackPayload,
   type IdentifiedAccount,
   type IdentifyAccountPayload,
+  type InteractiveConnectionStepPayload,
+  type InteractiveConnectionStepResult,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -13,12 +15,14 @@ import { type ConnectionProviderEntity } from 'src/engine/core-modules/applicati
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
 import { type CustomConnectionProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-custom-provider.util';
+import { type InteractiveConnectionProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-interactive-provider.util';
 import { parseAuthorizeConnectionResult } from 'src/engine/core-modules/application/connection-provider/utils/parse-authorize-connection-result.util';
 import {
   parseConnectionCallbackResult,
   type ParsedConnectedAccountFromCallback,
 } from 'src/engine/core-modules/application/connection-provider/utils/parse-connection-callback-result.util';
 import { parseIdentifyAccountResult } from 'src/engine/core-modules/application/connection-provider/utils/parse-identify-account-result.util';
+import { parseInteractiveConnectionStepResult } from 'src/engine/core-modules/application/connection-provider/utils/parse-interactive-connection-step-result.util';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
@@ -38,12 +42,13 @@ type ConnectionLifecycleHook =
   | 'identifyAccount'
   | 'authorize'
   | 'callback'
+  | 'step'
   | 'onConnect'
   | 'onDisconnect';
 
 type ConnectionFlowHook = Extract<
   ConnectionLifecycleHook,
-  'identifyAccount' | 'authorize' | 'callback'
+  'identifyAccount' | 'authorize' | 'callback' | 'step'
 >;
 
 type ConnectionLifecycleHookProvider = Pick<
@@ -59,6 +64,7 @@ const MISSING_LOGIC_FUNCTION_EXCEPTION_CODE_BY_HOOK: Record<
     ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_NOT_FOUND,
   authorize: ConnectionProviderExceptionCode.AUTHORIZE_LOGIC_FUNCTION_NOT_FOUND,
   callback: ConnectionProviderExceptionCode.CALLBACK_LOGIC_FUNCTION_NOT_FOUND,
+  step: ConnectionProviderExceptionCode.STEP_LOGIC_FUNCTION_NOT_FOUND,
   onConnect:
     ConnectionProviderExceptionCode.ON_CONNECT_LOGIC_FUNCTION_NOT_FOUND,
   onDisconnect:
@@ -73,6 +79,7 @@ const FAILED_LOGIC_FUNCTION_EXCEPTION_CODE_BY_CONNECTION_FLOW_HOOK: Record<
     ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_FAILED,
   authorize: ConnectionProviderExceptionCode.AUTHORIZE_LOGIC_FUNCTION_FAILED,
   callback: ConnectionProviderExceptionCode.CALLBACK_LOGIC_FUNCTION_FAILED,
+  step: ConnectionProviderExceptionCode.STEP_LOGIC_FUNCTION_FAILED,
 };
 
 const buildConnectionFlowHookFailedException = ({
@@ -298,6 +305,54 @@ export class ConnectionProviderLifecycleHookService {
     return parsedResult.connectedAccount;
   }
 
+  async runStep({
+    provider,
+    workspaceId,
+    payload,
+  }: {
+    provider: Pick<
+      InteractiveConnectionProvider,
+      'id' | 'name' | 'applicationId' | 'interactiveConfig'
+    >;
+    workspaceId: string;
+    payload: Omit<
+      InteractiveConnectionStepPayload,
+      'connectionProviderId' | 'connectionProviderName'
+    >;
+  }): Promise<InteractiveConnectionStepResult> {
+    const logicFunction = await this.resolveLogicFunctionOrThrow({
+      hook: 'step',
+      logicFunctionUniversalIdentifier:
+        provider.interactiveConfig.stepLogicFunctionUniversalIdentifier,
+      provider,
+      workspaceId,
+    });
+
+    const data = await this.executeConnectionFlowHook({
+      hook: 'step',
+      provider,
+      logicFunctionId: logicFunction.id,
+      workspaceId,
+      payload: {
+        connectionProviderId: provider.id,
+        connectionProviderName: provider.name,
+        ...payload,
+      },
+    });
+
+    const parsedResult = parseInteractiveConnectionStepResult(data);
+
+    if (!parsedResult.isValid) {
+      throw buildConnectionFlowHookFailedException({
+        hook: 'step',
+        provider,
+        reason: `returned an invalid result: ${parsedResult.reason}`,
+      });
+    }
+
+    return parsedResult.stepResult;
+  }
+
   // Runs inline, before the connected account and its token are deleted, so the
   // hook can still call the provider to release what onConnect set up remotely.
   async runOnDisconnect({
@@ -357,7 +412,8 @@ export class ConnectionProviderLifecycleHookService {
     payload:
       | IdentifyAccountPayload
       | AuthorizeConnectionPayload
-      | ConnectionCallbackPayload;
+      | ConnectionCallbackPayload
+      | InteractiveConnectionStepPayload;
   }): Promise<LogicFunctionExecuteResult['data']> {
     return this.logicFunctionExecutorService.executeOrThrow({
       logicFunctionId,

@@ -6,6 +6,7 @@ import {
   CONNECTION_PROVIDER_SCOPES,
   type ConnectionProviderManifest,
   type CustomConnectionProviderConfig,
+  type InteractiveConnectionProviderConfig,
   normalizeConnectionProviderManifest,
   withDeprecatedConnectionProviderReferences,
 } from 'twenty-shared/application';
@@ -16,6 +17,7 @@ const SUPPORTED_TYPES = [
   'oauth-discovery',
   'custom',
   'api-key',
+  'interactive',
 ] as const;
 
 type ConnectionProviderLogicFunctionKey = Extract<
@@ -71,6 +73,29 @@ const getCustomConfigErrors = (
 
     return isDefined(referenceError) ? [referenceError] : [];
   });
+};
+
+const getInteractiveConfigErrors = (
+  interactive: InteractiveConnectionProviderConfig | undefined,
+): string[] => {
+  if (!isDefined(interactive)) {
+    return [
+      "Connection provider with type 'interactive' must declare an `interactive` config block",
+    ];
+  }
+
+  if (!isDefined(interactive.stepLogicFunctionUniversalIdentifier)) {
+    return [
+      'Interactive connection provider must declare interactive.stepLogicFunctionUniversalIdentifier',
+    ];
+  }
+
+  const referenceError = getInvalidLogicFunctionReferenceError({
+    path: 'interactive.stepLogicFunction',
+    universalIdentifier: interactive.stepLogicFunctionUniversalIdentifier,
+  });
+
+  return isDefined(referenceError) ? [referenceError] : [];
 };
 
 export const defineConnectionProvider: DefineEntity<
@@ -174,6 +199,10 @@ export const defineConnectionProvider: DefineEntity<
 
   if (normalizedConfig.type === 'custom') {
     errors.push(...getCustomConfigErrors(normalizedConfig.custom));
+  }
+
+  if (config.type === 'interactive') {
+    errors.push(...getInteractiveConfigErrors(config.interactive));
   }
 
   // Both spellings, so a manifest built by a CLI older than this SDK still reads on older servers.

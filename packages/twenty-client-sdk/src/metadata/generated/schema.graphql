@@ -1656,6 +1656,12 @@ enum ConnectionProviderScope {
   WORKSPACE
 }
 
+input ContinueInteractiveConnectionInput {
+  action: InteractiveConnectionAction!
+  flowId: UUID!
+  values: JSON
+}
+
 input CreateAgentChatChannelInput {
   color: String
   icon: String
@@ -3080,6 +3086,25 @@ type InitiateTwoFactorAuthenticationProvisioning {
   uri: String!
 }
 
+enum InteractiveConnectionAction {
+  CANCEL
+  POLL
+  SUBMIT
+}
+
+enum InteractiveConnectionStatus {
+  CANCELLED
+  CONNECTED
+  IN_PROGRESS
+}
+
+type InteractiveConnectionStep {
+  connectedAccountId: UUID
+  flowId: UUID
+  screen: JSON
+  status: InteractiveConnectionStatus!
+}
+
 type InvalidatePassword {
   """Boolean that confirms query was dispatched"""
   success: Boolean!
@@ -3641,6 +3666,7 @@ type Mutation {
   completeWorkspaceLogoUpload(fileId: String!): FileWithSignedUrl!
   completeWorkspaceMemberProfilePictureUpload(fileId: String!): FileWithSignedUrl!
   connectApplicationWithApiKey(input: ConnectApplicationWithApiKeyInput!): UUID!
+  continueInteractiveConnection(input: ContinueInteractiveConnectionInput!): InteractiveConnectionStep!
   createAgentChatChannel(input: CreateAgentChatChannelInput!): AgentChatChannel!
   createApiKey(input: CreateApiKeyInput!): ApiKey!
   createAppMessageChannel(input: CreateAppMessageChannelInput!): MessageChannel!
@@ -3833,6 +3859,7 @@ type Mutation {
   snoozeAgentChatThreadInChannel(snoozedUntil: DateTime!, threadId: UUID!): Boolean!
   startAppChannelConversation(input: StartAppChannelConversationInput!): SendAppChannelMessageOutput!
   startChannelSync(connectedAccountId: UUID!): ChannelSyncSuccess!
+  startInteractiveConnection(input: StartInteractiveConnectionInput!): InteractiveConnectionStep!
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
   stopGenerate(input: StopGenerateInput!): Boolean!
@@ -5247,6 +5274,12 @@ input StartAppChannelConversationInput {
   messageChannelId: UUID!
   personId: UUID!
   text: String!
+}
+
+input StartInteractiveConnectionInput {
+  applicationId: UUID!
+  providerName: String!
+  reconnectingConnectedAccountId: UUID
 }
 
 type StartWorkspaceSetupChatResult {

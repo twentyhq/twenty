@@ -54,6 +54,7 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
       },
       customConfig: null,
       oauthDiscoveryConfig: null,
+      interactiveConfig: null,
       identifyAccountLogicFunctionUniversalIdentifier: null,
       onConnectLogicFunctionUniversalIdentifier: null,
       onDisconnectLogicFunctionUniversalIdentifier: null,
@@ -136,6 +137,35 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
       oauthConfig: null,
       customConfig: null,
       oauthDiscoveryConfig: { resourceUrl: 'https://mcp.linear.app/mcp' },
+    });
+  });
+
+  it('keeps the step logic function for an interactive provider', () => {
+    const result =
+      fromConnectionProviderManifestToUniversalFlatConnectionProvider({
+        connectionProviderManifest: {
+          universalIdentifier: PROVIDER_UID,
+          name: 'linkedin',
+          displayName: 'LinkedIn',
+          type: 'interactive',
+          interactive: {
+            stepLogicFunctionUniversalIdentifier:
+              'f3f3f3f3-f3f3-4f3f-f3f3-f3f3f3f3f3f3',
+          },
+        },
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+    expect(result).toMatchObject({
+      type: 'interactive',
+      oauthConfig: null,
+      customConfig: null,
+      oauthDiscoveryConfig: null,
+      interactiveConfig: {
+        stepLogicFunctionUniversalIdentifier:
+          'f3f3f3f3-f3f3-4f3f-f3f3-f3f3f3f3f3f3',
+      },
     });
   });
 

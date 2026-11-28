@@ -228,6 +228,18 @@ export type {
 export type { InboxThreadRecordInput } from './inboxThreadRecordInputType';
 export type { IndexFieldManifest } from './indexFieldManifestType';
 export type { IndexManifest } from './indexManifestType';
+export type {
+  InteractiveConnectionStepTrigger,
+  InteractiveConnectionFieldKind,
+  InteractiveConnectionField,
+  InteractiveConnectionFormScreen,
+  InteractiveConnectionWaitingScreen,
+  InteractiveConnectionQrCodeScreen,
+  InteractiveConnectionScreen,
+  InteractiveConnectionStepPayload,
+  InteractiveConnectionStepResult,
+} from './interactiveConnectionFlowType';
+export type { InteractiveConnectionProviderConfig } from './interactiveConnectionProviderConfigType';
 export { isApplicationBillingPrice } from './isApplicationBillingPrice';
 export { isApplicationBillingPriceAmount } from './isApplicationBillingPriceAmount';
 export { isApplicationBillingPriceCurrency } from './isApplicationBillingPriceCurrency';
@@ -350,6 +362,7 @@ export type {
   StartAppConversationResult,
 } from './startAppConversationType';
 export type { StoredCustomConnectionProviderConfig } from './storedCustomConnectionProviderConfigType';
+export type { StoredInteractiveConnectionProviderConfig } from './storedInteractiveConnectionProviderConfigType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
 export type { StoredOAuthDiscoveryConnectionProviderConfig } from './storedOAuthDiscoveryConnectionProviderConfigType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
