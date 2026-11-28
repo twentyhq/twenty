@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 
+import { VerifyDomainDkimCommand } from '@aws-sdk/client-ses';
 import {
   AlreadyExistsException,
   CreateEmailIdentityCommand,
@@ -13,7 +14,6 @@ import {
   type GetEmailIdentityCommandOutput,
   NotFoundException,
   PutEmailIdentityDkimAttributesCommand,
-  PutEmailIdentityDkimSigningAttributesCommand,
 } from '@aws-sdk/client-sesv2';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -186,20 +186,18 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
 
   async retryVerification(input: EmailingDomainResourceInput): Promise<void> {
     try {
-      await this.awsSesClientProvider.getSESClient().send(
-        new PutEmailIdentityDkimSigningAttributesCommand({
-          EmailIdentity: input.domain,
-          SigningAttributesOrigin: 'AWS_SES',
-          SigningAttributes: { NextSigningKeyLength: 'RSA_2048_BIT' },
-        }),
-      );
+      const identity = await this.findEmailIdentity(input.domain);
 
-      this.logger.log(`Retried DKIM verification for domain: ${input.domain}`);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
+      if (identity?.DkimAttributes?.Status !== 'FAILED') {
         return;
       }
 
+      await this.awsSesClientProvider
+        .getSESv1Client()
+        .send(new VerifyDomainDkimCommand({ Domain: input.domain }));
+
+      this.logger.log(`Retried DKIM verification for domain: ${input.domain}`);
+    } catch (error) {
       this.awsSesHandleErrorService.handleAwsSesError(
         error,
         'retryVerification',

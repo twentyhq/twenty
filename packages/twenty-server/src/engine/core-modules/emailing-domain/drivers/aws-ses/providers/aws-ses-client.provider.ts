@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { SESClient as SESv1Client } from '@aws-sdk/client-ses';
 import {
   SESv2Client as SESClient,
   type SESv2ClientConfig as SESClientConfig,
@@ -14,6 +15,8 @@ import { buildAwsRequestHandlerOptions } from 'src/utils/aws-request-handler.uti
 export class AwsSesClientProvider {
   private sesClient: SESClient | null = null;
   private sesClientConfigHash: string | null = null;
+  private sesV1Client: SESv1Client | null = null;
+  private sesV1ClientConfigHash: string | null = null;
 
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
@@ -33,7 +36,24 @@ export class AwsSesClientProvider {
     return this.sesClient;
   }
 
+  public getSESv1Client(): SESv1Client {
+    const configHash = this.configGroupHashService.computeHash(
+      ConfigVariablesGroup.AWS_SES_SETTINGS,
+    );
+
+    if (!this.sesV1Client || this.sesV1ClientConfigHash !== configHash) {
+      this.sesV1Client = new SESv1Client(this.buildClientConfig());
+      this.sesV1ClientConfigHash = configHash;
+    }
+
+    return this.sesV1Client;
+  }
+
   private createSESClient(): SESClient {
+    return new SESClient(this.buildClientConfig());
+  }
+
+  private buildClientConfig(): SESClientConfig {
     const config: SESClientConfig = {
       region: this.twentyConfigService.get('AWS_SES_REGION'),
       requestHandler: buildAwsRequestHandlerOptions(),
@@ -53,6 +73,6 @@ export class AwsSesClientProvider {
       };
     }
 
-    return new SESClient(config);
+    return config;
   }
 }
