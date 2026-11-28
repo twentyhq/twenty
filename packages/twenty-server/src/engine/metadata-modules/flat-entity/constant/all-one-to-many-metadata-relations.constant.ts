@@ -356,6 +356,7 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
   viewSort: {},
   connectionProvider: {},
   messagingProvider: {},
+  eventMetadata: {},
   searchFieldMetadata: {},
   timelineActivityType: {},
   settingsMenuItem: {},

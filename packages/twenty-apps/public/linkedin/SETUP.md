@@ -12,6 +12,7 @@ LinkedIn accounts are connected through [Unipile](https://www.unipile.com) (API 
 ## 1. Configure Unipile
 
 1. In your Unipile application, create an **Account key** (API keys → Account key). A service key also works but grants more than the app needs.
+   Optionally, also create a **Service key** (API keys → Service key). With it, each workspace links its accounts in its own Unipile Scope, so the same LinkedIn account can be connected in several workspaces. Without it, Unipile refuses an account already connected in another workspace with `Account already exists`.
 2. Add a webhook endpoint:
    - **URL**: `https://<twenty-server>/webhooks/server/<resolver-id>`, where `<resolver-id>` is the `id` of the `linkedin-webhook-resolver` logic function in the app's owner workspace:
 
@@ -27,6 +28,7 @@ LinkedIn accounts are connected through [Unipile](https://www.unipile.com) (API 
 1. Install the app on its owner workspace; the webhook URL only answers once it is installed there.
 2. In **Settings → Applications → LinkedIn → Application registration**, set:
    - `UNIPILE_API_KEY`: the Unipile account key
+   - `UNIPILE_SERVICE_API_KEY` (optional): the Unipile service key
    - `UNIPILE_WEBHOOK_SECRET`: the webhook endpoint's signing secret
 3. Members connect from **Settings → App preferences → LinkedIn**.
 

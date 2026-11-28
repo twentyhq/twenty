@@ -322,6 +322,52 @@ export const linkedinMarkThreadAsReadHandler = async ({
 
 عندما يفتح مالك حساب القناة إحدى سلاسل رسائلها، يستدعي Twenty طفرة `markAppChannelThreadAsRead`، التي تشغّل دالتك باستخدام `messagingProviderName` و`connectedAccountId` و`messageChannelId` و`threadExternalId` الخاص بالمحادثة. يتم تجاهل قيمة الإرجاع الخاصة بها. الأعضاء الذين لا تتم مشاركة الحساب إلا معهم لا يشغّلونه مطلقًا، ويتم تخطي الاستدعاءات للعضو والمحادثة نفسيهما لمدة 30 ثانية، لذا فإن إعادة فتح محادثة لا تستدعي موفر الخدمة لديك مجددًا. يُنفَّذ الاستدعاء على أساس أفضل جهد: تُفتح المحادثة مهما كانت نتيجة تنفيذ دالتك. لا يتم استدعاء موفر بلا `markThreadAsReadLogicFunctionUniversalIdentifier` مطلقًا. يتطلب `"engines": { "twenty": ">=2.59.0" }`.
 
+## بدء المحادثات
+
+يمكن لموفّر مراسلة أيضًا أن يعرّف `startConversationLogicFunctionUniversalIdentifier`. يتلقى الأعضاء بعد ذلك إدخالًا بعنوان "رسالة جديدة" للقناة في سجل شخص، وتبدأ أول رسالة يكتبونها هناك محادثة جديدة مع ذلك الشخص:
+
+```ts src/messaging-providers/linkedin-messaging.ts
+export default defineMessagingProvider({
+  // ...
+  sendMessageLogicFunctionUniversalIdentifier: 'f7d4b5e6-9a8c-4d0e-1f2a-3b4c5d6e7f80',
+  startConversationLogicFunctionUniversalIdentifier: '0c1d2e3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f',
+});
+```
+
+تتلقى طفرة `startAppChannelConversation` القناة و`personId` والنص و`idempotencyKey`، وتُشغّل الدالة:
+
+```ts src/logic-functions/handlers/linkedin-start-conversation-handler.ts
+import {
+  type StartAppConversationPayload,
+  type StartAppConversationResult,
+} from 'twenty-sdk/logic-function';
+
+export const linkedinStartConversationHandler = async ({
+  connectedAccountId,
+  recipients: [recipient],
+  text,
+}: StartAppConversationPayload): Promise<StartAppConversationResult> => {
+  const profile = await resolveLinkedinProfile(recipient);
+  const started = await startLinkedinChat({
+    connectedAccountId,
+    profileId: profile.id,
+    text,
+  });
+
+  return {
+    externalId: started.messageId,
+    threadExternalId: started.chatId,
+    recipients: [{ personId: recipient.personId, handle: profile.url }],
+  };
+};
+```
+
+يحمل كل مستلم `personId` و`displayName` و`handle` الذي يملكه الشخص بالفعل على هذه القناة عندما يعلم Twenty بواحدٍ منها من الرسائل السابقة، أو `null`. حلّ الشخص لدى الموفّر بنفسك عندما تكون القيمة `null`، على سبيل المثال من حقل في سجل الشخص.
+
+أعِد `externalId` للرسالة المُرسلة و`threadExternalId` للمحادثة الجديدة، باستخدام معرّف سلسلة الرسائل نفسه الذي تستخدمه عملية الاستيعاب لديك لكي تصل الرسائل اللاحقة إلى سلسلة الرسائل نفسها. أعِد `handle` لكل مستلم في `recipients` ما لم تكن الحمولة قد تضمّنته بالفعل: يسجّل Twenty الرسالة كرسالة صادرة من القناة إلى ذلك المعرّف، مرتبطة بالشخص، ويفتح سلسلة الرسائل الجديدة. تمر الردود بعد ذلك عبر دالتك `sendMessageLogicFunctionUniversalIdentifier` كالمعتاد.
+
+تعمل عمليات إعادة المحاولة، والتكرار، والإخفاقات كما في [الردود](#sending-replies)، مع اعتمادها على الشخص بدلاً من سلسلة الرسائل. ترفض القناة التي لا يملك موفّرها `startConversationLogicFunctionUniversalIdentifier`، أو التي تستخدم نمط المحادثة `'email'`، عملية التغيير، ولا يسرد إدخال "رسالة جديدة" إلا القنوات التي يمكنها بدء محادثات. يتطلب `"engines": { "twenty": ">=2.66.0" }`.
+
 ## إدراج القنوات وتحديثها
 
 ```ts
@@ -521,7 +567,7 @@ export const linkedinDisconnectHandler = async (payload: {
 ## ما لا تفعله القناة
 
 * **لا يتم استطلاعها.** يقوم مسار الاستيراد في Twenty باستطلاع مزودي صناديق البريد وفق cron. قنوات التطبيق تعتمد على الدفع فقط: لا شيء يجلب البيانات نيابةً عنك، لذا يكون تطبيقك مسؤولًا عن إدخال الرسائل، عبر مسار webhook أو دالة منطق cron.
-* **لا يبدأ محادثات.** تنتقل الردود إلى محادثة موجودة عبر [موفّر مراسلة](#sending-replies)؛ ويجب بدء أول رسالة إلى شخص جديد من تطبيقك.
+* **لا يبدأ المحادثات من تلقاء نفسه.** تنتقل الردود إلى سلسلة رسائل موجودة عبر [موفّر مراسلة](#sending-replies)؛ أما الرسالة الأولى إلى شخص جديد فتحتاج إلى [`startConversationLogicFunctionUniversalIdentifier`](#starting-conversations) لدى الموفّر.
 * **لا يحدد جهات الاتصال إلا من خلال حقل مُعلَن.** من دونه، لا يستطيع Twenty معرفة الشخص الذي ينتمي إليه URN في LinkedIn، لذا على قنوات التطبيق [ربط المشاركين صراحةً عند الاستيعاب](#resolve-the-person-yourself).
 * **لا ينشئ جهات اتصال.** يستمد الإنشاء التلقائي في Twenty الأشخاص والشركات من نطاقات البريد الإلكتروني، وهو أمر بلا معنى لمعظم المزوّدين، لذا يكون معطّلًا لقنوات التطبيقات. أنشئ الشخص بنفسك، ثم مرّر `personId` الخاص به.
 

@@ -1,6 +1,8 @@
 import { seedBuiltFrontComponentSharedDependenciesFile } from 'test/integration/metadata/suites/application/utils/seed-built-front-component-shared-dependencies-file.util';
 import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const SHARED_DEPENDENCIES_BUILT_PATH =
@@ -35,6 +37,9 @@ describe('Front component shared dependencies endpoint', () => {
       'UPDATE core."application" SET "frontComponentSharedDependenciesBuiltPath" = NULL, "frontComponentSharedDependenciesChecksum" = NULL WHERE id = $1',
       [applicationId],
     );
+    await getAppProviderByClassName<WorkspaceCacheService>(
+      'WorkspaceCacheService',
+    ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatApplicationMaps']);
 
     cleanupSharedDependenciesFile?.();
   });
@@ -65,6 +70,11 @@ describe('Front component shared dependencies endpoint', () => {
           applicationId,
         ],
       );
+      await getAppProviderByClassName<WorkspaceCacheService>(
+        'WorkspaceCacheService',
+      ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
+        'flatApplicationMaps',
+      ]);
     });
 
     it('should serve the shared dependencies bundle with no-store on the plain path', async () => {

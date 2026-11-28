@@ -1,34 +1,13 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { type IconComponent, type TablerIconsProps } from 'twenty-ui/icon';
+import { type TablerIconsProps } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-const StyledBillingFieldRow = styled.div`
-  align-items: center;
-  display: grid;
-  gap: ${themeCssVariables.spacing[1]};
-  grid-template-columns: 92px minmax(0, 1fr);
-  min-height: 24px;
-`;
-
-const StyledBillingFieldLabel = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  gap: ${themeCssVariables.spacing[2]};
-  min-width: 0;
-`;
-
-const StyledBillingFieldValue = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.primary};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  min-width: 0;
-`;
+import {
+  StyledDetailFieldLabel,
+  StyledDetailFieldValue,
+} from '@/ui/layout/details/components/DetailFieldRow';
 
 const StyledScheduledChangeItem = styled.div`
   align-items: center;
@@ -63,30 +42,6 @@ const StyledIncludedBillingItem = styled(StyledScheduledChangeItem)`
   grid-template-columns: max-content minmax(0, 1fr);
 `;
 
-type BillingFieldRowProps = {
-  Icon: IconComponent;
-  label: string;
-  children: ReactNode;
-};
-
-export const BillingFieldRow = ({
-  Icon,
-  label,
-  children,
-}: BillingFieldRowProps) => {
-  const theme = useTheme();
-
-  return (
-    <StyledBillingFieldRow>
-      <StyledBillingFieldLabel>
-        <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-        <OverflowingTextWithTooltip text={label} />
-      </StyledBillingFieldLabel>
-      <StyledBillingFieldValue>{children}</StyledBillingFieldValue>
-    </StyledBillingFieldRow>
-  );
-};
-
 export type ScheduledBillingChangeFieldProps = {
   Icon: (props: TablerIconsProps) => ReactNode;
   label: string;
@@ -102,11 +57,11 @@ export const ScheduledBillingChangeField = ({
 
   return (
     <StyledScheduledChangeItem>
-      <StyledBillingFieldLabel>
+      <StyledDetailFieldLabel>
         <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         <OverflowingTextWithTooltip text={label} />
-      </StyledBillingFieldLabel>
-      <StyledBillingFieldValue>{value}</StyledBillingFieldValue>
+      </StyledDetailFieldLabel>
+      <StyledDetailFieldValue>{value}</StyledDetailFieldValue>
     </StyledScheduledChangeItem>
   );
 };
@@ -122,11 +77,11 @@ export const IncludedBillingField = ({
 
   return (
     <StyledIncludedBillingItem>
-      <StyledBillingFieldLabel>
+      <StyledDetailFieldLabel>
         <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         {label}
-      </StyledBillingFieldLabel>
-      <StyledBillingFieldValue>{value}</StyledBillingFieldValue>
+      </StyledDetailFieldLabel>
+      <StyledDetailFieldValue>{value}</StyledDetailFieldValue>
     </StyledIncludedBillingItem>
   );
 };

@@ -133,6 +133,11 @@ sanitizzato) e lo lascia in un pulito, pagina stampabile che mostra solo il cont
 — lo stesso aspetto del PDF e l'anteprima in-app.
 [Vedi l'helper](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/render-document.ts).
 
+La pagina viene fornita con una policy sandbox, a meno che non provenga da un dominio personalizzato della
+tua applicazione: può eseguire script e seguire link, ma non può utilizzare cookie o
+archiviazione. Una pagina statica come questa non è interessata. Consulta
+[dove vengono eseguite le pagine di route](/it/developers/extend/apps/logic/logic-functions#where-route-pages-run).
+
 ## Provalo
 
 Con un modello e una Persona nel tuo spazio di lavoro, chiama la route (recupera un token da

@@ -15,7 +15,7 @@ type SettingsCardProps = {
   description?: string;
   disabled?: boolean;
   soon?: boolean;
-  Icon: ReactNode;
+  Icon?: ReactNode;
   iconColor?: string;
   illustrationColor?: ThemeColor;
   onClick?: () => void;
@@ -187,9 +187,11 @@ export const SettingsCard = ({
       <Card.Root fullWidth>
         <StyledCardContent render={getContentOwner()}>
           <StyledHeader>
-            <StyledIconContainer disabled={disabled} iconColor={iconColor}>
-              {Icon}
-            </StyledIconContainer>
+            {isDefined(Icon) && (
+              <StyledIconContainer disabled={disabled} iconColor={iconColor}>
+                {Icon}
+              </StyledIconContainer>
+            )}
             {titleAndActions}
           </StyledHeader>
           {isNonEmptyString(description) && (

@@ -21,7 +21,7 @@ import { handleCoreObjectTableRowKeyDown } from '@/object-core/utils/handleCoreO
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
-import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
+import { TableSkeletonRows } from '@/ui/layout/table/components/TableSkeletonRows';
 import { DateTimeDisplay } from '@/ui/field/display/components/DateTimeDisplay';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -75,9 +75,10 @@ export const CoreWorkflowRunsTab = ({
     return (
       <Table>
         {header}
-        {Array.from({ length: 3 }, (_, index) => (
-          <SkeletonLine height={32} key={index} />
-        ))}
+        <TableSkeletonRows
+          gridTemplateColumns={CORE_WORKFLOW_RUNS_GRID_TEMPLATE_COLUMNS}
+          columnCount={5}
+        />
       </Table>
     );
   }

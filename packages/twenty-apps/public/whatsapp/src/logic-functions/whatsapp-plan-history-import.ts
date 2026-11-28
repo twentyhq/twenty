@@ -5,69 +5,52 @@ import {
   getConnection,
   type LogicFunctionExecutionContext,
 } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
 
+import { WHATSAPP_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS } from 'src/constants/whatsapp-attachment-deadline-margin-milliseconds.constant';
 import { WHATSAPP_CHAT_OPTIONS_MAX_COUNT } from 'src/constants/whatsapp-chat-options-max-count.constant';
-import { WHATSAPP_HISTORY_IMPORT_CHATS_PER_JOB } from 'src/constants/whatsapp-history-import-chats-per-job.constant';
 import { WHATSAPP_IMPORT_HISTORY_TIMEOUT_SECONDS } from 'src/constants/whatsapp-import-history-timeout-seconds.constant';
 import { WHATSAPP_PLAN_HISTORY_IMPORT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type WhatsappPlanHistoryImportJobPayload } from 'src/logic-functions/types/whatsapp-plan-history-import-job-payload.type';
-import { enqueueWhatsappImportHistoryJob } from 'src/logic-functions/utils/enqueue-whatsapp-import-history-job.util';
 import { failWhatsappHistoryImportJob } from 'src/logic-functions/utils/fail-whatsapp-history-import-job.util';
 import { getActiveWhatsappHistoryImportState } from 'src/logic-functions/utils/get-active-whatsapp-history-import-state.util';
 import { getWhatsappPlanHistoryImportJobId } from 'src/logic-functions/utils/get-whatsapp-history-import-job-id.util';
 import { getWhatsappSettings } from 'src/logic-functions/utils/get-whatsapp-settings.util';
 import {
   getWhatsappHistoryImportPlanning,
-  getWhatsappHistoryImportProgress,
-  saveWhatsappHistoryImportChunkChats,
+  saveWhatsappHistoryImportChatProgress,
   saveWhatsappHistoryImportPlanning,
 } from 'src/logic-functions/utils/whatsapp-history-import-kv.util';
+import { scheduleNextWhatsappHistoryImportContacts } from 'src/logic-functions/utils/schedule-next-whatsapp-history-import-contacts.util';
 import { orderSelectedWhatsappChatsByRecency } from 'src/logic-functions/utils/order-selected-whatsapp-chats-by-recency.util';
-import { type WhatsappImportPolicy } from 'src/types/whatsapp-import-policy.type';
+import { type WhatsappHistoryImportState } from 'src/types/whatsapp-history-import-state.type';
 import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
-import { UnipileRateLimitError } from 'src/unipile/utils/request-unipile.util';
 import { listMostRecentUnipileChats } from 'src/unipile/utils/list-most-recent-unipile-chats.util';
+import { UnipileRateLimitError } from 'src/unipile/utils/request-unipile.util';
 
 const WHATSAPP_PLAN_HISTORY_IMPORT_RETRY_LIMIT = 3;
 
-const WHATSAPP_PLAN_HISTORY_IMPORT_TIME_BUDGET_MILLISECONDS = 10 * 60 * 1000;
-
 type WhatsappPlanHistoryImportResult = {
-  status: 'CANCELLED' | 'CONTINUED' | 'PLANNED';
-  chunkCount?: number;
+  status: 'CANCELLED' | 'PAUSED' | 'PLANNED';
+  conversationCount?: number;
 };
 
-const getCurrentPlanJobId = ({
-  runId,
-  continuationIndex,
-}: WhatsappPlanHistoryImportJobPayload): string =>
-  getWhatsappPlanHistoryImportJobId({ runId, continuationIndex });
-
-const retryPlanningLater = async (
-  {
-    connectedAccountId,
-    runId,
-    continuationIndex,
-  }: WhatsappPlanHistoryImportJobPayload,
-  delayMs: number,
-): Promise<WhatsappPlanHistoryImportResult> => {
-  const payload = {
-    connectedAccountId,
-    runId,
-    continuationIndex: (continuationIndex ?? 0) + 1,
+const pausePlanning = async ({
+  payload,
+  delayMs,
+}: {
+  payload: WhatsappPlanHistoryImportJobPayload;
+  delayMs: number;
+}): Promise<WhatsappPlanHistoryImportResult> => {
+  const nextPayload = {
+    ...payload,
+    continuationIndex: (payload.continuationIndex ?? 0) + 1,
   };
-
-  if ((await getActiveWhatsappHistoryImportState(payload)) === null) {
-    return { status: 'CANCELLED' };
-  }
-
-  const planJobId = getCurrentPlanJobId(payload);
+  const planJobId = getWhatsappPlanHistoryImportJobId(nextPayload);
 
   await saveWhatsappHistoryImportPlanning({
     ...payload,
     planning: {
-      plannedChunkCount: 0,
-      plannedConversationCount: 0,
       planJobId,
       resumeAt: new Date(Date.now() + delayMs).toISOString(),
     },
@@ -75,72 +58,51 @@ const retryPlanningLater = async (
   await enqueueJobs({
     logicFunctionUniversalIdentifier:
       WHATSAPP_PLAN_HISTORY_IMPORT_UNIVERSAL_IDENTIFIER,
-    jobs: [{ jobId: planJobId, payload }],
+    jobs: [{ jobId: planJobId, payload: nextPayload }],
     retryLimit: WHATSAPP_PLAN_HISTORY_IMPORT_RETRY_LIMIT,
     delayMs,
   });
 
-  return { status: 'CONTINUED' };
+  return { status: 'PAUSED' };
 };
 
-const planChunk = async ({
-  payload,
-  chunkIndex,
-  chats,
-  conversationCount,
-  reportedConversationCount,
+const listChatsToImport = async ({
+  connectedAccountId,
+  unipileAccountId,
+  state,
+  deadlineAtMs,
 }: {
-  payload: WhatsappPlanHistoryImportJobPayload;
-  chunkIndex: number;
-  chats: UnipileChat[];
-  conversationCount: number;
-  reportedConversationCount: number;
-}): Promise<boolean> => {
-  const { connectedAccountId, runId } = payload;
-
-  if ((await getActiveWhatsappHistoryImportState(payload)) === null) {
-    return false;
-  }
-
-  await saveWhatsappHistoryImportChunkChats({
-    connectedAccountId,
-    runId,
-    chunkIndex,
-    chats,
-  });
-  await saveWhatsappHistoryImportPlanning({
-    connectedAccountId,
-    runId,
-    planning: {
-      plannedChunkCount: chunkIndex + 1,
-      plannedConversationCount: conversationCount,
-      reportedConversationCount,
-      planJobId: getCurrentPlanJobId(payload),
-    },
-  });
-
-  const { completedChunkCount } =
-    await getWhatsappHistoryImportProgress(payload);
-
-  if (completedChunkCount === chunkIndex) {
-    await enqueueWhatsappImportHistoryJob({
-      connectedAccountId,
-      runId,
-      chunkIndex,
+  connectedAccountId: string;
+  unipileAccountId: string;
+  state: Pick<WhatsappHistoryImportState, 'importPolicy' | 'conversationLimit'>;
+  deadlineAtMs: number;
+}): Promise<UnipileChat[]> => {
+  if (state.importPolicy !== 'SELECTED') {
+    return listMostRecentUnipileChats({
+      accountId: unipileAccountId,
+      limit: state.conversationLimit,
+      deadlineAtMs,
     });
   }
 
-  return true;
+  const { selectedChats } = await getWhatsappSettings(connectedAccountId);
+  const recentChats = await listMostRecentUnipileChats({
+    accountId: unipileAccountId,
+    limit: WHATSAPP_CHAT_OPTIONS_MAX_COUNT,
+    deadlineAtMs,
+  });
+
+  return orderSelectedWhatsappChatsByRecency({ selectedChats, recentChats });
 };
 
 const planHistoryImport = async ({
   payload,
-  importPolicy,
-  conversationLimit,
+  state,
+  invokedAt,
 }: {
   payload: WhatsappPlanHistoryImportJobPayload;
-  importPolicy: WhatsappImportPolicy;
-  conversationLimit: number;
+  state: WhatsappHistoryImportState;
+  invokedAt: number;
 }): Promise<WhatsappPlanHistoryImportResult> => {
   const { connectedAccountId, runId } = payload;
   const connection = await getConnection(connectedAccountId);
@@ -155,25 +117,15 @@ const planHistoryImport = async ({
   let chats: UnipileChat[];
 
   try {
-    const deadlineAtMs =
-      Date.now() + WHATSAPP_PLAN_HISTORY_IMPORT_TIME_BUDGET_MILLISECONDS;
-
-    chats =
-      importPolicy === 'SELECTED'
-        ? orderSelectedWhatsappChatsByRecency({
-            selectedChats: (await getWhatsappSettings(connectedAccountId))
-              .selectedChats,
-            recentChats: await listMostRecentUnipileChats({
-              accountId: unipileAccountId,
-              limit: WHATSAPP_CHAT_OPTIONS_MAX_COUNT,
-              deadlineAtMs,
-            }),
-          })
-        : await listMostRecentUnipileChats({
-            accountId: unipileAccountId,
-            limit: conversationLimit,
-            deadlineAtMs,
-          });
+    chats = await listChatsToImport({
+      connectedAccountId,
+      unipileAccountId,
+      state,
+      deadlineAtMs:
+        invokedAt +
+        WHATSAPP_IMPORT_HISTORY_TIMEOUT_SECONDS * 1000 -
+        WHATSAPP_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS,
+    });
   } catch (error) {
     if (!(error instanceof UnipileRateLimitError)) {
       throw error;
@@ -183,80 +135,61 @@ const planHistoryImport = async ({
       `[whatsapp] history run ${runId}: listing paused for ${error.retryAfterSeconds}s: ${error.message}`,
     );
 
-    return retryPlanningLater(payload, error.retryAfterSeconds * 1000);
+    return pausePlanning({ payload, delayMs: error.retryAfterSeconds * 1000 });
   }
 
-  let chunkCount = 0;
-
-  for (
-    let chunkStart = 0;
-    chunkStart < chats.length;
-    chunkStart += WHATSAPP_HISTORY_IMPORT_CHATS_PER_JOB
-  ) {
-    const chunkChats = chats.slice(
-      chunkStart,
-      chunkStart + WHATSAPP_HISTORY_IMPORT_CHATS_PER_JOB,
-    );
-
-    if (
-      !(await planChunk({
-        payload,
-        chunkIndex: chunkCount,
-        chats: chunkChats,
-        conversationCount: chunkStart + chunkChats.length,
-        reportedConversationCount: chats.length,
-      }))
-    ) {
-      return { status: 'CANCELLED' };
-    }
-
-    chunkCount += 1;
-  }
-
-  if ((await getActiveWhatsappHistoryImportState(payload)) === null) {
+  if (!isDefined(await getActiveWhatsappHistoryImportState(payload))) {
     return { status: 'CANCELLED' };
   }
 
+  await Promise.all(
+    chats.map((chat) =>
+      saveWhatsappHistoryImportChatProgress({
+        connectedAccountId,
+        runId,
+        chatId: chat.id,
+        progress: { status: 'PENDING', chat },
+      }),
+    ),
+  );
   await saveWhatsappHistoryImportPlanning({
     ...payload,
     planning: {
-      plannedChunkCount: chunkCount,
-      plannedConversationCount: chats.length,
-      reportedConversationCount: chats.length,
-      chunkCount,
-      planJobId: getCurrentPlanJobId(payload),
+      chatIds: chats.map((chat) => chat.id),
+      planJobId: getWhatsappPlanHistoryImportJobId(payload),
     },
+  });
+  await scheduleNextWhatsappHistoryImportContacts({
+    connectedAccountId,
+    runId,
   });
 
   console.log(
-    `[whatsapp] history run ${runId}: listing done, ${chats.length} conversations in ${chunkCount} pages`,
+    `[whatsapp] history run ${runId}: ${chats.length} conversations listed (last messages ${chats[0]?.last_message_timestamp ?? '-'} to ${chats[chats.length - 1]?.last_message_timestamp ?? '-'})`,
   );
 
-  return { status: 'PLANNED', chunkCount };
+  return { status: 'PLANNED', conversationCount: chats.length };
 };
 
 export const whatsappPlanHistoryImportHandler = async (
   payload: WhatsappPlanHistoryImportJobPayload,
   context?: Pick<LogicFunctionExecutionContext, 'retryCount' | 'maxRetries'>,
 ): Promise<WhatsappPlanHistoryImportResult> => {
+  const invokedAt = Date.now();
   const state = await getActiveWhatsappHistoryImportState(payload);
 
-  if (state === null) {
+  if (!isDefined(state)) {
     return { status: 'CANCELLED' };
   }
 
   try {
-    return await planHistoryImport({
-      payload,
-      importPolicy: state.importPolicy,
-      conversationLimit: state.conversationLimit,
-    });
+    return await planHistoryImport({ payload, state, invokedAt });
   } catch (error) {
     return failWhatsappHistoryImportJob({
       error,
       context,
       onFinalFailure: async (importError) => {
-        if ((await getActiveWhatsappHistoryImportState(payload)) === null) {
+        if (!isDefined(await getActiveWhatsappHistoryImportState(payload))) {
           return;
         }
 
@@ -276,7 +209,7 @@ export default defineLogicFunction({
   universalIdentifier: WHATSAPP_PLAN_HISTORY_IMPORT_UNIVERSAL_IDENTIFIER,
   name: 'whatsapp-plan-history-import',
   description:
-    'Lists the past WhatsApp conversations of a connection to import, most recent first, and starts their import.',
+    'Lists the past WhatsApp conversations of a connection, most recent first, and starts importing their contacts one conversation after another.',
   timeoutSeconds: WHATSAPP_IMPORT_HISTORY_TIMEOUT_SECONDS,
   handler: whatsappPlanHistoryImportHandler,
 });

@@ -382,6 +382,10 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     workspace: null,
     application: null,
   },
+  eventMetadata: {
+    workspace: null,
+    application: null,
+  },
   timelineActivityType: {
     workspace: null,
     application: null,

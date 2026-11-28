@@ -23,6 +23,18 @@ describe('parseIdentifyAccountResult', () => {
     });
   });
 
+  it('returns the trimmed account name', () => {
+    expect(
+      parseIdentifyAccountResult({
+        externalAccountId: 'account-a',
+        name: ' Jane Doe ',
+      }),
+    ).toEqual({
+      isValid: true,
+      identifiedAccount: { externalAccountId: 'account-a', name: 'Jane Doe' },
+    });
+  });
+
   it('treats a null id as the explicit opt-out', () => {
     expect(parseIdentifyAccountResult({ externalAccountId: null })).toEqual({
       isValid: true,

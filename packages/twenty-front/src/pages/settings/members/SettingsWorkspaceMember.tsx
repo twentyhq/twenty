@@ -1,3 +1,4 @@
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { useParams } from 'react-router-dom';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -191,7 +192,9 @@ export const SettingsWorkspaceMember = () => {
   return (
     <>
       <SettingsRolesQueryEffect />
-      {isLoading ? null : (
+      {isLoading ? (
+        <SettingsSkeletonLoader />
+      ) : (
         <SettingsPageLayout
           title={`${member.name.firstName} ${member.name.lastName}`}
           links={[

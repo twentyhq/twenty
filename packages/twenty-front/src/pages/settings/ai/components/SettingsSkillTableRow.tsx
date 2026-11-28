@@ -16,6 +16,8 @@ export type SettingsSkillTableRowProps = {
   link?: string;
 };
 
+export const SKILL_TABLE_ROW_GRID_TEMPLATE_COLUMNS = '1fr 120px 36px';
+
 const StyledIconContainer = styled.div`
   align-items: center;
   display: flex;
@@ -35,7 +37,7 @@ export const SettingsSkillTableRow = ({
     <TableRow
       key={skill.id}
       to={link}
-      gridTemplateColumns="1fr 120px 36px"
+      gridTemplateColumns={SKILL_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
       style={{ opacity: skill.isActive ? 1 : 0.5 }}
     >
       <TableCell

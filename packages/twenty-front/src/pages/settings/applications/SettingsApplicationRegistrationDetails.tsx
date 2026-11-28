@@ -1,3 +1,4 @@
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { useRefetchOnApplicationRegistrationChange } from '@/applications/hooks/useRefetchOnApplicationRegistrationChange';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
@@ -54,7 +55,11 @@ export const SettingsApplicationRegistrationDetails = () => {
 
   const registration = data?.findOneApplicationRegistration;
 
-  if (loading || !isDefined(registration)) {
+  if (loading) {
+    return <SettingsSkeletonLoader />;
+  }
+
+  if (!isDefined(registration)) {
     return null;
   }
 

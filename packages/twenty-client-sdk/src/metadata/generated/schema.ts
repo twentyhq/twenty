@@ -342,7 +342,7 @@ export interface AiSystemPromptSection {
     __typename: 'AiSystemPromptSection'
 }
 
-export type AllMetadataName = 'agent' | 'agentChatChannel' | 'agentChatChannelRole' | 'applicationVariable' | 'commandMenuItem' | 'connectionProvider' | 'fieldMetadata' | 'fieldMetadataOption' | 'fieldPermission' | 'frontComponent' | 'index' | 'logicFunction' | 'mcpServer' | 'messagingProvider' | 'navigationMenuItem' | 'objectMetadata' | 'objectPermission' | 'pageLayout' | 'pageLayoutTab' | 'pageLayoutWidget' | 'permissionFlag' | 'relatedRecordPath' | 'role' | 'rolePermissionFlag' | 'roleTarget' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'rowLevelPermissionRule' | 'searchFieldMetadata' | 'settingsMenuItem' | 'skill' | 'timelineActivityType' | 'validationRule' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewFilter' | 'viewFilterGroup' | 'viewGroup' | 'viewSort' | 'webhook' | 'workflow' | 'workflowVersion'
+export type AllMetadataName = 'agent' | 'agentChatChannel' | 'agentChatChannelRole' | 'applicationVariable' | 'commandMenuItem' | 'connectionProvider' | 'eventMetadata' | 'fieldMetadata' | 'fieldMetadataOption' | 'fieldPermission' | 'frontComponent' | 'index' | 'logicFunction' | 'mcpServer' | 'messagingProvider' | 'navigationMenuItem' | 'objectMetadata' | 'objectPermission' | 'pageLayout' | 'pageLayoutTab' | 'pageLayoutWidget' | 'permissionFlag' | 'relatedRecordPath' | 'role' | 'rolePermissionFlag' | 'roleTarget' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'rowLevelPermissionRule' | 'searchFieldMetadata' | 'settingsMenuItem' | 'skill' | 'timelineActivityType' | 'validationRule' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewFilter' | 'viewFilterGroup' | 'viewGroup' | 'viewSort' | 'webhook' | 'workflow' | 'workflowVersion'
 
 export interface Analytics {
     /** Boolean that confirms query was dispatched */
@@ -1595,6 +1595,12 @@ export interface EmailsConfiguration {
     __typename: 'EmailsConfiguration'
 }
 
+export interface EmitAppEventOutput {
+    id: Scalars['String']
+    occurredAt: Scalars['String']
+    __typename: 'EmitAppEventOutput'
+}
+
 export type EngineComponentKey = 'ACTIVATE_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'ADD_TO_FAVORITES' | 'ADD_TO_MESSAGE_LIST' | 'ADD_VIEW_TO_MESSAGE_LIST' | 'ASK_AI' | 'ASSIGN_AI_CHAT' | 'CANCEL_DASHBOARD_LAYOUT' | 'CANCEL_MESSAGE_CAMPAIGN' | 'COMPOSE_CAMPAIGN' | 'COMPOSE_EMAIL' | 'CREATE_NEW_RECORD' | 'CREATE_NEW_VIEW' | 'DEACTIVATE_WORKFLOW' | 'DELETE_MULTIPLE_RECORDS' | 'DELETE_RECORDS' | 'DELETE_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'DESTROY_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DISCARD_DRAFT_WORKFLOW' | 'DUPLICATE_DASHBOARD' | 'DUPLICATE_MESSAGE_CAMPAIGN' | 'DUPLICATE_MESSAGE_LIST' | 'DUPLICATE_WORKFLOW' | 'EDIT_DASHBOARD_LAYOUT' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EMAIL_BLOCK_SETTINGS' | 'EMAIL_PAGE_STYLE' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS' | 'EXPORT_RECORDS' | 'EXPORT_VIEW' | 'FRONT_COMPONENT_RENDERER' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_NOTES' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_PEOPLE' | 'GO_TO_RUNS' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_WORKFLOWS' | 'HIDE_DELETED_RECORDS' | 'IMPORT_RECORDS' | 'MANAGE_AI_CHAT_PARTICIPANTS' | 'MARK_AI_CHAT_AS_DONE' | 'MARK_AI_CHAT_AS_READ' | 'MARK_AI_CHAT_AS_UNREAD' | 'MERGE_MULTIPLE_RECORDS' | 'MERGE_WITH_RECORD' | 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'NAVIGATION' | 'NEW_AI_CHAT' | 'REMOVE_FROM_FAVORITES' | 'REOPEN_AI_CHAT' | 'REPLY_TO_EMAIL_THREAD' | 'RESTORE_MULTIPLE_RECORDS' | 'RESTORE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RETRY_WORKFLOW_RUN' | 'SAVE_DASHBOARD_LAYOUT' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_DELETED_RECORDS' | 'SEE_RUNS_WORKFLOW' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'SEND_MESSAGE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN_TEST' | 'SHARE_RECORD' | 'SNOOZE_AI_CHAT' | 'STOP_WORKFLOW_RUN' | 'SUBSCRIBE_TO_AI_CHAT' | 'TEST_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'TOGGLE_WORKFLOW_VISIBILITY' | 'TRIGGER_WORKFLOW_VERSION' | 'UNSUBSCRIBE_FROM_AI_CHAT' | 'UPDATE_MULTIPLE_RECORDS' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'VIEW_PREVIOUS_AI_CHATS'
 
 export interface EnqueueJobResult {
@@ -2333,6 +2339,7 @@ export interface MessageCampaignSendBlockerDTO {
 }
 
 export interface MessageChannel {
+    canStartConversation: Scalars['Boolean']
     connectedAccount?: ConnectedAccountPublicDTO
     connectedAccountId: Scalars['UUID']
     contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy
@@ -2610,6 +2617,7 @@ export interface Mutation {
     duplicateMessageList: DuplicatedMessageList
     editSSOIdentityProvider: EditSso
     emailPasswordResetLink: EmailPasswordResetLink
+    emitAppEvent: EmitAppEventOutput
     endSubscriptionTrialPeriod: BillingEndTrialPeriod
     /** @deprecated Use enqueueJobs instead. */
     enqueueJob: EnqueueJobResult
@@ -2694,6 +2702,7 @@ export interface Mutation {
     signUpInWorkspace: SignUp
     skipSyncEmailOnboardingStep: OnboardingStepSuccess
     snoozeAgentChatThreadInChannel: Scalars['Boolean']
+    startAppChannelConversation: SendAppChannelMessageOutput
     startChannelSync: ChannelSyncSuccess
     startWorkspaceSetupChat: StartWorkspaceSetupChatResult
     stopAgentChatStream: Scalars['Boolean']
@@ -6486,6 +6495,15 @@ export interface EmailsConfigurationGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface EmitAppEventInput {event?: (Scalars['String'] | null),eventUniversalIdentifier?: (Scalars['String'] | null),id?: (Scalars['String'] | null),properties?: (Scalars['JSON'] | null)}
+
+export interface EmitAppEventOutputGenqlSelection{
+    id?: boolean | number
+    occurredAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface EnqueueJobInput {delayMs?: (Scalars['Int'] | null),jobId?: (Scalars['String'] | null),logicFunctionUniversalIdentifier: Scalars['String'],payload?: (Scalars['JSON'] | null),retryLimit?: (Scalars['Int'] | null)}
 
 export interface EnqueueJobItemInput {jobId?: (Scalars['String'] | null),payload?: (Scalars['JSON'] | null)}
@@ -7315,6 +7333,7 @@ export interface MessageCampaignSendBlockerDTOGenqlSelection{
 }
 
 export interface MessageChannelGenqlSelection{
+    canStartConversation?: boolean | number
     connectedAccount?: ConnectedAccountPublicDTOGenqlSelection
     connectedAccountId?: boolean | number
     contactAutoCreationPolicy?: boolean | number
@@ -7573,6 +7592,7 @@ export interface MutationGenqlSelection{
     duplicateMessageList?: (DuplicatedMessageListGenqlSelection & { __args: {id: Scalars['UUID']} })
     editSSOIdentityProvider?: (EditSsoGenqlSelection & { __args: {input: EditSsoInput} })
     emailPasswordResetLink?: (EmailPasswordResetLinkGenqlSelection & { __args: {captchaToken?: (Scalars['String'] | null), email: Scalars['String'], workspaceId?: (Scalars['UUID'] | null)} })
+    emitAppEvent?: (EmitAppEventOutputGenqlSelection & { __args: {input: EmitAppEventInput} })
     endSubscriptionTrialPeriod?: BillingEndTrialPeriodGenqlSelection
     /** @deprecated Use enqueueJobs instead. */
     enqueueJob?: (EnqueueJobResultGenqlSelection & { __args: {input: EnqueueJobInput} })
@@ -7657,6 +7677,7 @@ export interface MutationGenqlSelection{
     signUpInWorkspace?: (SignUpGenqlSelection & { __args: {captchaToken?: (Scalars['String'] | null), email: Scalars['String'], locale?: (Scalars['String'] | null), password: Scalars['String'], verifyEmailRedirectPath?: (Scalars['String'] | null), workspaceId?: (Scalars['UUID'] | null), workspaceInviteHash?: (Scalars['String'] | null), workspacePersonalInviteToken?: (Scalars['String'] | null)} })
     skipSyncEmailOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {isAutoSkipped: Scalars['Boolean']} })
     snoozeAgentChatThreadInChannel?: { __args: {snoozedUntil: Scalars['DateTime'], threadId: Scalars['UUID']} }
+    startAppChannelConversation?: (SendAppChannelMessageOutputGenqlSelection & { __args: {input: StartAppChannelConversationInput} })
     startChannelSync?: (ChannelSyncSuccessGenqlSelection & { __args: {connectedAccountId: Scalars['UUID']} })
     startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null), personContext?: (Scalars['JSON'] | null)} })
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
@@ -8902,6 +8923,8 @@ export interface StandaloneRichTextConfigurationGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+export interface StartAppChannelConversationInput {idempotencyKey: Scalars['UUID'],messageChannelId: Scalars['UUID'],personId: Scalars['UUID'],text: Scalars['String']}
 
 export interface StartWorkspaceSetupChatResultGenqlSelection{
     outcome?: boolean | number
@@ -11198,6 +11221,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const EmitAppEventOutput_possibleTypes: string[] = ['EmitAppEventOutput']
+    export const isEmitAppEventOutput = (obj?: { __typename?: any } | null): obj is EmitAppEventOutput => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isEmitAppEventOutput"')
+      return EmitAppEventOutput_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const EnqueueJobResult_possibleTypes: string[] = ['EnqueueJobResult']
     export const isEnqueueJobResult = (obj?: { __typename?: any } | null): obj is EnqueueJobResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isEnqueueJobResult"')
@@ -13174,6 +13205,7 @@ export const enumAllMetadataName = {
    applicationVariable: 'applicationVariable' as const,
    commandMenuItem: 'commandMenuItem' as const,
    connectionProvider: 'connectionProvider' as const,
+   eventMetadata: 'eventMetadata' as const,
    fieldMetadata: 'fieldMetadata' as const,
    fieldMetadataOption: 'fieldMetadataOption' as const,
    fieldPermission: 'fieldPermission' as const,
