@@ -8,6 +8,7 @@ import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useEnsureObjectViewsLoaded } from '@/views/hooks/useEnsureObjectViewsLoaded';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { computeObjectViewTargetIds } from '@/views/utils/computeObjectViewTargetIds';
 import { isUsableLastVisitedView } from '@/views/utils/isUsableLastVisitedView';
@@ -98,6 +99,8 @@ export const RouteContextStoreProvider = () => {
       objectMetadataItem.namePlural === objectNamePlural ||
       objectMetadataItem.nameSingular === objectNameSingular,
   );
+
+  useEnsureObjectViewsLoaded([objectMetadataItem?.id]);
 
   const { getLastVisitedViewIdFromObjectNamePlural } = useLastVisitedView();
 

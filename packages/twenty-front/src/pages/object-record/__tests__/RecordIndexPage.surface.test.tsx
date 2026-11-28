@@ -34,6 +34,10 @@ jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
   }),
 }));
 
+jest.mock('@/views/hooks/useAreObjectViewsLoaded', () => ({
+  useAreObjectViewsLoaded: () => true,
+}));
+
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
   useIsFeatureEnabled: () => false,
 }));

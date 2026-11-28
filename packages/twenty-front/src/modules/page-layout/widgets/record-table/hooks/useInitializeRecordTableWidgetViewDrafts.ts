@@ -2,10 +2,12 @@ import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutIn
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { recordTableWidgetViewPersistedComponentState } from '@/page-layout/states/recordTableWidgetViewPersistedComponentState';
+import { getWidgetViewObjectMetadataIds } from '@/page-layout/utils/getWidgetViewObjectMetadataIds';
 import { buildMissingRecordTableWidgetViewDraftSnapshots } from '@/page-layout/widgets/record-table/utils/buildMissingRecordTableWidgetViewDraftSnapshots';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useEnsureObjectViewsLoaded } from '@/views/hooks/useEnsureObjectViewsLoaded';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
@@ -20,6 +22,15 @@ export const useInitializeRecordTableWidgetViewDrafts = () => {
   );
 
   const views = useAtomStateValue(viewsSelector);
+
+  useEnsureObjectViewsLoaded(
+    getWidgetViewObjectMetadataIds({
+      widgets: isPageLayoutInEditMode
+        ? pageLayoutDraft.tabs.flatMap((tab) => tab.widgets)
+        : [],
+      views,
+    }),
+  );
 
   const recordTableWidgetViewDraftState = useAtomComponentStateCallbackState(
     recordTableWidgetViewDraftComponentState,

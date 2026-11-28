@@ -8,6 +8,7 @@ import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAreObjectViewsLoaded } from '@/views/hooks/useAreObjectViewsLoaded';
 import { isUndefined } from '@sniptt/guards';
 import { useParams } from 'react-router-dom';
 
@@ -23,6 +24,10 @@ export const RecordIndexPage = () => {
   const metadataStore = useAtomFamilyStateValue(
     metadataStoreState,
     'objectMetadataItems',
+  );
+
+  const areObjectViewsLoaded = useAreObjectViewsLoaded(
+    contextStoreCurrentObjectMetadataItemId,
   );
 
   const routeObjectMetadataItem = objectMetadataItems.find(
@@ -53,7 +58,7 @@ export const RecordIndexPage = () => {
       objectMetadataItem.id === contextStoreCurrentObjectMetadataItemId,
   );
 
-  if (isUndefined(objectMetadataItem)) {
+  if (isUndefined(objectMetadataItem) || !areObjectViewsLoaded) {
     return <RecordIndexSkeletonLoader />;
   }
 

@@ -2,24 +2,19 @@ import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMet
 import { type MetadataEntityKey } from '@/metadata-store/states/metadataStoreState';
 import { splitObjectMetadataGqlResponse } from '@/metadata-store/utils/splitObjectMetadataGqlResponse';
 import { splitPageLayoutWithRelated } from '@/metadata-store/utils/splitPageLayoutWithRelated';
-import { splitViewWithRelated } from '@/metadata-store/utils/splitViewWithRelated';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { useApolloClient } from '@apollo/client/react';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  FindAllViewsDocument,
   FindManyCommandMenuItemsDocument,
   FindAllRecordPageLayoutsDocument,
   FindAllRecordFormPageLayoutsDocument,
-  FindFieldsWidgetViewsDocument,
-  FindTableWidgetViewsDocument,
   FindManyFrontComponentsDocument,
   FindManyLogicFunctionsDocument,
   FindManyNavigationMenuItemsDocument,
   type ObjectMetadataItemsQuery,
-  ViewType,
 } from '~/generated-metadata/graphql';
 
 const OBJECTS_GROUP_KEYS: MetadataEntityKey[] = [
@@ -28,35 +23,10 @@ const OBJECTS_GROUP_KEYS: MetadataEntityKey[] = [
   'indexMetadataItems',
 ];
 
-const VIEWS_GROUP_KEYS: MetadataEntityKey[] = [
-  'views',
-  'viewFields',
-  'viewFilters',
-  'viewSorts',
-  'viewGroups',
-  'viewFilterGroups',
-  'viewFieldGroups',
-];
-
 const PAGE_LAYOUTS_GROUP_KEYS: MetadataEntityKey[] = [
   'pageLayouts',
   'pageLayoutTabs',
   'pageLayoutWidgets',
-];
-
-const INDEX_VIEW_TYPES = [
-  ViewType.TABLE,
-  ViewType.KANBAN,
-  ViewType.CALENDAR,
-  ViewType.LIST,
-  ViewType.INBOX,
-];
-const FIELDS_WIDGET_VIEW_TYPES = [ViewType.FIELDS_WIDGET];
-const WIDGET_VIEW_TYPES = [
-  ViewType.TABLE_WIDGET,
-  ViewType.KANBAN_WIDGET,
-  ViewType.LIST_WIDGET,
-  ViewType.CALENDAR_WIDGET,
 ];
 
 const hasOverlap = (
@@ -91,58 +61,6 @@ export const useLoadStaleMetadataEntities = () => {
               replaceDraft('fieldMetadataItems', flatFields);
               replaceDraft('indexMetadataItems', flatIndexes);
             }),
-        );
-      }
-
-      if (hasOverlap(staleEntityKeys, VIEWS_GROUP_KEYS)) {
-        fetchPromises.push(
-          Promise.all([
-            client.query({
-              query: FindAllViewsDocument,
-              variables: { viewTypes: INDEX_VIEW_TYPES },
-              fetchPolicy: 'network-only',
-            }),
-            client.query({
-              query: FindFieldsWidgetViewsDocument,
-              variables: { viewTypes: FIELDS_WIDGET_VIEW_TYPES },
-              fetchPolicy: 'network-only',
-            }),
-            client.query({
-              query: FindTableWidgetViewsDocument,
-              variables: { viewTypes: WIDGET_VIEW_TYPES },
-              fetchPolicy: 'network-only',
-            }),
-          ]).then(
-            ([
-              indexViewsResult,
-              fieldsWidgetViewsResult,
-              tableWidgetViewsResult,
-            ]) => {
-              const allViews = [
-                ...(indexViewsResult.data?.getViews ?? []),
-                ...(fieldsWidgetViewsResult.data?.getViews ?? []),
-                ...(tableWidgetViewsResult.data?.getViews ?? []),
-              ];
-
-              const {
-                flatViews,
-                flatViewFields,
-                flatViewFilters,
-                flatViewSorts,
-                flatViewGroups,
-                flatViewFilterGroups,
-                flatViewFieldGroups,
-              } = splitViewWithRelated(allViews);
-
-              replaceDraft('views', flatViews);
-              replaceDraft('viewFields', flatViewFields);
-              replaceDraft('viewFilters', flatViewFilters);
-              replaceDraft('viewSorts', flatViewSorts);
-              replaceDraft('viewGroups', flatViewGroups);
-              replaceDraft('viewFilterGroups', flatViewFilterGroups);
-              replaceDraft('viewFieldGroups', flatViewFieldGroups);
-            },
-          ),
         );
       }
 

@@ -3785,10 +3785,16 @@ export type MinimalObjectMetadata = {
 
 export type MinimalView = {
   __typename?: 'MinimalView';
+  icon: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
+  isActive: Scalars['Boolean']['output'];
+  isPrivate: Scalars['Boolean']['output'];
   key?: Maybe<ViewKey>;
+  name: Scalars['String']['output'];
   objectMetadataId: Scalars['UUID']['output'];
+  position: Scalars['Float']['output'];
   type: ViewType;
+  universalIdentifier: Scalars['UUID']['output'];
 };
 
 export enum ModelFamily {

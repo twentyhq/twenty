@@ -16,9 +16,15 @@ export const FIND_MINIMAL_METADATA = gql`
       }
       views {
         id
+        universalIdentifier
+        name
+        icon
         type
         key
         objectMetadataId
+        position
+        isPrivate
+        isActive
       }
       collectionHashes {
         collectionName

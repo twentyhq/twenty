@@ -11,7 +11,11 @@ const FRONT_GENERATED_METADATA_GRAPHQL_PATH = resolve(
 
 // Read from the generated file so a test follows the fragments the front ships
 export const readFrontMetadataDocument = (
-  documentName: 'GetCurrentUser' | 'ObjectMetadataItems' | 'FindAllViews',
+  documentName:
+    | 'GetCurrentUser'
+    | 'ObjectMetadataItems'
+    | 'FindMinimalMetadata'
+    | 'FindManyViews',
 ): DocumentNode => {
   const documentDeclaration = `export const ${documentName}Document = `;
   const declaration = readFileSync(

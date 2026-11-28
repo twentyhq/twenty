@@ -28,10 +28,6 @@ export const IsMinimalMetadataReadyEffect = () => {
     metadataStoreState,
     'views',
   );
-  const metadataStoreViewFields = useAtomFamilyStateValue(
-    metadataStoreState,
-    'viewFields',
-  );
   const setIsMinimalMetadataReady = useSetAtomState(
     isMinimalMetadataReadyState,
   );
@@ -47,9 +43,7 @@ export const IsMinimalMetadataReadyEffect = () => {
     const areObjectsLoaded =
       metadataStoreObjectMetadataItems.status === 'up-to-date' &&
       metadataStoreFieldMetadataItems.status === 'up-to-date';
-    const areViewsLoaded =
-      metadataStoreViews.status === 'up-to-date' &&
-      metadataStoreViewFields.status === 'up-to-date';
+    const areViewsLoaded = metadataStoreViews.status === 'up-to-date';
 
     if (!areObjectsLoaded) {
       setIsMinimalMetadataReady(false);
@@ -77,7 +71,6 @@ export const IsMinimalMetadataReadyEffect = () => {
     metadataStoreObjectMetadataItems.status,
     metadataStoreFieldMetadataItems.status,
     metadataStoreViews.status,
-    metadataStoreViewFields.status,
     setIsMinimalMetadataReady,
   ]);
 

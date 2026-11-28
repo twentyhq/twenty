@@ -7355,17 +7355,35 @@ export default {
             ]
         },
         "MinimalView": {
+            "icon": [
+                4
+            ],
             "id": [
                 576
+            ],
+            "isActive": [
+                1
+            ],
+            "isPrivate": [
+                1
             ],
             "key": [
                 710
             ],
+            "name": [
+                4
+            ],
             "objectMetadataId": [
                 576
             ],
+            "position": [
+                9
+            ],
             "type": [
                 715
+            ],
+            "universalIdentifier": [
+                573
             ],
             "__typename": [
                 4

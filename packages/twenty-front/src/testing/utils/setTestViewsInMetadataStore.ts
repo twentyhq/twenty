@@ -1,3 +1,4 @@
+import { loadedViewsObjectMetadataIdsState } from '@/metadata-store/states/loadedViewsObjectMetadataIdsState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { splitViewWithRelated } from '@/metadata-store/utils/splitViewWithRelated';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
@@ -24,6 +25,10 @@ export const setTestViewsInMetadataStore = (
     draft: [],
     status: 'up-to-date',
   });
+
+  store.set(loadedViewsObjectMetadataIdsState.atom, [
+    ...new Set(flatViews.map((flatView) => flatView.objectMetadataId)),
+  ]);
 
   store.set(metadataStoreState.atomFamily('viewFields'), {
     current: flatViewFields,

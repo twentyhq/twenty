@@ -17,9 +17,15 @@ const FIND_MINIMAL_METADATA_QUERY = gql`
       }
       views {
         id
+        universalIdentifier
+        name
+        icon
         type
         key
         objectMetadataId
+        position
+        isPrivate
+        isActive
       }
       collectionHashes {
         collectionName
@@ -80,8 +86,13 @@ describe('minimalMetadata', () => {
     for (const view of views) {
       expect(view).toMatchObject({
         id: expect.any(String),
+        universalIdentifier: expect.any(String),
+        name: expect.any(String),
         type: expect.any(String),
         objectMetadataId: expect.any(String),
+        position: expect.any(Number),
+        isPrivate: expect.any(Boolean),
+        isActive: expect.any(Boolean),
       });
     }
   });

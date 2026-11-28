@@ -8,6 +8,15 @@ export class MinimalViewDTO {
   @Field(() => UUIDScalarType)
   id: string;
 
+  @Field(() => UUIDScalarType)
+  universalIdentifier: string;
+
+  @Field()
+  name: string;
+
+  @Field()
+  icon: string;
+
   @Field(() => ViewType)
   type: ViewType;
 
@@ -16,4 +25,13 @@ export class MinimalViewDTO {
 
   @Field(() => UUIDScalarType)
   objectMetadataId: string;
+
+  @Field()
+  position: number;
+
+  @Field()
+  isPrivate: boolean;
+
+  @Field()
+  isActive: boolean;
 }
