@@ -148,7 +148,7 @@ export const useImapSmtpCaldavConnectionForm = ({
 
   const isValid = useMemo(() => {
     return (
-      Boolean(watchedValues.handle?.trim()) &&
+      isNonEmptyString(watchedValues.handle?.trim()) &&
       getConfiguredProtocols().length > 0
     );
   }, [getConfiguredProtocols, watchedValues.handle]);

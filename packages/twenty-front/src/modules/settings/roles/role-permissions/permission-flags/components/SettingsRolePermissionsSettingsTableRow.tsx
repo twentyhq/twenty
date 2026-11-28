@@ -55,13 +55,11 @@ export const SettingsRolePermissionsSettingsTableRow = ({
     !permission.isToolPermission &&
     settingsDraftRole.canUpdateAllSettings === true;
   const isAllToolsOverride =
-    permission.isToolPermission && settingsDraftRole.canAccessAllTools === true;
-  const isChecked = Boolean(
-    isPermissionEnabled || isAllSettingsOverride || isAllToolsOverride,
-  );
-  const isDisabled = Boolean(
-    !isEditable || isAllSettingsOverride || isAllToolsOverride,
-  );
+    (permission.isToolPermission ?? false) &&
+    settingsDraftRole.canAccessAllTools === true;
+  const isChecked =
+    isPermissionEnabled || isAllSettingsOverride || isAllToolsOverride;
+  const isDisabled = !isEditable || isAllSettingsOverride || isAllToolsOverride;
 
   const handleChange = (value: boolean) => {
     const currentPermissions = settingsDraftRole.permissionFlags ?? [];

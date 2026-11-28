@@ -114,7 +114,7 @@ export const SettingsTableListSection = <
           </TableRow>
           <StyledTableRows>
             {items.map((item) => (
-              <StyledRowWrapper key={item.id} clickable={Boolean(onRowClick)}>
+              <StyledRowWrapper key={item.id} clickable={isDefined(onRowClick)}>
                 <TableRow
                   gridAutoColumns={resolvedGridAutoColumns}
                   onClick={onRowClick ? () => onRowClick(item) : undefined}
