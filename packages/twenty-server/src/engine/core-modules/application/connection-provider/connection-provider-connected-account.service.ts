@@ -246,7 +246,10 @@ export class ConnectionProviderConnectedAccountService {
     const createConnectedAccount = async () => {
       const name =
         identifiedAccount?.name ??
-        (await this.buildDefaultConnectedAccountName({ provider, workspaceId }));
+        (await this.buildDefaultConnectedAccountName({
+          provider,
+          workspaceId,
+        }));
 
       const created = this.connectedAccountRepository.create({
         ...sharedFields,
