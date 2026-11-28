@@ -11,6 +11,7 @@ import { createOneRole } from 'test/integration/metadata/suites/role/utils/creat
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
+import { restoreWorkspaceAccessGroups } from 'test/integration/permissions/utils/restore-workspace-access-groups.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
@@ -339,24 +340,10 @@ describe('RLS rules through a relation (integration)', () => {
       `DELETE FROM ${COMPANY_TABLE} WHERE "id" = ANY($1)`,
       [[company.id, otherCompany.id]],
     );
-    // The sync stamped group ids on every object, so wiping the groups would orphan them
-    await getAppProviderByClassName<AccessGroupSyncService>(
-      'AccessGroupSyncService',
-    ).syncAccessGroups({ workspaceId: SEED_APPLE_WORKSPACE_ID });
-
-    for (const objectMetadataId of [
-      personObjectMetadataId,
-      companyObjectMetadataId,
-    ]) {
-      await getAppProviderByClassName<RecordAccessGroupComputationService>(
-        'RecordAccessGroupComputationService',
-      ).recomputeRecordAccessGroupIdsOfAllObjectRecords({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        objectMetadataId,
-      });
-    }
-
-    await waitForAllJobsToFinish();
+    await restoreWorkspaceAccessGroups({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      recomputedObjectNamesSingular: ['person', 'company'],
+    });
   });
 
   it('should follow a many to one relation and its related record changes', async () => {
