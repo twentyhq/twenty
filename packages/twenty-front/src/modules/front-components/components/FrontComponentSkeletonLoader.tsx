@@ -4,8 +4,12 @@ import { styled } from '@linaria/react';
 
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledContainer = styled.div`
-  height: 100%;
+type FrontComponentSkeletonLoaderProps = {
+  height?: string;
+};
+
+const StyledContainer = styled.div<{ loaderHeight: string }>`
+  height: ${({ loaderHeight }) => loaderHeight};
   width: 100%;
 `;
 
@@ -13,9 +17,11 @@ const skeletonLineContainerClassName = css`
   height: 100%;
 `;
 
-export const FrontComponentSkeletonLoader = () => {
+export const FrontComponentSkeletonLoader = ({
+  height = '100%',
+}: FrontComponentSkeletonLoaderProps) => {
   return (
-    <StyledContainer>
+    <StyledContainer loaderHeight={height}>
       <SkeletonLine
         containerClassName={skeletonLineContainerClassName}
         height="100%"

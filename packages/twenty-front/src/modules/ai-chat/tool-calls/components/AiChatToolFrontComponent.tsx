@@ -32,17 +32,23 @@ export const AiChatToolFrontComponent = ({
   onToolCallArgumentsChange,
   unavailableFallback,
   errorFallback,
-}: AiChatToolFrontComponentProps) => (
-  <StyledContainer>
-    <Suspense fallback={<FrontComponentSkeletonLoader />}>
-      <FrontComponentRenderer
-        frontComponentId={frontComponentId}
-        toolCall={toolCall}
-        onToolCallArgumentsChange={onToolCallArgumentsChange}
-        loadingFallback={<FrontComponentSkeletonLoader />}
-        unavailableFallback={unavailableFallback}
-        errorFallback={errorFallback}
-      />
-    </Suspense>
-  </StyledContainer>
-);
+}: AiChatToolFrontComponentProps) => {
+  const loadingFallback = (
+    <FrontComponentSkeletonLoader height={themeCssVariables.spacing[20]} />
+  );
+
+  return (
+    <StyledContainer>
+      <Suspense fallback={loadingFallback}>
+        <FrontComponentRenderer
+          frontComponentId={frontComponentId}
+          toolCall={toolCall}
+          onToolCallArgumentsChange={onToolCallArgumentsChange}
+          loadingFallback={loadingFallback}
+          unavailableFallback={unavailableFallback}
+          errorFallback={errorFallback}
+        />
+      </Suspense>
+    </StyledContainer>
+  );
+};
