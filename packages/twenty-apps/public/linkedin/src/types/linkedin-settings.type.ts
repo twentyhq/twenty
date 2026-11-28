@@ -8,4 +8,5 @@ export type LinkedinSettings = {
   contactAutoCreationPolicy: LinkedinContactAutoCreationPolicy;
   isNameMatchingEnabled: boolean;
   areChatsMarkedAsRead: boolean;
+  isPersonEnrichmentEnabled: boolean;
 };

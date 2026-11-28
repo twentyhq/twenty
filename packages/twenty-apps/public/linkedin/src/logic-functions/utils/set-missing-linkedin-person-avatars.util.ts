@@ -5,6 +5,7 @@ import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { LINKEDIN_AVATAR_REQUEST_TIMEOUT_MILLISECONDS } from 'src/constants/linkedin-avatar-request-timeout-milliseconds.constant';
 import { LINKEDIN_AVATAR_MAX_SIZE_BYTES } from 'src/constants/linkedin-avatar-max-size-bytes.constant';
 import { PERSON_AVATAR_FILE_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/person-avatar-file-field-universal-identifier.constant';
+import { createDeadlineBoundFetch } from 'src/logic-functions/utils/create-deadline-bound-fetch.util';
 
 type PersonAvatarRecord = {
   id: string;
@@ -78,11 +79,6 @@ const getRemainingTimeSignal = (deadlineAtMs: number): AbortSignal =>
     ),
   );
 
-const createDeadlineBoundFetch =
-  (deadlineAtMs: number) =>
-  (input: RequestInfo | URL, init?: RequestInit): Promise<Response> =>
-    fetch(input, { ...init, signal: getRemainingTimeSignal(deadlineAtMs) });
-
 const downloadLinkedinPicture = async ({
   pictureUrl,
   deadlineAtMs,
@@ -126,7 +122,10 @@ const uploadAvatarFile = async ({
 
   const metadataClient = new MetadataApiClient({
     runAs: 'application',
-    fetch: createDeadlineBoundFetch(deadlineAtMs),
+    fetch: createDeadlineBoundFetch({
+      deadlineAtMs,
+      maxRequestMilliseconds: LINKEDIN_AVATAR_REQUEST_TIMEOUT_MILLISECONDS,
+    }),
   });
 
   const { createFileUpload } = await metadataClient.mutation({
@@ -184,7 +183,10 @@ const setPersonAvatar = async ({
 
   const { updatePeople } = await new CoreApiClient({
     runAs: 'application',
-    fetch: createDeadlineBoundFetch(deadlineAtMs),
+    fetch: createDeadlineBoundFetch({
+      deadlineAtMs,
+      maxRequestMilliseconds: LINKEDIN_AVATAR_REQUEST_TIMEOUT_MILLISECONDS,
+    }),
   }).mutation({
     updatePeople: {
       __args: {

@@ -91,6 +91,10 @@ export const parseLinkedinSettingsUpdate = (
     update.areChatsMarkedAsRead = body.areChatsMarkedAsRead;
   }
 
+  if (isBoolean(body?.isPersonEnrichmentEnabled)) {
+    update.isPersonEnrichmentEnabled = body.isPersonEnrichmentEnabled;
+  }
+
   if (isOneOf(VISIBILITIES, body?.visibility)) {
     update.visibility = body.visibility;
   }

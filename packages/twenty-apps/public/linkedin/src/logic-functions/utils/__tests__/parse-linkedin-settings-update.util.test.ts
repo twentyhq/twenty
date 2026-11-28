@@ -18,6 +18,21 @@ describe('parseLinkedinSettingsUpdate', () => {
     ).toEqual({});
   });
 
+  it.each([true, false])(
+    'keeps isPersonEnrichmentEnabled set to %s',
+    (isPersonEnrichmentEnabled) => {
+      expect(
+        parseLinkedinSettingsUpdate({ isPersonEnrichmentEnabled }),
+      ).toEqual({ isPersonEnrichmentEnabled });
+    },
+  );
+
+  it('drops an isPersonEnrichmentEnabled that is not a boolean', () => {
+    expect(
+      parseLinkedinSettingsUpdate({ isPersonEnrichmentEnabled: 'yes' }),
+    ).toEqual({});
+  });
+
   it('keeps the conversations the member selected with their name, each once', () => {
     expect(
       parseLinkedinSettingsUpdate({
