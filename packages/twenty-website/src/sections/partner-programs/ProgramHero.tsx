@@ -34,16 +34,22 @@ const VisualStage = styled.div`
   width: 100%;
 `;
 
-// Without a visual, the room under the actions that brings the hero to the
-// shared height, so the backdrop shows below the copy.
+// Without a visual, the room under the actions for the backdrop's banner:
+// the gap down to the visual, then the banner itself, as a visual would
+// take. The banner shrinks with the width, so the room does too; at desktop
+// it is the shared height (belowActionsPx).
 const BackdropRoom = styled.div`
   height: calc(
-    ${HERO_COMPOSITION.belowActionsPx}px - ${spacing(RHYTHM.hero.bottom.base)}
+    ${HERO_COMPOSITION.ctaToVisualGapPx}px +
+      ${HERO_COMPOSITION.visualBannerHeight} -
+      ${spacing(RHYTHM.hero.bottom.base)}
   );
 
   ${mediaUp('md')} {
     height: calc(
-      ${HERO_COMPOSITION.belowActionsPx}px - ${spacing(RHYTHM.hero.bottom.md)}
+      ${HERO_COMPOSITION.ctaToVisualGapPx}px +
+        ${HERO_COMPOSITION.visualBannerHeight} -
+        ${spacing(RHYTHM.hero.bottom.md)}
     );
   }
 `;
