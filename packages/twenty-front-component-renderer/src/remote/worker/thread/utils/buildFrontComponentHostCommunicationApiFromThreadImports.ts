@@ -1,10 +1,13 @@
-import { createOpenCommandConfirmationModalAdapter } from '@/remote/worker/thread/utils/createOpenCommandConfirmationModalAdapter';
+import { rejectPreviewHostActionOrThrow } from '@/host/thread/utils/rejectPreviewHostActionOrThrow';
 import { type WorkerFrontComponentHostCommunicationApi } from '@/types/WorkerFrontComponentHostCommunicationApi';
+import { createOpenCommandConfirmationModalAdapter } from '@/remote/worker/thread/utils/createOpenCommandConfirmationModalAdapter';
 import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentHostCommunicationApi';
 
 export const buildFrontComponentHostCommunicationApiFromThreadImports = (
   hostThreadImports: FrontComponentHostCommunicationApi,
 ): Required<WorkerFrontComponentHostCommunicationApi> => ({
+  queryMetadata:
+    hostThreadImports.queryMetadata ?? rejectPreviewHostActionOrThrow,
   navigate: hostThreadImports.navigate,
   requestAccessTokenRefresh: hostThreadImports.requestAccessTokenRefresh,
   openSidePanelPage: hostThreadImports.openSidePanelPage,

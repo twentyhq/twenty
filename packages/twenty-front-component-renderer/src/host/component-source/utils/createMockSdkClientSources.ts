@@ -19,6 +19,9 @@ export const createMockSdkClientSources = (
     async mutation() { throw new Error('Mutations are unavailable in previews.'); }
   }`,
   metadata: `export class MetadataApiClient {
-    constructor() { throw new Error('Metadata API calls are unavailable in previews.'); }
+    async query(selection) {
+      return globalThis.frontComponentHostCommunicationApi.queryMetadata(selection);
+    }
+    async mutation() { throw new Error('Mutations are unavailable in previews.'); }
   }`,
 });

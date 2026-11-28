@@ -125,8 +125,20 @@ export const UnavailablePreview: Story = {
   },
 };
 
-export const DisabledFeature: Story = {
+export const StaleDisabledFeatureFlag: Story = {
   beforeEach: () => seedFrontComponentPreviewWorkspace(false),
+  play: ComponentPreview.play,
+};
+
+export const DisabledOnServer: Story = {
+  beforeEach: () => {
+    getWorker().use(
+      http.get(
+        `${REST_API_BASE_URL}/ai-front-components/drafts/:draftId`,
+        () => new HttpResponse(null, { status: 403 }),
+      ),
+    );
+  },
   play: UnavailablePreview.play,
 };
 

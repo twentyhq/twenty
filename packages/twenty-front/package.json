@@ -150,6 +150,7 @@
     "temporal-polyfill": "^0.3.0",
     "transliteration": "^2.3.5",
     "ts-key-enum": "^2.0.12",
+    "twenty-client-sdk": "workspace:*",
     "twenty-front-component-renderer": "workspace:*",
     "twenty-shared": "workspace:*",
     "twenty-ui": "workspace:*",

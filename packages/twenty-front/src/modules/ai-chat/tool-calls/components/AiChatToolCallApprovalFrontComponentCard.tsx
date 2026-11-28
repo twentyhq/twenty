@@ -9,8 +9,6 @@ import { AiChatFrontComponentPreviewContent } from '@/ai-chat/tool-calls/compone
 import { AiChatToolCallApprovalCardLayout } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalCardLayout';
 import { useAiChatFrontComponentPreview } from '@/ai-chat/tool-calls/hooks/useAiChatFrontComponentPreview';
 import { useAnswerToolCallApproval } from '@/ai-chat/tool-calls/hooks/useAnswerToolCallApproval';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type AiChatToolCallApprovalFrontComponentCardProps = {
   toolCallId: string;
@@ -43,9 +41,6 @@ const AiChatToolCallApprovalFrontComponentContent = ({
   approval,
 }: AiChatToolCallApprovalFrontComponentContentProps) => {
   const { t } = useLingui();
-  const isEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_AI_CHAT_COMPONENT_BUILDER_ENABLED,
-  );
   const draftId = isNonEmptyString(proposal.arguments.draftId)
     ? proposal.arguments.draftId
     : '';
@@ -58,7 +53,7 @@ const AiChatToolCallApprovalFrontComponentContent = ({
     reportPreviewRendered,
   } = useAiChatFrontComponentPreview(draftId);
   const { pendingResponse, isAnswering, approve, reject } = approval;
-  const canLoadPreview = isEnabled && isNonEmptyString(draftId);
+  const canLoadPreview = isNonEmptyString(draftId);
   const canApprove =
     canLoadPreview && preview?.isCurrent && isRendered && !isDefined(error);
 
