@@ -4,7 +4,7 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
-import { collectRecordsByObjectNameSingular } from 'src/engine/api/common/common-record-visibility/utils/collect-records-by-object-name-singular.util';
+import { collectRecordsByObjectNameSingular } from 'src/engine/api/common/common-record-read-custom-permissions/utils/collect-records-by-object-name-singular.util';
 import { type CommonSelection } from 'src/engine/api/common/types/common-selection.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';

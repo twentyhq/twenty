@@ -1,4 +1,4 @@
-import { Injectable, type OnModuleInit } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
@@ -9,8 +9,8 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
-import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
-import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
+import { RecordReadCustomPermissionHandler } from 'src/engine/permissions/record-read-custom-permissions/decorators/record-read-custom-permission-handler.decorator';
+import { type RecordReadCustomPermissionHandlerService } from 'src/engine/permissions/record-read-custom-permissions/types/record-read-custom-permission-handler-service.type';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
@@ -22,24 +22,15 @@ import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules
 const RESTRICTED_CALENDAR_EVENT_FIELD_NAMES = ['title', 'description'];
 
 @Injectable()
-export class ApplyCalendarEventsVisibilityRestrictionsService
-  implements RecordVisibilityRestrictionHandler, OnModuleInit
-{
+@RecordReadCustomPermissionHandler('calendarEvent')
+export class CalendarEventReadCustomPermissionHandlerService implements RecordReadCustomPermissionHandlerService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly commonRecordVisibilityService: CommonRecordVisibilityService,
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
   ) {}
 
-  onModuleInit() {
-    this.commonRecordVisibilityService.registerHandler({
-      objectNameSingular: 'calendarEvent',
-      handler: this,
-    });
-  }
-
-  public async applyVisibilityRestrictions({
+  public async applyToRecords({
     records,
     authContext,
   }: {

@@ -5,7 +5,7 @@ import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-f
 import { CommonArgsProcessors } from 'src/engine/api/common/common-args-processors/common-args-processors';
 import { FilterArgProcessorService } from 'src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service';
 import { GroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/group-by-arg-processor.service';
-import { CommonRecordVisibilityModule } from 'src/engine/api/common/common-record-visibility/common-record-visibility.module';
+import { CommonRecordReadCustomPermissionsModule } from 'src/engine/api/common/common-record-read-custom-permissions/common-record-read-custom-permissions.module';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
 import { CommonQueryRunners } from 'src/engine/api/common/common-query-runners/common-query-runners';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
@@ -28,7 +28,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 @Module({
   imports: [
     WorkspaceQueryHookModule,
-    CommonRecordVisibilityModule,
+    CommonRecordReadCustomPermissionsModule,
     EventLogEmitterModule,
     FileModule,
     ViewModule,

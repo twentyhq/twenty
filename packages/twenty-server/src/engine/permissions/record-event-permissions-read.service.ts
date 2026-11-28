@@ -6,6 +6,7 @@ import groupBy from 'lodash.groupby';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { isDefined } from 'twenty-shared/utils';
 
+import { buildRecordReadRestrictions } from 'src/engine/permissions/internal/role/utils/build-record-read-restrictions.util';
 import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
 import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/combine/services/permissions-metadata-maps.service';
@@ -24,6 +25,7 @@ import { PrincipalPermissionsReadService } from 'src/engine/permissions/principa
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
+import { RecordReadCustomPermissionsService } from 'src/engine/permissions/record-read-custom-permissions/record-read-custom-permissions.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 type EventBatchAccessLoaders = {
@@ -46,6 +48,7 @@ export class RecordEventPermissionsReadService {
     private readonly privateRecordRepository: PrivateRecordRepository,
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
     private readonly recordPermissionsReadService: RecordPermissionsReadService,
+    private readonly recordReadCustomPermissionsService: RecordReadCustomPermissionsService,
   ) {}
 
   async filterReadableEvents<TEvent extends ObjectRecordEvent>({
@@ -82,8 +85,12 @@ export class RecordEventPermissionsReadService {
     const readableEvents = events.filter((event) =>
       readableRecordIds.has(event.recordId),
     );
+    const recordsPermissions = getPermissionsPrincipalsRecordsPermissions({
+      principals,
+      metadataMaps,
+    });
 
-    return omitUnreadableFieldsFromEvents({
+    const eventsWithoutUnreadableFields = omitUnreadableFieldsFromEvents({
       unreadableFieldsOnMatchingRecords:
         await resolveUnreadableFieldsOnMatchingRecords({
           principals,
@@ -98,11 +105,19 @@ export class RecordEventPermissionsReadService {
         }),
       events: readableEvents,
       objectMetadata: eventBatch.objectMetadata,
-      recordsPermissions: getPermissionsPrincipalsRecordsPermissions({
-        principals,
-        metadataMaps,
-      }),
+      recordsPermissions,
       metadataMaps,
+    });
+
+    return this.recordReadCustomPermissionsService.applyToEvents({
+      objectNameSingular: eventBatch.objectMetadata.nameSingular,
+      events: eventsWithoutUnreadableFields,
+      permissionsPrincipals: principals,
+      recordReadRestrictions: buildRecordReadRestrictions({
+        recordsPermissions,
+      }),
+      flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
     });
   }
 

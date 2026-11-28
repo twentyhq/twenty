@@ -5,18 +5,23 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
-import { omitRestrictedFieldsFromTimelineActivity } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity.util';
+import {
+  type IsTimelineActivitySourceRecordReadable,
+  omitUnreadableFieldsFromTimelineActivityProperties,
+} from 'src/engine/permissions/record-read-custom-permissions/handlers/timeline-activity/utils/omit-unreadable-fields-from-timeline-activity-properties.util';
 
-export const omitRestrictedFieldsFromTimelineActivityEvent = <
+export const omitUnreadableFieldsFromTimelineActivityEvent = <
   TEvent extends ObjectRecordEvent,
 >({
   event,
   recordReadRestrictions,
+  isSourceRecordReadable,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
   event: TEvent;
   recordReadRestrictions: RecordReadRestrictions;
+  isSourceRecordReadable: IsTimelineActivitySourceRecordReadable;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): TEvent => {
@@ -30,24 +35,25 @@ export const omitRestrictedFieldsFromTimelineActivityEvent = <
       ? properties.after
       : undefined;
 
-  const omitRestrictedFields = ({
+  const omitUnreadableFields = ({
     value,
     timelineActivity,
   }: {
     value: unknown;
     timelineActivity: Record<string, unknown> | undefined;
   }) =>
-    omitRestrictedFieldsFromTimelineActivity({
+    omitUnreadableFieldsFromTimelineActivityProperties({
       properties: value,
       timelineActivity: timelineActivity ?? {},
       recordReadRestrictions,
+      isSourceRecordReadable,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     });
 
-  const omitRestrictedFieldsFromRecord = (record: Record<string, unknown>) => ({
+  const omitUnreadableFieldsFromRecord = (record: Record<string, unknown>) => ({
     ...record,
-    properties: omitRestrictedFields({
+    properties: omitUnreadableFields({
       value: record.properties,
       timelineActivity: record,
     }),
@@ -66,19 +72,19 @@ export const omitRestrictedFieldsFromTimelineActivityEvent = <
     properties: {
       ...properties,
       ...(isDefined(before) && {
-        before: omitRestrictedFieldsFromRecord(before),
+        before: omitUnreadableFieldsFromRecord(before),
       }),
-      ...(isDefined(after) && { after: omitRestrictedFieldsFromRecord(after) }),
+      ...(isDefined(after) && { after: omitUnreadableFieldsFromRecord(after) }),
       ...(isDefined(diffProperties) && {
         diff: {
           ...diff,
           properties: {
             ...diffProperties,
-            before: omitRestrictedFields({
+            before: omitUnreadableFields({
               value: diffProperties.before,
               timelineActivity: before ?? after,
             }),
-            after: omitRestrictedFields({
+            after: omitUnreadableFields({
               value: diffProperties.after,
               timelineActivity: after ?? before,
             }),

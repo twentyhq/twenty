@@ -1,4 +1,4 @@
-import { Injectable, type OnModuleInit } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -6,38 +6,29 @@ import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not } from 'typeorm';
 
-import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
-import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
+import { RecordReadCustomPermissionHandler } from 'src/engine/permissions/record-read-custom-permissions/decorators/record-read-custom-permission-handler.decorator';
+import { type RecordReadCustomPermissionHandlerService } from 'src/engine/permissions/record-read-custom-permissions/types/record-read-custom-permission-handler-service.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isChannelVisibilityEnforcedByIndividualRole } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-enforced-by-individual-role.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
-import { ApplyMessagesVisibilityRestrictionsService } from 'src/modules/messaging/common/query-hooks/message/apply-messages-visibility-restrictions.service';
+import { MessageReadCustomPermissionHandlerService } from 'src/engine/permissions/record-read-custom-permissions/handlers/message/message-read-custom-permission-handler.service';
 
 const RESTRICTED_ATTACHMENT_FIELD_NAMES = ['name', 'fullPath', 'file'];
 
 // Message files are readable from the attachment object too, so they follow the message's channel visibility here as well
 @Injectable()
-export class ApplyAttachmentsVisibilityRestrictionsService
-  implements RecordVisibilityRestrictionHandler, OnModuleInit
-{
+@RecordReadCustomPermissionHandler('attachment')
+export class AttachmentReadCustomPermissionHandlerService implements RecordReadCustomPermissionHandlerService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly commonRecordVisibilityService: CommonRecordVisibilityService,
-    private readonly applyMessagesVisibilityRestrictionsService: ApplyMessagesVisibilityRestrictionsService,
+    private readonly messageReadCustomPermissionHandlerService: MessageReadCustomPermissionHandlerService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  onModuleInit() {
-    this.commonRecordVisibilityService.registerHandler({
-      objectNameSingular: 'attachment',
-      handler: this,
-    });
-  }
-
-  public async applyVisibilityRestrictions({
+  public async applyToRecords({
     records,
     authContext,
   }: {
@@ -85,7 +76,7 @@ export class ApplyAttachmentsVisibilityRestrictionsService
     }
 
     const { fullyVisibleMessageIds } =
-      await this.applyMessagesVisibilityRestrictionsService.findVisibleMessageIds(
+      await this.messageReadCustomPermissionHandlerService.findVisibleMessageIds(
         {
           messageIds: [...targetMessageIdByAttachmentId.values()],
           authContext,
