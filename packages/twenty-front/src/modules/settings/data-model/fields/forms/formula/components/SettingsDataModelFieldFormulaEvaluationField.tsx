@@ -3,12 +3,14 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { type FieldMetadataFormulaEvaluation } from 'twenty-shared/types';
-import { SegmentedControl } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
-import { Field } from 'twenty-ui/primitives/input';
+import { IconDatabase } from 'twenty-ui/icon';
+import { Switch } from 'twenty-ui/primitives/input';
+import { Card } from 'twenty-ui/primitives/surfaces';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { type SettingsDataModelFieldFormulaFormValues } from '@/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaForm';
 import { buildFormulaFieldEditorInputs } from '@/settings/data-model/fields/forms/formula/utils/buildFormulaFieldEditorInputs';
 import { getFormulaExpressionEvaluation } from '@/settings/data-model/fields/forms/formula/utils/getFormulaExpressionEvaluation';
@@ -49,44 +51,48 @@ export const SettingsDataModelFieldFormulaEvaluationField = ({
     (expression) =>
       getFormulaExpressionEvaluation({ expression, fields }) === 'STORED',
   );
-  const evaluation: FieldMetadataFormulaEvaluation = isAggregating
-    ? 'STORED'
-    : (formulaEvaluation ?? 'QUERY_TIME');
+  const isStored = isAggregating || formulaEvaluation === 'STORED';
 
   const getDescription = () => {
     if (isAggregating) {
-      return t`Reads related records, so it is stored and updated in the background a few seconds after they change. Other formulas can read it.`;
+      return t`Aggregates related records, so it is always stored and updated in the background`;
     }
 
-    return evaluation === 'STORED'
-      ? t`Updated in the background a few seconds after the fields it reads change. Other formulas can read it.`
-      : t`Computed each time it is read. Other formulas cannot read it.`;
+    return isStored
+      ? t`Updated in the background; other formulas can read it`
+      : t`Computed on every read; other formulas cannot read it`;
   };
 
-  const handleEvaluationChange = (
-    newEvaluation: FieldMetadataFormulaEvaluation,
-  ) => {
-    setValue('formulaEvaluation', newEvaluation, { shouldDirty: true });
+  const handleIsStoredChange = (shouldStore: boolean) => {
+    const evaluation: FieldMetadataFormulaEvaluation = shouldStore
+      ? 'STORED'
+      : 'QUERY_TIME';
+
+    setValue('formulaEvaluation', evaluation, { shouldDirty: true });
     void trigger(['formula', 'formulaCurrencyCode']);
   };
 
   return (
     <Section.Root>
-      <Field.Root>
-        <Field.Label>{t`Computed`}</Field.Label>
-        <SegmentedControl
-          aria-label={t`Computed`}
-          variant="rectangle"
-          itemWidth="content"
-          options={[
-            { value: 'QUERY_TIME', label: t`Live`, disabled: isAggregating },
-            { value: 'STORED', label: t`Stored` },
-          ]}
-          value={evaluation}
-          onValueChange={handleEvaluationChange}
-        />
-        <Field.Description>{getDescription()}</Field.Description>
-      </Field.Root>
+      <Section.Header
+        title={t`Computation`}
+        description={t`When the value of this formula is computed`}
+      />
+      <Card.Root fullWidth>
+        <SettingsOptionCardContentSelect
+          Icon={IconDatabase}
+          title={t`Store the value`}
+          description={getDescription()}
+        >
+          <Switch
+            aria-label={t`Store the value`}
+            size="sm"
+            checked={isStored}
+            onCheckedChange={handleIsStoredChange}
+            disabled={isAggregating}
+          />
+        </SettingsOptionCardContentSelect>
+      </Card.Root>
     </Section.Root>
   );
 };
