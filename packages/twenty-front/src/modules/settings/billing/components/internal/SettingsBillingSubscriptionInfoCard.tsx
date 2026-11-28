@@ -1,5 +1,4 @@
 import {
-  BillingFieldRow,
   IncludedBillingField,
   type IncludedBillingFieldProps,
   ScheduledBillingChangeField,
@@ -15,6 +14,7 @@ import {
   StyledSettingsBillingCardTitleLabel,
 } from '@/settings/billing/components/internal/SettingsBillingCard';
 import { SettingsTextLink } from '@/settings/components/SettingsTextLink';
+import { DetailFieldRow } from '@/ui/layout/details/components/DetailFieldRow';
 import { WorkspaceMemberAvatarStack } from '@/workspace-member/components/WorkspaceMemberAvatarStack';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -227,14 +227,14 @@ export const SettingsBillingSubscriptionInfoCard = ({
       </StyledSettingsBillingCardHeader>
       <StyledSettingsBillingCardGridBody>
         <StyledSettingsBillingCardFieldList>
-          <BillingFieldRow label={t`Seats`} Icon={IconUserCircle}>
+          <DetailFieldRow label={t`Seats`} Icon={IconUserCircle}>
             <WorkspaceMemberAvatarStack
               workspaceMembers={workspaceMembers}
               totalWorkspaceMembersCount={totalWorkspaceMembersCount}
               defaultAvatarName={workspaceMemberDefaultName}
             />
-          </BillingFieldRow>
-          <BillingFieldRow label={t`Billing interval`} Icon={IconClockPlay}>
+          </DetailFieldRow>
+          <DetailFieldRow label={t`Billing interval`} Icon={IconClockPlay}>
             <StyledBillingIntervalValue>
               {currentIntervalLabel}
               {canDisplaySwitchToYearlyAction && (
@@ -268,17 +268,17 @@ export const SettingsBillingSubscriptionInfoCard = ({
                 </>
               )}
             </StyledBillingIntervalValue>
-          </BillingFieldRow>
+          </DetailFieldRow>
           {isDefined(displayedSubscriptionDate) && (
-            <BillingFieldRow
+            <DetailFieldRow
               label={subscriptionDateLabel}
               Icon={IconCalendarDue}
             >
               {displayedSubscriptionDate}
-            </BillingFieldRow>
+            </DetailFieldRow>
           )}
           {isDefined(billingEmail) && (
-            <BillingFieldRow label={t`Billing email`} Icon={IconMail}>
+            <DetailFieldRow label={t`Billing email`} Icon={IconMail}>
               <SettingsTextLink
                 title={t`Change billing email`}
                 onClick={onBillingEmailClick}
@@ -286,38 +286,38 @@ export const SettingsBillingSubscriptionInfoCard = ({
               >
                 {billingEmail}
               </SettingsTextLink>
-            </BillingFieldRow>
+            </DetailFieldRow>
           )}
         </StyledSettingsBillingCardFieldList>
         <StyledSettingsBillingCardFieldListWithDivider>
-          <BillingFieldRow label={t`Seats`} Icon={IconUsers}>
+          <DetailFieldRow label={t`Seats`} Icon={IconUsers}>
             {seatsSubtotalValue}
             {seatsSubtotalDetails && (
               <StyledSecondaryText>{seatsSubtotalDetails}</StyledSecondaryText>
             )}
-          </BillingFieldRow>
-          <BillingFieldRow label={t`Credit pack`} Icon={IconCoins}>
+          </DetailFieldRow>
+          <DetailFieldRow label={t`Credit pack`} Icon={IconCoins}>
             {creditsSubtotalValue}
             {creditsSubtotalDetails && (
               <StyledSecondaryText>
                 {creditsSubtotalDetails}
               </StyledSecondaryText>
             )}
-          </BillingFieldRow>
+          </DetailFieldRow>
           {isDefined(applicationsSubtotalValue) && (
-            <BillingFieldRow label={t`Apps`} Icon={IconApps}>
+            <DetailFieldRow label={t`Apps`} Icon={IconApps}>
               {applicationsSubtotalValue}
               <StyledSecondaryText>
                 {applicationsSubtotalDetails}
               </StyledSecondaryText>
-            </BillingFieldRow>
+            </DetailFieldRow>
           )}
-          <BillingFieldRow label={t`Total`} Icon={IconSum}>
+          <DetailFieldRow label={t`Total`} Icon={IconSum}>
             {totalValue}
             {isDefined(totalIntervalSubtitle) && (
               <StyledSecondaryText>{totalIntervalSubtitle}</StyledSecondaryText>
             )}
-          </BillingFieldRow>
+          </DetailFieldRow>
         </StyledSettingsBillingCardFieldListWithDivider>
       </StyledSettingsBillingCardGridBody>
       {hasIncludedPerSeatItems && (

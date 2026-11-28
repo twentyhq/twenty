@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatErrorCode } from '@/ai-chat/utils/aiChatErrorCode';
-import { findToolPartOutput } from '@/ai-chat/tool-calls/utils/findToolPartOutput';
+import { findToolPart } from '@/ai-chat/tool-calls/utils/findToolPart';
 import { aiChatThreadReplyErrorFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyErrorFamilyState';
 import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
 import { endAiChatReplyStatus } from '@/ai-chat/utils/endAiChatReplyStatus';
@@ -55,10 +55,10 @@ export const useAnswerAiChatToolCall = () => {
         threadId,
       });
 
-      const previousToolOutput = findToolPartOutput({
+      const previousToolOutput = findToolPart({
         messages: store.get(messagesAtom),
         toolCallId,
-      });
+      })?.output;
 
       if (isDefined(optimisticToolOutput)) {
         store.set(messagesAtom, (messages) =>

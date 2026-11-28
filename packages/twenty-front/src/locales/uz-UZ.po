@@ -197,8 +197,6 @@ msgid "(selected: {selectedIconKey})"
 msgstr "(tanlangan: {selectedIconKey})"
 
 #. js-lingui-id: ZBGbuw
-#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
-#: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -206,6 +204,7 @@ msgstr "(tanlangan: {selectedIconKey})"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
+#: src/modules/ui/layout/details/components/JsonSection.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
@@ -310,6 +309,12 @@ msgstr "{0, plural, one {# obyekt} other {# obyekt}}"
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 msgid "{0, plural, one {# Object} other {# Objects}}"
 msgstr "{0, plural, one {# obyekt} other {# obyekt}}"
+
+#. js-lingui-id: BPBz8e
+#. placeholder {0}: recordReferences.length
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRecordsDetail.tsx
+msgid "{0, plural, one {# record} other {# records}}"
+msgstr "{0, plural, one {# ta yozuv} other {# ta yozuv}}"
 
 #. js-lingui-id: zHa4lw
 #. placeholder {0}: parts.length
@@ -1073,7 +1078,7 @@ msgstr "{label}, {unreadOpenThreadCount} o‘qilmagan"
 #. js-lingui-id: B+e4L5
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 msgid "{limit, plural, one {# item} other {# items}}"
-msgstr ""
+msgstr "{limit, plural, one {# element} other {# element}}"
 
 #. js-lingui-id: 1DrH/j
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -2551,6 +2556,8 @@ msgid "Add filter"
 msgstr "Filtr qo‘shish"
 
 #. js-lingui-id: +NDti1
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterAddFilterRuleSelect.tsx
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterAddFilterRuleSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
@@ -2748,6 +2755,9 @@ msgid "Add row below"
 msgstr "Pastga satr qo‘shish"
 
 #. js-lingui-id: O8tK4v
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterAddFilterRuleSelect.tsx
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterAddFilterRuleSelect.tsx
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterAddFilterRuleSelect.tsx
 #: src/modules/object-core/filters/components/CoreObjectFilterAddRuleButton.tsx
 #: src/modules/object-core/filters/components/CoreObjectFilterAddRuleButton.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
@@ -2761,6 +2771,7 @@ msgid "Add rule"
 msgstr "Qoidani qo‘shish"
 
 #. js-lingui-id: cLBcTT
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterAddFilterRuleSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
 msgid "Add rule group"
@@ -3629,7 +3640,7 @@ msgstr "Buning uchun faqat ularning emaili kifoya."
 #. js-lingui-id: J3EsIX
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 msgid "All items"
-msgstr ""
+msgstr "Barcha elementlar"
 
 #. js-lingui-id: 623MHa
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
@@ -4054,15 +4065,11 @@ msgid "and"
 msgstr "va"
 
 #. js-lingui-id: qVyNMm
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityLogicalOperatorLabel.ts
 #: src/modules/object-record/advanced-filter/constants/AdvancedFilterLogicalOperatorOptions.ts
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterLogicalOperatorCell.tsx
 msgid "And"
 msgstr "Va"
-
-#. js-lingui-id: U/Q98U
-#: src/modules/ai-chat/thinking-steps/components/ToolRecordsWidget.tsx
-msgid "and {hiddenCount} more"
-msgstr "va yana {hiddenCount} ta"
 
 #. js-lingui-id: 2qLe/y
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
@@ -4086,7 +4093,6 @@ msgid "Answered"
 msgstr "Javob berilgan"
 
 #. js-lingui-id: +qygei
-#: src/modules/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/generateClassifyOutputSchema.ts
 msgid "Answers"
 msgstr "Javoblar"
@@ -4434,20 +4440,10 @@ msgstr "Barcha {pendingCardCount} tasini tasdiqlash"
 msgid "Approve media access for {applicationName}?"
 msgstr "{applicationName} uchun media kirishini tasdiqlaysizmi?"
 
-#. js-lingui-id: 7kb4LU
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
-msgid "Approved"
-msgstr "Tasdiqlangan"
-
 #. js-lingui-id: UDlRcx
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
 msgid "Approved access domain validated"
 msgstr "Tasdiqlangan kirish domeni muvaffaqiyatli tekshirildi"
-
-#. js-lingui-id: nfUdWT
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
-msgid "Approved but it failed"
-msgstr "Tasdiqlandi, ammo amalga oshmadi"
 
 #. js-lingui-id: 9tggYj
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
@@ -5960,6 +5956,11 @@ msgstr "Kalendar ko‘rinishi"
 msgid "Calendar widget"
 msgstr "Kalendar vidjeti"
 
+#. js-lingui-id: oQhLzs
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
+msgid "Call ID"
+msgstr "Qo‘ng‘iroq ID"
+
 #. js-lingui-id: cHma9m
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 msgid "Call recorder"
@@ -7240,9 +7241,7 @@ msgid "collapse"
 msgstr "yig‘ish"
 
 #. js-lingui-id: H86f9p
-#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsole.tsx
-#: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -7250,6 +7249,7 @@ msgstr "yig‘ish"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
+#: src/modules/ui/layout/details/components/JsonSection.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
@@ -7521,6 +7521,7 @@ msgstr "yakunlandi"
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 msgid "Completed"
@@ -7869,6 +7870,11 @@ msgstr "Claude yoki Cursor kabi AI yordamchilarini Model Context Protocol orqali
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Connect an account"
 msgstr "Akkauntni ulang"
+
+#. js-lingui-id: uvyCU0
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessageCompose.tsx
+msgid "Connect an email account"
+msgstr "Elektron pochta hisobini ulang"
 
 #. js-lingui-id: B+ajzf
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
@@ -8223,6 +8229,11 @@ msgstr "Cook"
 msgid "Cookie"
 msgstr "Pechenye"
 
+#. js-lingui-id: XQVCXB
+#: src/modules/ui/layout/details/components/JsonSection.tsx
+msgid "Copied as JSON"
+msgstr "JSON sifatida nusxalandi"
+
 #. js-lingui-id: FxVG/l
 #: src/hooks/useCopyToClipboard.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
@@ -8237,7 +8248,6 @@ msgid "Copies a Cloudflare setup prompt for your AI coding tool"
 msgstr "AI kodlash vositangiz uchun Cloudflare sozlash so‘rovini nusxalaydi"
 
 #. js-lingui-id: he3ygx
-#: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/settings/developers/components/ApiKeyInput.tsx
@@ -8247,12 +8257,13 @@ msgstr "AI kodlash vositangiz uchun Cloudflare sozlash so‘rovini nusxalaydi"
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
+#: src/modules/ui/layout/details/components/DetailMessageCard.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Copy"
 msgstr "Nusxalash"
 
 #. js-lingui-id: Qv14oC
-#: src/modules/log-console/components/LogConsoleDetailPanel.tsx
+#: src/modules/ui/layout/details/components/JsonSection.tsx
 msgid "Copy as JSON"
 msgstr "JSON sifatida nusxalash"
 
@@ -8569,6 +8580,11 @@ msgstr "Qidiruvni ishga tushirib bo‘lmadi."
 #: src/modules/object-core/workflows/hooks/useRenameCoreWorkflow.ts
 msgid "Could not save workflow"
 msgstr "Ish jarayonini saqlab bo‘lmadi"
+
+#. js-lingui-id: g0DwAz
+#: src/modules/side-panel/pages/start-app-conversation/components/SidePanelStartAppConversationPage.tsx
+msgid "Could not start the conversation"
+msgstr "Suhbatni boshlab bo‘lmadi"
 
 #. js-lingui-id: p75IO8
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
@@ -9372,6 +9388,11 @@ msgstr "joriy tarif"
 msgid "Current subscription state and line items"
 msgstr "Joriy obuna holati va bandlar"
 
+#. js-lingui-id: GvB/Ni
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterFieldSelect.tsx
+msgid "Current user"
+msgstr "Joriy foydalanuvchi"
+
 #. js-lingui-id: 6YzXhC
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Current value from server environment. Set a custom value to override."
@@ -9534,6 +9555,12 @@ msgstr "Maxsus provayderlar {0} tagacha o‘rin uchun bepul. Ushbu nusxada {1} t
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Custom roles"
 msgstr "Moslashtirilgan rollar"
+
+#. js-lingui-id: cHOtZ9
+#: src/modules/side-panel/pages/page-layout/components/WidgetVisibilitySettingItem.tsx
+#: src/modules/side-panel/pages/page-layout/components/WidgetVisibilitySettings.tsx
+msgid "Custom rule"
+msgstr "Moslashtirilgan qoida"
 
 #. js-lingui-id: 2jzCZZ
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
@@ -10153,6 +10180,7 @@ msgstr "o‘chirish"
 #: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorBlockHandleMenu.tsx
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterOptionsDropdown.tsx
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
@@ -10372,6 +10400,7 @@ msgid "Delete Folder"
 msgstr "Jildni oʻchirish"
 
 #. js-lingui-id: k/RLDM
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterOptionsDropdown.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterGroupOptionsDropdown.tsx
 msgid "Delete group"
 msgstr "Guruhni oʻchirish"
@@ -10615,6 +10644,7 @@ msgid "Deleted record"
 msgstr "O‘chirilgan yozuv"
 
 #. js-lingui-id: vaFq49
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 msgid "Deleted role"
 msgstr "O‘chirilgan rol"
@@ -10722,6 +10752,7 @@ msgid "Description provided by the application"
 msgstr "Ilova tomonidan taqdim etilgan tavsif"
 
 #. js-lingui-id: BBqGS9
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterFields.tsx
 #: src/modules/side-panel/pages/page-layout/hooks/useVisibilityLabels.ts
 msgid "Desktop"
 msgstr "Desktop"
@@ -10779,6 +10810,7 @@ msgstr "tafsilotlar"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
@@ -10830,6 +10862,13 @@ msgstr "Dasturchilar - Sozlamalar"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Development instance"
 msgstr "Dasturlash (development) instansiyasi"
+
+#. js-lingui-id: PEHQTf
+#: src/modules/conditional-availability/filter-builder/components/__stories__/ConditionalAvailabilityFilterBuilder.stories.tsx
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterFieldSelect.tsx
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterFields.tsx
+msgid "Device"
+msgstr "Qurilma"
 
 #. js-lingui-id: le4Hch
 #: src/modules/settings/profile/devices/components/SettingsDeviceSessionRowDropdownMenu.tsx
@@ -11283,7 +11322,7 @@ msgid "Draft an email to this company about "
 msgstr "Ushbu kompaniyaga quyidagi mavzuda elektron pochta qoralamasini tayyorlash: "
 
 #. js-lingui-id: DbAw4C
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/utils/getProposedToolCallLabel.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Draft email"
 msgstr "Qoralama xat"
@@ -12072,8 +12111,6 @@ msgid "Empty"
 msgstr "Bo‘sh"
 
 #. js-lingui-id: OMbipf
-#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
-#: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -12081,6 +12118,7 @@ msgstr "Bo‘sh"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
+#: src/modules/ui/layout/details/components/JsonSection.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
@@ -12091,8 +12129,6 @@ msgid "Empty Array"
 msgstr "Boʻsh massiv"
 
 #. js-lingui-id: 3hSGoJ
-#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
-#: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -12100,6 +12136,7 @@ msgstr "Boʻsh massiv"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
+#: src/modules/ui/layout/details/components/JsonSection.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
@@ -12682,6 +12719,7 @@ msgstr "Yumshoq o‘chirilgan yozuvlarni butunlay o‘chirish"
 #: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetErrorDisplay.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 #: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
@@ -12889,6 +12927,11 @@ msgstr "Yevropa Ittifoqi"
 msgid "Evaluation"
 msgstr "Baholash"
 
+#. js-lingui-id: acLjIx
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "event"
+msgstr "hodisa"
+
 #. js-lingui-id: 0pC/y6
 #: src/modules/log-console/constants/LogConsoleSecurityEventColumn.tsx
 #: src/modules/log-console/constants/LogConsoleSecurityFilterFields.tsx
@@ -13070,6 +13113,8 @@ msgstr ""
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/WidgetVisibilitySettingItem.tsx
+#: src/modules/side-panel/pages/page-layout/components/WidgetVisibilitySettings.tsx
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Everyone"
 msgstr "Hamma"
@@ -13199,8 +13244,6 @@ msgid "Exit import flow"
 msgstr "Import jarayonidan chiqish"
 
 #. js-lingui-id: 1A3EXy
-#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
-#: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -13208,6 +13251,7 @@ msgstr "Import jarayonidan chiqish"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
 #: src/modules/settings/event-logs/components/EventLogJsonCell.tsx
+#: src/modules/ui/layout/details/components/JsonSection.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
@@ -13469,6 +13513,7 @@ msgstr "Yuz"
 #: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 #: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
@@ -13482,6 +13527,7 @@ msgstr "Yuz"
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringFunctionsTable.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringVersionsTable.tsx
 #: src/modules/settings/emailing-domains/utils/getEmailingDomainStatusDisplay.ts
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
@@ -14151,12 +14197,18 @@ msgstr "Xususiyatlar"
 msgid "Features active until"
 msgstr "Funksiyalar quyidagi vaqtgacha faol"
 
+#. js-lingui-id: vi29BX
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalDecidedDetails.tsx
+msgid "Feedback: {feedback}"
+msgstr "Fikr-mulohaza: {feedback}"
+
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "field"
 msgstr "maydon"
 
 #. js-lingui-id: AXjA78
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterFieldSelect.tsx
 #: src/modules/settings/applications/constants/ApplicationContentFilterLabels.ts
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetLayoutDropdownContent.tsx
@@ -14579,6 +14631,11 @@ msgstr "Kiruvchi xabarlar qutisini ochish uchun maketni tahrirlashni yakunlang"
 msgid "Finish editing the layout to open Settings"
 msgstr "Sozlamalarni ochish uchun maketni tahrirlashni yakunlang"
 
+#. js-lingui-id: aFsDUw
+#: src/modules/navigation/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton.tsx
+msgid "Finish editing the layout to open this menu"
+msgstr "Ushbu menyuni ochish uchun maketni tahrirlashni yakunlang"
+
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Finish flow with errors"
@@ -14787,11 +14844,6 @@ msgstr "Form maʼlumotlari"
 #: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
 msgid "Form skipped"
 msgstr "Shakl o‘tkazib yuborildi"
-
-#. js-lingui-id: 6vS9Zq
-#: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
-msgid "Form submitted"
-msgstr "Shakl yuborildi"
 
 #. js-lingui-id: kI1qVD
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -16637,11 +16689,11 @@ msgid "Initial values"
 msgstr "Boshlang‘ich qiymatlar"
 
 #. js-lingui-id: XU5AOg
-#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
@@ -17132,6 +17184,7 @@ msgid "Iris"
 msgstr "Iris"
 
 #. js-lingui-id: W153SA
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperatorLabel.ts
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is"
 msgstr "Teng"
@@ -17140,6 +17193,11 @@ msgstr "Teng"
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is after or equal"
 msgstr "Keyin yoki teng"
+
+#. js-lingui-id: RPm4Rj
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperatorLabel.ts
+msgid "Is any of"
+msgstr "Quyidagilardan istalgani"
 
 #. js-lingui-id: NgIlDJ
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -17161,7 +17219,13 @@ msgstr "Kelajakda"
 msgid "Is in past"
 msgstr "O‘tmishda"
 
+#. js-lingui-id: T9KiSu
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperatorLabel.ts
+msgid "Is none of"
+msgstr "Quyidagilarning hech biri"
+
 #. js-lingui-id: 5pz6vU
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterOperatorLabel.ts
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is not"
 msgstr "Emas"
@@ -18626,11 +18690,6 @@ msgstr "Diagrammani qulflash"
 msgid "Log a new deal (company, amount, stage, expected close). Details: "
 msgstr "Yangi kelishuvni jurnalga yozing (kompaniya, miqdor, bosqich, kutilayotgan yopilish). Tafsilotlar: "
 
-#. js-lingui-id: RV6CK8
-#: src/modules/log-console/components/LogConsoleDetailPanel.tsx
-msgid "Log copied as JSON"
-msgstr "Jurnal JSON sifatida nusxalandi"
-
 #. js-lingui-id: FgAxTj
 #: src/modules/auth/sign-in-up/components/WorkspaceSelectionFooter.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
@@ -18767,10 +18826,10 @@ msgstr "Qidiruv ustunlari"
 msgid "loop"
 msgstr "tsikl"
 
-#. js-lingui-id: UeVuJ/
+#. js-lingui-id: VKHG/4
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
-msgid "Lost your authenticator? Use a backup or recovery code"
-msgstr "Autentifikatoringizni yo‘qotdingizmi? Zaxira yoki tiklash kodidan foydalaning"
+msgid "Lost your authenticator?"
+msgstr "Autentifikatoringizni yo‘qotdingizmi?"
 
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
@@ -19397,6 +19456,7 @@ msgstr "Birlashtirilmoqda..."
 #: src/modules/log-console/constants/LogConsoleApplicationLogColumns.tsx
 #: src/modules/object-core/agents/components/CoreAgentTestForm.tsx
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
+#: src/modules/side-panel/pages/start-app-conversation/components/SidePanelStartAppConversationPage.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "Message"
@@ -19404,6 +19464,7 @@ msgstr "Xabar"
 
 #. js-lingui-id: bCYjwr
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
+#: src/modules/side-panel/pages/start-app-conversation/components/SidePanelStartAppConversationPage.tsx
 msgid "Message {recipientName}"
 msgstr "{recipientName}ga xabar"
 
@@ -19598,6 +19659,7 @@ msgid "Mission accomplished!"
 msgstr "Vazifa bajarildi!"
 
 #. js-lingui-id: dMsM20
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterFields.tsx
 #: src/modules/side-panel/pages/page-layout/hooks/useVisibilityLabels.ts
 msgid "Mobile"
 msgstr "Mobil"
@@ -19780,6 +19842,11 @@ msgstr "Ko‘proq"
 #: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
 msgid "More ({0})"
 msgstr "Yana ({0})"
+
+#. js-lingui-id: 5iROXL
+#: src/modules/ui/layout/details/components/DetailMessageCard.tsx
+msgid "More ({hiddenMessageStackLineCount})"
+msgstr "Yana ({hiddenMessageStackLineCount})"
 
 #. js-lingui-id: f0jmdR
 #: src/modules/page-layout/widgets/field/components/FieldWidgetShowMoreButton.tsx
@@ -20359,6 +20426,7 @@ msgstr "Yangi kompaniya"
 
 #. js-lingui-id: +HY5kX
 #: src/modules/page-layout/widgets/chat-threads/components/WidgetActionChatThreadCreate.tsx
+#: src/modules/side-panel/hooks/useOpenStartAppConversationInSidePanel.ts
 #: src/modules/side-panel/pages/ask-ai/components/SidePanelAskAiNewChatButton.tsx
 msgid "New conversation"
 msgstr "Yangi suhbat"
@@ -21472,6 +21540,7 @@ msgstr "Serverdan javob yo‘q"
 
 #. js-lingui-id: Ev2r9A
 #: src/modules/activities/emails/recipients/components/EmailRecipientSuggestionsDropdownContent.tsx
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect.tsx
@@ -21951,10 +22020,10 @@ msgstr "Yozib olinmagan"
 msgid "Not Recorded"
 msgstr "Yozib olinmagan"
 
-#. js-lingui-id: gnnpkq
+#. js-lingui-id: +05x1/
 #: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
-msgid "Not run: the record changed since it was proposed"
-msgstr "Ishga tushirilmadi: taklif qilinganidan beri yozuv o‘zgardi"
+msgid "Not run: the record changed"
+msgstr "Ishga tushirilmadi: yozuv o‘zgardi"
 
 #. js-lingui-id: MTqQMG
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupStatusDisplay.ts
@@ -22943,6 +23012,7 @@ msgid "or"
 msgstr "yoki"
 
 #. js-lingui-id: ZAVklK
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityLogicalOperatorLabel.ts
 #: src/modules/object-record/advanced-filter/constants/AdvancedFilterLogicalOperatorOptions.ts
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
@@ -23138,9 +23208,9 @@ msgstr "Outlook"
 #. js-lingui-id: gh06VD
 #: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 #: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
-#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
 #: src/modules/workflow/components/WorkflowStepExecutionResult.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaBuilder.tsx
@@ -24869,6 +24939,7 @@ msgstr "recipient@example.com"
 #: src/modules/activities/emails/components/ChatThreadNewMessage.tsx
 #: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientField.tsx
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
+#: src/modules/side-panel/pages/start-app-conversation/components/SidePanelStartAppConversationPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Recipients"
 msgstr "Qabul qiluvchilar"
@@ -25074,6 +25145,7 @@ msgstr "Yozuv darajasidagi filtr"
 
 #. js-lingui-id: jdetKb
 #: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalDecidedDetails.tsx
 msgid "Record:"
 msgstr "Yozuv:"
 
@@ -25114,6 +25186,7 @@ msgstr "yozuvlar"
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallRecords.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 #: src/modules/workflow/workflow-variables/utils/generate/generateFindRecordsOutputSchema.ts
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
@@ -25796,6 +25869,11 @@ msgstr "{requestCount} tadan {requestNumber}-so‘rov"
 msgid "Request Failed"
 msgstr "So‘rov bajarilmadi"
 
+#. js-lingui-id: yYlEZs
+#: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
+msgid "Request form"
+msgstr "So‘rov shakli"
+
 #. js-lingui-id: Vhxipp
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "requests"
@@ -26199,6 +26277,8 @@ msgid "role"
 msgstr "rol"
 
 #. js-lingui-id: GDvlUT
+#: src/modules/conditional-availability/filter-builder/components/__stories__/ConditionalAvailabilityFilterBuilder.stories.tsx
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterFields.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
@@ -26376,6 +26456,16 @@ msgstr "Qoida o‘chirib qo‘yildi."
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Rule enabled."
 msgstr "Qoida yoqildi."
+
+#. js-lingui-id: N/BlR5
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterOptionsDropdown.tsx
+msgid "Rule group options"
+msgstr "Qoida guruhi parametrlari"
+
+#. js-lingui-id: 9Ggzqm
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterOptionsDropdown.tsx
+msgid "Rule options"
+msgstr "Qoida parametrlari"
 
 #. js-lingui-id: sBTDyi
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -26975,6 +27065,8 @@ msgid "search field metadata"
 msgstr "qidiruv maydoni metamaʼlumotlari"
 
 #. js-lingui-id: 7taA9j
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterFieldSelect.tsx
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterFieldSelect.tsx
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu.tsx
@@ -27039,6 +27131,7 @@ msgid "Search icon"
 msgstr "Belgi bo‘yicha qidirish"
 
 #. js-lingui-id: AaDUlx
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
 #: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
 #: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
 #: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
@@ -27101,6 +27194,11 @@ msgstr "Ro‘yxatdan o‘tkazishlarni qidiring..."
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 msgid "Search relations"
 msgstr "Munosabatlarni qidirish"
+
+#. js-lingui-id: pzfKRn
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
+msgid "Search roles"
+msgstr "Rollarni qidiring"
 
 #. js-lingui-id: BlLxpG
 #: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
@@ -27503,6 +27601,11 @@ msgstr "Sana tanlang"
 msgid "Select a date and time"
 msgstr "Sana va vaqtni tanlang"
 
+#. js-lingui-id: cggcog
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
+msgid "Select a device"
+msgstr "Qurilmani tanlang"
+
 #. js-lingui-id: 1YV5aa
 #: src/modules/object-core/filters/components/CoreObjectFilterFieldSelect.tsx
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexFieldsForm.tsx
@@ -27534,6 +27637,11 @@ msgstr "Mavjud modelni tanlang yoki maxsus model qo‘shing"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Select a known provider or create a custom one"
 msgstr "Mavjud provayderni tanlang yoki maxsus provayder yarating"
+
+#. js-lingui-id: E5eC82
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
+msgid "Select a member"
+msgstr "A’zoni tanlang"
 
 #. js-lingui-id: KQtk7u
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInsertionPreview.tsx
@@ -27697,6 +27805,11 @@ msgstr "Sarlavha qatorini tanlang"
 msgid "Select matching field"
 msgstr "Mos keluvchi maydonni tanlang"
 
+#. js-lingui-id: 76TVV2
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
+msgid "Select members"
+msgstr "A’zolarni tanlang"
+
 #. js-lingui-id: ezY8Ut
 #: src/modules/ui/input/components/internal/date/components/DateTimePickerHeader.tsx
 msgid "Select month and year"
@@ -27726,6 +27839,11 @@ msgstr "Qabul qiluvchilarni tanlang"
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiRecordPicker.tsx
 msgid "Select records"
 msgstr "Yozuvlarni tanlang"
+
+#. js-lingui-id: 1Ky5Mj
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
+msgid "Select roles"
+msgstr "Rollarni tanlang"
 
 #. js-lingui-id: 9c44h0
 #: src/modules/object-core/components/CoreObjectTable.tsx
@@ -27796,6 +27914,8 @@ msgid "Select your language and adjust the size of the interface"
 msgstr "Tilni tanlang va interfeys masshtabini sozlang"
 
 #. js-lingui-id: ylXj1N
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionAnsweredDetails.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionAnsweredDetails.tsx
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Selected"
 msgstr "Tanlangan"
@@ -27821,6 +27941,7 @@ msgstr "Tanlov"
 #: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
+#: src/modules/side-panel/pages/start-app-conversation/components/SidePanelStartAppConversationPage.tsx
 msgid "Send"
 msgstr "Yuborish"
 
@@ -27849,7 +27970,7 @@ msgstr "Kampaniyani yuborish"
 
 #. js-lingui-id: 65dxv8
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
-#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/utils/getProposedToolCallLabel.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Send email"
 msgstr "Elektron xat yuborish"
@@ -28440,6 +28561,11 @@ msgstr "Barcha elementlarni ko‘rsatish"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Show API values"
 msgstr "API qiymatlarini ko‘rsatish"
+
+#. js-lingui-id: BowKyI
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
+msgid "Show details"
+msgstr "Tafsilotlarni ko‘rsatish"
 
 #. js-lingui-id: tAUYYP
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor.tsx
@@ -29304,6 +29430,7 @@ msgstr "Statistika"
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersTable.tsx
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
@@ -30578,6 +30705,11 @@ msgstr "PDF hujjati oldindan Twenty tomonidan imzolangan va sizning yuridik shax
 msgid "The priority record keeps its identity"
 msgstr "Ustuvor yozuv o‘z identifikatorini saqlab qoladi"
 
+#. js-lingui-id: cXfCXQ
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalDecidedDetails.tsx
+msgid "The record changed since it was proposed, so nothing was run."
+msgstr "Yozuv taklif qilinganidan beri o‘zgardi, shuning uchun hech narsa ishga tushirilmadi."
+
 #. js-lingui-id: Ir4tSJ
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "The recorder is joining the call…"
@@ -31290,6 +31422,11 @@ msgstr "Bu yozuv o‘chirib tashlanadi:"
 msgid "This role is assigned to these {roleTargetDisplayName}."
 msgstr "Ushbu rol ushbu {roleTargetDisplayName} ga biriktirilgan."
 
+#. js-lingui-id: 0bjsKH
+#: src/modules/side-panel/pages/page-layout/components/WidgetVisibilitySettings.tsx
+msgid "This rule cannot be edited here. Select Everyone to remove it."
+msgstr "Bu qoidani bu yerda tahrirlab bo‘lmaydi. Uni olib tashlash uchun Everyone-ni tanlang."
+
 #. js-lingui-id: 9IqK24
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "This rule is disabled. Records are not checked against it."
@@ -31718,6 +31855,7 @@ msgstr "Juda ko‘p yozuvlar. {maxRecordsString} tagacha ruxsat etiladi"
 #. js-lingui-id: LYzbQ2
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
+#: src/modules/side-panel/pages/ai-chat-tool-call/components/SidePanelAiChatToolCallPageContent.tsx
 msgid "Tool"
 msgstr "Asbob"
 
@@ -31748,11 +31886,6 @@ msgstr "Asbob yaratildi"
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 msgid "Tool deleted"
 msgstr "Asbob o‘chirildi"
-
-#. js-lingui-id: RO68oO
-#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
-msgid "Tool details: {displayMessage}"
-msgstr "Asbob tafsilotlari: {displayMessage}"
 
 #. js-lingui-id: YsAptn
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
@@ -32601,6 +32734,11 @@ msgstr "\"{relationFieldName}\" ichida noma’lum \"{fieldName}\" maydoni"
 #: src/modules/chat/components/ChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "Noma’lum fayl"
+
+#. js-lingui-id: rIOkYf
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterValueInput.tsx
+msgid "Unknown member"
+msgstr "Noma’lum a’zo"
 
 #. js-lingui-id: num3KD
 #: src/modules/mention/components/MentionRecordChip.tsx
@@ -34016,6 +34154,8 @@ msgstr "To‘q binafsha"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
 #: src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
+#: src/modules/side-panel/pages/page-layout/components/WidgetVisibilitySettingItem.tsx
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
 msgid "Visibility"
@@ -34607,6 +34747,7 @@ msgid "When your trial ends, you will be charged {priceLabel}."
 msgstr "Sinov muddati tugaganda, sizdan {priceLabel} undiriladi."
 
 #. js-lingui-id: YvwwqC
+#: src/modules/conditional-availability/filter-builder/components/ConditionalAvailabilityFilterLogicalOperatorCell.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorCell.tsx
 #: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelLogicalOperatorCell.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterLogicalOperatorCell.tsx
@@ -35044,6 +35185,8 @@ msgid "Workspace logo upload failed"
 msgstr "Ish maydoni logotipini yuklash muvaffaqiyatsiz tugadi"
 
 #. js-lingui-id: CbGxon
+#: src/modules/conditional-availability/filter-builder/components/__stories__/ConditionalAvailabilityFilterBuilder.stories.tsx
+#: src/modules/conditional-availability/filter-builder/utils/getConditionalAvailabilityFilterFields.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableRow.tsx
 msgid "Workspace member"
@@ -35145,6 +35288,7 @@ msgstr "Tavsif yozing"
 
 #. js-lingui-id: eWlz27
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
+#: src/modules/side-panel/pages/start-app-conversation/components/SidePanelStartAppConversationPage.tsx
 msgid "Write a message"
 msgstr "Xabar yozing"
 

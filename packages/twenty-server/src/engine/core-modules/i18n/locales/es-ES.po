@@ -1423,6 +1423,21 @@ msgstr "Se produjo un error con los datos de la autenticación de dos factores."
 msgid "An error occurred."
 msgstr "Ocurrió un error."
 
+#. js-lingui-id: tu7jLy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "An event property references an object that does not exist"
+msgstr "Una propiedad de evento hace referencia a un objeto que no existe"
+
+#. js-lingui-id: o/4JpS
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "An event with this name already exists for this application"
+msgstr "Ya existe un evento con este nombre para esta aplicación"
+
+#. js-lingui-id: pb8I0K
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "An event with this name already exists for this application."
+msgstr "Ya existe un evento con este nombre para esta aplicación."
+
 #. js-lingui-id: CKXJCD
 #: src/engine/core-modules/record-export/__tests__/record-export-exception-filter.spec.ts
 #: src/engine/core-modules/record-export/services/record-export-query.service.ts
@@ -5512,6 +5527,31 @@ msgctxt "fieldMetadata.label"
 msgid "Event ID"
 msgstr "ID del evento"
 
+#. js-lingui-id: zccZhJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event label is required"
+msgstr "La etiqueta de evento es obligatoria"
+
+#. js-lingui-id: WZZzB6
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event name is required"
+msgstr "El nombre del evento es obligatorio"
+
+#. js-lingui-id: ElR3MZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event not found"
+msgstr "Evento no encontrado"
+
+#. js-lingui-id: ed1R08
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "Event not found."
+msgstr "Evento no encontrado."
+
 #. js-lingui-id: irEsRo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -5523,6 +5563,11 @@ msgstr "Participantes del evento"
 msgctxt "fieldMetadata.label"
 msgid "Event Participants"
 msgstr "Participantes del evento"
+
+#. js-lingui-id: h6h6j+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event property \"{propertyName}\" references object \"{objectUniversalIdentifier}\", which was not found"
+msgstr "La propiedad de evento \"{propertyName}\" hace referencia al objeto \"{objectUniversalIdentifier}\", que no se encontró"
 
 #. js-lingui-id: lr7Nsq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5544,6 +5589,11 @@ msgstr "Destino del evento"
 msgctxt "fieldMetadata.label"
 msgid "Event type"
 msgstr "Tipo de evento"
+
+#. js-lingui-id: zIUq08
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event with name {name} already exists for this application"
+msgstr "Ya existe un evento con el nombre {name} para esta aplicación"
 
 #. js-lingui-id: NZy2VR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -7365,6 +7415,16 @@ msgstr "Direcciones de correo electrónico no válidas: {invalidEmailList}"
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Invalid email or domain."
 msgstr "Correo electrónico o dominio no válido."
+
+#. js-lingui-id: q96eTT
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Invalid event definition"
+msgstr "Definición de evento no válida"
+
+#. js-lingui-id: VAifIo
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "Invalid event definition."
+msgstr "Definición de evento no válida."
 
 #. js-lingui-id: 8knMLv
 #: src/engine/core-modules/event-logs/emit/event-log-emitter.exception.ts
@@ -11052,6 +11112,11 @@ msgctxt "fieldMetadata.label"
 msgid "Parts"
 msgstr "Partes"
 
+#. js-lingui-id: x5aPy7
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "Pass either the event name or its universal identifier."
+msgstr "Proporcione el nombre del evento o su identificador universal."
+
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Password is too weak."
@@ -13729,6 +13794,11 @@ msgstr "Los indicadores de permiso estándar no pueden modificarse."
 msgid "Standard skills cannot be modified."
 msgstr "Las habilidades estándar no pueden modificarse."
 
+#. js-lingui-id: w3TWxe
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Start conversation logic function \"{startConversationLogicFunctionUniversalIdentifier}\" was not found in this application"
+msgstr "No se encontró la función lógica de inicio de conversación \"{startConversationLogicFunctionUniversalIdentifier}\" en esta aplicación"
+
 #. js-lingui-id: ndAwoq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -14583,6 +14653,11 @@ msgstr "El dominio no coincide con su dominio de correo electrónico."
 msgid "The email content is invalid."
 msgstr "El contenido del correo electrónico no es válido."
 
+#. js-lingui-id: JmTVCB
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "The event properties do not match its definition."
+msgstr "Las propiedades del evento no coinciden con su definición."
+
 #. js-lingui-id: hY1mx5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -14752,6 +14827,11 @@ msgstr "La función lógica que este proveedor de mensajería utiliza para marca
 msgid "The logic function this messaging provider sends with was not found in its application."
 msgstr "No se encontró en su aplicación la función lógica que utiliza este proveedor de mensajería para enviar."
 
+#. js-lingui-id: 3Auz53
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The logic function this messaging provider starts conversations with was not found in its application."
+msgstr "No se encontró en su aplicación la función lógica con la que este proveedor de mensajería inicia conversaciones."
+
 #. js-lingui-id: zIwdvk
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function to run on connect was not found."
@@ -14918,6 +14998,11 @@ msgstr "El proveedor no está disponible temporalmente. Vuelve a intentarlo más
 #: src/modules/messaging/message-import-manager/drivers/inbound-email/sources/resend-inbound-email-message-source.service.ts
 msgid "The received email content is no longer available."
 msgstr "El contenido del correo electrónico recibido ya no está disponible."
+
+#. js-lingui-id: b84VDO
+#: src/engine/api/common/common-query-runners/common-create-one-query-runner.service.ts
+msgid "The record was created, but you do not have permission to see it."
+msgstr "El registro se creó, pero no tienes permiso para verlo."
 
 #. js-lingui-id: dXHirT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -15533,7 +15618,7 @@ msgstr "Este dominio ya está en uso."
 #. js-lingui-id: IBjn2S
 #: src/engine/core-modules/public-domain/public-domain.exception.ts
 msgid "This domain is used by Twenty itself and cannot be a public domain."
-msgstr ""
+msgstr "Este dominio lo utiliza Twenty y no puede ser un dominio público."
 
 #. js-lingui-id: Ukfndw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -15766,6 +15851,11 @@ msgstr "Este miembro no ha configurado la autenticación de dos factores, por lo
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "This message channel cannot send messages."
 msgstr "Este canal de mensajes no puede enviar mensajes."
+
+#. js-lingui-id: yXQyf9
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "This message channel cannot start new conversations."
+msgstr "Este canal de mensajería no puede iniciar nuevas conversaciones."
 
 #. js-lingui-id: Rt42MP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts

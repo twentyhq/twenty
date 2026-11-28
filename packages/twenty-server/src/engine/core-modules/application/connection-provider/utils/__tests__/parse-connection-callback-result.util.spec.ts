@@ -19,6 +19,18 @@ describe('parseConnectionCallbackResult', () => {
     });
   });
 
+  it('returns the trimmed account name', () => {
+    expect(
+      parseConnectionCallbackResult({
+        externalAccountId: 'account-a',
+        name: ' Jane Doe ',
+      }),
+    ).toEqual({
+      isValid: true,
+      connectedAccount: { externalAccountId: 'account-a', name: 'Jane Doe' },
+    });
+  });
+
   it('leaves out the handle and access token when they are absent or null', () => {
     expect(
       parseConnectionCallbackResult({

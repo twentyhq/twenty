@@ -32,6 +32,7 @@ export enum SidePanelPages {
   CommandMenuEdit = 'command-menu-edit',
   PageLayoutRecordPageWidgetTypeSelect = 'page-layout-record-page-widget-type-select',
   ComposeEmail = 'compose-email',
+  StartAppConversation = 'start-app-conversation',
   ComposeCalendarEvent = 'compose-calendar-event',
   CreateRelatedRecord = 'create-related-record',
   RecordCreationForm = 'record-creation-form',
@@ -59,5 +60,6 @@ export enum SidePanelPages {
   AssignAiChat = 'assign-ai-chat',
   AiChatParticipants = 'ai-chat-participants',
   AddAiChatParticipants = 'add-ai-chat-participants',
+  AiChatToolCall = 'ai-chat-tool-call',
   EditColumn = 'edit-column',
 }

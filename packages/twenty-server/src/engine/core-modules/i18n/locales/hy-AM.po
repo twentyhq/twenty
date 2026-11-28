@@ -1423,6 +1423,21 @@ msgstr "Երկքայլ նույնականացման տվյալների հետ տ
 msgid "An error occurred."
 msgstr "Տեղի ունեցավ սխալ։"
 
+#. js-lingui-id: tu7jLy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "An event property references an object that does not exist"
+msgstr "Իրադարձության հատկությունը հղում է կատարում գոյություն չունեցող օբյեկտի"
+
+#. js-lingui-id: o/4JpS
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "An event with this name already exists for this application"
+msgstr "Այս հավելվածի համար այս անունով իրադարձություն արդեն կա"
+
+#. js-lingui-id: pb8I0K
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "An event with this name already exists for this application."
+msgstr "Այս հավելվածի համար այս անվամբ իրադարձություն արդեն գոյություն ունի։"
+
 #. js-lingui-id: CKXJCD
 #: src/engine/core-modules/record-export/__tests__/record-export-exception-filter.spec.ts
 #: src/engine/core-modules/record-export/services/record-export-query.service.ts
@@ -5512,6 +5527,31 @@ msgctxt "fieldMetadata.label"
 msgid "Event ID"
 msgstr "Իրադարձության ID"
 
+#. js-lingui-id: zccZhJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event label is required"
+msgstr "Իրադարձության պիտակը պարտադիր է"
+
+#. js-lingui-id: WZZzB6
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event name is required"
+msgstr "Իրադարձության անունը պարտադիր է"
+
+#. js-lingui-id: ElR3MZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event not found"
+msgstr "Իրադարձությունը չի գտնվել"
+
+#. js-lingui-id: ed1R08
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "Event not found."
+msgstr "Իրադարձությունը չի գտնվել։"
+
 #. js-lingui-id: irEsRo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -5523,6 +5563,11 @@ msgstr "Իրադարձության մասնակիցներ"
 msgctxt "fieldMetadata.label"
 msgid "Event Participants"
 msgstr "Իրադարձության մասնակիցներ"
+
+#. js-lingui-id: h6h6j+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event property \"{propertyName}\" references object \"{objectUniversalIdentifier}\", which was not found"
+msgstr "Իրադարձության \"{propertyName}\" հատկությունը հղում է կատարում \"{objectUniversalIdentifier}\" օբյեկտին, որը չի գտնվել"
 
 #. js-lingui-id: lr7Nsq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5544,6 +5589,11 @@ msgstr "Իրադարձության թիրախ"
 msgctxt "fieldMetadata.label"
 msgid "Event type"
 msgstr "Իրադարձության տեսակ"
+
+#. js-lingui-id: zIUq08
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event with name {name} already exists for this application"
+msgstr "Այս հավելվածի համար {name} անվամբ իրադարձություն արդեն գոյություն ունի"
 
 #. js-lingui-id: NZy2VR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -7365,6 +7415,16 @@ msgstr "Անվավեր էլ. փոստի հասցեներ՝ {invalidEmailList}"
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Invalid email or domain."
 msgstr "Սխալ էլ. փոստ կամ դոմեյն։"
+
+#. js-lingui-id: q96eTT
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Invalid event definition"
+msgstr "Իրադարձության սահմանումը անվավեր է"
+
+#. js-lingui-id: VAifIo
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "Invalid event definition."
+msgstr "Իրադարձության սահմանումը անվավեր է։"
 
 #. js-lingui-id: 8knMLv
 #: src/engine/core-modules/event-logs/emit/event-log-emitter.exception.ts
@@ -11052,6 +11112,11 @@ msgctxt "fieldMetadata.label"
 msgid "Parts"
 msgstr "Մասեր"
 
+#. js-lingui-id: x5aPy7
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "Pass either the event name or its universal identifier."
+msgstr "Նշեք կամ իրադարձության անունը, կամ դրա համընդհանուր նույնացուցիչը։"
+
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Password is too weak."
@@ -13729,6 +13794,11 @@ msgstr "Ստանդարտ թույլտվության դրոշները չեն կա
 msgid "Standard skills cannot be modified."
 msgstr "Ստանդարտ հմտությունները չի կարելի փոփոխել։"
 
+#. js-lingui-id: w3TWxe
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Start conversation logic function \"{startConversationLogicFunctionUniversalIdentifier}\" was not found in this application"
+msgstr "\"{startConversationLogicFunctionUniversalIdentifier}\" զրույցի մեկնարկի տրամաբանության գործառույթը չի գտնվել այս հավելվածում"
+
 #. js-lingui-id: ndAwoq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -14583,6 +14653,11 @@ msgstr "Դոմեյնը չի համապատասխանում ձեր էլ. հասց
 msgid "The email content is invalid."
 msgstr "Էլ. նամակի բովանդակությունն անվավեր է։"
 
+#. js-lingui-id: JmTVCB
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "The event properties do not match its definition."
+msgstr "Իրադարձության հատկությունները չեն համապատասխանում դրա սահմանմանը։"
+
 #. js-lingui-id: hY1mx5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -14752,6 +14827,11 @@ msgstr "Այս հաղորդագրությունների մատակարարի՝ �
 msgid "The logic function this messaging provider sends with was not found in its application."
 msgstr "Տրամաբանության ֆունկցիան, որով այս հաղորդագրությունների մատուցողն ուղարկում է, չի գտնվել իր հավելվածում։"
 
+#. js-lingui-id: 3Auz53
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The logic function this messaging provider starts conversations with was not found in its application."
+msgstr "Տրամաբանության գործառույթը, որով հաղորդագրությունների այս մատակարարը սկսում է զրույցները, չի գտնվել իր հավելվածում։"
+
 #. js-lingui-id: zIwdvk
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function to run on connect was not found."
@@ -14918,6 +14998,11 @@ msgstr "Մատակարարը ժամանակավորապես հասանելի չ�
 #: src/modules/messaging/message-import-manager/drivers/inbound-email/sources/resend-inbound-email-message-source.service.ts
 msgid "The received email content is no longer available."
 msgstr "Ստացված էլ․ փոստի բովանդակությունն այլևս հասանելի չէ։"
+
+#. js-lingui-id: b84VDO
+#: src/engine/api/common/common-query-runners/common-create-one-query-runner.service.ts
+msgid "The record was created, but you do not have permission to see it."
+msgstr "Գրառումը ստեղծվել է, բայց դուք այն դիտելու թույլտվություն չունեք։"
 
 #. js-lingui-id: dXHirT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -15533,7 +15618,7 @@ msgstr "Այս դոմեյնը արդեն զբաղված է։"
 #. js-lingui-id: IBjn2S
 #: src/engine/core-modules/public-domain/public-domain.exception.ts
 msgid "This domain is used by Twenty itself and cannot be a public domain."
-msgstr ""
+msgstr "Այս տիրույթն օգտագործվում է հենց Twenty-ի կողմից և չի կարող լինել հանրային տիրույթ։"
 
 #. js-lingui-id: Ukfndw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -15766,6 +15851,11 @@ msgstr "Այս անդամը չի կարգավորել երկգործոն նու�
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "This message channel cannot send messages."
 msgstr "Հաղորդագրությունների այս ալիքը չի կարող հաղորդագրություններ ուղարկել։"
+
+#. js-lingui-id: yXQyf9
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "This message channel cannot start new conversations."
+msgstr "Հաղորդագրությունների այս ալիքը չի կարող սկսել նոր զրույցներ։"
 
 #. js-lingui-id: Rt42MP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts

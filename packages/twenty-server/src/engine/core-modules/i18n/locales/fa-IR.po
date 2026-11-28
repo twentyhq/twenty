@@ -1423,6 +1423,21 @@ msgstr "خطایی در داده‌های احراز هویت دومرحله‌�
 msgid "An error occurred."
 msgstr "خطایی رخ داد."
 
+#. js-lingui-id: tu7jLy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "An event property references an object that does not exist"
+msgstr "یک ویژگی رویداد به شیئی ارجاع می‌دهد که وجود ندارد"
+
+#. js-lingui-id: o/4JpS
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "An event with this name already exists for this application"
+msgstr "رویدادی با این نام از قبل برای این برنامه وجود دارد"
+
+#. js-lingui-id: pb8I0K
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "An event with this name already exists for this application."
+msgstr "رویدادی با این نام از قبل برای این برنامه وجود دارد."
+
 #. js-lingui-id: CKXJCD
 #: src/engine/core-modules/record-export/__tests__/record-export-exception-filter.spec.ts
 #: src/engine/core-modules/record-export/services/record-export-query.service.ts
@@ -5512,6 +5527,31 @@ msgctxt "fieldMetadata.label"
 msgid "Event ID"
 msgstr "شناسه رویداد"
 
+#. js-lingui-id: zccZhJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event label is required"
+msgstr "برچسب رویداد الزامی است"
+
+#. js-lingui-id: WZZzB6
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event name is required"
+msgstr "نام رویداد الزامی است"
+
+#. js-lingui-id: ElR3MZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event not found"
+msgstr "رویداد یافت نشد"
+
+#. js-lingui-id: ed1R08
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "Event not found."
+msgstr "رویداد یافت نشد."
+
 #. js-lingui-id: irEsRo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -5523,6 +5563,11 @@ msgstr "شرکت‌کنندگان رویداد"
 msgctxt "fieldMetadata.label"
 msgid "Event Participants"
 msgstr "شرکت‌کنندگان رویداد"
+
+#. js-lingui-id: h6h6j+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event property \"{propertyName}\" references object \"{objectUniversalIdentifier}\", which was not found"
+msgstr "ویژگی رویداد \"{propertyName}\" به شیء \"{objectUniversalIdentifier}\" ارجاع می‌دهد که یافت نشد"
 
 #. js-lingui-id: lr7Nsq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5544,6 +5589,11 @@ msgstr "هدف رویداد"
 msgctxt "fieldMetadata.label"
 msgid "Event type"
 msgstr "نوع رویداد"
+
+#. js-lingui-id: zIUq08
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event with name {name} already exists for this application"
+msgstr "رویدادی با نام {name} از قبل برای این برنامه وجود دارد"
 
 #. js-lingui-id: NZy2VR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -7365,6 +7415,16 @@ msgstr "نشانی‌های ایمیل نامعتبرند: {invalidEmailList}"
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Invalid email or domain."
 msgstr "ایمیل یا دامنه نامعتبر است."
+
+#. js-lingui-id: q96eTT
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Invalid event definition"
+msgstr "تعریف رویداد نامعتبر است"
+
+#. js-lingui-id: VAifIo
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "Invalid event definition."
+msgstr "تعریف رویداد نامعتبر است."
 
 #. js-lingui-id: 8knMLv
 #: src/engine/core-modules/event-logs/emit/event-log-emitter.exception.ts
@@ -11052,6 +11112,11 @@ msgctxt "fieldMetadata.label"
 msgid "Parts"
 msgstr "بخش‌ها"
 
+#. js-lingui-id: x5aPy7
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "Pass either the event name or its universal identifier."
+msgstr "نام رویداد یا شناسه جهانی آن را وارد کنید."
+
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Password is too weak."
@@ -13729,6 +13794,11 @@ msgstr "پرچم‌های مجوز استاندارد قابل تغییر نیس
 msgid "Standard skills cannot be modified."
 msgstr "مهارت‌های استاندارد قابل تغییر نیستند."
 
+#. js-lingui-id: w3TWxe
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Start conversation logic function \"{startConversationLogicFunctionUniversalIdentifier}\" was not found in this application"
+msgstr "تابع منطق شروع گفت‌وگو \"{startConversationLogicFunctionUniversalIdentifier}\" در این برنامه یافت نشد"
+
 #. js-lingui-id: ndAwoq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -14583,6 +14653,11 @@ msgstr "دامنه با دامنه ایمیل شما مطابقت ندارد."
 msgid "The email content is invalid."
 msgstr "محتوای ایمیل نامعتبر است."
 
+#. js-lingui-id: JmTVCB
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "The event properties do not match its definition."
+msgstr "ویژگی‌های رویداد با تعریف آن مطابقت ندارند."
+
 #. js-lingui-id: hY1mx5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -14752,6 +14827,11 @@ msgstr "تابع منطقی که این ارائه‌دهنده پیام‌رس�
 msgid "The logic function this messaging provider sends with was not found in its application."
 msgstr "تابع منطقی که این ارائه‌دهنده پیام‌رسانی با آن ارسال می‌کند، در برنامه آن پیدا نشد."
 
+#. js-lingui-id: 3Auz53
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The logic function this messaging provider starts conversations with was not found in its application."
+msgstr "تابع منطقی که این ارائه‌دهنده پیام‌رسانی با آن گفت‌وگوها را شروع می‌کند، در برنامه آن یافت نشد."
+
 #. js-lingui-id: zIwdvk
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function to run on connect was not found."
@@ -14918,6 +14998,11 @@ msgstr "ارائه‌دهنده موقتاً در دسترس نیست. لطفا�
 #: src/modules/messaging/message-import-manager/drivers/inbound-email/sources/resend-inbound-email-message-source.service.ts
 msgid "The received email content is no longer available."
 msgstr "محتوای ایمیل دریافتی دیگر در دسترس نیست."
+
+#. js-lingui-id: b84VDO
+#: src/engine/api/common/common-query-runners/common-create-one-query-runner.service.ts
+msgid "The record was created, but you do not have permission to see it."
+msgstr "رکورد ایجاد شد، اما شما اجازه مشاهده آن را ندارید."
 
 #. js-lingui-id: dXHirT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -15533,7 +15618,7 @@ msgstr "این دامنه از قبل گرفته شده است."
 #. js-lingui-id: IBjn2S
 #: src/engine/core-modules/public-domain/public-domain.exception.ts
 msgid "This domain is used by Twenty itself and cannot be a public domain."
-msgstr ""
+msgstr "این دامنه توسط خود Twenty استفاده می‌شود و نمی‌تواند یک دامنه عمومی باشد."
 
 #. js-lingui-id: Ukfndw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -15766,6 +15851,11 @@ msgstr "این عضو احراز هویت دومرحله‌ای را تنظیم 
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "This message channel cannot send messages."
 msgstr "این کانال پیام نمی‌تواند پیام ارسال کند."
+
+#. js-lingui-id: yXQyf9
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "This message channel cannot start new conversations."
+msgstr "این کانال پیام نمی‌تواند گفت‌وگوهای جدیدی را شروع کند."
 
 #. js-lingui-id: Rt42MP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts

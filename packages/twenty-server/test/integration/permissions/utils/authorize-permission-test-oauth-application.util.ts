@@ -1,6 +1,7 @@
-import { findManyApplications } from 'test/integration/graphql/utils/find-many-applications.util';
+import { findOneApplication } from 'test/integration/metadata/suites/application/utils/find-one-application.util';
 import { loginAsTwentyCli } from 'test/integration/metadata/suites/application/utils/login-as-twenty-cli.util';
-import { isDefined } from 'twenty-shared/utils';
+
+import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
 export const authorizePermissionTestOauthApplicationOrThrow = async ({
   accessToken,
@@ -9,19 +10,15 @@ export const authorizePermissionTestOauthApplicationOrThrow = async ({
 }) => {
   await loginAsTwentyCli(accessToken);
 
-  const { data } = await findManyApplications({
-    gqlFields: 'id requestedRoleId',
+  const { data } = await findOneApplication({
+    input: {
+      universalIdentifier:
+        TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
+    },
+    gqlFields: 'id',
     expectToFail: false,
-    accessToken,
+    token: accessToken,
   });
 
-  const oauthOnlyApplication = data.findManyApplications.find(
-    ({ requestedRoleId }) => !isDefined(requestedRoleId),
-  );
-
-  if (!isDefined(oauthOnlyApplication)) {
-    throw new Error('No application without a default role was found');
-  }
-
-  return oauthOnlyApplication.id;
+  return data.findOneApplication.id;
 };

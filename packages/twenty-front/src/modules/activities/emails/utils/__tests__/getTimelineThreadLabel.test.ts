@@ -32,17 +32,29 @@ describe('getTimelineThreadLabel', () => {
     ).toBe('Email thread');
   });
 
-  it('should use a conversation label for app chats, even with a subject', () => {
+  const chatChannel = {
+    type: MessageChannelType.APP,
+    provider: 'app',
+    applicationId: null,
+    conversationStyle: 'chat',
+  };
+
+  it('should use the conversation name for app chats', () => {
     expect(
       getTimelineThreadLabel({
-        subject: 'Intro call',
+        subject: 'Family group',
         visibility: MessageChannelVisibility.SHARE_EVERYTHING,
-        channel: {
-          type: MessageChannelType.APP,
-          provider: 'app',
-          applicationId: null,
-          conversationStyle: 'chat',
-        },
+        channel: chatChannel,
+      }),
+    ).toBe('Family group');
+  });
+
+  it('should use a conversation label for app chats without a visible name', () => {
+    expect(
+      getTimelineThreadLabel({
+        subject: 'Family group',
+        visibility: MessageChannelVisibility.METADATA,
+        channel: chatChannel,
       }),
     ).toBe('Conversation');
   });

@@ -8,10 +8,13 @@ export type IdentifyAccountPayload = {
 export type IdentifiedAccount = {
   externalAccountId: string;
   handle?: string;
+  // Display name given to the connected account when it is created.
+  name?: string;
 };
 
 // externalAccountId null is the explicit opt-out of providers without a stable id.
 export type IdentifyAccountResult = {
   externalAccountId: string | null;
   handle?: string;
+  name?: string;
 };

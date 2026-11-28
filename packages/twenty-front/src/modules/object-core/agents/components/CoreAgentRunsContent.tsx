@@ -25,7 +25,7 @@ import { type CoreAgentRun } from '@/object-core/agents/types/CoreAgentRun';
 import { groupCoreAgentRunsByConversation } from '@/object-core/agents/utils/groupCoreAgentRunsByConversation';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
-import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
+import { TableSkeletonRows } from '@/ui/layout/table/components/TableSkeletonRows';
 import { Table } from '@/ui/layout/table/components/Table';
 import { CORE_AGENT_RUNS_POLL_INTERVAL_IN_MS } from '@/object-core/agents/constants/CoreAgentRunsPollIntervalInMs';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -115,9 +115,10 @@ export const CoreAgentRunsContent = ({ agent }: CoreAgentRunsContentProps) => {
     return (
       <Table>
         {header}
-        {Array.from({ length: 3 }).map((_, index) => (
-          <SkeletonLine height={32} key={index} />
-        ))}
+        <TableSkeletonRows
+          gridTemplateColumns={CORE_AGENT_RUNS_GRID_TEMPLATE_COLUMNS}
+          columnCount={7}
+        />
       </Table>
     );
   }

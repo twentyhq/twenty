@@ -173,6 +173,7 @@ export const StyledTableScrollContainer = styled.div`
   table {
     border-collapse: collapse;
     margin-block: ${themeCssVariables.spacing[2]};
+    width: 100%;
   }
 
   th,
@@ -181,8 +182,13 @@ export const StyledTableScrollContainer = styled.div`
     padding: ${themeCssVariables.spacing[2]};
   }
 
+  td {
+    background-color: ${themeCssVariables.background.primary};
+  }
+
   th {
     background-color: ${themeCssVariables.background.secondary};
     font-weight: ${themeCssVariables.font.weight.medium};
+    text-align: left;
   }
 `;

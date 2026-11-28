@@ -7,11 +7,9 @@ import { IconForms } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { AiChatFormFields } from '@/ai-chat/tool-calls/components/AiChatFormFields';
 import { StyledAiChatAskCard } from '@/ai-chat/tool-calls/components/StyledAiChatAskCard';
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
-import { WorkflowFormFields } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFields';
-
-const AI_CHAT_FORM_FIELD_MIN_WIDTH_PX = 240;
 
 const StyledHeader = styled.div`
   align-items: center;
@@ -22,20 +20,6 @@ const StyledHeader = styled.div`
   gap: ${themeCssVariables.spacing[2]};
   min-height: ${themeCssVariables.spacing[6]};
   padding-left: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledFields = styled.div`
-  display: grid;
-  gap: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(min(100%, ${AI_CHAT_FORM_FIELD_MIN_WIDTH_PX}px), 1fr)
-  );
-  padding: 0 ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[1]};
-
-  > :last-child:nth-child(odd) {
-    grid-column: 1 / -1;
-  }
 `;
 
 const StyledActions = styled.div`
@@ -98,17 +82,13 @@ export const AiChatFormCardContent = ({
         <IconForms size={16} />
         {title ?? t`Form`}
       </StyledHeader>
-      <StyledFields>
-        <WorkflowFormFields
-          fields={fields.map((field) => ({
-            ...field,
-            value: fieldValues[field.name],
-          }))}
-          readonly={isSubmitting}
-          onChange={(fieldName, value) => onFieldChange({ fieldName, value })}
-          onError={onError}
-        />
-      </StyledFields>
+      <AiChatFormFields
+        fields={fields}
+        values={fieldValues}
+        readonly={isSubmitting}
+        onFieldChange={onFieldChange}
+        onError={onError}
+      />
       <StyledActions>
         {prefilledCount > 0 && (
           <StyledPrefillFeedback>

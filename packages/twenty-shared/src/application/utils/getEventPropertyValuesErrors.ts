@@ -1,0 +1,119 @@
+import { isBoolean, isNumber, isString } from '@sniptt/guards';
+import { validate as uuidValidate } from 'uuid';
+
+import { type InputJsonSchema } from '@/logic-function/input-json-schema.type';
+import { fastDeepEqual } from '@/utils/json/fast-deep-equal';
+import { isDefined } from '@/utils/validation/isDefined';
+
+// Inherited members such as constructor are neither properties nor values
+const hasOwnKey = (object: object, key: string) =>
+  Object.prototype.hasOwnProperty.call(object, key);
+
+const isValueOfPropertySchema = ({
+  value,
+  propertySchema,
+}: {
+  value: unknown;
+  propertySchema: Pick<InputJsonSchema, 'type' | 'format'>;
+}): boolean => {
+  switch (propertySchema.type) {
+    case 'string':
+      if (!isString(value)) {
+        return false;
+      }
+
+      if (propertySchema.format === 'date-time') {
+        return !Number.isNaN(Date.parse(value));
+      }
+
+      return propertySchema.format === 'uuid' ? uuidValidate(value) : true;
+    case 'number':
+      return isNumber(value) && Number.isFinite(value);
+    case 'integer':
+      return isNumber(value) && Number.isInteger(value);
+    case 'boolean':
+      return isBoolean(value);
+    case 'record':
+      return isString(value) && uuidValidate(value);
+    default:
+      return true;
+  }
+};
+
+const getPropertyConstraintErrors = ({
+  value,
+  propertySchema,
+  label,
+}: {
+  value: unknown;
+  propertySchema: Pick<InputJsonSchema, 'enum' | 'minimum' | 'maximum'>;
+  label: string;
+}): string[] => {
+  const errors: string[] = [];
+  const { enum: allowedValues, minimum, maximum } = propertySchema;
+
+  if (
+    isDefined(allowedValues) &&
+    !allowedValues.some((allowedValue) => fastDeepEqual(allowedValue, value))
+  ) {
+    errors.push(
+      `${label} must be one of: ${allowedValues.map((allowedValue) => JSON.stringify(allowedValue)).join(', ')}`,
+    );
+  }
+
+  if (isNumber(value) && isDefined(minimum) && value < minimum) {
+    errors.push(`${label} must be at least ${minimum}`);
+  }
+
+  if (isNumber(value) && isDefined(maximum) && value > maximum) {
+    errors.push(`${label} must be at most ${maximum}`);
+  }
+
+  return errors;
+};
+
+export const getEventPropertyValuesErrors = ({
+  eventName,
+  schema,
+  values,
+}: {
+  eventName: string;
+  schema: Pick<InputJsonSchema, 'properties' | 'required'>;
+  values: Record<string, unknown>;
+}): string[] => {
+  const errors: string[] = [];
+  const properties = schema.properties ?? {};
+  const requiredNames = new Set(schema.required ?? []);
+  for (const valueName of Object.keys(values)) {
+    if (!hasOwnKey(properties, valueName)) {
+      errors.push(`Event "${eventName}" has no property "${valueName}"`);
+    }
+  }
+
+  for (const [propertyName, propertySchema] of Object.entries(properties)) {
+    const label = `Event "${eventName}" property "${propertyName}"`;
+    const value = hasOwnKey(values, propertyName)
+      ? values[propertyName]
+      : undefined;
+
+    if (!isDefined(value)) {
+      if (requiredNames.has(propertyName)) {
+        errors.push(`${label} is required`);
+      }
+      continue;
+    }
+
+    if (!isValueOfPropertySchema({ value, propertySchema })) {
+      errors.push(
+        `${label} must be a ${propertySchema.format ?? propertySchema.type} value`,
+      );
+      continue;
+    }
+
+    errors.push(
+      ...getPropertyConstraintErrors({ value, propertySchema, label }),
+    );
+  }
+
+  return errors;
+};

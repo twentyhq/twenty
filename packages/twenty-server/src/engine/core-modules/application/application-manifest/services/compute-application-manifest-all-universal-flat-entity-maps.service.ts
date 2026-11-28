@@ -23,6 +23,7 @@ import { fromConnectionProviderManifestToUniversalFlatConnectionProvider } from 
 import { fromMcpServerManifestToUniversalFlatMcpServer } from 'src/engine/core-modules/application/application-manifest/converters/from-mcp-server-manifest-to-universal-flat-mcp-server.util';
 import { fromMessagingProviderManifestToUniversalFlatMessagingProviderOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-messaging-provider-manifest-to-universal-flat-messaging-provider-or-throw.util';
 import { setFormulaFieldTreesThroughMutation } from 'src/engine/core-modules/application/application-manifest/utils/set-formula-field-trees-through-mutation.util';
+import { fromEventManifestToUniversalFlatEventMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-event-manifest-to-universal-flat-event-metadata.util';
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-field-manifest-to-universal-flat-field-metadata.util';
 import { fromFrontComponentManifestToUniversalFlatFrontComponent } from 'src/engine/core-modules/application/application-manifest/converters/from-front-component-manifest-to-universal-flat-front-component.util';
 import { fromIndexManifestToUniversalFlatIndex } from 'src/engine/core-modules/application/application-manifest/converters/from-index-manifest-to-universal-flat-index.util';
@@ -349,6 +350,18 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           }),
         universalFlatEntityMapsToMutate:
           allUniversalFlatEntityMaps.flatRelatedRecordPathMaps,
+      });
+    }
+
+    for (const eventManifest of manifest.events ?? []) {
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity: fromEventManifestToUniversalFlatEventMetadata({
+          eventManifest,
+          applicationUniversalIdentifier,
+          now,
+        }),
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatEventMetadataMaps,
       });
     }
 

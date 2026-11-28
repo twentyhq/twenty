@@ -104,6 +104,9 @@ export const ALL_OVERRIDABLE_UNIVERSAL_PROPERTIES_BY_METADATA_NAME: Record<
     ALL_METADATA_NAME.messagingProvider,
   ),
   mcpServer: getOverridableUniversalProperties(ALL_METADATA_NAME.mcpServer),
+  eventMetadata: getOverridableUniversalProperties(
+    ALL_METADATA_NAME.eventMetadata,
+  ),
   searchFieldMetadata: getOverridableUniversalProperties(
     ALL_METADATA_NAME.searchFieldMetadata,
   ),

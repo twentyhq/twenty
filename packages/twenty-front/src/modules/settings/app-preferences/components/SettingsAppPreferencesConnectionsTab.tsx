@@ -44,7 +44,6 @@ export const SettingsAppPreferencesConnectionsTab = ({
           <SettingsApplicationConnectionProviderSection
             key={provider.id}
             providerDisplayName={provider.displayName}
-            providerLogoUrl={provider.logoUrl}
             description={t`Connect your own ${provider.displayName} account for this app to use on your behalf.`}
             shouldShowMissingCredentialsBanner={!canStartAuthorization}
           >

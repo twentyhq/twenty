@@ -1423,6 +1423,21 @@ msgstr "雙重驗證資料發生錯誤。"
 msgid "An error occurred."
 msgstr "發生錯誤。"
 
+#. js-lingui-id: tu7jLy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "An event property references an object that does not exist"
+msgstr "事件屬性參照了不存在的物件"
+
+#. js-lingui-id: o/4JpS
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "An event with this name already exists for this application"
+msgstr "此應用程式中已存在具有此名稱的事件"
+
+#. js-lingui-id: pb8I0K
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "An event with this name already exists for this application."
+msgstr "此應用程式中已存在具有此名稱的事件。"
+
 #. js-lingui-id: CKXJCD
 #: src/engine/core-modules/record-export/__tests__/record-export-exception-filter.spec.ts
 #: src/engine/core-modules/record-export/services/record-export-query.service.ts
@@ -5512,6 +5527,31 @@ msgctxt "fieldMetadata.label"
 msgid "Event ID"
 msgstr "事件 ID"
 
+#. js-lingui-id: zccZhJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event label is required"
+msgstr "需要事件標籤"
+
+#. js-lingui-id: WZZzB6
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event name is required"
+msgstr "需要事件名稱"
+
+#. js-lingui-id: ElR3MZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event not found"
+msgstr "找不到事件"
+
+#. js-lingui-id: ed1R08
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "Event not found."
+msgstr "找不到事件。"
+
 #. js-lingui-id: irEsRo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -5523,6 +5563,11 @@ msgstr "事件參與者"
 msgctxt "fieldMetadata.label"
 msgid "Event Participants"
 msgstr "事件參與者"
+
+#. js-lingui-id: h6h6j+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event property \"{propertyName}\" references object \"{objectUniversalIdentifier}\", which was not found"
+msgstr "事件屬性 \"{propertyName}\" 參照了找不到的物件 \"{objectUniversalIdentifier}\""
 
 #. js-lingui-id: lr7Nsq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5544,6 +5589,11 @@ msgstr "事件目標"
 msgctxt "fieldMetadata.label"
 msgid "Event type"
 msgstr "事件類型"
+
+#. js-lingui-id: zIUq08
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event with name {name} already exists for this application"
+msgstr "此應用程式已存在名為 {name} 的事件"
 
 #. js-lingui-id: NZy2VR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -7365,6 +7415,16 @@ msgstr "無效的電子郵件地址：{invalidEmailList}"
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Invalid email or domain."
 msgstr "無效的電子郵件或網域。"
+
+#. js-lingui-id: q96eTT
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Invalid event definition"
+msgstr "無效的事件定義"
+
+#. js-lingui-id: VAifIo
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "Invalid event definition."
+msgstr "無效的事件定義。"
 
 #. js-lingui-id: 8knMLv
 #: src/engine/core-modules/event-logs/emit/event-log-emitter.exception.ts
@@ -11052,6 +11112,11 @@ msgctxt "fieldMetadata.label"
 msgid "Parts"
 msgstr "部分"
 
+#. js-lingui-id: x5aPy7
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "Pass either the event name or its universal identifier."
+msgstr "請提供事件名稱或其通用識別碼其中之一。"
+
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Password is too weak."
@@ -13729,6 +13794,11 @@ msgstr "無法修改標準權限旗標。"
 msgid "Standard skills cannot be modified."
 msgstr "無法修改標準技能。"
 
+#. js-lingui-id: w3TWxe
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Start conversation logic function \"{startConversationLogicFunctionUniversalIdentifier}\" was not found in this application"
+msgstr "在此應用程式中找不到開始對話邏輯函式 \"{startConversationLogicFunctionUniversalIdentifier}\""
+
 #. js-lingui-id: ndAwoq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -14583,6 +14653,11 @@ msgstr "此網域與您的電子郵件網域不相符。"
 msgid "The email content is invalid."
 msgstr "電子郵件內容無效。"
 
+#. js-lingui-id: JmTVCB
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "The event properties do not match its definition."
+msgstr "事件屬性與其定義不相符。"
+
 #. js-lingui-id: hY1mx5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -14752,6 +14827,11 @@ msgstr "在其應用程式中找不到此訊息提供者用來將討論串標示
 msgid "The logic function this messaging provider sends with was not found in its application."
 msgstr "在其應用程式中找不到此訊息提供者用於傳送訊息的邏輯函式。"
 
+#. js-lingui-id: 3Auz53
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The logic function this messaging provider starts conversations with was not found in its application."
+msgstr "在其應用程式中找不到此訊息提供者用於開始對話的邏輯函式。"
+
 #. js-lingui-id: zIwdvk
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function to run on connect was not found."
@@ -14918,6 +14998,11 @@ msgstr "供應商暫時不可用。請稍後再試。"
 #: src/modules/messaging/message-import-manager/drivers/inbound-email/sources/resend-inbound-email-message-source.service.ts
 msgid "The received email content is no longer available."
 msgstr "接收的電子郵件內容已無法使用。"
+
+#. js-lingui-id: b84VDO
+#: src/engine/api/common/common-query-runners/common-create-one-query-runner.service.ts
+msgid "The record was created, but you do not have permission to see it."
+msgstr "記錄已建立，但您沒有查看它的權限。"
 
 #. js-lingui-id: dXHirT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -15533,7 +15618,7 @@ msgstr "此網域已被使用。"
 #. js-lingui-id: IBjn2S
 #: src/engine/core-modules/public-domain/public-domain.exception.ts
 msgid "This domain is used by Twenty itself and cannot be a public domain."
-msgstr ""
+msgstr "此網域由 Twenty 本身使用，無法作為公開網域。"
 
 #. js-lingui-id: Ukfndw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -15766,6 +15851,11 @@ msgstr "此成員尚未設定雙重身份驗證，因此沒有可復原的內容
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "This message channel cannot send messages."
 msgstr "此訊息通道無法傳送訊息。"
+
+#. js-lingui-id: yXQyf9
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "This message channel cannot start new conversations."
+msgstr "此訊息頻道無法開始新的對話。"
 
 #. js-lingui-id: Rt42MP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts

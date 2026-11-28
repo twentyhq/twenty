@@ -1,3 +1,4 @@
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -29,7 +30,7 @@ export const SettingsObjectValidationRuleEdit = () => {
   );
 
   if (!isDefined(validationRule)) {
-    return loading ? null : <NotFound />;
+    return loading ? <SettingsSkeletonLoader /> : <NotFound />;
   }
 
   return (

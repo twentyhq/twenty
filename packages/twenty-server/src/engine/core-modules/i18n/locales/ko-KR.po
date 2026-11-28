@@ -1423,6 +1423,21 @@ msgstr "이중 인증 데이터에서 오류가 발생했습니다."
 msgid "An error occurred."
 msgstr "오류가 발생했습니다."
 
+#. js-lingui-id: tu7jLy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "An event property references an object that does not exist"
+msgstr "이벤트 속성이 존재하지 않는 객체를 참조합니다"
+
+#. js-lingui-id: o/4JpS
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "An event with this name already exists for this application"
+msgstr "이 애플리케이션에 해당 이름의 이벤트가 이미 존재합니다"
+
+#. js-lingui-id: pb8I0K
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "An event with this name already exists for this application."
+msgstr "이 이름의 이벤트가 이 애플리케이션에 이미 존재합니다."
+
 #. js-lingui-id: CKXJCD
 #: src/engine/core-modules/record-export/__tests__/record-export-exception-filter.spec.ts
 #: src/engine/core-modules/record-export/services/record-export-query.service.ts
@@ -5512,6 +5527,31 @@ msgctxt "fieldMetadata.label"
 msgid "Event ID"
 msgstr "이벤트 ID"
 
+#. js-lingui-id: zccZhJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event label is required"
+msgstr "이벤트 레이블이 필요합니다"
+
+#. js-lingui-id: WZZzB6
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event name is required"
+msgstr "이벤트 이름이 필요합니다"
+
+#. js-lingui-id: ElR3MZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event not found"
+msgstr "이벤트를 찾을 수 없습니다"
+
+#. js-lingui-id: ed1R08
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "Event not found."
+msgstr "이벤트를 찾을 수 없습니다."
+
 #. js-lingui-id: irEsRo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -5523,6 +5563,11 @@ msgstr "이벤트 참가자"
 msgctxt "fieldMetadata.label"
 msgid "Event Participants"
 msgstr "이벤트 참가자"
+
+#. js-lingui-id: h6h6j+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event property \"{propertyName}\" references object \"{objectUniversalIdentifier}\", which was not found"
+msgstr "이벤트 속성 \"{propertyName}\"이(가) 찾을 수 없는 객체 \"{objectUniversalIdentifier}\"을(를) 참조합니다"
 
 #. js-lingui-id: lr7Nsq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5544,6 +5589,11 @@ msgstr "이벤트 대상"
 msgctxt "fieldMetadata.label"
 msgid "Event type"
 msgstr "이벤트 유형"
+
+#. js-lingui-id: zIUq08
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Event with name {name} already exists for this application"
+msgstr "{name}라는 이름의 이벤트가 이 애플리케이션에 이미 존재합니다"
 
 #. js-lingui-id: NZy2VR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -7365,6 +7415,16 @@ msgstr "유효하지 않은 이메일 주소: {invalidEmailList}"
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Invalid email or domain."
 msgstr "잘못된 이메일 또는 도메인."
+
+#. js-lingui-id: q96eTT
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-event-metadata-validator.service.ts
+msgid "Invalid event definition"
+msgstr "잘못된 이벤트 정의"
+
+#. js-lingui-id: VAifIo
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "Invalid event definition."
+msgstr "잘못된 이벤트 정의."
 
 #. js-lingui-id: 8knMLv
 #: src/engine/core-modules/event-logs/emit/event-log-emitter.exception.ts
@@ -11052,6 +11112,11 @@ msgctxt "fieldMetadata.label"
 msgid "Parts"
 msgstr "부분"
 
+#. js-lingui-id: x5aPy7
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "Pass either the event name or its universal identifier."
+msgstr "이벤트 이름 또는 범용 식별자 중 하나를 전달하세요."
+
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Password is too weak."
@@ -13729,6 +13794,11 @@ msgstr "표준 권한 플래그는 수정할 수 없습니다."
 msgid "Standard skills cannot be modified."
 msgstr "표준 스킬은 수정할 수 없습니다."
 
+#. js-lingui-id: w3TWxe
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Start conversation logic function \"{startConversationLogicFunctionUniversalIdentifier}\" was not found in this application"
+msgstr "이 애플리케이션에서 대화 시작 로직 함수 \"{startConversationLogicFunctionUniversalIdentifier}\"을 찾을 수 없습니다"
+
 #. js-lingui-id: ndAwoq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -14583,6 +14653,11 @@ msgstr "도메인이 이메일 도메인과 일치하지 않습니다."
 msgid "The email content is invalid."
 msgstr "이메일 콘텐츠가 유효하지 않습니다."
 
+#. js-lingui-id: JmTVCB
+#: src/engine/metadata-modules/event-metadata/event-metadata.exception.ts
+msgid "The event properties do not match its definition."
+msgstr "이벤트 속성이 해당 정의와 일치하지 않습니다."
+
 #. js-lingui-id: hY1mx5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -14752,6 +14827,11 @@ msgstr "이 메시징 공급자가 스레드를 읽음으로 표시하는 데 �
 msgid "The logic function this messaging provider sends with was not found in its application."
 msgstr "이 메시징 공급자가 전송에 사용하는 로직 함수를 해당 애플리케이션에서 찾을 수 없습니다."
 
+#. js-lingui-id: 3Auz53
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The logic function this messaging provider starts conversations with was not found in its application."
+msgstr "이 메시징 제공자가 대화를 시작하는 데 사용하는 로직 함수를 해당 애플리케이션에서 찾을 수 없습니다."
+
 #. js-lingui-id: zIwdvk
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function to run on connect was not found."
@@ -14918,6 +14998,11 @@ msgstr "제공자를 일시적으로 사용할 수 없습니다. 나중에 다�
 #: src/modules/messaging/message-import-manager/drivers/inbound-email/sources/resend-inbound-email-message-source.service.ts
 msgid "The received email content is no longer available."
 msgstr "수신된 이메일 내용은 더 이상 사용할 수 없습니다."
+
+#. js-lingui-id: b84VDO
+#: src/engine/api/common/common-query-runners/common-create-one-query-runner.service.ts
+msgid "The record was created, but you do not have permission to see it."
+msgstr "레코드는 생성되었지만, 이를 볼 권한이 없습니다."
 
 #. js-lingui-id: dXHirT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -15533,7 +15618,7 @@ msgstr "이 도메인은 이미 사용 중입니다."
 #. js-lingui-id: IBjn2S
 #: src/engine/core-modules/public-domain/public-domain.exception.ts
 msgid "This domain is used by Twenty itself and cannot be a public domain."
-msgstr ""
+msgstr "이 도메인은 Twenty 자체에서 사용되며 공개 도메인이 될 수 없습니다."
 
 #. js-lingui-id: Ukfndw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -15766,6 +15851,11 @@ msgstr "이 구성원은 이중 인증을 설정하지 않았으므로 복구할
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "This message channel cannot send messages."
 msgstr "이 메시지 채널은 메시지를 보낼 수 없습니다."
+
+#. js-lingui-id: yXQyf9
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "This message channel cannot start new conversations."
+msgstr "이 메시지 채널에서는 새 대화를 시작할 수 없습니다."
 
 #. js-lingui-id: Rt42MP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
