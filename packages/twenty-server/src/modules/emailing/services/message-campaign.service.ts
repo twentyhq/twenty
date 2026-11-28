@@ -25,10 +25,13 @@ import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/services/usage-limit-speed.service';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
 import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -48,8 +51,6 @@ import { sendableCampaignSchema } from 'src/modules/emailing/zod-schemas/sendabl
 
 type SendableCampaign = z.infer<typeof sendableCampaignSchema>;
 
-const TEST_SEND_THROTTLE = { maxRequests: 3, windowMs: 24 * 60 * 60 * 1000 };
-
 @Injectable()
 export class MessageCampaignService {
   private readonly logger = new Logger(MessageCampaignService.name);
@@ -66,7 +67,7 @@ export class MessageCampaignService {
     private readonly campaignVariableService: CampaignVariableService,
     private readonly messageCampaignAudienceService: MessageCampaignAudienceService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
-    private readonly throttlerService: ThrottlerService,
+    private readonly usageLimitSpeedService: UsageLimitSpeedService,
     private readonly emailBillingService: EmailBillingService,
     private readonly i18nService: I18nService,
   ) {}
@@ -461,12 +462,11 @@ export class MessageCampaignService {
       variables,
     });
 
-    await this.throttlerService.tokenBucketThrottleOrThrow(
-      `message-campaign-test-send:throttler:${workspaceId}`,
-      1,
-      TEST_SEND_THROTTLE.maxRequests,
-      TEST_SEND_THROTTLE.windowMs,
-    );
+    await this.usageLimitSpeedService.consumeOrThrow({
+      resourceType: UsageResourceType.EMAIL,
+      operationType: UsageOperationType.MESSAGE_CAMPAIGN_TEST_SEND,
+      authContext: buildSystemAuthContext(workspaceId),
+    });
 
     const result = await this.emailingDomainSenderService.sendEmail(
       workspaceId,

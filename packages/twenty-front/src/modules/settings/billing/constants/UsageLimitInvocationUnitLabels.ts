@@ -24,4 +24,8 @@ export const USAGE_LIMIT_INVOCATION_UNIT_LABELS: Partial<
     name: msg`Emails`,
     suffix: msg`emails`,
   },
+  [UsageOperationType.MESSAGE_CAMPAIGN_TEST_SEND]: {
+    name: msg`Emails`,
+    suffix: msg`emails`,
+  },
 };

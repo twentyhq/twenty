@@ -2,6 +2,7 @@ import { t } from '@lingui/core/macro';
 
 const SECONDS_PER_MINUTE = 60;
 const SECONDS_PER_HOUR = 3600;
+const SECONDS_PER_DAY = 86_400;
 
 export const formatRoundedDuration = (durationMs: number): string => {
   const totalSeconds = Math.max(0, Math.round(durationMs / 1000));
@@ -17,10 +18,17 @@ export const formatRoundedDuration = (durationMs: number): string => {
     return seconds === 0 ? t`${minutes}m` : t`${minutes}m ${seconds}s`;
   }
 
-  const hours = Math.floor(totalSeconds / SECONDS_PER_HOUR);
-  const minutes = Math.floor(
-    (totalSeconds % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE,
-  );
+  if (totalSeconds < SECONDS_PER_DAY) {
+    const hours = Math.floor(totalSeconds / SECONDS_PER_HOUR);
+    const minutes = Math.floor(
+      (totalSeconds % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE,
+    );
 
-  return minutes === 0 ? t`${hours}h` : t`${hours}h ${minutes}m`;
+    return minutes === 0 ? t`${hours}h` : t`${hours}h ${minutes}m`;
+  }
+
+  const days = Math.floor(totalSeconds / SECONDS_PER_DAY);
+  const hours = Math.floor((totalSeconds % SECONDS_PER_DAY) / SECONDS_PER_HOUR);
+
+  return hours === 0 ? t`${days}d` : t`${days}d ${hours}h`;
 };

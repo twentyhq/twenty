@@ -175,6 +175,10 @@ export const USAGE_LIMIT_DEFINITIONS = {
           operationType: UsageOperationType.MESSAGE_CAMPAIGN_SEND,
           allowedUnits: [UsageUnit.INVOCATION],
         },
+        {
+          operationType: UsageOperationType.MESSAGE_CAMPAIGN_TEST_SEND,
+          allowedUnits: [UsageUnit.INVOCATION],
+        },
       ],
       allowedSpenderTypes: ['workspace'],
       // Two buckets, and a send has to fit both. The workspace one keeps a
@@ -236,6 +240,21 @@ export const USAGE_LIMIT_DEFINITIONS = {
           limitValueConfigVariable: 'EMAIL_SEND_RATE_LIMITING_LIMIT',
           counterScope: 'crossWorkspace',
           isOverridable: false,
+        },
+        {
+          resourceType: UsageResourceType.EMAIL,
+          operationType: UsageOperationType.MESSAGE_CAMPAIGN_TEST_SEND,
+          limitKind: 'speed',
+          spenderType: 'workspace',
+          spenderId: '',
+          unit: UsageUnit.INVOCATION,
+          periodUnit: 'second',
+          windowMsConfigVariable:
+            'MESSAGE_CAMPAIGN_TEST_SEND_RATE_LIMITING_TTL_IN_MS',
+          limitValueConfigVariable:
+            'MESSAGE_CAMPAIGN_TEST_SEND_RATE_LIMITING_LIMIT',
+          counterScope: 'perWorkspace',
+          isOverridable: true,
         },
       ],
     },

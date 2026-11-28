@@ -33,6 +33,7 @@ export const USAGE_LIMIT_OPERATION_TYPE_ICONS: Record<
   [UsageOperationType.CALL_RECORDING]: IconPhone,
   [UsageOperationType.EMAIL_SEND]: IconMail,
   [UsageOperationType.MESSAGE_CAMPAIGN_SEND]: IconSend,
+  [UsageOperationType.MESSAGE_CAMPAIGN_TEST_SEND]: IconSend,
   [UsageOperationType.APP_OPERATION]: IconApps,
   [UsageOperationType.API_REQUEST]: IconApi,
   [UsageOperationType.WEBHOOK_CALL]: IconWebhook,
