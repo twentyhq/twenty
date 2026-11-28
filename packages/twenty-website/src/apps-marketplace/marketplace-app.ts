@@ -7,11 +7,35 @@ export type MarketplaceApp = {
   category: string;
   logoUrl?: string;
   sourcePackage?: string;
+  // The first gallery image, shown as the card's band.
+  coverUrl?: string;
 };
+
+export type MarketplaceAppContentKind =
+  | 'objects'
+  | 'fields'
+  | 'views'
+  | 'frontComponents'
+  | 'workflows'
+  | 'logicFunctions'
+  | 'agents'
+  | 'skills'
+  | 'roles'
+  | 'connectionProviders';
+
+// Labels of what the app adds, by kind.
+export type MarketplaceAppContent = Partial<
+  Record<MarketplaceAppContentKind, readonly string[]>
+>;
 
 export type MarketplaceAppDetail = MarketplaceApp & {
   aboutDescription?: string;
   screenshots: readonly string[];
   websiteUrl?: string;
   latestAvailableVersion?: string;
+  installCount?: number;
+  termsUrl?: string;
+  emailSupport?: string;
+  issueReportUrl?: string;
+  content: MarketplaceAppContent;
 };

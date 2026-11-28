@@ -5,6 +5,8 @@ import {
   type VisualFrame,
 } from '../engine/create-visual-frame-loop';
 import { createVisualRenderer } from '../three-runtime/create-visual-renderer';
+import { readGeometryParts } from '../three-runtime/load-glb-geometry';
+import { createPartFloat } from '../three-runtime/part-float';
 import { createRenderTarget } from './create-render-target';
 import { HALFTONE_CONSTANTS } from './halftone-constants';
 import { createVirtualSize } from './virtual-size';
@@ -217,7 +219,11 @@ export async function createBandSession({
   renderer.setSize(getVirtualWidth(), getVirtualHeight(), false);
 
   const canvas = renderer.domElement;
-  canvas.style.cursor = reducedMotion ? 'default' : 'grab';
+  // a grab hand only where the model can be dragged
+  const canDrag =
+    !reducedMotion &&
+    (animation.followDragEnabled || animation.autoRotateEnabled);
+  canvas.style.cursor = canDrag ? 'grab' : 'default';
   canvas.style.display = 'block';
   canvas.style.height = '100%';
   canvas.style.touchAction = 'none';
@@ -262,7 +268,14 @@ export async function createBandSession({
   const material = halftoneMaterials.create();
   halftoneMaterials.applySettings(material, settings.material, materialAssets);
 
-  const mesh = new THREE.Mesh(geometry, material);
+  // A composed model (several meshes in one GLB) floats piece by piece, on
+  // a copy of the geometry, since the loader's is cached and shared.
+  const parts = readGeometryParts(geometry);
+  const meshGeometry = parts.length > 0 ? geometry.clone() : geometry;
+  const floatParts =
+    parts.length > 0 ? createPartFloat(meshGeometry, parts) : null;
+
+  const mesh = new THREE.Mesh(meshGeometry, material);
   scene3d.add(mesh);
 
   const sceneTarget = createRenderTarget(getVirtualWidth(), getVirtualHeight());
@@ -410,6 +423,8 @@ export async function createBandSession({
   const handlePointerMove = (event: PointerEvent) => {
     updatePointerPosition(event);
     interaction.pointerInside = true;
+    hoverSpot.x = interaction.mouseX;
+    hoverSpot.y = interaction.mouseY;
     if (!interaction.dragging) {
       return;
     }
@@ -422,6 +437,10 @@ export async function createBandSession({
     interaction.pointerX = event.clientX;
     interaction.pointerY = event.clientY;
   };
+
+  // The hover swell (hoverHalftoneEnabled): the dashes thicken around the
+  // pointer, fading in and out; the spot stays where the pointer left.
+  const hoverSpot = { x: 0.5, y: 0.5, strength: 0 };
 
   const handlePointerLeave = () => {
     interaction.pointerInside = false;
@@ -444,6 +463,22 @@ export async function createBandSession({
     const elapsedTime = (initialPose?.timeElapsed ?? 0) + elapsedSeconds;
 
     halftoneMaterial.uniforms.time.value = elapsedTime;
+    if (animation.hoverHalftoneEnabled) {
+      hoverSpot.strength +=
+        ((interaction.pointerInside ? 1 : 0) - hoverSpot.strength) *
+        (1 - Math.exp(-deltaSeconds * 8));
+      halftoneMaterial.uniforms.interactionUv.value.set(
+        hoverSpot.x,
+        1 - hoverSpot.y,
+      );
+      halftoneMaterial.uniforms.hoverHalftoneActive.value = hoverSpot.strength;
+      halftoneMaterial.uniforms.hoverHalftoneRadius.value =
+        animation.hoverHalftoneRadius;
+      halftoneMaterial.uniforms.hoverHalftonePowerShift.value =
+        animation.hoverHalftonePowerShift;
+      halftoneMaterial.uniforms.hoverHalftoneWidthShift.value =
+        animation.hoverHalftoneWidthShift;
+    }
     halftoneMaterial.uniforms.waveAmount.value = animation.waveEnabled
       ? animation.waveAmount
       : 0;
@@ -467,7 +502,11 @@ export async function createBandSession({
     if (animation.floatEnabled) {
       const floatPhase = elapsedTime * animation.floatSpeed;
       const driftAmount = (animation.driftAmount * Math.PI) / 180;
-      meshOffsetY += Math.sin(floatPhase) * animation.floatAmplitude;
+      if (floatParts === null) {
+        meshOffsetY += Math.sin(floatPhase) * animation.floatAmplitude;
+      } else {
+        floatParts(floatPhase, animation.floatAmplitude);
+      }
       baseRotationX += Math.sin(floatPhase * 0.72) * driftAmount * 0.45;
       baseRotationZ += Math.cos(floatPhase * 0.93) * driftAmount * 0.3;
     }
@@ -685,6 +724,9 @@ export async function createBandSession({
     halftoneMaterial.dispose();
     fullScreenGeometry.dispose();
     material.dispose();
+    if (meshGeometry !== geometry) {
+      meshGeometry.dispose();
+    }
     sceneTarget.dispose();
     transmissionBacksideTarget.dispose();
     transmissionTarget.dispose();

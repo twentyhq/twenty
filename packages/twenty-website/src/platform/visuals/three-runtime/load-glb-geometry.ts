@@ -23,6 +23,19 @@ const FAILURE_CACHE_SIZE = 32;
 const EMPTY_TEXTURE_DATA_URL =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO8B7Q8AAAAASUVORK5CYII=';
 
+// A run of vertices that came from one mesh of the GLB.
+export type GeometryPart = { start: number; count: number };
+
+// The parts of a geometry merged from several meshes; none for one mesh.
+export const readGeometryParts = (
+  geometry: THREE.BufferGeometry,
+): GeometryPart[] => {
+  const parts: unknown = geometry.userData.parts;
+  return Array.isArray(parts) && parts.length > 1
+    ? (parts as GeometryPart[])
+    : [];
+};
+
 const geometryCache = new Map<string, Promise<THREE.BufferGeometry>>();
 const failureCache = createBoundedFailureCache(FAILURE_CACHE_SIZE);
 
@@ -117,6 +130,19 @@ function mergeGeometries(
     merged.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
   }
   merged.setIndex(new THREE.BufferAttribute(indices, 1));
+  // where each source mesh's vertices sit, so a scene can move the models
+  // of a composed GLB one by one (readGeometryParts)
+  merged.userData.parts = geometryInfos.reduce<GeometryPart[]>(
+    (parts, { vertexCount }) => {
+      const previous = parts.at(-1);
+      parts.push({
+        start: previous === undefined ? 0 : previous.start + previous.count,
+        count: vertexCount,
+      });
+      return parts;
+    },
+    [],
+  );
   return merged;
 }
 

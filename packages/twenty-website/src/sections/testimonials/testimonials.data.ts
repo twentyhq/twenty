@@ -2,7 +2,12 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
 export type TestimonialRecord = {
-  author: { name: MessageDescriptor; designation: MessageDescriptor };
+  author: {
+    name: MessageDescriptor;
+    designation: MessageDescriptor;
+    // A halftone portrait replaces the hourglass when set.
+    portraitSrc?: string;
+  };
   quote: MessageDescriptor;
 };
 

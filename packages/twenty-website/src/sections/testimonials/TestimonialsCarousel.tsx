@@ -1,5 +1,7 @@
 'use client';
 
+import { type MessageDescriptor } from '@lingui/core';
+import { isDefined } from 'twenty-shared/utils';
 import { msg } from '@lingui/core/macro';
 
 import { ArrowLeft, ArrowRight } from '@/icons';
@@ -20,6 +22,7 @@ import { HalftoneModel } from '@/platform/visuals/rigs/HalftoneModel';
 import { Body, Eyebrow, IconButton, MarkedDivider } from '@/ui';
 
 import { HOURGLASS_VISUAL } from './hourglass-config';
+import { PartnerPortrait } from './PartnerPortrait';
 
 import { type TestimonialRecord } from './testimonials.data';
 
@@ -183,11 +186,15 @@ const SeparatorSlot = styled.div`
   }
 `;
 
-export function TestimonialsCarousel({
-  testimonials,
-}: {
+type TestimonialsCarouselProps = {
+  eyebrow: MessageDescriptor;
   testimonials: readonly TestimonialRecord[];
-}) {
+};
+
+export function TestimonialsCarousel({
+  eyebrow,
+  testimonials,
+}: TestimonialsCarouselProps) {
   const { i18n } = useLingui();
   const [index, setIndex] = useState(0);
   const total = testimonials.length;
@@ -207,19 +214,30 @@ export function TestimonialsCarousel({
             {index + 1}/{total}
           </CounterText>
         </CounterSlot>
-        <VisualSlot data-illustration="hourglass">
-          <HalftoneModel
-            initialPose={HOURGLASS_VISUAL.initialPose}
-            modelUrl={HOURGLASS_VISUAL.modelUrl}
-            settings={HOURGLASS_VISUAL.settings}
-          />
+        <VisualSlot
+          data-illustration={
+            isDefined(current.author.portraitSrc) ? undefined : 'hourglass'
+          }
+        >
+          {isDefined(current.author.portraitSrc) ? (
+            <PartnerPortrait
+              alt={i18n._(msg`Portrait of ${i18n._(current.author.name)}`)}
+              src={current.author.portraitSrc}
+            />
+          ) : (
+            <HalftoneModel
+              initialPose={HOURGLASS_VISUAL.initialPose}
+              modelUrl={HOURGLASS_VISUAL.modelUrl}
+              settings={HOURGLASS_VISUAL.settings}
+            />
+          )}
         </VisualSlot>
       </LeftColumn>
       <SeparatorSlot>
         <MarkedDivider />
       </SeparatorSlot>
       <RightColumn>
-        <Eyebrow>{i18n._(msg`They are the real sales`)}</Eyebrow>
+        <Eyebrow>{i18n._(eyebrow)}</Eyebrow>
         <QuoteStack>
           {testimonials.map((testimonial, testimonialIndex) => (
             <QuoteSlide

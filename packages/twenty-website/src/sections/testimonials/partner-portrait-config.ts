@@ -2,22 +2,22 @@ import { paletteColorNumber } from '@/tokens';
 
 import { type HalftoneImageBackdropProps } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 
-// The author portrait as a halftone: white dashes in the photo's light areas
-// (toneTarget light) on the dark testimonials panel, with a hover halftone
-// shift + light. The image URL varies per author across the carousel, so only
-// the shared settings live here.
+// The home hero's bridge recipe on a cut-out portrait (white background,
+// softened subject): blue dashes from its dark areas, uncropped. Only the
+// shared settings live here; the image URL varies per author.
 export const PARTNER_PORTRAIT_SETTINGS: HalftoneImageBackdropProps['settings'] =
   {
-    previewDistance: 4,
-    imageFit: 'cover',
-    contrast: 1,
+    previewDistance: 3,
+    imageFit: 'contain',
+    applyToDarkAreas: true,
+    contrast: 1.7,
     halftone: {
-      scale: 8,
-      power: -0.07,
-      width: 0.46,
+      scale: 6,
+      power: -0.12,
+      width: 0.42,
       minimumTone: 0,
-      dashColor: paletteColorNumber('white'),
-      hoverDashColor: paletteColorNumber('white'),
+      dashColor: paletteColorNumber('blue'),
+      hoverDashColor: paletteColorNumber('blue'),
     },
     hover: {
       halftoneEnabled: true,
