@@ -26,21 +26,21 @@ export type HalftoneModelStack = {
 
 export type StackedGeometry = {
   geometry: THREE.BufferGeometry;
-  // Shows the first `count` copies: new ones drop in from above, settling
-  // with a small overshoot; removed ones fly off upward, faster.
+  // Shows the first `count` copies: new ones drop in from just above and
+  // settle without a bounce; removed ones fly off upward, faster.
   setVisible: (count: number, animate: boolean) => void;
   dispose: () => void;
 };
 
 // The motion, in the scene's thicknesses and milliseconds.
-const DROP = { height: 6, ms: 380, staggerMs: 22, fromScale: 0.85 };
+const DROP = { height: 3, ms: 600, staggerMs: 40, fromScale: 0.85 };
 const LEAVE = { height: 5, ms: 260, staggerMs: 14 };
+// How long the stack takes to glide back to the frame's middle as it grows
+// or shrinks.
+const GLIDE_MS = 600;
 
-const easeOutBack = (t: number): number => {
-  const overshoot = 1.4;
-  const shifted = t - 1;
-  return 1 + (overshoot + 1) * shifted ** 3 + overshoot * shifted ** 2;
-};
+// The site's count-up curve (animated-number.ts): fast in, slow to land.
+const easeOutCubic = (t: number): number => 1 - (1 - t) ** 3;
 const easeInQuad = (t: number): number => t * t;
 
 // The way the model's face looks: its normals averaged over the side that
@@ -109,9 +109,10 @@ export function stackGeometry(
   geometry.rotateX(tilt);
   geometry.computeBoundingBox();
   geometry.computeBoundingSphere();
-  // room for a copy dropping in from above
+  // room for a copy dropping in from above, and for the glide below
   if (geometry.boundingSphere !== null) {
-    geometry.boundingSphere.radius += DROP.height * size.y;
+    geometry.boundingSphere.radius +=
+      DROP.height * size.y + (geometry.boundingBox?.max.y ?? 0);
   }
 
   const indicesPerCopy = flat.index?.count ?? flat.attributes.position.count;
@@ -132,13 +133,31 @@ export function stackGeometry(
       .applyAxisAngle(new THREE.Vector3(1, 0, 0), tilt),
   );
 
+  // The middle of the first `count` copies, in screen height. The geometry
+  // is centred on the full stack, so a part-filled one sits low under the
+  // room kept for the rest: the stack glides by this much to stay centred.
+  const shownMiddle = (count: number): number => {
+    if (count === 0) {
+      return 0;
+    }
+    let low = Infinity;
+    let high = -Infinity;
+    for (let copyIndex = 0; copyIndex < count; copyIndex += 1) {
+      low = Math.min(low, copyCenters[copyIndex].y);
+      high = Math.max(high, copyCenters[copyIndex].y);
+    }
+    return (low + high) / 2;
+  };
+  let shift = 0;
+  let glide: { from: number; to: number; startedAt: number } | null = null;
+
   // Moves one copy's vertices: scaled about its centre, lifted along the
-  // stack's up.
+  // stack's up, and shifted with the whole stack.
   const placeCopy = (copyIndex: number, scale: number, lift: number) => {
     const copyCenter = copyCenters[copyIndex];
     const array = position.array as Float32Array;
     const offsetX = up.x * lift * size.y;
-    const offsetY = up.y * lift * size.y;
+    const offsetY = up.y * lift * size.y + shift;
     const offsetZ = up.z * lift * size.y;
     const start = copyIndex * verticesPerCopy * 3;
     const end = start + verticesPerCopy * 3;
@@ -170,12 +189,25 @@ export function stackGeometry(
 
   const step = (now: number) => {
     frameId = null;
+    if (glide !== null) {
+      const t = Math.min(Math.max((now - glide.startedAt) / GLIDE_MS, 0), 1);
+      shift = glide.from + (glide.to - glide.from) * easeOutCubic(t);
+      if (t >= 1) {
+        glide = null;
+      }
+      // the copies at rest move with the stack; moving ones are placed below
+      for (let copyIndex = 0; copyIndex < drawnCount(); copyIndex += 1) {
+        if (!motions.has(copyIndex)) {
+          placeCopy(copyIndex, 1, 0);
+        }
+      }
+    }
     motions.forEach((motion, copyIndex) => {
       const duration = motion.from === 'drop' ? DROP.ms : LEAVE.ms;
       const t = Math.min(Math.max((now - motion.startedAt) / duration, 0), 1);
 
       if (motion.from === 'drop') {
-        const eased = easeOutBack(t);
+        const eased = easeOutCubic(t);
         placeCopy(
           copyIndex,
           DROP.fromScale + (1 - DROP.fromScale) * Math.min(t * 2, 1),
@@ -199,7 +231,7 @@ export function stackGeometry(
     position.needsUpdate = true;
     geometry.setDrawRange(0, drawnCount() * indicesPerCopy);
 
-    if (motions.size > 0) {
+    if (motions.size > 0 || glide !== null) {
       frameId = requestAnimationFrame(step);
     }
   };
@@ -207,6 +239,15 @@ export function stackGeometry(
   const setVisible = (count: number, animate: boolean) => {
     const next = Math.min(Math.max(Math.round(count), 0), placements.length);
     const now = performance.now();
+    const target = -shownMiddle(next);
+
+    // the first fill lands centred; later changes glide there
+    if (!animate || shown === 0) {
+      shift = target;
+      glide = null;
+    } else if (target !== shift) {
+      glide = { from: shift, to: target, startedAt: now };
+    }
 
     if (!animate) {
       motions.clear();
