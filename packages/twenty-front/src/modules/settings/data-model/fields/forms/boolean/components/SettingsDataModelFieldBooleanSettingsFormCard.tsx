@@ -1,6 +1,6 @@
 import { useFormContext } from 'react-hook-form';
 
-import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
+import { SettingsPreviewCard } from '@/settings/components/SettingsPreviewCard';
 import {
   SettingsDataModelFieldBooleanForm,
   type SettingsDataModelFieldBooleanFormValues,
@@ -26,7 +26,7 @@ export const SettingsDataModelFieldBooleanSettingsFormCard = ({
   >();
 
   return (
-    <SettingsDataModelPreviewFormCard
+    <SettingsPreviewCard
       preview={
         <SettingsDataModelFieldPreviewWidget
           fieldMetadataItem={{
@@ -38,7 +38,7 @@ export const SettingsDataModelFieldBooleanSettingsFormCard = ({
           objectNameSingular={objectNameSingular}
         />
       }
-      form={
+      content={
         <SettingsDataModelFieldBooleanForm
           disabled={disabled}
           existingFieldMetadataId={existingFieldMetadataId}

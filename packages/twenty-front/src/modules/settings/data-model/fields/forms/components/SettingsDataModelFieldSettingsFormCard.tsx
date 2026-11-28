@@ -1,4 +1,4 @@
-import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
+import { SettingsPreviewCard } from '@/settings/components/SettingsPreviewCard';
 import { SettingsDataModelFieldAddressSettingsFormCard } from '@/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressSettingsFormCard';
 import { SettingsDataModelFieldBooleanSettingsFormCard } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanSettingsFormCard';
 import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm';
@@ -164,7 +164,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   }
 
   return (
-    <SettingsDataModelPreviewFormCard
+    <SettingsPreviewCard
       preview={
         <SettingsDataModelFieldPreviewWidget
           fieldMetadataItem={{
@@ -177,7 +177,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
           objectNameSingular={objectNameSingular}
         />
       }
-      form={
+      content={
         <>
           {[
             FieldMetadataType.EMAILS,

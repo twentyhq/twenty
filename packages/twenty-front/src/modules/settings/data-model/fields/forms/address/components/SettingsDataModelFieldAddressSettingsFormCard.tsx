@@ -1,4 +1,4 @@
-import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
+import { SettingsPreviewCard } from '@/settings/components/SettingsPreviewCard';
 import {
   SettingsDataModelFieldAddressForm,
   type SettingsDataModelFieldTextFormValues,
@@ -23,7 +23,7 @@ export const SettingsDataModelFieldAddressSettingsFormCard = ({
     SettingsDataModelFieldTextFormValues & SettingsDataModelFieldEditFormValues
   >();
   return (
-    <SettingsDataModelPreviewFormCard
+    <SettingsPreviewCard
       preview={
         <SettingsDataModelFieldPreviewWidget
           fieldMetadataItem={{
@@ -37,7 +37,7 @@ export const SettingsDataModelFieldAddressSettingsFormCard = ({
           objectNameSingular={objectNameSingular}
         />
       }
-      form={
+      content={
         <SettingsDataModelFieldAddressForm
           disabled={disabled}
           existingFieldMetadataId={existingFieldMetadataId}

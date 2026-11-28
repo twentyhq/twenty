@@ -1,0 +1,1 @@
+export const SETTINGS_COVER_HEIGHT = 150;

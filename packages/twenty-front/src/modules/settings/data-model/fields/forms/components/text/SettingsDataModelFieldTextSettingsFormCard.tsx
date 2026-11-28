@@ -1,5 +1,5 @@
 import { SettingsCardSeparator } from '@/settings/components/SettingsCardSeparator';
-import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
+import { SettingsPreviewCard } from '@/settings/components/SettingsPreviewCard';
 
 import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm';
 import { SettingsDataModelFieldTextForm } from '@/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm';
@@ -21,7 +21,7 @@ export const SettingsDataModelFieldTextSettingsFormCard = ({
   const { watch } = useFormContext();
 
   return (
-    <SettingsDataModelPreviewFormCard
+    <SettingsPreviewCard
       preview={
         <SettingsDataModelFieldPreviewWidget
           fieldMetadataItem={{
@@ -33,7 +33,7 @@ export const SettingsDataModelFieldTextSettingsFormCard = ({
           objectNameSingular={objectNameSingular}
         />
       }
-      form={
+      content={
         <>
           <SettingsDataModelFieldTextForm
             disabled={disabled}
