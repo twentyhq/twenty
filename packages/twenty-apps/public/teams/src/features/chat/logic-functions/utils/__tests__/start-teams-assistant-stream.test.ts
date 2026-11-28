@@ -129,7 +129,7 @@ describe('startTeamsAssistantStream', () => {
     ]);
   });
 
-  it('should return the stream id as the answer activity id when the final call returns none', async () => {
+  it('should return the stream id as the answer activity id', async () => {
     const writer = await startTeamsAssistantStream({
       ...CONVERSATION,
       text: 'Thinking…',
@@ -138,18 +138,6 @@ describe('startTeamsAssistantStream', () => {
     await expect(
       writer.finish({ text: 'Acme has 3 open deals.' }),
     ).resolves.toBe('stream-1');
-  });
-
-  it('should return the activity id of the final message when Teams sends one', async () => {
-    const writer = await startTeamsAssistantStream({
-      ...CONVERSATION,
-      text: 'Thinking…',
-    });
-    requestConnectorMock.mockResolvedValue('{"id":"final-activity-1"}');
-
-    await expect(
-      writer.finish({ text: 'Acme has 3 open deals.' }),
-    ).resolves.toBe('final-activity-1');
   });
 
   it('should stop update retries once the final message is sent', async () => {

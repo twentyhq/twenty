@@ -3,7 +3,6 @@ import { type TeamsAssistantStatusWriter } from 'src/features/chat/logic-functio
 import { buildTeamsActivityPath } from 'src/features/chat/logic-functions/utils/build-teams-activity-path';
 import { buildTeamsMessageActivity } from 'src/features/chat/logic-functions/utils/build-teams-message-activity';
 import { getTeamsConnectorAccessTokenOrThrow } from 'src/features/chat/logic-functions/utils/get-teams-connector-access-token-or-throw';
-import { parseTeamsActivityId } from 'src/features/chat/logic-functions/utils/parse-teams-activity-id';
 import { requestTeamsConnector } from 'src/features/chat/logic-functions/utils/request-teams-connector';
 import { sendTeamsActivity } from 'src/features/chat/logic-functions/utils/send-teams-activity';
 
@@ -32,15 +31,15 @@ export const startTeamsAssistantStream = async ({
     },
   });
 
-  // Follow-up stream calls can answer 202 with no payload.
+  // Follow-up stream calls answer 202 with no payload to parse.
   const sendStreamActivity = async ({
     activity,
     retryAbortSignal,
   }: {
     activity: TeamsActivity;
     retryAbortSignal?: AbortSignal;
-  }) =>
-    requestTeamsConnector({
+  }) => {
+    await requestTeamsConnector({
       serviceUrl,
       path: buildTeamsActivityPath({ conversationId }),
       method: 'POST',
@@ -48,12 +47,13 @@ export const startTeamsAssistantStream = async ({
       body: activity,
       retryAbortSignal,
     });
+  };
 
   return {
-    update: async (text) => {
+    update: (text) => {
       streamSequence += 1;
 
-      await sendStreamActivity({
+      return sendStreamActivity({
         activity: {
           type: 'typing',
           text,
@@ -72,7 +72,7 @@ export const startTeamsAssistantStream = async ({
     finish: async ({ text, answerMarkers }) => {
       streamClosing.abort();
 
-      const responseBody = await sendStreamActivity({
+      await sendStreamActivity({
         activity: buildTeamsMessageActivity({
           text,
           ...answerMarkers,
@@ -80,7 +80,7 @@ export const startTeamsAssistantStream = async ({
         }),
       });
 
-      return parseTeamsActivityId(responseBody) ?? streamId;
+      return streamId;
     },
   };
 };

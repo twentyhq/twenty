@@ -24,7 +24,7 @@ const parseFeedbackText = (feedback: string | undefined): string => {
   }
 
   try {
-    const parsedFeedback: { feedbackText?: unknown } | null =
+    const parsedFeedback: { feedbackText?: string } | null =
       JSON.parse(feedback);
 
     return isNonEmptyString(parsedFeedback?.feedbackText)
