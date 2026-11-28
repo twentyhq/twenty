@@ -2,6 +2,7 @@ import {
   getFieldMetadataFormulaEvaluation,
   isDefined,
   listFieldMetadataFormulaFieldNodes,
+  substituteQueryTimeFormulaReferences,
 } from 'twenty-shared/utils';
 
 import {
@@ -9,9 +10,11 @@ import {
   type StoredFormulaWatchPlans,
 } from 'src/engine/core-modules/stored-formula-field/types/stored-formula-watch-plans.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { buildFormulaFieldDescriptorsFromFlatEntityMaps } from 'src/engine/metadata-modules/formula-field/utils/build-formula-field-descriptors-from-flat-entity-maps.util';
 import { resolveFormulaAggregatedRelation } from 'src/engine/metadata-modules/formula-field/utils/resolve-formula-aggregated-relation.util';
 import { resolveFormulaLookedUpRelation } from 'src/engine/metadata-modules/formula-field/utils/resolve-formula-looked-up-relation.util';
 
@@ -83,7 +86,16 @@ export const buildStoredFormulaWatchPlans = ({
   for (const { objectMetadataId, formula } of Object.values(
     flatFieldMetadataMaps.byUniversalIdentifier,
   ).filter(isDefined)) {
-    if (getFieldMetadataFormulaEvaluation({ formula }) !== 'STORED') {
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: objectMetadataId,
+      flatEntityMaps: flatObjectMetadataMaps,
+    });
+
+    if (
+      getFieldMetadataFormulaEvaluation({ formula }) !== 'STORED' ||
+      !isDefined(formula) ||
+      !isDefined(flatObjectMetadata)
+    ) {
       continue;
     }
 
@@ -94,7 +106,16 @@ export const buildStoredFormulaWatchPlans = ({
     for (const {
       fieldUniversalIdentifier,
       relationFieldUniversalIdentifier,
-    } of listFieldMetadataFormulaFieldNodes({ formula })) {
+    } of listFieldMetadataFormulaFieldNodes({
+      formula: substituteQueryTimeFormulaReferences({
+        formula,
+        fields: buildFormulaFieldDescriptorsFromFlatEntityMaps({
+          flatObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        }),
+      }),
+    })) {
       const readFlatFieldMetadata = findFlatFieldMetadata(
         fieldUniversalIdentifier,
       );

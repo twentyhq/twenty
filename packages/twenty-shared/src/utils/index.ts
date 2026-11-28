@@ -99,6 +99,7 @@ export { findExpressionAggregationError } from './expression/findExpressionAggre
 export { getExpressionArgumentCountError } from './expression/getExpressionArgumentCountError';
 export { getExpressionSyntaxError } from './expression/getExpressionSyntaxError';
 export { listExpressionFieldNodes } from './expression/listExpressionFieldNodes';
+export { mapExpressionFieldNodes } from './expression/mapExpressionFieldNodes';
 export { parseExpressionNode } from './expression/parseExpressionNode';
 export { reduceExpressionNumbers } from './expression/reduceExpressionNumbers';
 export { resolveExpressionFieldReferences } from './expression/resolveExpressionFieldReferences';
@@ -264,6 +265,7 @@ export { isFormulaFieldMetadataType } from './formula/isFormulaFieldMetadataType
 export { isQueryTimeFormulaFieldMetadata } from './formula/isQueryTimeFormulaFieldMetadata';
 export { listFieldMetadataFormulaFieldNodes } from './formula/listFieldMetadataFormulaFieldNodes';
 export { printFieldMetadataFormula } from './formula/printFieldMetadataFormula';
+export { substituteQueryTimeFormulaReferences } from './formula/substituteQueryTimeFormulaReferences';
 export { fromArrayToUniqueKeyRecord } from './from-array-to-unique-key-record.util';
 export { fromArrayToValuesByKeyRecord } from './fromArrayToValuesByKeyRecord.util';
 export { getUrlSafely } from './getUrlSafely';

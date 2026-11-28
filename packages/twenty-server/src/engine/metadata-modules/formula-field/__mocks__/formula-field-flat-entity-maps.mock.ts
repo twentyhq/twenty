@@ -133,6 +133,12 @@ const SUPPLIER_FIELDS = [
     type: FieldMetadataType.TEXT,
     expression: 'name || "!"',
   }),
+  buildSupplierField({
+    id: 'supplier-checked-at',
+    name: 'checkedAt',
+    type: FieldMetadataType.DATE_TIME,
+    expression: 'now',
+  }),
 ];
 
 const GADGET_FIELDS = [
@@ -177,6 +183,18 @@ const GADGET_FIELDS = [
     type: FieldMetadataType.CURRENCY,
     expression: 'supplier.revenue.amountMicros * 0.1',
     currencyCodeExpression: 'supplier.revenue.currencyCode',
+  }),
+  buildGadgetField({
+    id: 'gadget-double-total',
+    name: 'doubleTotal',
+    type: FieldMetadataType.NUMBER,
+    expression: 'total * 2',
+  }),
+  buildGadgetField({
+    id: 'gadget-supplier-shout',
+    name: 'supplierShout',
+    type: FieldMetadataType.TEXT,
+    expression: 'supplier.shout',
   }),
   buildGadgetField({
     id: 'gadget-broken',

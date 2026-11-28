@@ -1,12 +1,14 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { validateFlatFieldMetadataFormula } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util';
 import {
   FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK,
   FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
 } from 'src/engine/metadata-modules/formula-field/__mocks__/formula-field-flat-entity-maps.mock';
+import { setFormulaFieldTrees } from 'src/engine/metadata-modules/formula-field/utils/set-formula-field-trees.util';
 
 type ValidateFormulaArgs = Parameters<
   typeof validateFlatFieldMetadataFormula
@@ -237,16 +239,6 @@ describe('validateFlatFieldMetadataFormula', () => {
       message: 'Invalid formula: Unknown field "margin"',
     },
     {
-      reason: 'another formula field',
-      expression: 'total * 2',
-      message: 'Invalid formula: Unknown field "total"',
-    },
-    {
-      reason: 'a formula field of the related record',
-      expression: 'arrayLength(supplier.shout)',
-      message: 'Invalid formula: Unknown field "shout" on "supplier"',
-    },
-    {
       reason: 'a previous value',
       expression: 'previous.price',
       message:
@@ -260,6 +252,36 @@ describe('validateFlatFieldMetadataFormula', () => {
         },
       }),
     ).toEqual([{ message }]);
+  });
+
+  it('should accept a formula reading other formula fields, on the record and behind a relation', () => {
+    expect(
+      validate({
+        flatFieldMetadataToValidate: {
+          type: FieldMetadataType.TEXT,
+          formula: { expression: 'concat(total * 2, supplier.shout)' },
+        },
+      }),
+    ).toEqual([]);
+  });
+
+  it('should refuse a stored formula reading now through a query-time formula', () => {
+    const flatFieldMetadataToValidate = setFormulaFieldTrees({
+      universalFlatFieldMetadata: getFlatFieldMetadataMock({
+        name: 'checkSummary',
+        type: FieldMetadataType.TEXT,
+        universalIdentifier: 'supplier-check-summary-uid',
+        objectMetadataId: 'supplier-object',
+        objectMetadataUniversalIdentifier: 'supplier-object-uid',
+        formula: { expression: 'concat(count(gadgets), checkedAt)' },
+      }),
+      universalFlatObjectMetadataMaps: FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
+      universalFlatFieldMetadataMaps: FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK,
+    });
+
+    expect(validate({ flatFieldMetadataToValidate })).toEqual([
+      { message: expect.stringContaining('cannot read "now"') },
+    ]);
   });
 
   it('should let a formula read a field created in the same build', () => {

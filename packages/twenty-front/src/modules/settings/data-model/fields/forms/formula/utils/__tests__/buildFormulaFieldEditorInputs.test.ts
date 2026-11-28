@@ -45,7 +45,7 @@ const findObjectMetadataItemOrThrow = (nameSingular: string) => {
 };
 
 describe('buildFormulaFieldEditorInputs', () => {
-  it('should offer the stored fields of the object and of its to-one relations', () => {
+  it('should offer the fields of the object and of its to-one relations', () => {
     const { fields, editorFields } = buildFormulaFieldEditorInputs({
       objectMetadataItem: findObjectMetadataItemOrThrow('person'),
       objectMetadataItems,
@@ -74,16 +74,7 @@ describe('buildFormulaFieldEditorInputs', () => {
     );
   });
 
-  it('should offer stored formula fields, which other formulas can read', () => {
-    const { fields } = buildFormulaFieldEditorInputs({
-      objectMetadataItem: findObjectMetadataItemOrThrow('company'),
-      objectMetadataItems,
-    });
-
-    expect(fields.map(({ name }) => name)).toContain('idealCustomerProfile');
-  });
-
-  it('should leave out query-time formula fields, on the object and behind a relation', () => {
+  it('should offer formula fields, stored or not, on the object and behind a relation', () => {
     const companyInputs = buildFormulaFieldEditorInputs({
       objectMetadataItem: findObjectMetadataItemOrThrow('company'),
       objectMetadataItems,
@@ -93,10 +84,10 @@ describe('buildFormulaFieldEditorInputs', () => {
       objectMetadataItems,
     });
 
-    expect(companyInputs.fields.map(({ name }) => name)).not.toContain(
-      'employees',
+    expect(companyInputs.fields.map(({ name }) => name)).toEqual(
+      expect.arrayContaining(['employees', 'idealCustomerProfile']),
     );
-    expect(personInputs.editorFields.map(({ path }) => path)).not.toContain(
+    expect(personInputs.editorFields.map(({ path }) => path)).toContain(
       'company.employees',
     );
   });
