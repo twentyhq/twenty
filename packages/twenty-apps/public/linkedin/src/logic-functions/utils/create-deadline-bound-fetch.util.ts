@@ -1,5 +1,11 @@
 export const createDeadlineBoundFetch =
-  (deadlineAtMs: number, maxRequestMilliseconds = Number.POSITIVE_INFINITY) =>
+  ({
+    deadlineAtMs,
+    maxRequestMilliseconds = Number.POSITIVE_INFINITY,
+  }: {
+    deadlineAtMs: number;
+    maxRequestMilliseconds?: number;
+  }) =>
   (input: RequestInfo | URL, init?: RequestInit): Promise<Response> =>
     fetch(input, {
       ...init,

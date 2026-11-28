@@ -122,10 +122,10 @@ const uploadAvatarFile = async ({
 
   const metadataClient = new MetadataApiClient({
     runAs: 'application',
-    fetch: createDeadlineBoundFetch(
+    fetch: createDeadlineBoundFetch({
       deadlineAtMs,
-      LINKEDIN_AVATAR_REQUEST_TIMEOUT_MILLISECONDS,
-    ),
+      maxRequestMilliseconds: LINKEDIN_AVATAR_REQUEST_TIMEOUT_MILLISECONDS,
+    }),
   });
 
   const { createFileUpload } = await metadataClient.mutation({
@@ -183,10 +183,10 @@ const setPersonAvatar = async ({
 
   const { updatePeople } = await new CoreApiClient({
     runAs: 'application',
-    fetch: createDeadlineBoundFetch(
+    fetch: createDeadlineBoundFetch({
       deadlineAtMs,
-      LINKEDIN_AVATAR_REQUEST_TIMEOUT_MILLISECONDS,
-    ),
+      maxRequestMilliseconds: LINKEDIN_AVATAR_REQUEST_TIMEOUT_MILLISECONDS,
+    }),
   }).mutation({
     updatePeople: {
       __args: {

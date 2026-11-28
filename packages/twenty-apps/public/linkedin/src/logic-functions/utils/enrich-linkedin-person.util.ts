@@ -45,7 +45,7 @@ const findEnrichablePerson = async ({
 }): Promise<EnrichablePersonRecord | undefined> => {
   const { people } = await new CoreApiClient({
     runAs: 'application',
-    fetch: createDeadlineBoundFetch(deadlineAtMs),
+    fetch: createDeadlineBoundFetch({ deadlineAtMs }),
   }).query({
     people: {
       __args: { filter: { id: { eq: personId } }, first: 1 },
@@ -82,7 +82,7 @@ const setEmptyPersonFieldOrWarn = async ({
   try {
     await new CoreApiClient({
       runAs: 'application',
-      fetch: createDeadlineBoundFetch(deadlineAtMs),
+      fetch: createDeadlineBoundFetch({ deadlineAtMs }),
     }).mutation({
       updatePeople: {
         __args: {
