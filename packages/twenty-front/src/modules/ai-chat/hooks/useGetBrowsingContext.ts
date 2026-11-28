@@ -3,6 +3,8 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type BrowsingContext } from '@/ai-chat/types/BrowsingContext';
+import { settingsExpressionDraftState } from '@/ai-chat/states/settingsExpressionDraftState';
+import { buildSettingsPageBrowsingContext } from '@/ai-chat/utils/buildSettingsPageBrowsingContext';
 import { getAiChatBrowsingContextType } from '@/ai-chat/utils/getAiChatBrowsingContextType';
 import { getAiChatContextStoreInstanceId } from '@/ai-chat/utils/getAiChatContextStoreInstanceId';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
@@ -22,15 +24,24 @@ import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTab
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useStore } from 'jotai';
 import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useGetBrowsingContext = () => {
   const store = useStore();
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
 
   const getBrowsingContext = useCallback((): BrowsingContext | null => {
     const { pathname } = window.location;
 
     if (isSettingsPath(pathname)) {
-      return { type: 'settingsPage', path: pathname };
+      return buildSettingsPageBrowsingContext({
+        path: pathname,
+        draft: store.get(settingsExpressionDraftState.atom),
+        isDraftEnabled: isCustomizableSidebarEnabled,
+      });
     }
 
     const isSidePanelOpened = store.get(isSidePanelOpenedState.atom);
@@ -175,7 +186,7 @@ export const useGetBrowsingContext = () => {
     }
 
     return null;
-  }, [store]);
+  }, [store, isCustomizableSidebarEnabled]);
 
   return { getBrowsingContext };
 };

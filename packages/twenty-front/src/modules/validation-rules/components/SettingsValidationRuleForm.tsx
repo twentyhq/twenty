@@ -94,6 +94,7 @@ export const SettingsValidationRuleForm = ({
               fields={fields}
               editorFields={editorFields}
               onChange={(expression) => onChange({ ...values, expression })}
+              draftKind="validationRule"
             />
           }
         />

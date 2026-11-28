@@ -1,3 +1,8 @@
+export type SettingsExpressionDraftKind =
+  | 'validationRule'
+  | 'formula'
+  | 'agentTriggerCondition';
+
 export type BrowsingContextType =
   | {
       type: 'recordPage';
@@ -16,4 +21,8 @@ export type BrowsingContextType =
   | {
       type: 'settingsPage';
       path: string;
+      draft?: {
+        kind: SettingsExpressionDraftKind;
+        expression: string;
+      };
     };
