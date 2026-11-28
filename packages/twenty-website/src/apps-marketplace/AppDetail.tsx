@@ -191,7 +191,7 @@ const SideFieldRow = styled.div`
 
   /* centred on the text's first line (bodySm) */
   & > svg {
-    color: ${semanticColor.inkMuted};
+    color: ${color('blue')};
     margin-top: ${spacing(1)};
   }
 `;

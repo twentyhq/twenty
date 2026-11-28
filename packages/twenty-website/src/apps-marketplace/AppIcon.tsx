@@ -15,7 +15,6 @@ const Tile = styled.div`
   background-color: ${semanticColor.surface};
   border-radius: ${radius(2)};
   box-shadow: inset 0 0 0 1px ${semanticColor.line};
-  clip-path: polygon(0 0, 100% 0, 100% 82%, 82% 100%, 0 100%);
   display: flex;
   flex-shrink: 0;
   height: var(--apps-icon-size);
