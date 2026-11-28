@@ -23,6 +23,7 @@ import { useApolloClient } from '@apollo/client/react';
 import { GetCurrentUserDocument } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { persistLocale } from '~/utils/i18n/persistLocale';
 import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
 import { type UiScale } from '@/ui/theme/types/UiScale';
 
@@ -108,9 +109,11 @@ export const useLoadCurrentUser = () => {
       setCurrentWorkspaceMember(workspaceMember);
 
       initializeFormatPreferences(workspaceMember);
-      dynamicActivate(
-        (workspaceMember.locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE,
-      );
+
+      const workspaceMemberLocale =
+        (workspaceMember.locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE;
+      dynamicActivate(workspaceMemberLocale);
+      persistLocale(workspaceMemberLocale);
     }
 
     const workspace = isDefined(user.currentWorkspace)

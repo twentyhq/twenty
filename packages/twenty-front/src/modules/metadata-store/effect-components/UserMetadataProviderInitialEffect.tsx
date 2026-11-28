@@ -24,6 +24,7 @@ import { useQuery } from '@apollo/client/react';
 import { GetCurrentUserDocument } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { persistLocale } from '~/utils/i18n/persistLocale';
 import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
 import { type UiScale } from '@/ui/theme/types/UiScale';
 
@@ -159,9 +160,8 @@ export const UserMetadataProviderInitialEffect = () => {
 
       initializeFormatPreferences(updatedWorkspaceMember);
 
-      dynamicActivate(
-        (workspaceMember.locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE,
-      );
+      dynamicActivate(updatedWorkspaceMember.locale);
+      persistLocale(updatedWorkspaceMember.locale);
     }
 
     if (isDefined(workspaceMembers)) {
