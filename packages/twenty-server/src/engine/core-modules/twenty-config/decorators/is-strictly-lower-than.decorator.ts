@@ -17,9 +17,10 @@ export const IsStrictlyLowerThan = (
       options: validationOptions,
       validator: {
         validate(value: unknown, args: ValidationArguments) {
-          const [relatedPropertyName] = args.constraints;
-          // oxlint-disable-next-line typescript/no-explicit-any
-          const relatedValue = (args.object as any)[relatedPropertyName];
+          const relatedPropertyName: string = args.constraints[0];
+          const relatedValue: unknown = new Map(
+            Object.entries(args.object),
+          ).get(relatedPropertyName);
 
           return (
             typeof value === 'number' &&
