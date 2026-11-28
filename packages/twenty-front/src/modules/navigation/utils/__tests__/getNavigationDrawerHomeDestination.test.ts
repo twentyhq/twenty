@@ -8,6 +8,7 @@ describe('getNavigationDrawerHomeDestination', () => {
       getNavigationDrawerHomeDestination({
         memorizedUrl: '/objects/people?viewId=42',
         defaultHomePagePath,
+        inboxRecordRouteObjectNames: null,
       }),
     ).toBe('/objects/people?viewId=42');
   });
@@ -17,6 +18,7 @@ describe('getNavigationDrawerHomeDestination', () => {
       getNavigationDrawerHomeDestination({
         memorizedUrl: '/settings/profile',
         defaultHomePagePath,
+        inboxRecordRouteObjectNames: null,
       }),
     ).toBe(defaultHomePagePath);
   });
@@ -28,6 +30,7 @@ describe('getNavigationDrawerHomeDestination', () => {
         getNavigationDrawerHomeDestination({
           memorizedUrl,
           defaultHomePagePath,
+          inboxRecordRouteObjectNames: null,
         }),
       ).toBe(defaultHomePagePath);
     },
@@ -40,6 +43,7 @@ describe('getNavigationDrawerHomeDestination', () => {
         getNavigationDrawerHomeDestination({
           memorizedUrl,
           defaultHomePagePath,
+          inboxRecordRouteObjectNames: null,
         }),
       ).toBe(defaultHomePagePath);
     },

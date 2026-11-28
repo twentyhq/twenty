@@ -41,6 +41,8 @@ import { AppBasePath, AppPath, SidePanelPages } from 'twenty-shared/types';
 import { isDefined, isSafeInternalPath } from 'twenty-shared/utils';
 import { usePageChangeEffectNavigateLocation } from '@/app/hooks/usePageChangeEffectNavigateLocation';
 import { getPageLayoutIdForLocation } from '@/app/utils/getPageLayoutIdForLocation';
+import { inboxRecordRouteObjectNamesSelector } from '@/ai-chat/states/selectors/inboxRecordRouteObjectNamesSelector';
+import { isInboxPath } from '~/utils/isInboxPath';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 // TODO: break down into smaller functions and / or hooks
@@ -238,7 +240,39 @@ export const PageChangeEffect = () => {
       }
     }
 
+    const inboxRecordRouteObjectNames = store.get(
+      inboxRecordRouteObjectNamesSelector.atom,
+    );
+
     switch (true) {
+      case isInboxPath(location.pathname, inboxRecordRouteObjectNames): {
+        const isEnteringInbox = !isInboxPath(
+          previousLocation,
+          inboxRecordRouteObjectNames,
+        );
+
+        if (!isEnteringInbox) {
+          break;
+        }
+
+        refreshShownInboxThreadList();
+
+        resetFocusStackToFocusItem({
+          focusStackItem: {
+            focusId: PageFocusId.AiChatInbox,
+            componentInstance: {
+              componentType: FocusComponentType.PAGE,
+              componentInstanceId: PageFocusId.AiChatInbox,
+            },
+            globalHotkeysConfig: {
+              enableGlobalHotkeysWithModifiers: true,
+              enableGlobalHotkeysConflictingWithKeyboard: true,
+            },
+          },
+          shouldKeepItemsAbovePage: store.get(isSidePanelOpenedState.atom),
+        });
+        break;
+      }
       case isMatchingLocation(location, AppPath.RecordIndexPage) ||
         isMatchingLocation(location, AppPath.WorkflowIndexPage) ||
         isMatchingLocation(location, AppPath.AgentIndexPage): {
@@ -280,34 +314,6 @@ export const PageChangeEffect = () => {
 
           store.set(newRecordTitleCellToOpenState.atom, null);
         }
-        break;
-      }
-      case isMatchingLocation(location, AppPath.AiChatInbox): {
-        const isEnteringInbox = !matchPath(
-          AppPath.AiChatInbox,
-          previousLocation,
-        );
-
-        if (!isEnteringInbox) {
-          break;
-        }
-
-        refreshShownInboxThreadList();
-
-        resetFocusStackToFocusItem({
-          focusStackItem: {
-            focusId: PageFocusId.AiChatInbox,
-            componentInstance: {
-              componentType: FocusComponentType.PAGE,
-              componentInstanceId: PageFocusId.AiChatInbox,
-            },
-            globalHotkeysConfig: {
-              enableGlobalHotkeysWithModifiers: true,
-              enableGlobalHotkeysConflictingWithKeyboard: true,
-            },
-          },
-          shouldKeepItemsAbovePage: store.get(isSidePanelOpenedState.atom),
-        });
         break;
       }
       case isMatchingLocation(location, AppPath.PageLayoutPage): {

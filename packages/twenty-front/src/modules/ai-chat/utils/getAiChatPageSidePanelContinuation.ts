@@ -2,6 +2,7 @@ import { type Location } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getAiChatPageThreadId } from '@/ai-chat/utils/getAiChatPageThreadId';
+import { type InboxRecordRouteObjectNames } from '@/ai-chat/types/InboxRecordRouteObjectNames';
 import { isAiChatHandoffSkipped } from '@/ai-chat/utils/isAiChatHandoffSkipped';
 import { isAiChatPath } from '~/utils/isAiChatPath';
 import { isInboxPath } from '~/utils/isInboxPath';
@@ -17,24 +18,27 @@ export const getAiChatPageSidePanelContinuation = ({
   location,
   isMobile,
   newAiChatThreadId,
+  inboxRecordRouteObjectNames,
   isNewAiChatThreadReplySending,
 }: {
   previousPathname: string;
   location: Pick<Location, 'pathname' | 'state'>;
   isMobile: boolean;
   newAiChatThreadId: string;
+  inboxRecordRouteObjectNames: InboxRecordRouteObjectNames | null;
   isNewAiChatThreadReplySending: boolean;
 }): AiChatPageSidePanelContinuation => {
   const threadId = getAiChatPageThreadId({
     pathname: previousPathname,
     newAiChatThreadId,
+    inboxRecordRouteObjectNames,
   });
 
   if (
     !isDefined(threadId) ||
     isMobile ||
     isAiChatPath(location.pathname) ||
-    isInboxPath(location.pathname) ||
+    isInboxPath(location.pathname, inboxRecordRouteObjectNames) ||
     isAiChatHandoffSkipped(location.state)
   ) {
     return { type: 'none' };

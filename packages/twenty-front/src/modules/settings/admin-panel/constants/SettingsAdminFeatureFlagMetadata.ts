@@ -82,4 +82,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Inbox object names`,
     description: msg`Use the inbox names for the chat thread and message objects. Turned on by the workspace upgrade that renames them, so don't toggle it by hand.`,
   },
+  [FeatureFlagKey.IS_INBOX_VIEWS_ENABLED]: {
+    label: msg`Inbox views`,
+    description: msg`Show the inbox thread list from saved views, with their filters and sorts, instead of the built-in tabs. Requires the inbox.`,
+  },
 };

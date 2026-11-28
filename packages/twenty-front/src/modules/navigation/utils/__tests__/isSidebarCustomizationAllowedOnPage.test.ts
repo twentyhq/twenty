@@ -16,6 +16,7 @@ describe('isSidebarCustomizationAllowedOnPage', () => {
           pathname,
           activeNavigationDrawerTab: NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
           isLayoutCustomizationAllowedOnCurrentPage: false,
+          inboxRecordRouteObjectNames: null,
         }),
       ).toBe(expected);
     },
@@ -27,6 +28,7 @@ describe('isSidebarCustomizationAllowedOnPage', () => {
         pathname: '/objects/companies',
         activeNavigationDrawerTab: NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
         isLayoutCustomizationAllowedOnCurrentPage: true,
+        inboxRecordRouteObjectNames: null,
       }),
     ).toBe(true);
   });
@@ -39,6 +41,7 @@ describe('isSidebarCustomizationAllowedOnPage', () => {
           pathname,
           activeNavigationDrawerTab: NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
           isLayoutCustomizationAllowedOnCurrentPage: true,
+          inboxRecordRouteObjectNames: null,
         }),
       ).toBe(false);
     },

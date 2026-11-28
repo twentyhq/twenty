@@ -7,10 +7,18 @@ import {
 } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
 import { MotionGlobalConfig } from 'framer-motion';
-import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
+import {
+  MemoryRouter,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+  useParams,
+} from 'react-router-dom';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import {
   AppPath,
+  OpenRecordIn,
   StandardObjectNameSingular,
   SidePanelPages,
 } from 'twenty-shared/types';
@@ -25,7 +33,16 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { v4 as uuidv4 } from 'uuid';
 import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 
+import { WorkspaceRouteObjectsContext } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
+import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { RouteContextStoreProvider } from '@/context-store/components/RouteContextStoreProvider';
+import { AiChatThreadRecordView } from '@/inbox/components/AiChatThreadRecordView';
 import { INBOX_LAYOUT } from '@/inbox/constants/InboxLayout';
+import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
+import { ViewType } from '@/views/types/ViewType';
+import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { INBOX_LIST_PANE_WIDTH } from '@/inbox/constants/InboxListPaneWidth';
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai-chat/constants/AiChatNewThreadPathSegment';
 import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelectedThreadListSourceState';
@@ -45,7 +62,10 @@ import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPage
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { InboxPage } from '~/pages/inbox/InboxPage';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
+import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
 import { TEST_CHAT_OBJECT_METADATA_ID } from '~/testing/constants/TestChatObjectMetadataId';
 import { ChatObjectMetadataDecorator } from '~/testing/decorators/ChatObjectMetadataDecorator';
@@ -98,12 +118,48 @@ const StyledNavigationControls = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
+const INBOX_STORY_LOCATION_TEST_ID = 'inbox-story-location';
+const INBOX_STORY_ROUTE_CHANGE_TIMEOUT = 5000;
+const INBOX_STORY_RECORD_ROUTE_OBJECTS: WorkspaceRouteObject[] = [
+  { path: AppPath.RecordIndexPage },
+  { path: AppPath.RecordShowPage },
+];
+const INBOX_STORY_VIEW: ViewWithRelations = {
+  id: '20202020-0000-4000-8000-0000000000e1',
+  name: 'Open',
+  type: ViewType.LIST,
+  objectMetadataId: TEST_CHAT_OBJECT_METADATA_ID,
+  icon: 'IconInbox',
+  position: 0,
+  isCompact: false,
+  isPrivate: false,
+  isActive: true,
+  shouldHideEmptyGroups: false,
+  viewFields: [],
+  viewGroups: [],
+  viewFilters: [],
+  viewSorts: [],
+};
+
+const InboxThreadRecordRoute = () => {
+  const { objectRecordId } = useParams();
+
+  return isDefined(objectRecordId) ? (
+    <AiChatThreadRecordView objectRecordId={objectRecordId} />
+  ) : null;
+};
+
 const InboxRouteNavigation = () => {
   const navigate = useNavigate();
+  const { pathname, search } = useLocation();
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
 
   return (
     <StyledNavigationControls>
+      <output hidden data-testid={INBOX_STORY_LOCATION_TEST_ID}>
+        {pathname}
+        {search}
+      </output>
       <Button onClick={() => navigate(NEW_CHAT_PATH)}>
         Open new chat route
       </Button>
@@ -134,7 +190,7 @@ const InboxRouteNavigation = () => {
   );
 };
 
-const InboxRouteDecorator: Decorator = (Story) => (
+const InboxRouteDecorator: Decorator = (Story, { parameters }) => (
   <HelmetProvider>
     <MemoryRouter
       initialEntries={[getAppPath(AppPath.AiChatInbox, { threadId: null })]}
@@ -145,8 +201,20 @@ const InboxRouteDecorator: Decorator = (Story) => (
         <MemoryRouterAppNavigatorProvider>
           <StyledInboxStory>
             <InboxRouteNavigation />
+            {parameters.hasInboxRecordRoutes === true && (
+              <WorkspaceRouteObjectsContext.Provider
+                value={INBOX_STORY_RECORD_ROUTE_OBJECTS}
+              >
+                <RouteContextStoreProvider />
+              </WorkspaceRouteObjectsContext.Provider>
+            )}
             <Routes>
               <Route path={AppPath.AiChatInbox} element={<Story />} />
+              <Route path={AppPath.RecordIndexPage} element={null} />
+              <Route
+                path={AppPath.RecordShowPage}
+                element={<InboxThreadRecordRoute />}
+              />
             </Routes>
           </StyledInboxStory>
         </MemoryRouterAppNavigatorProvider>
@@ -627,5 +695,91 @@ export const TriageAfterReopeningConversation: Story = {
     await expect(
       canvas.getByRole('button', { name: 'Chat details' }),
     ).toBeVisible();
+  },
+};
+
+export const ThreadRecordRouteWithInboxViews: Story = {
+  parameters: { hasInboxRecordRoutes: true },
+  beforeEach: () => {
+    jotaiStore.set(inboxLayoutState.atom, INBOX_LAYOUT.SPLIT_VIEW);
+    jotaiStore.set(lastVisitedViewPerObjectMetadataItemState.atom, null);
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      featureFlags: [
+        { key: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED, value: true },
+        { key: FeatureFlagKey.IS_INBOX_VIEWS_ENABLED, value: true },
+      ],
+    });
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const user = userEvent.setup();
+    const routeChangeOptions = { timeout: INBOX_STORY_ROUTE_CHANGE_TIMEOUT };
+    const location = await canvas.findByTestId(
+      INBOX_STORY_LOCATION_TEST_ID,
+      {},
+      routeChangeOptions,
+    );
+
+    setTestViewsInMetadataStore(jotaiStore, [INBOX_STORY_VIEW]);
+    jotaiStore.set(
+      currentWorkspaceMemberState.atom,
+      (currentWorkspaceMember) =>
+        isDefined(currentWorkspaceMember)
+          ? {
+              ...currentWorkspaceMember,
+              openRecordIn: OpenRecordIn.RECORD_PAGE,
+            }
+          : currentWorkspaceMember,
+    );
+
+    await waitFor(
+      () => expect(location).toHaveTextContent('/objects/agentChatThreads'),
+      routeChangeOptions,
+    );
+
+    await user.click(
+      canvas.getByRole('button', { name: 'Open saved chat route' }),
+    );
+    await waitFor(
+      () =>
+        expect(location).toHaveTextContent(
+          `/object/agentChatThread/${SECOND_THREAD_ID}`,
+        ),
+      routeChangeOptions,
+    );
+
+    const listPane = within(
+      await canvas.findByRole(
+        'region',
+        { name: 'Conversation list' },
+        routeChangeOptions,
+      ),
+    );
+
+    await canvas.findByRole(
+      'button',
+      { name: 'Chat details' },
+      routeChangeOptions,
+    );
+    await expect(
+      await listPane.findByText(SECOND_THREAD_TITLE, {}, routeChangeOptions),
+    ).toBeVisible();
+
+    await user.click(await listPane.findByText(FIRST_THREAD_TITLE));
+    await waitFor(
+      () =>
+        expect(location).toHaveTextContent(
+          `/object/agentChatThread/${FIRST_THREAD_ID}`,
+        ),
+      routeChangeOptions,
+    );
+    await expect(listPane.getByText(SECOND_THREAD_TITLE)).toBeVisible();
+
+    await user.click(canvas.getByRole('button', { name: 'Close' }));
+    await waitFor(
+      () => expect(location).toHaveTextContent('/objects/agentChatThreads'),
+      routeChangeOptions,
+    );
   },
 };

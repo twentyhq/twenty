@@ -43,6 +43,7 @@ import {
 import { isDefined, resolveObjectMetadataLabel } from 'twenty-shared/utils';
 import { useLocation } from 'react-router-dom';
 
+import { inboxRecordRouteObjectNamesSelector } from '@/ai-chat/states/selectors/inboxRecordRouteObjectNamesSelector';
 import { isInboxPath } from '~/utils/isInboxPath';
 
 export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
@@ -50,6 +51,9 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   const isInSidePanel = workspaceSurface.type === 'side-panel';
   const contextStoreInstanceId = useContextStoreInstanceId();
   const location = useLocation();
+  const inboxRecordRouteObjectNames = useAtomStateValue(
+    inboxRecordRouteObjectNamesSelector,
+  );
 
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -128,7 +132,7 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
       threadIds: inboxStatusThreadIds,
       // Every menu on the inbox page, the open chat's included, files the
       // chats of the channel on screen for the channel
-      channelId: isInboxPath(location.pathname)
+      channelId: isInboxPath(location.pathname, inboxRecordRouteObjectNames)
         ? (inboxSelectedChannelView?.channelId ?? null)
         : null,
     },

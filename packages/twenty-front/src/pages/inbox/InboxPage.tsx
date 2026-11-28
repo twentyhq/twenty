@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { AnimatePresence } from 'framer-motion';
 import { useLingui } from '@lingui/react/macro';
 import { useRef } from 'react';
-import { Navigate, useParams } from 'react-router-dom';
+import { Navigate, useLocation, useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
@@ -19,6 +19,8 @@ import { InboxSelectionToContextStoreEffect } from '@/inbox/components/InboxSele
 import { InboxThreadPagination } from '@/inbox/components/InboxThreadPagination';
 import { INBOX_LIST_PANE_WIDTH } from '@/inbox/constants/InboxListPaneWidth';
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai-chat/constants/AiChatNewThreadPathSegment';
+import { inboxRecordRouteObjectNamesSelector } from '@/ai-chat/states/selectors/inboxRecordRouteObjectNamesSelector';
+import { getInboxPath } from '@/ai-chat/utils/getInboxPath';
 import { useInboxRecordSelectionInstanceId } from '@/inbox/hooks/useInboxRecordSelectionInstanceId';
 import { useInboxThreadListKeyboardNavigation } from '@/inbox/hooks/useInboxThreadListKeyboardNavigation';
 import { useIsInboxShowingDirectMessage } from '@/inbox/hooks/useIsInboxShowingDirectMessage';
@@ -219,6 +221,10 @@ const InboxPageContent = () => {
 export const InboxPage = () => {
   const recordSelectionInstanceId = useInboxRecordSelectionInstanceId();
   const { threadId } = useParams();
+  const location = useLocation();
+  const inboxRecordRouteObjectNames = useAtomStateValue(
+    inboxRecordRouteObjectNamesSelector,
+  );
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
@@ -227,6 +233,23 @@ export const InboxPage = () => {
     return (
       <Navigate
         to={getAppPath(AppPath.AiChat, { threadId: threadId ?? null })}
+        replace
+      />
+    );
+  }
+
+  if (isDefined(inboxRecordRouteObjectNames)) {
+    return (
+      <Navigate
+        to={{
+          pathname: getInboxPath({
+            threadId: threadId ?? null,
+            inboxRecordRouteObjectNames,
+          }),
+          search: location.search,
+          hash: location.hash,
+        }}
+        state={location.state}
         replace
       />
     );

@@ -29,18 +29,25 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { inboxRecordRouteObjectNamesSelector } from '@/ai-chat/states/selectors/inboxRecordRouteObjectNamesSelector';
 import { isAiModePath } from '~/utils/isAiModePath';
 
 export const useSwitchNavigationDrawerTab = () => {
   const isMobile = useIsMobile();
   const location = useLocation();
+  const inboxRecordRouteObjectNames = useAtomStateValue(
+    inboxRecordRouteObjectNamesSelector,
+  );
   const navigate = useNavigate();
   const navigateSettings = useNavigateSettings();
 
   const activeNavigationDrawerTab = useActiveNavigationDrawerTab();
   const isSettingsDrawer = useIsSettingsDrawer();
   const isSettingsPage = useIsSettingsPage();
-  const isAiModePage = isAiModePath(location.pathname);
+  const isAiModePage = isAiModePath(
+    location.pathname,
+    inboxRecordRouteObjectNames,
+  );
 
   const navigationMemorizedUrl = useAtomStateValue(navigationMemorizedUrlState);
   const navigationDrawerExpandedMemorized = useAtomStateValue(
@@ -72,6 +79,7 @@ export const useSwitchNavigationDrawerTab = () => {
     destinationPath: getNavigationDrawerHomeDestination({
       memorizedUrl: getExpandedAiChatReturnLocation(location.state),
       defaultHomePagePath,
+      inboxRecordRouteObjectNames,
     }),
   });
 
@@ -91,6 +99,7 @@ export const useSwitchNavigationDrawerTab = () => {
         getNavigationDrawerHomeDestination({
           memorizedUrl: navigationMemorizedUrl,
           defaultHomePagePath,
+          inboxRecordRouteObjectNames,
         }),
         { replace: true },
       );

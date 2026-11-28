@@ -1,13 +1,9 @@
-import { matchPath, useLocation } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
-
 import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
+import { useInboxRouteThreadId } from '@/inbox/hooks/useInboxRouteThreadId';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 export const useIsInboxShowingDirectMessage = () => {
-  const location = useLocation();
-  const inboxThreadId =
-    matchPath(AppPath.AiChatInbox, location.pathname)?.params.threadId ?? null;
+  const inboxThreadId = useInboxRouteThreadId() ?? null;
 
   return useAtomFamilySelectorValue(
     aiChatThreadIsDirectMessageFamilySelector,
