@@ -13,6 +13,7 @@ import { syncMarketplaceCatalogFromRegistryPackage } from 'test/integration/meta
 import { upsertApplicationRegistrationFromCatalog } from 'test/integration/metadata/suites/application/utils/upsert-application-registration-from-catalog.util';
 import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
 import { type DataSource } from 'typeorm';
 
 import { MARKETPLACE_FEATURED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-featured-applications.constant';
@@ -465,6 +466,35 @@ describe('Marketplace Catalog Sync (integration)', () => {
         sourcePackage: '@test/pinned-app',
         latestAvailableVersion: '2.0.0',
       });
+    });
+
+    it('does not register a Twenty app identifier from a package outside the Twenty npm scope', async () => {
+      const universalIdentifier =
+        TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.GITHUB;
+
+      try {
+        await upsertApplicationRegistrationFromCatalog({
+          universalIdentifier,
+          name: 'Squatted GitHub',
+          sourceType: ApplicationRegistrationSourceType.NPM,
+          sourcePackage: 'twenty-github',
+          latestAvailableVersion: '1.0.0',
+          manifest: buildBaseManifest({
+            appId: universalIdentifier,
+            roleId: crypto.randomUUID(),
+          }),
+        });
+
+        expect(
+          await findApplicationRegistrationByUniversalIdentifier({
+            universalIdentifier,
+          }),
+        ).toBeNull();
+      } finally {
+        await cleanupApplicationAndAppRegistration({
+          applicationUniversalIdentifier: universalIdentifier,
+        });
+      }
     });
 
     it('does not register an official identifier from a non-official package', async () => {

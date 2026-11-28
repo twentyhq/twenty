@@ -30,6 +30,8 @@ import { shouldRefreshApplicationRegistrationOnInstall } from 'src/engine/core-m
 import { type BundledApplication } from 'src/engine/core-modules/application/application-bundled/types/bundled-application.type';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { MARKETPLACE_FEATURED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-featured-applications.constant';
+import { TWENTY_PUBLIC_APP_NPM_SCOPE } from 'src/engine/core-modules/application/application-marketplace/constants/twenty-public-app-npm-scope.constant';
+import { isTwentyPublicAppUniversalIdentifier } from 'src/engine/core-modules/application/application-marketplace/utils/is-twenty-public-app-universal-identifier.util';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import {
@@ -926,6 +928,18 @@ export class ApplicationRegistrationService {
     ) {
       this.logger.warn(
         `Skipping catalog entry from package ${params.sourcePackage}: universal identifier ${params.universalIdentifier} belongs to package ${expectedSourcePackage}`,
+      );
+
+      return null;
+    }
+
+    // Only Twenty can publish under its npm scope, so a first-party identifier cannot be claimed by a look-alike package published first.
+    if (
+      isTwentyPublicAppUniversalIdentifier(params.universalIdentifier) &&
+      params.sourcePackage?.startsWith(TWENTY_PUBLIC_APP_NPM_SCOPE) !== true
+    ) {
+      this.logger.warn(
+        `Skipping catalog entry from package ${params.sourcePackage}: universal identifier ${params.universalIdentifier} belongs to a Twenty app, published under ${TWENTY_PUBLIC_APP_NPM_SCOPE}`,
       );
 
       return null;

@@ -1,13 +1,20 @@
 // Universal identifiers of the first-party apps in packages/twenty-apps/public.
 export const TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS = {
   CALL_RECORDER: '8da4b8b5-5edf-4880-b51f-ab6e679ec617',
+  COMPANION: '8bdaaa9f-dc53-4247-a89b-aa386c9b3244',
+  DISCORD: '9b1b7628-ac98-4e44-8e1e-91b401378a5f',
   EXA: '2b7f4a2e-9c4b-4a11-b63c-2e5e7d3f5a9a',
   FATHOM: 'c5fb24b3-15b0-48fb-a9b5-f182ba231e6c',
-  MEET: '6d3edf97-994f-4489-8207-3822fed19c38',
+  FIREFLIES: '97d24431-ebc7-4156-9705-b6900e73edc8',
+  GITHUB: '60b93f09-77b4-40f3-9501-f342c5ee64bd',
   GRANOLA: 'ffcc3979-0ee6-4d7d-912b-c12997d9f0f4',
   HELP_CENTER: 'a905e256-5b7b-46e6-ad22-a5a562982eed',
   LAST_CONTACT: '66a504cc-0a75-410e-a43f-cdeae1db1522',
+  LINKEDIN: '06e0e0a1-27be-4710-ab65-4c982622da7e',
+  MEET: '6d3edf97-994f-4489-8207-3822fed19c38',
   PEOPLE_DATA_LABS: '4a1178c1-3535-4a47-b592-231d3216b36f',
   SLACK: 'a8c47f21-3b9e-4d2a-8f61-9c0e7d4a2b51',
   TEAMS: '5955f8fe-6724-4749-b770-b849d63d5330',
+  TELEGRAM: '4b277f4e-3f04-46d5-a0c5-d38e73d8cad6',
+  WHATSAPP: '50a2ea2a-e36a-49c5-ae45-00ac34780e90',
 } as const;
