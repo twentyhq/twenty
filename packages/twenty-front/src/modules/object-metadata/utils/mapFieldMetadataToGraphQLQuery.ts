@@ -359,6 +359,12 @@ ${mapObjectMetadataToGraphQLQuery({
   blocknote
   markdown
   tiptap
+  files {
+    fileId
+    label
+    extension
+    url
+  }
 }`);
   }
 

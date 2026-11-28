@@ -4,6 +4,8 @@ export const isCompositePropertySupportedInGroupBy = (
   property: CompositeProperty,
 ): boolean => {
   return (
-    property.hidden !== true && property.type !== FieldMetadataType.RAW_JSON
+    property.hidden !== true &&
+    property.type !== FieldMetadataType.RAW_JSON &&
+    property.type !== FieldMetadataType.FILES
   );
 };

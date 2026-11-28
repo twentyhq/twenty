@@ -3,7 +3,10 @@ import { GET_MY_MESSAGE_CHANNELS } from '@/settings/accounts/graphql/queries/get
 import { useApolloClient, useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useMyMessageChannels = (connectedAccountId?: string) => {
+export const useMyMessageChannels = (
+  connectedAccountId?: string,
+  { skip = false }: { skip?: boolean } = {},
+) => {
   const apolloClient = useApolloClient();
 
   const { data, loading, error, refetch } = useQuery<{
@@ -11,6 +14,7 @@ export const useMyMessageChannels = (connectedAccountId?: string) => {
   }>(GET_MY_MESSAGE_CHANNELS, {
     client: apolloClient,
     variables: connectedAccountId ? { connectedAccountId } : undefined,
+    skip,
   });
 
   return {

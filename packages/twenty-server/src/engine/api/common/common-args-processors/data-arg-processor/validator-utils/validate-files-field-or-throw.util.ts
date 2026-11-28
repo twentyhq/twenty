@@ -6,6 +6,7 @@ import {
   type FieldMetadataSettingsMapping,
   type FieldMetadataType,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { type FileInput } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
@@ -26,7 +27,7 @@ export const filesFieldSchema = z.array(fileItemSchema);
 export const validateFilesFieldOrThrow = (
   value: unknown,
   fieldName: string,
-  settings: FieldMetadataSettingsMapping[FieldMetadataType.FILES],
+  settings: FieldMetadataSettingsMapping[FieldMetadataType.FILES] | null,
 ): FileInput[] | null => {
   if (isNull(value)) {
     return null;
@@ -67,9 +68,9 @@ export const validateFilesFieldOrThrow = (
     );
   }
 
-  if (result.data.length > settings.maxNumberOfValues) {
-    const maxNumberOfValues = settings.maxNumberOfValues;
+  const maxNumberOfValues = settings?.maxNumberOfValues;
 
+  if (isDefined(maxNumberOfValues) && result.data.length > maxNumberOfValues) {
     throw new CommonQueryRunnerException(
       `Max number of files is ${maxNumberOfValues} for field "${fieldName}"`,
       CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,

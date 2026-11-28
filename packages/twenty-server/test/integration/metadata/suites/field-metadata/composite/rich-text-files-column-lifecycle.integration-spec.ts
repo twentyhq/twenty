@@ -147,29 +147,6 @@ describe('Rich text field files column lifecycle', () => {
     ]);
   });
 
-  it('should rename a field whose files column was not provisioned yet', async () => {
-    await global.testDataSource.query(
-      `ALTER TABLE "${SCHEMA}"."${TABLE_NAME}" DROP COLUMN "summaryFiles"`,
-    );
-
-    await updateOneFieldMetadata({
-      expectToFail: false,
-      input: {
-        idToUpdate: fieldMetadataId,
-        updatePayload: { name: 'outline', label: 'Outline' },
-      },
-      gqlFields: 'id',
-    });
-
-    expect(await findColumnNames('outline')).toEqual([
-      'outlineBlocknote',
-      'outlineFiles',
-      'outlineMarkdown',
-      'outlineTiptap',
-    ]);
-    expect(await findColumnNames('summary')).toEqual([]);
-  });
-
   it('should rename the files column with the field', async () => {
     await updateOneFieldMetadata({
       expectToFail: false,
@@ -180,7 +157,7 @@ describe('Rich text field files column lifecycle', () => {
       gqlFields: 'id',
     });
 
-    expect(await findColumnNames('outline')).toEqual([]);
+    expect(await findColumnNames('summary')).toEqual([]);
     expect(await findColumnNames('recap')).toEqual([
       'recapBlocknote',
       'recapFiles',

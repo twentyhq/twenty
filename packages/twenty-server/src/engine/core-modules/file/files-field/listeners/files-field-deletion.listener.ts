@@ -7,6 +7,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { OnDatabaseBatchEvent } from 'src/engine/workspace-event-emitter/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
+import { isFieldHoldingFiles } from 'src/engine/core-modules/file/files-field/utils/is-field-holding-files.util';
+import { readFilesValue } from 'src/engine/core-modules/file/files-field/utils/read-files-value.util';
 import {
   FilesFieldDeletionJob,
   FilesFieldDeletionJobData,
@@ -72,9 +74,7 @@ export class FilesFieldDeletionListener {
       flatFieldMetadataMaps,
     );
 
-    const filesFields = objectFields.filter(
-      (field) => field.type === FieldMetadataType.FILES,
-    );
+    const filesFields = objectFields.filter(isFieldHoldingFiles);
 
     if (filesFields.length === 0) {
       return;
@@ -86,7 +86,10 @@ export class FilesFieldDeletionListener {
       const recordBefore = event.properties.before as Record<string, unknown>;
 
       for (const filesField of filesFields) {
-        const filesValue = recordBefore[filesField.name];
+        const filesValue = readFilesValue({
+          record: recordBefore,
+          field: filesField,
+        });
 
         if (!isDefined(filesValue)) {
           continue;

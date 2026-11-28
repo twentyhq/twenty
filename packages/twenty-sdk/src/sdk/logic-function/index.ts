@@ -63,6 +63,10 @@ export type {
   SendAppMessagePayload,
   SendAppMessageRecipient,
   SendAppMessageResult,
+  StartAppConversationPayload,
+  StartAppConversationRecipient,
+  StartAppConversationResult,
+  StartAppConversationResultRecipient,
 } from 'twenty-shared/application';
 
 export { createMessageChannel } from '@/sdk/logic-function/messaging/create-message-channel';
@@ -103,6 +107,12 @@ export { isAgentChatTurnEndEvent } from 'twenty-shared/ai';
 export { ai, type GenerateInput } from '@/sdk/logic-function/ai/ai';
 export type { GenerateResult } from 'twenty-shared/application';
 export type { AiRunScope } from 'twenty-shared/ai';
+
+export { emitEvent } from '@/sdk/logic-function/events/emit-event';
+export type {
+  EmitEventInput,
+  EmitEventResult,
+} from 'twenty-shared/application';
 
 export { sendInboxMessage } from '@/sdk/inbox/send-inbox-message';
 export { inboxMention } from '@/sdk/inbox/mentions/inbox-mention';

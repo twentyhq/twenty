@@ -2,7 +2,7 @@ import path from 'path';
 
 import { msg } from '@lingui/core/macro';
 import {
-  FieldMetadataType,
+  type FieldMetadataType,
   type FieldMetadataSettingsMapping,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,6 +19,9 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { isFieldHoldingFiles } from 'src/engine/core-modules/file/files-field/utils/is-field-holding-files.util';
+import { readFilesValue } from 'src/engine/core-modules/file/files-field/utils/read-files-value.util';
+import { writeFilesValue } from 'src/engine/core-modules/file/files-field/utils/write-files-value.util';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -96,8 +99,7 @@ export class FilesFieldSync {
       );
 
       for (const filesField of filesFields) {
-        const existingFilesValue = (existingRecord?.[filesField.name] ??
-          []) as FileItem[];
+        const existingFilesValue = this.readFiles(existingRecord, filesField);
 
         const diff = this.validateAndComputeFilesFieldDiff(
           entity as Record<string, unknown>,
@@ -164,8 +166,7 @@ export class FilesFieldSync {
     const existingRecord = existingRecords[0];
 
     for (const filesField of filesFields) {
-      const existingFilesValue = (existingRecord?.[filesField.name] ??
-        []) as FileItem[];
+      const existingFilesValue = this.readFiles(existingRecord, filesField);
 
       const diff = this.validateAndComputeFilesFieldDiff(
         updatePayload as Record<string, unknown>,
@@ -250,9 +251,7 @@ export class FilesFieldSync {
         : undefined;
 
       for (const filesField of filesFields) {
-        const existingFilesValue = existingRecord
-          ? ((existingRecord[filesField.name] ?? []) as FileItem[])
-          : [];
+        const existingFilesValue = this.readFiles(existingRecord, filesField);
 
         const diff = this.validateAndComputeFilesFieldDiff(
           entity as Record<string, unknown>,
@@ -279,10 +278,16 @@ export class FilesFieldSync {
     newFilesValue: FileItem[],
   ): void {
     const filesFieldMaxNumberOfValues = (
-      filesField.settings as FieldMetadataSettingsMapping[FieldMetadataType.FILES]
-    ).maxNumberOfValues;
+      filesField.settings as
+        | Partial<FieldMetadataSettingsMapping[FieldMetadataType.FILES]>
+        | null
+        | undefined
+    )?.maxNumberOfValues;
 
-    if (newFilesValue.length > filesFieldMaxNumberOfValues) {
+    if (
+      isDefined(filesFieldMaxNumberOfValues) &&
+      newFilesValue.length > filesFieldMaxNumberOfValues
+    ) {
       throw new TwentyOrmException(
         `Max number of files is ${filesFieldMaxNumberOfValues}`,
         TwentyOrmExceptionCode.INVALID_INPUT,
@@ -320,10 +325,10 @@ export class FilesFieldSync {
     filesField: OrmFlatFieldMetadata,
     existingFilesValue: FileItem[],
   ): FilesFieldDiff | null {
-    const newFilesValue = entity[filesField.name] as
-      | FileItem[]
-      | null
-      | undefined;
+    const newFilesValue = readFilesValue({
+      record: entity,
+      field: filesField,
+    }) as FileItem[] | null | undefined;
 
     if (!isDefined(newFilesValue)) {
       return null;
@@ -419,10 +424,11 @@ export class FilesFieldSync {
       objectMetadata.id,
     );
 
-    const updatedEntities = this.updateEntitiesWithEnrichedFilesFieldValues(
+    const updatedEntities = this.updateEntitiesWithEnrichedFilesFieldValues({
       entities,
       filesFieldDiffByEntityIndex,
-    );
+      filesFields: this.getFilesFields(objectMetadata.id),
+    });
 
     return {
       entities: updatedEntities,
@@ -459,7 +465,21 @@ export class FilesFieldSync {
         const fieldUniversalIdentifier =
           fieldNameToUniversalIdentifier.get(fieldName);
 
+        const fileIdsAddedElsewhere = new Set(allFileIds.toAdd);
+
         diff.toAdd.forEach((file) => {
+          if (fileIdsAddedElsewhere.has(file.fileId)) {
+            const fileId = file.fileId;
+
+            throw new TwentyOrmException(
+              `File ${fileId} is listed by more than one record or field`,
+              TwentyOrmExceptionCode.INVALID_INPUT,
+              {
+                userFriendlyMessage: msg`File ${fileId} is listed more than once. Please re-upload the file.`,
+              },
+            );
+          }
+
           allFileIds.toAdd.add(file.fileId);
           allFileIdsToFetch.add(file.fileId);
           if (isDefined(fieldUniversalIdentifier)) {
@@ -623,10 +643,15 @@ export class FilesFieldSync {
 
   private updateEntitiesWithEnrichedFilesFieldValues<
     Entity extends ObjectLiteral,
-  >(
-    entities: QueryDeepPartialEntity<Entity>[],
-    filesFieldDiffByEntityIndex: FilesFieldDiffByEntityIndex,
-  ): QueryDeepPartialEntity<Entity>[] {
+  >({
+    entities,
+    filesFieldDiffByEntityIndex,
+    filesFields,
+  }: {
+    entities: QueryDeepPartialEntity<Entity>[];
+    filesFieldDiffByEntityIndex: FilesFieldDiffByEntityIndex;
+    filesFields: OrmFlatFieldMetadata[];
+  }): QueryDeepPartialEntity<Entity>[] {
     return entities.map((entity, index) => {
       const entityDiffs = filesFieldDiffByEntityIndex[index];
 
@@ -634,12 +659,16 @@ export class FilesFieldSync {
         return entity;
       }
 
-      const updatedEntity = { ...entity };
-      const updatedEntityAny = updatedEntity as Record<string, unknown>;
+      let updatedEntity = entity as Record<string, unknown>;
 
-      for (const [fieldName, diff] of Object.entries(entityDiffs)) {
-        const entityAny = entity as Record<string, unknown>;
-        const currentFiles = (entityAny[fieldName] ?? []) as FileItem[];
+      for (const filesField of filesFields) {
+        const diff = entityDiffs[filesField.name];
+
+        if (!isDefined(diff)) {
+          continue;
+        }
+
+        const currentFiles = this.readFiles(updatedEntity, filesField);
 
         const toAddMap = new Map(diff.toAdd.map((file) => [file.fileId, file]));
         const toUpdateMap = new Map(
@@ -653,11 +682,25 @@ export class FilesFieldSync {
           return enrichedFile || file;
         });
 
-        updatedEntityAny[fieldName] = updatedFiles;
+        updatedEntity = {
+          ...updatedEntity,
+          [filesField.name]: writeFilesValue({
+            fieldValue: updatedEntity[filesField.name],
+            field: filesField,
+            filesValue: updatedFiles,
+          }),
+        };
       }
 
-      return updatedEntity;
+      return updatedEntity as QueryDeepPartialEntity<Entity>;
     });
+  }
+
+  private readFiles(
+    record: Record<string, unknown> | null | undefined,
+    filesField: OrmFlatFieldMetadata,
+  ): FileItem[] {
+    return (readFilesValue({ record, field: filesField }) ?? []) as FileItem[];
   }
 
   private isPayloadTouchingFilesFields(
@@ -665,7 +708,7 @@ export class FilesFieldSync {
     filesFields: OrmFlatFieldMetadata[],
   ): boolean {
     return filesFields.some((filesField) =>
-      isDefined(updatePayload[filesField.name]),
+      isDefined(readFilesValue({ record: updatePayload, field: filesField })),
     );
   }
 
@@ -684,8 +727,6 @@ export class FilesFieldSync {
       this.internalContext.flatFieldMetadataMaps,
     );
 
-    return objectFields.filter(
-      (field) => field.type === FieldMetadataType.FILES,
-    );
+    return objectFields.filter(isFieldHoldingFiles);
   }
 }

@@ -10,6 +10,7 @@ export type InputJsonSchema = {
     | 'record'
     | 'records';
   description?: string;
+  format?: string;
   enum?: unknown[];
   items?: InputJsonSchema;
   properties?: Record<string, InputJsonSchema>;

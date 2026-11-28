@@ -57,6 +57,20 @@ describe('fromMessagingProviderManifestToUniversalFlatMessagingProviderOrThrow',
     });
   });
 
+  it('keeps the start conversation logic function the app declares', () => {
+    expect(
+      fromMessagingProviderManifestToUniversalFlatMessagingProviderOrThrow({
+        messagingProviderManifest: {
+          ...MESSAGING_PROVIDER_MANIFEST,
+          startConversationLogicFunctionUniversalIdentifier:
+            '7d2a8b5c-4e6f-4a0b-9c3d-9e8f7a6b5c4d',
+        },
+        applicationUniversalIdentifier: 'application-universal-identifier',
+        now: '2026-11-09T00:00:00.000Z',
+      }).startConversationLogicFunctionUniversalIdentifier,
+    ).toBe('7d2a8b5c-4e6f-4a0b-9c3d-9e8f7a6b5c4d');
+  });
+
   it('rejects a messaging provider without a connection provider', () => {
     expect(() =>
       fromMessagingProviderManifestToUniversalFlatMessagingProviderOrThrow({

@@ -5,6 +5,7 @@ import { EmailThreadNotShared } from '@/activities/emails/components/EmailThread
 import { MessageChannelLogo } from '@/activities/emails/components/MessageChannelLogo';
 import { getEmailParticipantAvatarColorSeed } from '@/activities/emails/utils/getEmailParticipantAvatarColorSeed';
 import { getTimelineThreadLabel } from '@/activities/emails/utils/getTimelineThreadLabel';
+import { getVisibleTimelineThreadSubject } from '@/activities/emails/utils/getVisibleTimelineThreadSubject';
 import { isChatTimelineThreadChannel } from '@/activities/emails/utils/isChatTimelineThreadChannel';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
@@ -104,7 +105,7 @@ export const EmailThreadPreview = ({
   const visibility = thread.visibility;
   const isChatThread = isChatTimelineThreadChannel(thread.channel);
 
-  const senderNames =
+  const participantNames =
     thread.firstParticipant.displayName +
     (thread?.lastTwoParticipants?.[0]?.displayName
       ? `, ${thread.lastTwoParticipants?.[0]?.displayName}`
@@ -112,6 +113,11 @@ export const EmailThreadPreview = ({
     (thread?.lastTwoParticipants?.[1]?.displayName
       ? `, ${thread.lastTwoParticipants?.[1]?.displayName}`
       : '');
+
+  const conversationName = isChatThread
+    ? getVisibleTimelineThreadSubject(thread)
+    : undefined;
+  const senderNames = conversationName ?? participantNames;
 
   const lastParticipant = thread?.lastTwoParticipants?.[1];
 

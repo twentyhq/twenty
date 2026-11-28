@@ -20,8 +20,10 @@ export const StyledChatMessageRow = styled.div<{
     outline: none;
   }
 
-  &:hover .message-actions,
-  &:focus-within .message-actions {
+  &:hover:not(:has([data-hover-card-ignore]:hover)) .message-actions,
+  &:focus-visible .message-actions,
+  &:has(:focus-visible):not(:has([data-hover-card-ignore]:hover))
+    .message-actions {
     opacity: 1;
     pointer-events: auto;
   }
@@ -48,7 +50,7 @@ export const StyledChatMessageRow = styled.div<{
     z-index: -1;
   }
 
-  &[data-hover-card]:hover::before {
+  &[data-hover-card]:hover:not(:has([data-hover-card-ignore]:hover))::before {
     opacity: 1;
   }
 `;

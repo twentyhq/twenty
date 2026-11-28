@@ -25,6 +25,12 @@ export const richTextCompositeType: CompositeType = {
       hidden: false,
       isRequired: false,
     },
+    {
+      name: 'files',
+      type: FieldMetadataType.FILES,
+      hidden: false,
+      isRequired: false,
+    },
   ],
 };
 

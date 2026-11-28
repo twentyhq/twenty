@@ -353,7 +353,9 @@ import { AddValidationRuleTreeFastInstanceCommand } from 'src/database/commands/
 import { PurgeExpiredRefreshTokensSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795731384123-purge-expired-refresh-tokens';
 import { AddNavigationMenuItemVisibleItemLimitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-fast-1795772817031-add-navigation-menu-item-visible-item-limit';
 import { BackfillRecentChatsSectionVisibleItemLimitSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-65/2-65-instance-command-slow-1795772818031-backfill-recent-chats-section-visible-item-limit';
-import { DropValidationRuleExpressionAndBindingsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-66/2-66-instance-command-fast-1795796873742-drop-validation-rule-expression-and-bindings';
+import { AddEventMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-66/2-66-instance-command-fast-1795792442166-add-event-metadata';
+import { AddStartConversationLogicFunctionToMessagingProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-66/2-66-instance-command-fast-1795809856924-add-start-conversation-logic-function-to-messaging-provider';
+import { DropValidationRuleExpressionAndBindingsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-66/2-66-instance-command-fast-1795859275327-drop-validation-rule-expression-and-bindings';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -709,5 +711,7 @@ export const INSTANCE_COMMANDS = [
   PurgeExpiredRefreshTokensSlowInstanceCommand,
   AddNavigationMenuItemVisibleItemLimitFastInstanceCommand,
   BackfillRecentChatsSectionVisibleItemLimitSlowInstanceCommand,
+  AddEventMetadataFastInstanceCommand,
+  AddStartConversationLogicFunctionToMessagingProviderFastInstanceCommand,
   DropValidationRuleExpressionAndBindingsFastInstanceCommand,
 ];

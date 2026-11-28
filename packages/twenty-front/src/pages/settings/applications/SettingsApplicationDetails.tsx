@@ -262,6 +262,17 @@ export const SettingsApplicationDetails = () => {
     ? () => redirect(configurationTabLocation)
     : undefined;
 
+  const healthCheckBanner =
+    isDefined(application) && !hasMissingRequiredVariables ? (
+      <SettingsApplicationHealthCheckBanner
+        applicationId={applicationId}
+        healthCheckFamilyState={
+          WORKSPACE_APPLICATION_HEALTH_CHECK_RUNNER.healthCheckFamilyState
+        }
+        fallbackLocation={configurationTabLocation}
+      />
+    ) : null;
+
   const renderActiveTabContent = () => {
     if (isUnavailable) {
       return (
@@ -299,6 +310,7 @@ export const SettingsApplicationDetails = () => {
             displayName={displayName}
             description={description}
             coverImageUrl={coverImageUrl}
+            healthCheckBanner={healthCheckBanner}
             marketplaceUniversalIdentifier={detail?.universalIdentifier}
             isMarketplaceApplication={isMarketplaceApplication}
             hasUpdate={hasUpdate}
@@ -399,21 +411,13 @@ export const SettingsApplicationDetails = () => {
             />
           )}
         {isDefined(application) && !hasMissingRequiredVariables && (
-          <>
-            <SettingsApplicationHealthCheckEffect
-              key={`${applicationId}-${application.healthCheckLogicFunctionId}`}
-              applicationId={applicationId}
-              runner={WORKSPACE_APPLICATION_HEALTH_CHECK_RUNNER}
-            />
-            <SettingsApplicationHealthCheckBanner
-              applicationId={applicationId}
-              healthCheckFamilyState={
-                WORKSPACE_APPLICATION_HEALTH_CHECK_RUNNER.healthCheckFamilyState
-              }
-              fallbackLocation={configurationTabLocation}
-            />
-          </>
+          <SettingsApplicationHealthCheckEffect
+            key={`${applicationId}-${application.healthCheckLogicFunctionId}`}
+            applicationId={applicationId}
+            runner={WORKSPACE_APPLICATION_HEALTH_CHECK_RUNNER}
+          />
         )}
+        {activeTabId !== SETTINGS_GENERAL_TAB_ID && healthCheckBanner}
         <SettingsApplicationStoppedBanner
           applicationUniversalIdentifier={application?.universalIdentifier}
         />

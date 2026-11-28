@@ -9,8 +9,9 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { ShimmeringText } from '@/ai-chat/components/ShimmeringText';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 
-const StyledRowLabel = styled.div`
-  color: inherit;
+const StyledRowLabel = styled.div<{ isError: boolean }>`
+  color: ${({ isError }) =>
+    isError ? themeCssVariables.font.color.danger : 'inherit'};
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.regular};
   line-height: ${themeCssVariables.text.lineHeight.md};
@@ -35,6 +36,13 @@ const StyledRowLabelContainer = styled.div`
   align-items: center;
   display: flex;
   flex: 1;
+  gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
+`;
+
+const StyledRowText = styled.div`
+  align-items: baseline;
+  display: flex;
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
 `;
@@ -94,18 +102,55 @@ const StyledShimmeringLabel = styled(ShimmeringText)`
   white-space: nowrap;
 `;
 
+const StyledRowDetail = styled.span`
+  color: ${themeCssVariables.font.color.light};
+  flex-shrink: 1;
+  font-size: ${themeCssVariables.font.size.sm};
+  line-height: ${themeCssVariables.text.lineHeight.md};
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const StyledRowAction = styled.div`
+  display: flex;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity calc(${themeCssVariables.animation.duration.fast} * 1s)
+    ease-in-out;
+
+  [data-thinking-step-row]:hover &,
+  [data-thinking-step-row]:focus-within & {
+    opacity: 1;
+  }
+`;
+
+const StyledDetails = styled.div`
+  padding-left: calc(
+    ${themeCssVariables.icon.size.sm} * 1px + ${themeCssVariables.spacing[2]}
+  );
+`;
+
 type ThinkingStepRowLayoutProps = {
   icon: ReactNode;
   label: string;
   isActive: boolean;
-  details?: ReactNode;
-};
+  detail?: ReactNode;
+  isError?: boolean;
+} & (
+  | { details?: ReactNode; action?: never }
+  | { details?: never; action?: ReactNode }
+);
 
 export const ThinkingStepRowLayout = ({
   icon,
   label,
   isActive,
+  detail,
   details,
+  action,
+  isError = false,
 }: ThinkingStepRowLayoutProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const isExpandable = isDefined(details);
@@ -114,20 +159,26 @@ export const ThinkingStepRowLayout = ({
     <>
       <StyledIconContainer>{icon}</StyledIconContainer>
       <StyledRowLabelContainer>
-        <StyledRowLabel>
-          {isActive ? (
-            <StyledShimmeringLabel>{label}</StyledShimmeringLabel>
-          ) : (
-            <OverflowingTextWithTooltip
-              text={label}
-              tooltipDelay={TooltipDelay.shortDelay}
-            />
-          )}
-        </StyledRowLabel>
+        <StyledRowText>
+          <StyledRowLabel isError={isError}>
+            {isActive ? (
+              <StyledShimmeringLabel>{label}</StyledShimmeringLabel>
+            ) : (
+              <OverflowingTextWithTooltip
+                text={label}
+                tooltipDelay={TooltipDelay.shortDelay}
+              />
+            )}
+          </StyledRowLabel>
+          {isDefined(detail) && <StyledRowDetail>{detail}</StyledRowDetail>}
+        </StyledRowText>
         {isExpandable && (
           <StyledChevronContainer>
             <IconChevronRight size={14} />
           </StyledChevronContainer>
+        )}
+        {!isExpandable && isDefined(action) && (
+          <StyledRowAction>{action}</StyledRowAction>
         )}
       </StyledRowLabelContainer>
     </>
@@ -137,7 +188,9 @@ export const ThinkingStepRowLayout = ({
     <Collapsible.Root
       open={isExpanded}
       onOpenChange={setIsExpanded}
-      render={<StyledRowContainer />}
+      render={
+        <StyledRowContainer data-thinking-step-row data-hover-card-ignore />
+      }
     >
       {isExpandable ? (
         <Collapsible.Trigger render={<StyledRow as="button" isExpandable />}>
@@ -147,7 +200,11 @@ export const ThinkingStepRowLayout = ({
         <StyledRow isExpandable={false}>{rowContent}</StyledRow>
       )}
 
-      {isExpandable && <Collapsible.Panel>{details}</Collapsible.Panel>}
+      {isExpandable && (
+        <Collapsible.Panel render={<StyledDetails />}>
+          {details}
+        </Collapsible.Panel>
+      )}
     </Collapsible.Root>
   );
 };

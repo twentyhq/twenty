@@ -2,47 +2,34 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import { formatInTimeZone } from 'date-fns-tz';
-import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { JsonTree } from 'twenty-ui/components/data-display';
-import { IconButton, LightButton } from 'twenty-ui/components/input';
+import { IconButton } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
-import {
-  IconCopy,
-  IconId,
-  IconLayoutSidebarRightCollapse,
-} from 'twenty-ui/icon';
-import { Card } from 'twenty-ui/primitives/surfaces';
+import { IconId, IconLayoutSidebarRightCollapse } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
-import { LogConsoleFieldsCard } from '@/log-console/components/LogConsoleFieldsCard';
 import { LOG_CONSOLE_NARROW_BODY_MAX_WIDTH } from '@/log-console/constants/LogConsoleNarrowBodyMaxWidth';
 import { useLogConsoleTimeZone } from '@/log-console/hooks/useLogConsoleTimeZone';
 import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
-import { FieldWidgetShowMoreButton } from '@/page-layout/widgets/field/components/FieldWidgetShowMoreButton';
-import { BillingFieldRow } from '@/settings/billing/components/internal/SettingsBillingCardField';
 import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
+import { DetailFieldRow } from '@/ui/layout/details/components/DetailFieldRow';
+import { DetailFieldsCard } from '@/ui/layout/details/components/DetailFieldsCard';
+import { DetailMessageCard } from '@/ui/layout/details/components/DetailMessageCard';
+import { JsonSection } from '@/ui/layout/details/components/JsonSection';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type EventLogRecord } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
-
-const COLLAPSED_MESSAGE_STACK_LINE_COUNT = 1;
-
-const StyledShowMoreContainer = styled.div`
-  align-self: flex-start;
-`;
 
 const StyledPanel = styled.aside`
   border-left: 1px solid ${themeCssVariables.border.color.medium};
@@ -81,31 +68,9 @@ const StyledContent = styled.div`
   padding: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledMessageCard = styled(Card.Root)`
-  display: flex;
-  flex-direction: column;
-  font-size: ${themeCssVariables.font.size.sm};
-  gap: ${themeCssVariables.spacing[1]};
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
-`;
-
-const StyledMessageFirstLine = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  overflow-wrap: anywhere;
-`;
-
-const StyledMessageStackLine = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-`;
-
 const StyledCopyableId = styled.div`
   cursor: pointer;
   min-width: 0;
-`;
-
-const StyledRawEvent = styled.div`
-  overflow-x: auto;
 `;
 
 export const LogConsoleDetailPanel = () => {
@@ -124,8 +89,6 @@ export const LogConsoleDetailPanel = () => {
   const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
   );
-  const [entryWithExpandedMessage, setEntryWithExpandedMessage] =
-    useState<EventLogRecord>();
 
   if (!isDefined(logConsoleSelectedLog)) {
     return null;
@@ -167,16 +130,6 @@ export const LogConsoleDetailPanel = () => {
     `${timeWithMillisecondsFormat} · ${dateFormat}`,
     { locale: localeCatalog },
   );
-
-  const [firstMessageLine, ...messageStackLines] = (message ?? '').split('\n');
-
-  const displayedMessageStackLines =
-    entryWithExpandedMessage === entry
-      ? messageStackLines
-      : messageStackLines.slice(0, COLLAPSED_MESSAGE_STACK_LINE_COUNT);
-
-  const hiddenMessageStackLineCount =
-    messageStackLines.length - displayedMessageStackLines.length;
 
   const detailItems = [
     ...source.detailFields.flatMap(({ label, Icon, renderValue }) => {
@@ -254,80 +207,24 @@ export const LogConsoleDetailPanel = () => {
       </StyledTopBar>
       <StyledContent>
         {isNonEmptyString(message) && (
-          <Section.Root>
-            <Section.Header
-              title={t`Message`}
-              actions={
-                <LightButton
-                  startIcon={<IconCopy />}
-                  onClick={() => copyToClipboard(message)}
-                >
-                  {t`Copy`}
-                </LightButton>
-              }
-            />
-            <StyledMessageCard
-              backgroundColor={themeCssVariables.background.secondary}
-            >
-              <StyledMessageFirstLine>
-                {firstMessageLine}
-              </StyledMessageFirstLine>
-              {displayedMessageStackLines.map((messageStackLine, index) => (
-                <StyledMessageStackLine key={index}>
-                  <OverflowingTextWithTooltip text={messageStackLine.trim()} />
-                </StyledMessageStackLine>
-              ))}
-              {hiddenMessageStackLineCount > 0 && (
-                <StyledShowMoreContainer>
-                  <FieldWidgetShowMoreButton
-                    remainingCount={hiddenMessageStackLineCount}
-                    onClick={() => setEntryWithExpandedMessage(entry)}
-                  />
-                </StyledShowMoreContainer>
-              )}
-            </StyledMessageCard>
-          </Section.Root>
+          <DetailMessageCard
+            key={`${entry.timestamp}-${entry.event}`}
+            title={t`Message`}
+            message={message}
+          />
         )}
         {source.renderDetailContent?.(entry)}
         <Section.Root>
           <Section.Header title={t`Details`} />
-          <LogConsoleFieldsCard>
+          <DetailFieldsCard>
             {detailItems.map(({ Icon, label, value }) => (
-              <BillingFieldRow key={label} Icon={Icon} label={label}>
+              <DetailFieldRow key={label} Icon={Icon} label={label}>
                 {value}
-              </BillingFieldRow>
+              </DetailFieldRow>
             ))}
-          </LogConsoleFieldsCard>
+          </DetailFieldsCard>
         </Section.Root>
-        <Section.Root>
-          <Section.Header
-            title={t`Raw event`}
-            actions={
-              <LightButton
-                startIcon={<IconCopy />}
-                onClick={() =>
-                  copyToClipboard(
-                    JSON.stringify(rawEvent, null, 2),
-                    t`Log copied as JSON`,
-                  )
-                }
-              >
-                {t`Copy as JSON`}
-              </LightButton>
-            }
-          />
-          <StyledRawEvent>
-            <JsonTree
-              value={rawEvent}
-              emptyArrayLabel={t`Empty Array`}
-              emptyObjectLabel={t`Empty Object`}
-              emptyStringLabel={t`[empty string]`}
-              arrowButtonCollapsedLabel={t`Expand`}
-              arrowButtonExpandedLabel={t`Collapse`}
-              onNodeValueClick={copyToClipboard}
-            />
-          </StyledRawEvent>
-        </Section.Root>
+        <JsonSection title={t`Raw event`} value={rawEvent} />
       </StyledContent>
     </StyledPanel>
   );
