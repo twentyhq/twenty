@@ -20,6 +20,8 @@ const APPLICATION_IDENTIFIER = v4();
 const ROLE_IDENTIFIER = v4();
 const PROVIDER_IDENTIFIER = v4();
 const STEP_IDENTIFIER = v4();
+const QR_PROVIDER_IDENTIFIER = v4();
+const QR_STEP_IDENTIFIER = v4();
 const ON_CONNECT_IDENTIFIER = v4();
 
 const STEP_SOURCE = `const credentialsScreen = (error) => ({
@@ -52,8 +54,29 @@ export const handler = ({ trigger, state, values }) => {
   return { type: 'done', externalAccountId: 'account-' + state.email, handle: state.email };
 };`;
 
+const QR_STEP_SOURCE = `export const handler = ({ trigger, state }) => {
+  if (trigger === 'cancel') {
+    return { type: 'cancelled' };
+  }
+  const pollCount = trigger === 'start' ? 0 : state.pollCount + 1;
+  if (pollCount === 2) {
+    return { type: 'done', externalAccountId: 'whatsapp-account', handle: '+33 6 12 34 56 78' };
+  }
+  return {
+    type: 'screen',
+    state: { pollCount },
+    screen: {
+      type: 'qr-code',
+      title: 'Scan with WhatsApp',
+      data: 'whatsapp-qr-' + pollCount,
+      pollIntervalSeconds: 5,
+    },
+  };
+};`;
+
 describe('app connection interactive flow', () => {
   let provider: ConnectionProviderEntity;
+  let qrProvider: ConnectionProviderEntity;
   let markerServer: MarkerServer;
   let onConnectExecutionsUrl: string;
 
@@ -71,12 +94,17 @@ describe('app connection interactive flow', () => {
   const start = ({
     token,
     reconnectingConnectedAccountId,
-  }: { token?: string; reconnectingConnectedAccountId?: string } = {}) =>
+    providerName = provider.name,
+  }: {
+    token?: string;
+    reconnectingConnectedAccountId?: string;
+    providerName?: string;
+  } = {}) =>
     makeMetadataApiRequest(
       startInteractiveConnectionQueryFactory({
         input: {
           applicationId: provider.applicationId,
-          providerName: provider.name,
+          providerName,
           reconnectingConnectedAccountId,
         },
       }),
@@ -138,6 +166,11 @@ describe('app connection interactive flow', () => {
         source: STEP_SOURCE,
       },
       {
+        universalIdentifier: QR_STEP_IDENTIFIER,
+        name: 'qr-connection-step',
+        source: QR_STEP_SOURCE,
+      },
+      {
         universalIdentifier: ON_CONNECT_IDENTIFIER,
         name: 'on-connect',
         source: `export const handler = async ({ connectedAccountId }) => {
@@ -187,6 +220,16 @@ describe('app connection interactive flow', () => {
               },
               onConnectLogicFunctionUniversalIdentifier: ON_CONNECT_IDENTIFIER,
             },
+            {
+              universalIdentifier: QR_PROVIDER_IDENTIFIER,
+              name: 'interactive-qr-provider',
+              displayName: 'Interactive QR provider',
+              type: 'interactive',
+              scope: 'USER',
+              interactive: {
+                stepLogicFunctionUniversalIdentifier: QR_STEP_IDENTIFIER,
+              },
+            },
           ],
         },
       }),
@@ -197,6 +240,10 @@ describe('app connection interactive flow', () => {
     [provider] = await globalThis.testDataSource.query(
       'SELECT * FROM core."connectionProvider" WHERE "universalIdentifier" = $1',
       [PROVIDER_IDENTIFIER],
+    );
+    [qrProvider] = await globalThis.testDataSource.query(
+      'SELECT * FROM core."connectionProvider" WHERE "universalIdentifier" = $1',
+      [QR_PROVIDER_IDENTIFIER],
     );
   }, 120000);
 
@@ -393,5 +440,55 @@ describe('app connection interactive flow', () => {
 
     expect(response.body.errors?.[0]?.extensions?.code).toBe('BAD_USER_INPUT');
     expect(account.archivedAt).not.toBeNull();
+  });
+
+  it('refreshes the QR code on each poll until the phone links the account', async () => {
+    const startResponse = await start({ providerName: qrProvider.name });
+    const { flowId, screen } =
+      startResponse.body.data.startInteractiveConnection;
+
+    expect(screen).toEqual({
+      type: 'qr-code',
+      title: 'Scan with WhatsApp',
+      data: 'whatsapp-qr-0',
+      pollIntervalSeconds: 5,
+    });
+
+    const submitResponse = await continueFlow({
+      flowId,
+      action: 'SUBMIT',
+      values: {},
+    });
+
+    expect(submitResponse.body.errors?.[0]?.extensions?.code).toBe(
+      'BAD_USER_INPUT',
+    );
+
+    const refreshedResponse = await continueFlow({ flowId, action: 'POLL' });
+
+    expect(
+      refreshedResponse.body.data.continueInteractiveConnection,
+    ).toMatchObject({
+      status: 'IN_PROGRESS',
+      flowId,
+      screen: { type: 'qr-code', data: 'whatsapp-qr-1' },
+    });
+
+    const connectedResponse = await continueFlow({ flowId, action: 'POLL' });
+    const [account] = await globalThis.testDataSource.query(
+      'SELECT * FROM core."connectedAccount" WHERE "connectionProviderId" = $1',
+      [qrProvider.id],
+    );
+
+    expect(connectedResponse.body.data.continueInteractiveConnection).toEqual({
+      status: 'CONNECTED',
+      flowId: null,
+      screen: null,
+      connectedAccountId: account.id,
+    });
+    expect(account).toMatchObject({
+      externalAccountId: 'whatsapp-account',
+      handle: '+33 6 12 34 56 78',
+    });
   });
 });

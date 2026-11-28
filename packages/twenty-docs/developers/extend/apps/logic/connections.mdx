@@ -369,6 +369,55 @@ A screen is one of:
 | `'waiting'` | `title`, optional `description`, `pollIntervalSeconds` (clamped to 2–60)                                                                                   |
 | `'qr-code'` | `title`, optional `description`, the QR code `data`, `pollIntervalSeconds` (clamped to 2–60)                                                               |
 
+For a service the member links by scanning a QR code with their phone, such as WhatsApp, return a `qr-code` screen. Twenty calls the step function again every `pollIntervalSeconds`: return the screen with fresh `data` while the code rotates, and `done` once the phone has linked the account:
+
+```ts src/logic-functions/handlers/whatsapp-connection-step-handler.ts
+import {
+  type InteractiveConnectionStepPayload,
+  type InteractiveConnectionStepResult,
+} from 'twenty-sdk/logic-function';
+
+type WhatsappState = { accountId: string };
+
+export const whatsappConnectionStepHandler = async ({
+  trigger,
+  state,
+}: InteractiveConnectionStepPayload<WhatsappState>): Promise<
+  InteractiveConnectionStepResult<WhatsappState>
+> => {
+  if (trigger === 'cancel') {
+    return { type: 'cancelled' };
+  }
+
+  const linking =
+    trigger === 'start'
+      ? await startWhatsappLinking()
+      : await getWhatsappLinking(state?.accountId ?? '');
+
+  if (linking.isConnected) {
+    return {
+      type: 'done',
+      externalAccountId: linking.accountId,
+      handle: linking.phoneNumber,
+    };
+  }
+
+  return {
+    type: 'screen',
+    state: { accountId: linking.accountId },
+    screen: {
+      type: 'qr-code',
+      title: 'Scan with WhatsApp',
+      description: 'Open WhatsApp on your phone, go to Linked devices and scan this code.',
+      data: linking.qrCode,
+      pollIntervalSeconds: 5,
+    },
+  };
+};
+```
+
+`data` is the text the QR code encodes, not an image: Twenty draws the code.
+
 Return an expected failure, such as a wrong password, as a form with `error` set; throw only when the service is unreachable. `done` takes the same `externalAccountId`, `handle` and `accessToken` as a custom callback result, and the connection is saved, reconnected and announced to the on-connect logic function the same way.
 
 Twenty keeps `state` on the server, never in the browser, so it can hold ids but must stay under 16 KB, and must never hold the member's password: credentials only ever reach your step function in `values`. A connect attempt expires after 15 minutes or 30 submits. Password fields cannot be prefilled. Like the custom flow functions, the step function's timeout is capped at 10 seconds.
