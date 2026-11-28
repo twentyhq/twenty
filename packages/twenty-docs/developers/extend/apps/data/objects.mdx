@@ -201,6 +201,7 @@ A `formula` makes a field computed: its value comes from an expression over othe
 
 - `formula.expression` reads fields of the record by name (`price * quantity`), composite parts with a dot (`amount.amountMicros`), fields of a many-to-one related record (`company.name`), and aggregates over a one-to-many relation (`count(tasks)`, `sum(deals.amount.amountMicros, deals.stage == 'WON')`).
 - A `CURRENCY` formula computes the amount in micros, and also needs `formula.currencyCodeExpression`, such as `"USD"` or `amount.currencyCode`.
+- `formula.evaluation` is `QUERY_TIME` (computed on every read) or `STORED` (written to the column and recomputed in the background; it reads `null` until its backfill reaches a record). Left out on creation, only a formula with an aggregate is stored; left out on update, the field keeps its evaluation. A formula with an aggregate must be `STORED` (otherwise it fails with `AGGREGATE_IN_LIVE_FORMULA`), a `STORED` formula cannot read `now` or `updatedAt`, and only `STORED` formulas can be read by other formulas, so a formula that others read cannot be switched to `QUERY_TIME`.
 - A formula field cannot be unique, searchable or the object's label identifier.
 
 ```ts
