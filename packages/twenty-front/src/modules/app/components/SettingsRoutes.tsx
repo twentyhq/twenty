@@ -10,15 +10,15 @@ import {
   useParams,
 } from 'react-router-dom';
 
-import {
-  type WorkspaceRouteHandle,
-  type WorkspaceRouteObject,
-} from '@/app/routing/types/WorkspaceRouteObject';
+import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
 import { SETTINGS_AI_TABS } from '@/settings/ai/constants/SettingsAiTabs';
 import { SettingsLegacyAccountsRedirect } from '@/settings/app-preferences/components/SettingsLegacyAccountsRedirect';
 import { APP_PREFERENCES_PATH_BY_LEGACY_ACCOUNTS_PATH } from '@/settings/app-preferences/constants/AppPreferencesPathByLegacyAccountsPath';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
+import { type SettingsSearchRouteHandle } from '@/settings/search/types/SettingsSearchRouteHandle';
+import { type SettingsSearchRouteMetadata } from '@/settings/search/types/SettingsSearchRouteMetadata';
+import { msg } from '@lingui/core/macro';
 import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -797,7 +797,11 @@ type CreateSettingsRouteObjectsArgs = {
   isAdminPageEnabled?: boolean;
 };
 
-type SettingsRouteHandle = WorkspaceRouteHandle;
+type SettingsRouteHandle = SettingsSearchRouteHandle;
+
+const MAIN_SETTINGS_ROUTE_HANDLE: SettingsRouteHandle = {
+  workspaceSurfaces: ['main'],
+};
 
 const MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE: SettingsRouteHandle = {
   workspaceSurfaces: ['main', 'side-panel'],
@@ -820,16 +824,39 @@ const MEMBERS_LIST_SETTINGS_ROUTE_HANDLE: SettingsRouteHandle = {
   },
 };
 
+const buildSettingsSearchRouteHandle = ({
+  settingsSearch,
+  handle = MAIN_SETTINGS_ROUTE_HANDLE,
+}: {
+  settingsSearch: SettingsSearchRouteMetadata;
+  handle?: SettingsRouteHandle;
+}): SettingsRouteHandle => ({ ...handle, settingsSearch });
+
+const USER_SECTION = msg`User`;
+const WORKSPACE_SECTION = msg`Workspace`;
+
 const createSettingsRouteElements = ({
   isAdminPageEnabled,
 }: CreateSettingsRouteObjectsArgs) => (
   <>
-    <Route path={SettingsPath.ProfilePage} element={<SettingsProfile />} />
+    <Route
+      path={SettingsPath.ProfilePage}
+      element={<SettingsProfile />}
+      handle={buildSettingsSearchRouteHandle({
+        settingsSearch: { title: msg`Profile`, section: USER_SECTION },
+      })}
+    />
     <Route
       path={SettingsPath.TwoFactorAuthenticationStrategyConfig}
       element={<SettingsTwoFactorAuthenticationMethod />}
     />
-    <Route path={SettingsPath.Experience} element={<SettingsExperience />} />
+    <Route
+      path={SettingsPath.Experience}
+      element={<SettingsExperience />}
+      handle={buildSettingsSearchRouteHandle({
+        settingsSearch: { title: msg`Experience`, section: USER_SECTION },
+      })}
+    />
     {/* Reached from both the Applications and Accounts settings; the mutation checks the caller per provider scope */}
     <Route
       path={SettingsPath.ApplicationConnectWithApiKey}
@@ -887,7 +914,13 @@ const createSettingsRouteElements = ({
         />
       }
     >
-      <Route path={SettingsPath.General} element={<SettingsGeneral />} />
+      <Route
+        path={SettingsPath.General}
+        element={<SettingsGeneral />}
+        handle={buildSettingsSearchRouteHandle({
+          settingsSearch: { title: msg`General`, section: WORKSPACE_SECTION },
+        })}
+      />
       <Route
         path={SettingsPath.WorkspaceCommunications}
         element={<SettingsWorkspaceCommunications />}
@@ -916,7 +949,17 @@ const createSettingsRouteElements = ({
         path={SettingsPath.WorkspaceBlocklist}
         element={<SettingsWorkspaceBlocklist />}
       />
-      <Route path={SettingsPath.Usage} element={<SettingsUsage />} />
+      <Route
+        path={SettingsPath.Usage}
+        element={<SettingsUsage />}
+        handle={buildSettingsSearchRouteHandle({
+          settingsSearch: {
+            title: msg`Usage`,
+            parentPath: SettingsPath.Billing,
+            isHiddenWhenBillingDisabled: true,
+          },
+        })}
+      />
       <Route
         path={SettingsPath.UsageUserDetail}
         element={<SettingsUsageUserDetail />}
@@ -924,6 +967,14 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.BillingLimits}
         element={<SettingsBillingLimits />}
+        handle={buildSettingsSearchRouteHandle({
+          settingsSearch: {
+            title: msg`Limits`,
+            parentPath: SettingsPath.Billing,
+            keywords: [msg`Usage limits`],
+            isHiddenWhenBillingDisabled: true,
+          },
+        })}
       />
       <Route
         path={SettingsPath.BillingNewLimit}
@@ -963,10 +1014,27 @@ const createSettingsRouteElements = ({
         />
       }
     >
-      <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
+      <Route
+        path={SettingsPath.Billing}
+        element={<SettingsBilling />}
+        handle={buildSettingsSearchRouteHandle({
+          settingsSearch: {
+            title: msg`Billing`,
+            section: WORKSPACE_SECTION,
+            isHiddenWhenBillingDisabled: true,
+          },
+        })}
+      />
       <Route
         path={SettingsPath.BillingPlans}
         element={<SettingsBillingPlans />}
+        handle={buildSettingsSearchRouteHandle({
+          settingsSearch: {
+            title: msg`Plans`,
+            parentPath: SettingsPath.Billing,
+            isHiddenWhenBillingDisabled: true,
+          },
+        })}
       />
     </Route>
     <Route
@@ -1018,7 +1086,10 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.WorkspaceMembersPage}
         element={<SettingsWorkspaceMembers />}
-        handle={MEMBERS_LIST_SETTINGS_ROUTE_HANDLE}
+        handle={buildSettingsSearchRouteHandle({
+          handle: MEMBERS_LIST_SETTINGS_ROUTE_HANDLE,
+          settingsSearch: { title: msg`Members`, section: WORKSPACE_SECTION },
+        })}
       />
       <Route
         path={SettingsPath.WorkspaceMemberPage}
@@ -1035,7 +1106,13 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.Objects}
         element={<SettingsObjects />}
-        handle={EXPANDABLE_SETTINGS_ROUTE_HANDLE}
+        handle={buildSettingsSearchRouteHandle({
+          handle: EXPANDABLE_SETTINGS_ROUTE_HANDLE,
+          settingsSearch: {
+            title: msg`Data model`,
+            section: WORKSPACE_SECTION,
+          },
+        })}
       />
       <Route
         path={SettingsPath.ObjectOverview}
@@ -1145,7 +1222,16 @@ const createSettingsRouteElements = ({
           element={<LegacySettingsPathRedirect to={to} />}
         />
       ))}
-      <Route path={SettingsPath.Developers} element={<SettingsDevelopers />} />
+      <Route
+        path={SettingsPath.Developers}
+        element={<SettingsDevelopers />}
+        handle={buildSettingsSearchRouteHandle({
+          settingsSearch: {
+            title: msg`Developers`,
+            section: WORKSPACE_SECTION,
+          },
+        })}
+      />
       <Route
         path={SettingsPath.ApplicationRegistrationDetail}
         element={<SettingsApplicationRegistrationDetails />}

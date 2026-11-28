@@ -26,7 +26,10 @@ import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectsCommands } from '@/object-core/commands/components/CoreObjectsCommands';
 import { useCoreObjectsCommands } from '@/object-core/commands/hooks/useCoreObjectsCommands';
+import { isPathCommandMenuItemPayload } from '@/command-menu-item/engine-command/utils/isPathCommandMenuItemPayload';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { CommandMenuSettingsSearchSection } from '@/settings/search/components/CommandMenuSettingsSearchSection';
+import { useSettingsSearchResults } from '@/settings/search/hooks/useSettingsSearchResults';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useFilterCommandMenuItemsWithSidePanelSearch } from '@/side-panel/pages/root/hooks/useFilterCommandMenuItemsWithSidePanelSearch';
@@ -41,7 +44,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useMemo, useState } from 'react';
-import { SidePanelPages } from 'twenty-shared/types';
+import { ContextStorePageType, SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconApps,
@@ -192,6 +195,20 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
   const commandMenuItemsBySection =
     groupCommandMenuItemsBySection(matchingItems);
+
+  const isSettingsPage =
+    commandMenuContextApi.pageType === ContextStorePageType.Settings;
+
+  const settingsSearchResults = useSettingsSearchResults({
+    search: isInlineRecordSearchActive ? trimmedSidePanelSearch : '',
+    excludedPaths: commandMenuItemsBySection.GO_TO.flatMap((item) =>
+      isDefined(item.payload) && isPathCommandMenuItemPayload(item.payload)
+        ? [item.payload.path]
+        : [],
+    ),
+  });
+
+  const settingsSearchItemIds = settingsSearchResults.map(({ id }) => id);
 
   const {
     inlineSearchResultItems,
@@ -361,17 +378,26 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     ];
   };
 
-  const selectableItemIds = displayedSections.flatMap(
+  const sectionSelectableItemIds = displayedSections.flatMap(
     getSelectableSectionItemIds,
   );
 
-  const firstCommandItemId = displayedSections
+  const selectableItemIds = isSettingsPage
+    ? [...settingsSearchItemIds, ...sectionSelectableItemIds]
+    : [...sectionSelectableItemIds, ...settingsSearchItemIds];
+
+  const firstSectionCommandItemId = displayedSections
     .filter((section) => isSectionOpen(section))
     .flatMap(getSectionCommandItemIds)[0];
 
+  const firstCommandItemId = isSettingsPage
+    ? (settingsSearchItemIds[0] ?? firstSectionCommandItemId)
+    : firstSectionCommandItemId;
+
   const firstRecordItemId = isSearchingRecords
     ? undefined
-    : inlineSearchResultItems[0]?.id;
+    : (inlineSearchResultItems[0]?.id ??
+      (isSettingsPage ? undefined : settingsSearchItemIds[0]));
 
   const defaultSelectedItemId = getCommandMenuDefaultSelectedItemId({
     trimmedSearch: trimmedSidePanelSearch,
@@ -505,6 +531,9 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
         selectableItemIds={selectableItemIds}
         defaultSelectedItemId={defaultSelectedItemId}
       >
+        {isSettingsPage && (
+          <CommandMenuSettingsSearchSection results={settingsSearchResults} />
+        )}
         {displayedSections.map((section) => {
           const heading = getSectionHeading(section);
 
@@ -533,6 +562,9 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
             </CommandMenuItemSectionGroup>
           );
         })}
+        {!isSettingsPage && (
+          <CommandMenuSettingsSearchSection results={settingsSearchResults} />
+        )}
       </SidePanelList>
     </>
   );
