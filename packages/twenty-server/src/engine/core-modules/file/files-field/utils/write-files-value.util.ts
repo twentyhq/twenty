@@ -12,7 +12,7 @@ export const writeFilesValue = ({
   fieldValue: unknown;
   field: { type: FieldMetadataType };
   filesValue: FileInput[];
-}): unknown => {
+}): FileInput[] | Record<string, unknown> => {
   const filesSubFieldName = FILES_SUB_FIELD_NAME_BY_FIELD_TYPE[field.type];
 
   if (!isDefined(filesSubFieldName)) {

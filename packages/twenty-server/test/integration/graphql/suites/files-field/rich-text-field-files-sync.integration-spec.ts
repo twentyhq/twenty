@@ -109,7 +109,7 @@ describe('Rich text field files sub-field <> files sync', () => {
     body,
   }: {
     id: string;
-    body: Record<string, unknown>;
+    body: { markdown?: string; files?: { fileId: string; label: string }[] };
   }) =>
     makeGraphqlApiRequest({
       query: updateRecordMutation,
