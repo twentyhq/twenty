@@ -26,10 +26,10 @@ import {
   DURATION,
   EASING,
   fontSize,
-  mediaUp,
   paletteColorNumber,
   radius,
   semanticColor,
+  UNITS,
 } from '@/tokens';
 
 import { type MarketplaceApp } from './marketplace-app';
@@ -109,11 +109,24 @@ const MARK_MODEL_SETTINGS = {
     springStrength: 0.06,
   },
 } satisfies HalftoneModelProps['settings'];
-// Half an app's logo on screen (its 34px at most), the margin it keeps
-// from the logo when it passes behind.
-const APP_HALF_PX = 17;
-// At that distance the logo fills about this share of its frame.
-const MARK_MODEL_FILL = 0.6;
+// At that distance the logo fills this share of its frame (measured on
+// the drawn logo): the mask the rings and apps pass behind takes the same
+// size, so what hides them is the logo as it is drawn.
+const MARK_MODEL_FILL = 0.7;
+// An app's logo on screen, where it passes in front: 12% larger than the
+// 28 / 34px it had.
+const APP_PX = { base: 31, md: 38 } as const;
+// The room an app on the far side keeps under the banner's top edge.
+const APP_TOP_MARGIN_PX = 12;
+// Its thickness, as a share of its side, drawn in this many layers; the
+// layers inside are this much darker than its face.
+const APP_THICKNESS = 0.12;
+const APP_LAYERS = 12;
+const APP_EDGE_SHADE = 0.78;
+// The texture the logo is drawn into, in pixels, its corners rounded as
+// the site rounds an app's logo (radius(2)).
+const APP_TEXTURE_PX = 128;
+const APP_CORNER = (2 * UNITS.radiusBasePx) / 34;
 
 const Banner = styled(SceneBanner)`
   cursor: grab;
@@ -138,38 +151,22 @@ const MarkLayer = styled.div`
   z-index: -1;
 `;
 
-// An app on the ring: its logo, placed each frame
-// (--x / --y / --s / --o). Its name shows on hover.
+// The apps themselves are drawn in the scene (see below), so the logo
+// hides them as it hides the rings. This is only where the hovered app's
+// name shows, placed each frame on that app (--x / --y).
 const AppLabel = styled.div`
-  backface-visibility: hidden;
-  cursor: default;
   display: none;
+  height: 34px;
   left: 0;
-  opacity: var(--o, 0);
-  pointer-events: auto;
+  pointer-events: none;
   position: absolute;
   top: 0;
-  transform: translate(var(--x), var(--y)) translate(-50%, -50%)
-    scale(var(--s, 1));
-  /* moved on the GPU: no re-layout or re-raster as it travels */
-  will-change: transform, opacity;
+  transform: translate(var(--x), var(--y)) translate(-50%, -50%);
+  width: 34px;
+  will-change: transform;
 `;
 
-// The logo as the app ships it, no chip around it.
-const AppLogo = styled.img`
-  border-radius: ${radius(2)};
-  display: block;
-  height: 28px;
-  object-fit: contain;
-  width: 28px;
-
-  ${mediaUp('md')} {
-    height: 34px;
-    width: 34px;
-  }
-`;
-
-// The app's name, above its chip, on hover only.
+// The app's name, above it, on hover only.
 const AppName = styled.span`
   background-color: ${color('white')};
   border-radius: ${radius(1.5)};
@@ -190,7 +187,7 @@ const AppName = styled.span`
     transform ${DURATION.sm} ${EASING.standard};
   white-space: nowrap;
 
-  ${AppLabel}:hover & {
+  ${AppLabel}[data-shown] & {
     opacity: 1;
     transform: translate(-50%, 0);
   }
@@ -200,11 +197,46 @@ type AppsMarkOrbitProps = {
   apps: readonly MarketplaceApp[];
 };
 
+// An app's logo drawn into a square texture, contained and with its
+// corners rounded, as the site shows an app's logo.
+const loadAppTexture = async (logoUrl: string): Promise<THREE.Texture> => {
+  const image = new Image();
+  image.crossOrigin = 'anonymous';
+  image.src = logoUrl;
+  await image.decode();
+  const canvas = document.createElement('canvas');
+  canvas.width = APP_TEXTURE_PX;
+  canvas.height = APP_TEXTURE_PX;
+  const context = canvas.getContext('2d');
+  if (isDefined(context)) {
+    const fit = Math.min(
+      APP_TEXTURE_PX / (image.naturalWidth || APP_TEXTURE_PX),
+      APP_TEXTURE_PX / (image.naturalHeight || APP_TEXTURE_PX),
+    );
+    const width = (image.naturalWidth || APP_TEXTURE_PX) * fit;
+    const height = (image.naturalHeight || APP_TEXTURE_PX) * fit;
+    context.beginPath();
+    context.roundRect(0, 0, APP_TEXTURE_PX, APP_TEXTURE_PX, [
+      APP_TEXTURE_PX * APP_CORNER,
+    ]);
+    context.clip();
+    context.drawImage(
+      image,
+      (APP_TEXTURE_PX - width) / 2,
+      (APP_TEXTURE_PX - height) / 2,
+      width,
+      height,
+    );
+  }
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 4;
+  return texture;
+};
+
 export function AppsMarkOrbit({ apps }: AppsMarkOrbitProps) {
   const frameRef = useRef<HTMLDivElement>(null);
   const labelRefs = useRef<(HTMLDivElement | null)[]>([]);
-  // a hovered app holds the rings still so its name can be read
-  const hoveredRef = useRef(false);
   // each logo once, even when the list repeats an app
   const appsWithLogo = useMemo(
     () =>
@@ -242,25 +274,77 @@ export function AppsMarkOrbit({ apps }: AppsMarkOrbitProps) {
     // the camera looks down on the scene: the mark tips back by as much
     const MARK_FACING_PITCH = -Math.atan2(viewDirection.y, viewDirection.z);
     const outerDiameter = 2 * Math.max(...RINGS.map((ring) => ring.radius));
+    // On a wide banner (its height stops at 396px) the rings' far side would
+    // run off the top, which clips it: the scene then slides down, its size
+    // kept, until every app clears the top. The near side may run off the
+    // bottom, into the next section. Tested at the rings' widest sway, so
+    // the scene holds still as they rock.
+    const ringPose = new THREE.Object3D();
+    const sample = new THREE.Vector3();
+    const clearsTop = (appPx: number, heightPx: number) => {
+      stage.camera.updateMatrixWorld();
+      for (const config of RINGS) {
+        for (const sway of [-1, 1]) {
+          ringPose.position.set(0, config.height, 0);
+          ringPose.rotation.set(0.06 * sway, 0, config.tilt + 0.07 * sway);
+          ringPose.updateMatrixWorld();
+          for (let step = 0; step < 48; step++) {
+            const angle = (step / 48) * Math.PI * 2;
+            sample
+              .set(
+                Math.sin(angle) * config.radius,
+                0.5,
+                Math.cos(angle) * config.radius,
+              )
+              .applyMatrix4(ringPose.matrixWorld)
+              .project(stage.camera);
+            const yPx = ((1 - sample.y) / 2) * heightPx;
+            if (yPx < appPx / 2 + APP_TOP_MARGIN_PX) return false;
+          }
+        }
+      }
+      return true;
+    };
+    const lift = new THREE.Vector3();
+    const lookAt = new THREE.Vector3();
+    let framedAspect = 0;
+    let framedDistance = 0;
+    const placeCamera = () => {
+      stage.camera.position
+        .copy(viewDirection)
+        .multiplyScalar(framedDistance)
+        .add(lift);
+      stage.camera.lookAt(lookAt.copy(LOOK_AT).add(lift));
+    };
     const frameCamera = () => {
-      const halfHeight = Math.tan((stage.camera.fov / 2) * (Math.PI / 180));
-      const distance = THREE.MathUtils.clamp(
-        outerDiameter / (0.67 * 2 * halfHeight * stage.camera.aspect),
-        11,
-        17.5,
-      );
-      stage.camera.position.copy(viewDirection).multiplyScalar(distance);
-      stage.camera.lookAt(LOOK_AT);
+      if (stage.camera.aspect !== framedAspect) {
+        framedAspect = stage.camera.aspect;
+        const halfHeight = Math.tan((stage.camera.fov / 2) * (Math.PI / 180));
+        framedDistance = THREE.MathUtils.clamp(
+          outerDiameter / (0.67 * 2 * halfHeight * stage.camera.aspect),
+          11,
+          17.5,
+        );
+        const appPx = frame.clientWidth >= 768 ? APP_PX.md : APP_PX.base;
+        lift.set(0, 0, 0);
+        for (let tries = 0; tries < 60; tries++) {
+          placeCamera();
+          if (clearsTop(appPx, frame.clientHeight)) break;
+          lift.y += 0.05;
+        }
+      }
+      placeCamera();
     };
     frameCamera();
 
     // The mark is drawn by its own halftone canvas (MarkLayer). Here it
-    // is only a shape the rings can pass behind: depth, no colour.
+    // is only a shape the rings and the apps pass behind: depth, no colour.
     const SIDE = 40;
-    const MARK_SCALE = 0.083;
+    const MARK_SCALE = 0.0968;
     const mark = new THREE.Group();
     stage.tone.add(mark);
     let disposed = false;
+    let maskMesh: THREE.Mesh | null = null;
     fetch(MARK_URL)
       .then((response) => response.text())
       .then((text) => {
@@ -274,7 +358,7 @@ export function AppsMarkOrbit({ apps }: AppsMarkOrbitProps) {
           SVGLoader.createShapes(square),
           { bevelEnabled: false, curveSegments: 12, depth: DEPTH },
         ).translate(-SIDE / 2, -SIDE / 2, -DEPTH / 2);
-        const maskMesh = new THREE.Mesh(
+        maskMesh = new THREE.Mesh(
           maskGeometry,
           new THREE.MeshBasicMaterial({ colorWrite: false }),
         );
@@ -285,17 +369,11 @@ export function AppsMarkOrbit({ apps }: AppsMarkOrbitProps) {
     // where the mark sits on screen, for its canvas
     const markCentre = new THREE.Vector3();
     const markEdge = new THREE.Vector3();
-    // where the logo sits on screen, in the banner's pixels
-    const markOnScreen = { x: 0, y: 0, half: 0 };
-    const projected = new THREE.Vector3();
     const placeMarkLayer = () => {
       const bounds = frame.getBoundingClientRect();
       markCentre.set(0, 0, 0).project(stage.camera);
       markEdge.set((SIDE / 2) * MARK_SCALE, 0, 0).project(stage.camera);
       const sidePx = Math.abs(markEdge.x - markCentre.x) * bounds.width;
-      markOnScreen.x = (markCentre.x * 0.5 + 0.5) * bounds.width;
-      markOnScreen.y = (-markCentre.y * 0.5 + 0.5) * bounds.height;
-      markOnScreen.half = sidePx / 2;
       frame.style.setProperty(
         '--mark-x',
         `${((markCentre.x * 0.5 + 0.5) * bounds.width).toFixed(1)}px`,
@@ -336,9 +414,89 @@ export function AppsMarkOrbit({ apps }: AppsMarkOrbitProps) {
       );
       arcs.forEach((arc) => arc.dispose());
       group.add(path);
-      return { config, group, path };
+      // the ring's apps, drawn sharp (not in halftone) in the same place
+      const appGroup = new THREE.Group();
+      stage.crisp.add(appGroup);
+      return { config, group, path, appGroup };
     });
-    const layers = slots.map(() => -1);
+
+    // The apps: each a logo with a little thickness, facing out from the
+    // ring's centre, so it turns as it goes round and shows its back on the
+    // far side. Drawn after the mask's depth, the logo hides them as it
+    // hides the rings. The thickness is the logo's own shape stacked a few
+    // times, its inner layers darker, so a logo without a tile behind it
+    // keeps its shape and gets no chip.
+    const appGeometry = new THREE.PlaneGeometry(1, 1);
+    const textures = appsWithLogo.map(() => null as THREE.Texture | null);
+    const appMaterial = (shade: number, side: THREE.Side) =>
+      new THREE.MeshBasicMaterial({
+        alphaTest: 0.5,
+        alphaToCoverage: true,
+        color: new THREE.Color(shade, shade, shade),
+        side,
+        visible: false,
+      });
+    const faceMaterials = appsWithLogo.map(() =>
+      appMaterial(1, THREE.FrontSide),
+    );
+    const edgeMaterials = appsWithLogo.map(() =>
+      appMaterial(APP_EDGE_SHADE, THREE.DoubleSide),
+    );
+    appsWithLogo.forEach((app, index) => {
+      if (!isNonEmptyString(app.logoUrl)) return;
+      loadAppTexture(app.logoUrl)
+        .then((texture) => {
+          if (disposed) {
+            texture.dispose();
+            return;
+          }
+          textures[index] = texture;
+          [faceMaterials[index], edgeMaterials[index]].forEach((material) => {
+            material.map = texture;
+            material.visible = true;
+            material.needsUpdate = true;
+          });
+        })
+        .catch(() => undefined);
+    });
+    const pieces = slots.map((slot) => {
+      const pivot = new THREE.Group();
+      // a face on each side, so the logo reads the right way round from
+      // either side, and the layers of its thickness between them
+      const front = new THREE.Mesh(appGeometry, faceMaterials[slot.app]);
+      front.position.z = APP_THICKNESS / 2;
+      const back = new THREE.Mesh(appGeometry, faceMaterials[slot.app]);
+      back.position.z = -APP_THICKNESS / 2;
+      back.rotation.y = Math.PI;
+      pivot.add(front, back);
+      for (let layer = 1; layer < APP_LAYERS; layer++) {
+        const edge = new THREE.Mesh(appGeometry, edgeMaterials[slot.app]);
+        edge.position.z = APP_THICKNESS * (layer / APP_LAYERS - 0.5);
+        pivot.add(edge);
+      }
+      rings[slot.ring].appGroup.add(pivot);
+      return { pivot, faces: [front, back] };
+    });
+    // The far side reads lighter: the apps fade into the page's colour with
+    // their distance, as far things do.
+    const pageColor = (() => {
+      for (
+        let element: HTMLElement | null = frame;
+        isDefined(element);
+        element = element.parentElement
+      ) {
+        const background = getComputedStyle(element).backgroundColor;
+        if (!/rgba\(.*,\s*0\)$|transparent/.test(background)) {
+          return new THREE.Color(background);
+        }
+      }
+      return new THREE.Color(0xffffff);
+    })();
+    const fog = new THREE.Fog(pageColor, 0, 1);
+    stage.crisp.fog = fog;
+    const outerRadius = outerDiameter / 2;
+    const hitTargets: THREE.Object3D[] = pieces.flatMap(({ faces }) => faces);
+    let hovered = -1;
 
     // drag to throw, then ease back to the slow spin
     let spin = 0;
@@ -364,6 +522,22 @@ export function AppsMarkOrbit({ apps }: AppsMarkOrbitProps) {
     frame.addEventListener('pointerup', onUp);
     frame.addEventListener('pointercancel', onUp);
 
+    const worldPosition = new THREE.Vector3();
+    // the app under the pointer, unless the logo is in front of it
+    const findHovered = () => {
+      const ray = stage.pointerRay();
+      if (!isDefined(ray) || dragging) return -1;
+      const targets = isDefined(maskMesh)
+        ? [...hitTargets, maskMesh]
+        : hitTargets;
+      // nearest first: the mask in front means the app is hidden
+      const [hit] = ray.intersectObjects(targets, false);
+      if (!isDefined(hit) || hit.object === maskMesh) return -1;
+      return pieces.findIndex(({ faces }) =>
+        faces.some((face) => face === hit.object),
+      );
+    };
+
     let animationFrame = 0;
     const render = (now: number) => {
       animationFrame = requestAnimationFrame(render);
@@ -371,7 +545,8 @@ export function AppsMarkOrbit({ apps }: AppsMarkOrbitProps) {
       frameCamera();
 
       if (!dragging) {
-        const target = reducedMotion || hoveredRef.current ? 0 : AUTO_SPIN;
+        // a hovered app holds the rings still so its name can be read
+        const target = reducedMotion || hovered >= 0 ? 0 : AUTO_SPIN;
         velocity += (target - velocity) * 0.06;
         spin += velocity;
       }
@@ -385,63 +560,64 @@ export function AppsMarkOrbit({ apps }: AppsMarkOrbitProps) {
         group.rotation.x = 0.06 * Math.sin(now / 6200 + phase);
         group.rotation.z = config.tilt + 0.07 * Math.sin(now / 5100 + phase);
       });
-      rings.forEach(({ config, path }) => {
+      rings.forEach(({ config, group, path, appGroup }) => {
         path.rotation.y = spin * config.speed;
+        appGroup.position.copy(group.position);
+        appGroup.rotation.copy(group.rotation);
+      });
+
+      // the apps keep about the same size on screen wherever they are on
+      // the ring, a little smaller behind, as before: only their turn is 3D
+      const bounds = frame.getBoundingClientRect();
+      const appPx = bounds.width >= 768 ? APP_PX.md : APP_PX.base;
+      const worldPerPx =
+        (2 * Math.tan((stage.camera.fov / 2) * (Math.PI / 180))) /
+        Math.max(bounds.height, 1);
+      const cameraDistance = stage.camera.position.length();
+      fog.near = cameraDistance - outerRadius;
+      // the far edge of the outer ring at about 45% of its colour
+      fog.far = fog.near + (2 * outerRadius) / 0.55;
+      stage.crisp.updateMatrixWorld(true);
+      slots.forEach((slot, index) => {
+        const { config, appGroup } = rings[slot.ring];
+        const { pivot } = pieces[index];
+        const angle = slot.angle + spin * config.speed;
+        // just above the line
+        pivot.position.set(
+          Math.sin(angle) * config.radius,
+          0.5,
+          Math.cos(angle) * config.radius,
+        );
+        pivot.rotation.y = angle;
+        worldPosition.copy(pivot.position).applyMatrix4(appGroup.matrixWorld);
+        const depthScale = 0.82 + (0.18 * (Math.cos(angle) + 1)) / 2;
+        pivot.scale.setScalar(
+          appPx *
+            depthScale *
+            worldPerPx *
+            worldPosition.distanceTo(stage.camera.position),
+        );
       });
       stage.tone.updateMatrixWorld(true);
       stage.crisp.updateMatrixWorld(true);
 
-      const bounds = frame.getBoundingClientRect();
-      const placed = slots.map((slot, index) => {
-        const { config, group } = rings[slot.ring];
-        const angle = slot.angle + spin * config.speed;
-        const position = new THREE.Vector3(
-          Math.sin(angle) * config.radius,
-          // just above the line
-          0.5,
-          Math.cos(angle) * config.radius,
-        ).applyMatrix4(group.matrixWorld);
-        const depth = Math.cos(angle);
-        // how far the app sits outside the logo on screen, in pixels (its
-        // own half width counted): an app behind the logo must not show
-        // over it
-        projected.copy(position).project(stage.camera);
-        const gapPx =
-          Math.max(
-            Math.abs((projected.x * 0.5 + 0.5) * bounds.width - markOnScreen.x),
-            Math.abs(
-              (-projected.y * 0.5 + 0.5) * bounds.height - markOnScreen.y,
-            ),
-          ) -
-          markOnScreen.half -
-          APP_HALF_PX;
-        return {
-          index,
-          position,
-          depth,
-          // the far side stays readable, lighter; it clears where it runs
-          // behind the logo
-          opacity:
-            (0.45 + 0.55 * THREE.MathUtils.smoothstep(depth, -0.6, 0.3)) *
-            (depth < 0 ? THREE.MathUtils.smoothstep(gapPx, 0, APP_HALF_PX) : 1),
-        };
-      });
-      placed.forEach((entry) => {
-        const label = labelRefs.current[entry.index];
-        if (!isDefined(label)) return;
-        stage.place(
-          label,
-          entry.position,
-          entry.opacity,
-          0.82 + (0.18 * (entry.depth + 1)) / 2,
-        );
-        // restack only when the order changes
-        const layer = Math.round((entry.depth + 1) * 20);
-        if (layer !== layers[entry.index]) {
-          layers[entry.index] = layer;
-          label.style.zIndex = String(layer);
+      const nextHovered = findHovered();
+      if (nextHovered !== hovered) {
+        if (hovered >= 0) {
+          labelRefs.current[hovered]?.removeAttribute('data-shown');
         }
-      });
+        if (nextHovered >= 0) {
+          labelRefs.current[nextHovered]?.setAttribute('data-shown', '');
+        }
+        hovered = nextHovered;
+      }
+      if (hovered >= 0) {
+        const label = labelRefs.current[hovered];
+        if (isDefined(label)) {
+          pieces[hovered].pivot.getWorldPosition(worldPosition);
+          stage.place(label, worldPosition);
+        }
+      }
 
       stage.render();
     };
@@ -454,6 +630,7 @@ export function AppsMarkOrbit({ apps }: AppsMarkOrbitProps) {
       frame.removeEventListener('pointermove', onMove);
       frame.removeEventListener('pointerup', onUp);
       frame.removeEventListener('pointercancel', onUp);
+      textures.forEach((texture) => texture?.dispose());
       stage.dispose();
     };
   }, [appsWithLogo, slots]);
@@ -475,18 +652,11 @@ export function AppsMarkOrbit({ apps }: AppsMarkOrbitProps) {
           const app = appsWithLogo[slot.app];
           return (
             <AppLabel
-              onPointerEnter={() => {
-                hoveredRef.current = true;
-              }}
-              onPointerLeave={() => {
-                hoveredRef.current = false;
-              }}
               key={`${slot.ring}-${app.slug}`}
               ref={(element) => {
                 labelRefs.current[index] = element;
               }}
             >
-              <AppLogo alt="" src={app.logoUrl} />
               <AppName>{app.name}</AppName>
             </AppLabel>
           );
