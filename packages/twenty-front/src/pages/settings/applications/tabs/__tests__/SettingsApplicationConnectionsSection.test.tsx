@@ -56,6 +56,7 @@ describe('SettingsApplicationConnectionsSection', () => {
           name: 'google-calendar',
           displayName: 'Google Calendar',
           scope: 'WORKSPACE',
+          allowMultipleConnections: true,
           logoUrl: null,
           oauth: {
             scopes: ['calendar.readonly'],
@@ -123,6 +124,7 @@ describe('SettingsApplicationConnectionsSection', () => {
           name: 'google-calendar',
           displayName: 'Google Calendar',
           scope: 'WORKSPACE',
+          allowMultipleConnections: true,
           logoUrl: null,
           oauth: {
             scopes: ['calendar.readonly'],
@@ -169,6 +171,7 @@ describe('SettingsApplicationConnectionsSection', () => {
           name: 'linkedin',
           displayName: 'LinkedIn',
           scope: 'WORKSPACE',
+          allowMultipleConnections: true,
           logoUrl: null,
           oauth: null,
         },
@@ -204,9 +207,11 @@ describe('SettingsApplicationConnectionsSection', () => {
   const buildProvider = ({
     scope,
     isClientCredentialsConfigured = true,
+    allowMultipleConnections = true,
   }: {
     scope: 'USER' | 'WORKSPACE';
     isClientCredentialsConfigured?: boolean;
+    allowMultipleConnections?: boolean;
   }) => ({
     id: 'provider-1',
     applicationId: 'app-1',
@@ -214,6 +219,7 @@ describe('SettingsApplicationConnectionsSection', () => {
     name: 'google-calendar',
     displayName: 'Google Calendar',
     scope,
+    allowMultipleConnections,
     logoUrl: null,
     oauth: {
       scopes: ['calendar.readonly'],
@@ -262,14 +268,20 @@ describe('SettingsApplicationConnectionsSection', () => {
     providerScope,
     accounts,
     isClientCredentialsConfigured = true,
+    allowMultipleConnections = true,
   }: {
     providerScope: 'USER' | 'WORKSPACE';
     accounts: ReturnType<typeof buildAccount>[];
     isClientCredentialsConfigured?: boolean;
+    allowMultipleConnections?: boolean;
   }) => {
     mockedUseFindApplicationConnectionProviders.mockReturnValue({
       connectionProviders: [
-        buildProvider({ scope: providerScope, isClientCredentialsConfigured }),
+        buildProvider({
+          scope: providerScope,
+          isClientCredentialsConfigured,
+          allowMultipleConnections,
+        }),
       ],
       loading: false,
       refetch: jest.fn(),
@@ -299,6 +311,19 @@ describe('SettingsApplicationConnectionsSection', () => {
     expect(
       screen.getByRole('button', { name: /Add connection/i }),
     ).toBeVisible();
+  });
+
+  it('hides Add connection once a single-connection provider has one', () => {
+    renderSection({
+      providerScope: 'WORKSPACE',
+      accounts: [SHARED_ACCOUNT],
+      allowMultipleConnections: false,
+    });
+
+    expect(screen.getByRole('link', { name: /Team calendar/i })).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: /Add connection/i }),
+    ).not.toBeInTheDocument();
   });
 
   it('does not list a member-scoped provider', () => {

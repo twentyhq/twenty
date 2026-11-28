@@ -131,6 +131,15 @@ export const defineConnectionProvider: DefineEntity<
     );
   }
 
+  if (
+    isDefined(config.allowMultipleConnections) &&
+    typeof config.allowMultipleConnections !== 'boolean'
+  ) {
+    errors.push(
+      'Connection provider allowMultipleConnections must be a boolean',
+    );
+  }
+
   if (config.type === 'oauth') {
     const oauth = config.oauth;
 

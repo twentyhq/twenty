@@ -59,6 +59,15 @@ export class ConnectionProviderCustomFlowService {
         authorizationArgs.reconnectingConnectedAccountId,
     });
 
+    await this.connectedAccountService.assertCanAddConnectionOrThrow({
+      provider: connectionProvider,
+      workspaceId,
+      userWorkspaceId,
+      scope: connectionProvider.scope,
+      reconnectingConnectedAccountId:
+        authorizationArgs.reconnectingConnectedAccountId,
+    });
+
     const state = await this.authorizationStateService.sign({
       ...authorizationArgs,
       flowSecrets: null,

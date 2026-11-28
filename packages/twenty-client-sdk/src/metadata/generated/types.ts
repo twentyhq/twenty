@@ -1417,6 +1417,9 @@ export default {
             ]
         },
         "ApplicationConnectionProvider": {
+            "allowMultipleConnections": [
+                1
+            ],
             "applicationId": [
                 4
             ],

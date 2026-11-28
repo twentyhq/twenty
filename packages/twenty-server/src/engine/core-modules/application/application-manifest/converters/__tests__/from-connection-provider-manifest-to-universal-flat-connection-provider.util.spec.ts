@@ -41,6 +41,7 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
       logo: null,
       type: 'oauth',
       scope: 'WORKSPACE',
+      allowMultipleConnections: true,
       oauthConfig: {
         authorizationEndpoint: 'https://linear.app/oauth/authorize',
         tokenEndpoint: 'https://api.linear.app/oauth/token',
@@ -71,6 +72,19 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
       });
 
     expect(result.scope).toBe('USER');
+  });
+
+  it('passes through a declared allowMultipleConnections', () => {
+    const result =
+      fromConnectionProviderManifestToUniversalFlatConnectionProvider({
+        connectionProviderManifest: buildManifest({
+          allowMultipleConnections: false,
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+    expect(result.allowMultipleConnections).toBe(false);
   });
 
   it('passes through the logo path when provided', () => {

@@ -27,22 +27,27 @@ const APPLICATION_IDENTIFIER = v4();
 const ROLE_IDENTIFIER = v4();
 const WORKSPACE_PROVIDER_IDENTIFIER = v4();
 const USER_PROVIDER_IDENTIFIER = v4();
+const SINGLE_WORKSPACE_PROVIDER_IDENTIFIER = v4();
+const SINGLE_USER_PROVIDER_IDENTIFIER = v4();
 const TOKEN_ENDPOINT = 'https://scoped-provider.example.com/token';
 
 const buildProvider = ({
   universalIdentifier,
   name,
   scope,
+  allowMultipleConnections,
 }: {
   universalIdentifier: string;
   name: string;
   scope: 'USER' | 'WORKSPACE';
+  allowMultipleConnections?: boolean;
 }): ConnectionProviderManifest => ({
   universalIdentifier,
   name,
   displayName: name,
   type: 'oauth',
   scope,
+  allowMultipleConnections,
   oauth: {
     authorizationEndpoint: 'https://scoped-provider.example.com/authorize',
     tokenEndpoint: TOKEN_ENDPOINT,
@@ -68,6 +73,18 @@ const syncProviders = async () => {
             universalIdentifier: USER_PROVIDER_IDENTIFIER,
             name: 'user-provider',
             scope: 'USER',
+          }),
+          buildProvider({
+            universalIdentifier: SINGLE_WORKSPACE_PROVIDER_IDENTIFIER,
+            name: 'single-workspace-provider',
+            scope: 'WORKSPACE',
+            allowMultipleConnections: false,
+          }),
+          buildProvider({
+            universalIdentifier: SINGLE_USER_PROVIDER_IDENTIFIER,
+            name: 'single-user-provider',
+            scope: 'USER',
+            allowMultipleConnections: false,
           }),
         ],
       },
@@ -108,25 +125,30 @@ describe('app connections follow the provider scope', () => {
 
   const insertConnection = async ({
     providerName,
+    userWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.JANE,
+    archivedAt = null,
   }: {
     providerName: string;
+    userWorkspaceId?: string;
+    archivedAt?: Date | null;
   }): Promise<string> => {
     const id = v4();
 
     await globalThis.testDataSource.query(
       `INSERT INTO core."connectedAccount"
          (id, handle, provider, scope, "workspaceId", "userWorkspaceId",
-          "applicationId", "connectionProviderId")
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+          "applicationId", "connectionProviderId", "archivedAt")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
       [
         id,
         `${providerName}@example.com`,
         ConnectedAccountProvider.APP,
         providerByName[providerName].scope,
         SEED_APPLE_WORKSPACE_ID,
-        USER_WORKSPACE_DATA_SEED_IDS.JANE,
+        userWorkspaceId,
         applicationId,
         providerByName[providerName].id,
+        archivedAt,
       ],
     );
 
@@ -287,5 +309,78 @@ describe('app connections follow the provider scope', () => {
       { id: connectedAccountId, scope: 'USER' },
     ]);
     expect(tokenExchanges).toEqual(['reconnect-code']);
+  });
+
+  describe('when the provider allows a single connection', () => {
+    it("refuses a member's second connection on a USER provider", async () => {
+      await insertConnection({ providerName: 'single-user-provider' });
+
+      const { state, errorMessage } = await authorize({
+        providerName: 'single-user-provider',
+      });
+
+      expect(state).toBeNull();
+      expect(errorMessage).toContain('allows a single connection');
+      expect(await readAccounts()).toHaveLength(1);
+    });
+
+    it('counts an archived connection', async () => {
+      await insertConnection({
+        providerName: 'single-user-provider',
+        archivedAt: new Date(),
+      });
+
+      const { errorMessage } = await authorize({
+        providerName: 'single-user-provider',
+      });
+
+      expect(errorMessage).toContain('allows a single connection');
+    });
+
+    it("ignores another member's connection on a USER provider", async () => {
+      await insertConnection({
+        providerName: 'single-user-provider',
+        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
+      });
+
+      const errorMessage = await callback(
+        await authorizeOrThrow({ providerName: 'single-user-provider' }),
+        'second-member-code',
+      );
+
+      expect(errorMessage).toBeNull();
+      expect(await readAccounts()).toHaveLength(2);
+    });
+
+    it('refuses a second connection on a WORKSPACE provider, whoever made the first', async () => {
+      await insertConnection({
+        providerName: 'single-workspace-provider',
+        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
+      });
+
+      const { errorMessage } = await authorize({
+        providerName: 'single-workspace-provider',
+      });
+
+      expect(errorMessage).toContain('allows a single connection');
+      expect(await readAccounts()).toHaveLength(1);
+    });
+
+    it('still reconnects the existing connection', async () => {
+      const connectedAccountId = await insertConnection({
+        providerName: 'single-user-provider',
+      });
+
+      const errorMessage = await callback(
+        await authorizeOrThrow({
+          providerName: 'single-user-provider',
+          reconnectingConnectedAccountId: connectedAccountId,
+        }),
+        'single-reconnect-code',
+      );
+
+      expect(errorMessage).toBeNull();
+      expect(await readAccounts()).toMatchObject([{ id: connectedAccountId }]);
+    });
   });
 });

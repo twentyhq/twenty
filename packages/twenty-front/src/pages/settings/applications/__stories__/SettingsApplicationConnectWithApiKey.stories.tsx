@@ -29,6 +29,7 @@ const connectionProvidersHandler = graphql.query(
             name: 'demo',
             displayName: 'Demo Service',
             scope: 'USER',
+            allowMultipleConnections: true,
             logoUrl: null,
             oauth: null,
           },

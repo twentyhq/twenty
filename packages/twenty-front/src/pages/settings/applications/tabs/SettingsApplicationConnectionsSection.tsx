@@ -8,6 +8,7 @@ import { SettingsApplicationConnectionProviderSection } from '@/settings/applica
 import { SettingsApplicationConnectionName } from '@/settings/applications/components/SettingsApplicationConnectionName';
 import { SettingsApplicationConnectionStatus } from '@/settings/applications/components/SettingsApplicationConnectionStatus';
 import { SettingsApplicationConnectionTableRows } from '@/settings/applications/components/SettingsApplicationConnectionTableRows';
+import { canAddConnectionProviderConnection } from '@/settings/applications/utils/canAddConnectionProviderConnection';
 import { canStartConnectionProviderAuthorization } from '@/settings/applications/utils/canStartConnectionProviderAuthorization';
 import { SettingsSectionAnchor } from '@/settings/components/SettingsSectionAnchor';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -119,13 +120,17 @@ export const SettingsApplicationConnectionsSection = ({
                 </SettingsApplicationConnectionTableRows>
               </Table>
             )}
-            {canStartAuthorization && (
-              <SettingsApplicationAddConnectionButton
-                applicationId={applicationId}
-                connectionProviderName={provider.name}
-                connectionProviderType={provider.type}
-              />
-            )}
+            {canStartAuthorization &&
+              canAddConnectionProviderConnection({
+                allowMultipleConnections: provider.allowMultipleConnections,
+                connectionCount: providerConnections.length,
+              }) && (
+                <SettingsApplicationAddConnectionButton
+                  applicationId={applicationId}
+                  connectionProviderName={provider.name}
+                  connectionProviderType={provider.type}
+                />
+              )}
           </SettingsApplicationConnectionProviderSection>
         );
       })}

@@ -88,6 +88,7 @@ const meta: Meta<PageDecoratorArgs> = {
                   name: 'microsoft-teams',
                   displayName: 'Teams',
                   scope: 'WORKSPACE',
+                  allowMultipleConnections: true,
                   logoUrl: null,
                   oauth: {
                     __typename: 'ApplicationConnectionProviderOAuthConfig',

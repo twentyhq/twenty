@@ -255,6 +255,7 @@ export class ConnectionProviderService {
       name: provider.name,
       displayName: provider.displayName,
       scope: provider.scope,
+      allowMultipleConnections: provider.allowMultipleConnections,
       logo: provider.logo,
       oauth:
         provider.type === 'oauth' && isDefined(provider.oauthConfig)

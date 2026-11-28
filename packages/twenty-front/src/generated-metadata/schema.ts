@@ -702,6 +702,7 @@ export type ApplicationConnectedMemberCount = {
 
 export type ApplicationConnectionProvider = {
   __typename?: 'ApplicationConnectionProvider';
+  allowMultipleConnections: Scalars['Boolean']['output'];
   applicationId: Scalars['String']['output'];
   displayName: Scalars['String']['output'];
   id: Scalars['UUID']['output'];

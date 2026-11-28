@@ -9,6 +9,7 @@ type ConnectionProviderManifestBase = SyncableEntityOptions & {
   displayName: string;
   logo?: string;
   scope?: ConnectionProviderScope;
+  allowMultipleConnections?: boolean;
   identifyAccountLogicFunctionUniversalIdentifier?: string;
   onConnectLogicFunctionUniversalIdentifier?: string;
   onDisconnectLogicFunctionUniversalIdentifier?: string;

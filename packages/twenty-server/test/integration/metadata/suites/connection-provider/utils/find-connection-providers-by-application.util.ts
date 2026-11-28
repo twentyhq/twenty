@@ -12,6 +12,7 @@ type ConnectionProviderRow = {
   displayName: string;
   type: string;
   scope: ConnectionProviderScope;
+  allowMultipleConnections: boolean;
   oauthConfig: StoredOAuthConnectionProviderConfig | null;
   identifyAccountLogicFunctionUniversalIdentifier: string | null;
   onConnectLogicFunctionUniversalIdentifier: string | null;
@@ -24,6 +25,7 @@ export const findConnectionProvidersByApplication = async (
   return globalThis.testDataSource.query(
     `SELECT cp.id, cp."universalIdentifier", cp."applicationId",
             cp."workspaceId", cp.name, cp."displayName", cp.type, cp.scope,
+            cp."allowMultipleConnections",
             cp."oauthConfig", cp."identifyAccountLogicFunctionUniversalIdentifier",
             cp."onConnectLogicFunctionUniversalIdentifier",
             cp."onDisconnectLogicFunctionUniversalIdentifier"

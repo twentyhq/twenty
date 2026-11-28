@@ -71,6 +71,15 @@ export class ConnectionProviderOAuthFlowService {
         authorizationArgs.reconnectingConnectedAccountId,
     });
 
+    await this.connectedAccountService.assertCanAddConnectionOrThrow({
+      provider: connectionProvider,
+      workspaceId,
+      userWorkspaceId,
+      scope: connectionProvider.scope,
+      reconnectingConnectedAccountId:
+        authorizationArgs.reconnectingConnectedAccountId,
+    });
+
     const client = await this.oauthClientService.resolveForAuthorization({
       provider: connectionProvider,
       workspaceId,

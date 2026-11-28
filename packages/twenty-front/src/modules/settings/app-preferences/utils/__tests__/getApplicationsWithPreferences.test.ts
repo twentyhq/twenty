@@ -85,6 +85,7 @@ const buildUserConnectionProvider = ({
   name: 'linear',
   displayName: 'Linear',
   scope: ConnectionProviderScope.USER,
+  allowMultipleConnections: true,
   logoUrl: null,
   oauth: {
     __typename: 'ApplicationConnectionProviderOAuthConfig' as const,

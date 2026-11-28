@@ -18,6 +18,7 @@ export type FrontendApplicationConnectionProvider = {
   name: string;
   displayName: string;
   scope: ConnectionProviderScope;
+  allowMultipleConnections: boolean;
   logoUrl: string | null;
   oauth: FrontendApplicationConnectionProviderOAuthConfig | null;
 };

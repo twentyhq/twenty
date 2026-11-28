@@ -525,6 +525,7 @@ export interface ApplicationConnectedMemberCount {
 }
 
 export interface ApplicationConnectionProvider {
+    allowMultipleConnections: Scalars['Boolean']
     applicationId: Scalars['String']
     displayName: Scalars['String']
     id: Scalars['UUID']
@@ -5211,6 +5212,7 @@ export interface ApplicationConnectedMemberCountGenqlSelection{
 }
 
 export interface ApplicationConnectionProviderGenqlSelection{
+    allowMultipleConnections?: boolean | number
     applicationId?: boolean | number
     displayName?: boolean | number
     id?: boolean | number

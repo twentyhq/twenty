@@ -57,6 +57,8 @@ const getConnectionProviderExceptionUserFriendlyMessage = (
       return msg`Enter an API key.`;
     case ConnectionProviderExceptionCode.APPLICATION_CHARGE_DECLINED:
       return msg`We couldn't bill this connection. Update your payment method and try again.`;
+    case ConnectionProviderExceptionCode.MULTIPLE_CONNECTIONS_NOT_ALLOWED:
+      return msg`This app allows only one connection. Reconnect or remove the existing one instead.`;
     default:
       assertUnreachable(code);
   }

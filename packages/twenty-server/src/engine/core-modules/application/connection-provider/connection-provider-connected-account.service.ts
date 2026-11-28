@@ -13,6 +13,7 @@ import { ConnectionProviderException } from 'src/engine/core-modules/application
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
 import { extractEmailFromIdTokenClaims } from 'src/engine/core-modules/application/connection-provider/utils/extract-email-from-id-token-claims.util';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import {
@@ -45,6 +46,7 @@ export class ConnectionProviderConnectedAccountService {
     private readonly userRepository: Repository<UserEntity>,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly billingSubscriptionUpdateService: BillingSubscriptionUpdateService,
+    private readonly cacheLockService: CacheLockService,
   ) {}
 
   async assertCallerCanConnectOrThrow({
@@ -72,6 +74,43 @@ export class ConnectionProviderConnectedAccountService {
       workspaceId,
       userWorkspaceId,
     });
+  }
+
+  async assertCanAddConnectionOrThrow({
+    provider,
+    workspaceId,
+    userWorkspaceId,
+    scope,
+    reconnectingConnectedAccountId,
+  }: {
+    provider: Pick<ConnectionProviderEntity, 'id' | 'allowMultipleConnections'>;
+    workspaceId: string;
+    userWorkspaceId: string;
+    scope: ConnectedAccountScope;
+    reconnectingConnectedAccountId: string | null;
+  }): Promise<void> {
+    if (
+      provider.allowMultipleConnections ||
+      isDefined(reconnectingConnectedAccountId)
+    ) {
+      return;
+    }
+
+    const hasExistingConnection = await this.connectedAccountRepository.exists({
+      where: {
+        connectionProviderId: provider.id,
+        workspaceId,
+        scope,
+        ...(scope === 'USER' && { userWorkspaceId }),
+      },
+    });
+
+    if (hasExistingConnection) {
+      throw new ConnectionProviderException(
+        `Connection provider ${provider.id} allows a single connection and one already exists`,
+        ConnectionProviderExceptionCode.MULTIPLE_CONNECTIONS_NOT_ALLOWED,
+      );
+    }
   }
 
   async resolveHandle({
@@ -114,7 +153,7 @@ export class ConnectionProviderConnectedAccountService {
   }: {
     provider: Pick<
       ConnectionProviderEntity,
-      'id' | 'displayName' | 'applicationId'
+      'id' | 'displayName' | 'applicationId' | 'allowMultipleConnections'
     >;
     credentials: ConnectedAccountCredentials | undefined;
     handle: string | undefined;
@@ -204,27 +243,54 @@ export class ConnectionProviderConnectedAccountService {
       return connectedAccount;
     }
 
-    const name =
-      identifiedAccount?.name ??
-      (await this.buildDefaultConnectedAccountName({ provider, workspaceId }));
+    const createConnectedAccount = async () => {
+      const name =
+        identifiedAccount?.name ??
+        (await this.buildDefaultConnectedAccountName({
+          provider,
+          workspaceId,
+        }));
 
-    const created = this.connectedAccountRepository.create({
-      ...sharedFields,
-      handle: handle ?? (await this.resolveHandle({ idToken: null, userId })),
-      name,
-      scope,
-      provider: ConnectedAccountProvider.APP,
-      workspaceId,
-      applicationId: provider.applicationId,
-      connectionProviderId: provider.id,
-      userWorkspaceId,
-    });
+      const created = this.connectedAccountRepository.create({
+        ...sharedFields,
+        handle: handle ?? (await this.resolveHandle({ idToken: null, userId })),
+        name,
+        scope,
+        provider: ConnectedAccountProvider.APP,
+        workspaceId,
+        applicationId: provider.applicationId,
+        connectionProviderId: provider.id,
+        userWorkspaceId,
+      });
 
-    const connectedAccount = await this.chargeThenPersist({
-      workspaceId,
-      provider,
-      persist: () => this.connectedAccountRepository.save(created),
-    });
+      return this.chargeThenPersist({
+        workspaceId,
+        provider,
+        persist: () => this.connectedAccountRepository.save(created),
+      });
+    };
+
+    const createWithinConnectionLimit = async () => {
+      if (provider.allowMultipleConnections) {
+        return createConnectedAccount();
+      }
+
+      const singleConnectionLockKey = `app-single-connection:${workspaceId}:${provider.id}${scope === 'USER' ? `:${userWorkspaceId}` : ''}`;
+
+      return this.cacheLockService.withLock(async () => {
+        await this.assertCanAddConnectionOrThrow({
+          provider,
+          workspaceId,
+          userWorkspaceId,
+          scope,
+          reconnectingConnectedAccountId,
+        });
+
+        return createConnectedAccount();
+      }, singleConnectionLockKey);
+    };
+
+    const connectedAccount = await createWithinConnectionLimit();
 
     this.emitConnectionChanged(connectedAccount);
 
