@@ -6,13 +6,17 @@ import {
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { ErrorMessageEffect } from '@/error-handler/components/ErrorMessageEffect';
 import { myApplicationHealthCheckFamilyState } from '@/settings/app-preferences/states/myApplicationHealthCheckFamilyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Toaster } from 'twenty-ui/components/feedback';
-import { ApplicationHealthStatus } from '~/generated-metadata/graphql';
+import {
+  ApplicationHealthStatus,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 import { SettingsApplicationPreferences } from '~/pages/settings/accounts/SettingsApplicationPreferences';
 import {
   FATHOM_APPLICATION_ID,
@@ -624,6 +628,35 @@ export const MemberLandsOnGeneralWithoutWorkspaceActions: Story = {
     expect(canvas.queryByText('View in marketplace')).not.toBeInTheDocument();
     expect(canvas.queryByText('See app page')).not.toBeInTheDocument();
     expect(findApplicationsGatedQuery).not.toHaveBeenCalled();
+  },
+};
+
+export const AppsManagerOpensWorkspaceSettings: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText(
+      'Records, transcribes and summarizes your meetings.',
+      undefined,
+      { timeout: 3000 },
+    );
+    expect(
+      canvas.queryByRole('button', { name: 'Open workspace settings' }),
+    ).not.toBeInTheDocument();
+
+    jotaiStore.set(currentUserWorkspaceState.atom, {
+      permissionFlags: [
+        PermissionFlagType.APPLICATIONS,
+        PermissionFlagType.CONNECTED_ACCOUNTS,
+      ],
+      objectRecordsPermissions: [],
+      twoFactorAuthenticationMethodSummary: [],
+      isImpersonating: false,
+    });
+
+    expect(
+      await canvas.findByRole('button', { name: 'Open workspace settings' }),
+    ).toBeVisible();
   },
 };
 

@@ -5,12 +5,15 @@ import { useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import { MyApplicationPreferencesDocument } from '~/generated-metadata/graphql';
 
-export const useApplicationsWithPreferences = () => {
+export const useApplicationsWithPreferences = ({
+  shouldSkip = false,
+}: { shouldSkip?: boolean } = {}) => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { data, loading, error, refetch } = useQuery(
     MyApplicationPreferencesDocument,
     {
       fetchPolicy: 'cache-and-network',
+      skip: shouldSkip,
     },
   );
 

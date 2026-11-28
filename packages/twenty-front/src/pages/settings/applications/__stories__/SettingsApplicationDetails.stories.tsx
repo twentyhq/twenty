@@ -9,7 +9,10 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchMetadataOperationBrowserEvent } from '@/browser-event/utils/dispatchMetadataOperationBrowserEvent';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
@@ -20,6 +23,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   ApplicationRegistrationSourceType,
   type FindMarketplaceAppDetailQuery,
+  PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
 import { SettingsApplicationDetails } from '~/pages/settings/applications/SettingsApplicationDetails';
@@ -307,6 +311,69 @@ export const MarketplaceListingFillsTheHeaderAndOverview: Story = {
     ).not.toBeNull();
     expect(
       canvas.getByRole('button', { name: 'View in marketplace' }),
+    ).toBeVisible();
+  },
+};
+
+export const AppWithMemberPreferencesOpensAppPreferences: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('MyApplicationPreferences', () =>
+          HttpResponse.json({
+            data: {
+              myApplicationPreferences: [
+                {
+                  __typename: 'ApplicationPreferences',
+                  applicationId: APPLICATION_ID,
+                  connectionProviders: [],
+                  settingsMenuItems: [USER_SETTINGS_MENU_ITEM],
+                  variables: [],
+                },
+              ],
+            },
+          }),
+        ),
+        ...buildApplicationHandlers({
+          settingsMenuItems: [USER_SETTINGS_MENU_ITEM],
+        }),
+      ],
+    },
+  },
+  beforeEach: () => {
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      installedApplications: [
+        ...mockCurrentWorkspace.installedApplications,
+        {
+          id: APPLICATION_ID,
+          universalIdentifier: APPLICATION_ID,
+          name: 'Recorder',
+          description: 'Records meetings',
+          logoUrl: null,
+          createdAt: '2024-01-01T00:00:00.000Z',
+          runHealthCheckOnUserPreferences: false,
+        },
+      ],
+    });
+  },
+  play: async ({ canvasElement }) => {
+    jotaiStore.set(currentUserWorkspaceState.atom, {
+      permissionFlags: [
+        PermissionFlagType.APPLICATIONS,
+        PermissionFlagType.CONNECTED_ACCOUNTS,
+      ],
+      objectRecordsPermissions: [],
+      twoFactorAuthenticationMethodSummary: [],
+      isImpersonating: false,
+    });
+
+    expect(
+      await within(canvasElement).findByRole(
+        'button',
+        { name: 'Open app preferences' },
+        { timeout: 3000 },
+      ),
     ).toBeVisible();
   },
 };
