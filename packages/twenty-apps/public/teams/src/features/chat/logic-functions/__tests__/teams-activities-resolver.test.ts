@@ -1,7 +1,10 @@
 import { Response } from 'twenty-sdk/logic-function';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { TEAMS_ACTIVITIES_ENQUEUE_UNIVERSAL_IDENTIFIER } from 'src/features/chat/constants/universal-identifiers';
+import {
+  TEAMS_ACTIVITIES_ENQUEUE_UNIVERSAL_IDENTIFIER,
+  TEAMS_ASSISTANT_FEEDBACK_UNIVERSAL_IDENTIFIER,
+} from 'src/features/chat/constants/universal-identifiers';
 import { TEAMS_ASSISTANT_NOT_CONNECTED_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-not-connected-text';
 import { TEAMS_ASSISTANT_NOTICE_TTL_MS } from 'src/features/chat/logic-functions/constants/teams-assistant-notice-ttl-ms';
 import { teamsActivitiesResolverHandler } from 'src/features/chat/logic-functions/teams-activities-resolver';
@@ -38,6 +41,21 @@ const MESSAGE_ACTIVITY: TeamsInboundActivity = {
   serviceUrl: SERVICE_URL,
   conversation: { id: 'conversation-1', conversationType: 'personal' },
   channelData: { tenant: { id: 'tenant-1' } },
+};
+
+const FEEDBACK_ACTIVITY: TeamsInboundActivity = {
+  type: 'invoke',
+  name: 'message/submitAction',
+  id: 'activity-2',
+  replyToId: 'answer-activity-1',
+  serviceUrl: SERVICE_URL,
+  from: { id: '29:user-1' },
+  conversation: { id: 'conversation-1', conversationType: 'personal' },
+  channelData: { tenant: { id: 'tenant-1' } },
+  value: {
+    actionName: 'feedback',
+    actionValue: { reaction: 'like', feedback: '{"feedbackText":"Nice!"}' },
+  },
 };
 
 const resolve = (activity: TeamsInboundActivity | null) =>
@@ -196,5 +214,43 @@ describe('teamsActivitiesResolverHandler', () => {
       text: TEAMS_ASSISTANT_NOT_CONNECTED_TEXT,
       ttlMs: TEAMS_ASSISTANT_NOTICE_TTL_MS,
     });
+  });
+
+  it('routes a verified feedback invoke to the feedback function', async () => {
+    expect(await resolve(FEEDBACK_ACTIVITY)).toEqual({
+      workspaceId: 'workspace-1',
+      targetLogicFunctionUniversalIdentifier:
+        TEAMS_ASSISTANT_FEEDBACK_UNIVERSAL_IDENTIFIER,
+      payload: {
+        activity: FEEDBACK_ACTIVITY,
+        serviceUrl: SERVICE_URL,
+        tenantId: 'tenant-1',
+      },
+    });
+    expect(verifyTokenMock).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    ['another invoke', { ...FEEDBACK_ACTIVITY, name: 'task/fetch' }],
+    [
+      'a submit action that is not feedback',
+      { ...FEEDBACK_ACTIVITY, value: { actionName: 'other' } },
+    ],
+  ])('does not dispatch %s', async (_, activity) => {
+    expect(await resolve(activity)).toEqual(
+      new Response({ ok: true, skipped: 'Not a message' }),
+    );
+  });
+
+  it('skips a feedback invoke quietly when no workspace claims the tenant', async () => {
+    kvGetMock.mockResolvedValue(null);
+
+    expect(await resolve(FEEDBACK_ACTIVITY)).toEqual(
+      new Response({
+        ok: true,
+        skipped: 'No workspace claims this Teams tenant',
+      }),
+    );
+    expect(sendNoticeMock).not.toHaveBeenCalled();
   });
 });

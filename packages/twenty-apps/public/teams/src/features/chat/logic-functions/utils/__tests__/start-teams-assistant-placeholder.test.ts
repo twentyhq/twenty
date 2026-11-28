@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { TEAMS_ASSISTANT_ANSWER_MARKERS } from 'src/features/chat/logic-functions/constants/teams-assistant-answer-markers';
 import { TEAMS_ASSISTANT_INITIAL_STATUS } from 'src/features/chat/logic-functions/constants/teams-assistant-status-steps';
 import { startTeamsAssistantPlaceholder } from 'src/features/chat/logic-functions/utils/start-teams-assistant-placeholder';
 
@@ -76,7 +77,7 @@ describe('startTeamsAssistantPlaceholder', () => {
   it('should post a placeholder in the thread and replace it with the answer', async () => {
     const status = await startPlaceholder();
 
-    await status.finish(ANSWER);
+    await status.finish({ text: ANSWER });
 
     expect(sendActivityMock).toHaveBeenCalledExactlyOnceWith(
       sentMessage(TEAMS_ASSISTANT_INITIAL_STATUS),
@@ -93,7 +94,7 @@ describe('startTeamsAssistantPlaceholder', () => {
 
     const status = await startPlaceholder();
 
-    await status.finish(ANSWER);
+    await status.finish({ text: ANSWER });
 
     expect(sendActivityMock).toHaveBeenLastCalledWith(sentMessage(ANSWER));
     expect(sendActivityMock).toHaveBeenCalledTimes(2);
@@ -106,7 +107,7 @@ describe('startTeamsAssistantPlaceholder', () => {
 
     const status = await startPlaceholder();
 
-    await status.finish(ANSWER);
+    await status.finish({ text: ANSWER });
 
     expect(sendActivityMock).toHaveBeenLastCalledWith(sentMessage(ANSWER));
     expect(deleteActivityMock).toHaveBeenCalledExactlyOnceWith(PLACEHOLDER);
@@ -118,8 +119,48 @@ describe('startTeamsAssistantPlaceholder', () => {
 
     const status = await startPlaceholder();
 
-    await expect(status.finish(ANSWER)).resolves.toBeUndefined();
+    await expect(status.finish({ text: ANSWER })).resolves.toBe(
+      'placeholder-1',
+    );
     expect(sendActivityMock).toHaveBeenLastCalledWith(sentMessage(ANSWER));
+  });
+
+  it('should add feedback buttons to the answer that replaces the placeholder and return its activity id', async () => {
+    const status = await startPlaceholder();
+
+    await expect(
+      status.finish({
+        text: ANSWER,
+        answerMarkers: TEAMS_ASSISTANT_ANSWER_MARKERS,
+      }),
+    ).resolves.toBe('placeholder-1');
+
+    expect(updateActivityMock).toHaveBeenCalledExactlyOnceWith({
+      ...PLACEHOLDER,
+      activity: { ...message(ANSWER), ...TEAMS_ASSISTANT_ANSWER_MARKERS },
+    });
+  });
+
+  it('should add feedback buttons to the answer sent as a new message and return the id of that message', async () => {
+    updateActivityMock.mockRejectedValue(new Error('404'));
+    sendActivityMock
+      .mockResolvedValueOnce({ id: 'placeholder-1' })
+      .mockResolvedValueOnce({ id: 'answer-1' });
+
+    const status = await startPlaceholder();
+
+    await expect(
+      status.finish({
+        text: ANSWER,
+        answerMarkers: TEAMS_ASSISTANT_ANSWER_MARKERS,
+      }),
+    ).resolves.toBe('answer-1');
+
+    expect(sendActivityMock).toHaveBeenLastCalledWith({
+      ...CONVERSATION,
+      accessToken: 'token',
+      activity: { ...message(ANSWER), ...TEAMS_ASSISTANT_ANSWER_MARKERS },
+    });
   });
 
   it('should keep the placeholder for the failure text when the answer cannot be delivered', async () => {
@@ -128,10 +169,10 @@ describe('startTeamsAssistantPlaceholder', () => {
     updateActivityMock.mockRejectedValueOnce(new Error('413'));
     sendActivityMock.mockRejectedValueOnce(new Error('413'));
 
-    await expect(status.finish(ANSWER)).rejects.toThrow('413');
+    await expect(status.finish({ text: ANSWER })).rejects.toThrow('413');
     expect(deleteActivityMock).not.toHaveBeenCalled();
 
-    await status.finish(FAILURE);
+    await status.finish({ text: FAILURE });
 
     expect(updateActivityMock).toHaveBeenLastCalledWith({
       ...PLACEHOLDER,

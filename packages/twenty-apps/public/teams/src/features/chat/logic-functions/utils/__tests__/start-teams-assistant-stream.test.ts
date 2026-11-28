@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { TEAMS_ASSISTANT_ANSWER_MARKERS } from 'src/features/chat/logic-functions/constants/teams-assistant-answer-markers';
 import { startTeamsAssistantStream } from 'src/features/chat/logic-functions/utils/start-teams-assistant-stream';
 
 const { sendActivityMock, requestConnectorMock } = vi.hoisted(() => ({
@@ -58,7 +59,7 @@ describe('startTeamsAssistantStream', () => {
 
     await writer.update('Digging through your CRM…');
     await writer.update('Still on it…');
-    await writer.finish('Acme has 3 open deals.');
+    await writer.finish({ text: 'Acme has 3 open deals.' });
 
     expect(requestConnectorMock).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -104,6 +105,41 @@ describe('startTeamsAssistantStream', () => {
     ]);
   });
 
+  it('should add feedback buttons to the final message when it is an answer', async () => {
+    const writer = await startTeamsAssistantStream({
+      ...CONVERSATION,
+      text: 'Thinking…',
+    });
+
+    await writer.finish({
+      text: 'Acme has 3 open deals.',
+      answerMarkers: TEAMS_ASSISTANT_ANSWER_MARKERS,
+    });
+
+    expect(streamedActivities()).toEqual([
+      {
+        type: 'message',
+        textFormat: 'extendedmarkdown',
+        text: 'Acme has 3 open deals.',
+        channelData: TEAMS_ASSISTANT_ANSWER_MARKERS.channelData,
+        entities: [
+          { type: 'streaminfo', streamId: 'stream-1', streamType: 'final' },
+        ],
+      },
+    ]);
+  });
+
+  it('should return the stream id as the answer activity id', async () => {
+    const writer = await startTeamsAssistantStream({
+      ...CONVERSATION,
+      text: 'Thinking…',
+    });
+
+    await expect(
+      writer.finish({ text: 'Acme has 3 open deals.' }),
+    ).resolves.toBe('stream-1');
+  });
+
   it('should stop update retries once the final message is sent', async () => {
     const writer = await startTeamsAssistantStream({
       ...CONVERSATION,
@@ -116,7 +152,7 @@ describe('startTeamsAssistantStream', () => {
 
     expect(retryAbortSignal.aborted).toBe(false);
 
-    await writer.finish('Acme has 3 open deals.');
+    await writer.finish({ text: 'Acme has 3 open deals.' });
 
     expect(retryAbortSignal.aborted).toBe(true);
     expect(

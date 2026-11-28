@@ -59,11 +59,19 @@ export const startTeamsAssistantPlaceholder = async ({
   const activityId = await postPlaceholder(conversation);
 
   return {
-    finish: async (text) => {
-      if (!isDefined(activityId)) {
-        await sendTeamsMessage({ ...conversation, text });
+    finish: async ({ text, answerMarkers }) => {
+      const sendMessage = async () => {
+        const { id } = await sendTeamsMessage({
+          ...conversation,
+          text,
+          answerMarkers,
+        });
 
-        return;
+        return id;
+      };
+
+      if (!isDefined(activityId)) {
+        return sendMessage();
       }
 
       try {
@@ -71,10 +79,10 @@ export const startTeamsAssistantPlaceholder = async ({
           ...conversation,
           activityId,
           accessToken: await getTeamsConnectorAccessTokenOrThrow(),
-          activity: buildTeamsMessageActivity({ text }),
+          activity: buildTeamsMessageActivity({ text, ...answerMarkers }),
         });
 
-        return;
+        return activityId;
       } catch (error) {
         console.warn(
           `[teams] could not replace the placeholder in ${conversationId}`,
@@ -83,8 +91,11 @@ export const startTeamsAssistantPlaceholder = async ({
       }
 
       // The placeholder is only deleted once the text is delivered, so a failed send leaves it for the caller's failure text.
-      await sendTeamsMessage({ ...conversation, text });
+      const sentActivityId = await sendMessage();
+
       await deletePlaceholder({ ...conversation, activityId });
+
+      return sentActivityId;
     },
   };
 };

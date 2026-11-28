@@ -9,6 +9,7 @@ import {
 import {
   TEAMS_ACTIVITIES_ENQUEUE_UNIVERSAL_IDENTIFIER,
   TEAMS_ACTIVITIES_ROUTE_UNIVERSAL_IDENTIFIER,
+  TEAMS_ASSISTANT_FEEDBACK_UNIVERSAL_IDENTIFIER,
 } from 'src/features/chat/constants/universal-identifiers';
 import { TEAMS_ASSISTANT_NOT_CONNECTED_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-not-connected-text';
 import { TEAMS_ASSISTANT_NOTICE_TTL_MS } from 'src/features/chat/logic-functions/constants/teams-assistant-notice-ttl-ms';
@@ -17,6 +18,7 @@ import { TeamsActivityTokenInvalidError } from 'src/features/chat/logic-function
 import { type TeamsInboundActivity } from 'src/features/chat/logic-functions/types/teams-inbound-activity.type';
 import { buildTeamsTenantKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-kv-key';
 import { getTeamsBotCredentials } from 'src/features/chat/logic-functions/utils/get-teams-bot-credentials';
+import { isTeamsFeedbackInvokeActivity } from 'src/features/chat/logic-functions/utils/is-teams-feedback-invoke-activity';
 import { isTeamsInstallActivity } from 'src/features/chat/logic-functions/utils/is-teams-install-activity';
 import { sendTeamsAssistantNotice } from 'src/features/chat/logic-functions/utils/send-teams-assistant-notice';
 import { verifyTeamsActivityTokenOrThrow } from 'src/features/chat/logic-functions/utils/verify-teams-activity-token';
@@ -52,7 +54,13 @@ export const teamsActivitiesResolverHandler = async (
     return new Response({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  if (activity.type !== 'message' && !isTeamsInstallActivity(activity)) {
+  const isFeedbackInvoke = isTeamsFeedbackInvokeActivity(activity);
+
+  if (
+    activity.type !== 'message' &&
+    !isTeamsInstallActivity(activity) &&
+    !isFeedbackInvoke
+  ) {
     return new Response({ ok: true, skipped: 'Not a message' });
   }
 
@@ -67,14 +75,16 @@ export const teamsActivitiesResolverHandler = async (
     scope: 'SERVER',
   });
 
-  if (!isNonEmptyString(workspaceId)) {
+  if (!isNonEmptyString(workspaceId) && !isFeedbackInvoke) {
     await sendTeamsAssistantNotice({
       payload: { activity, serviceUrl, tenantId },
       kind: 'not-connected',
       text: TEAMS_ASSISTANT_NOT_CONNECTED_TEXT,
       ttlMs: TEAMS_ASSISTANT_NOTICE_TTL_MS,
     });
+  }
 
+  if (!isNonEmptyString(workspaceId)) {
     return new Response({
       ok: true,
       skipped: 'No workspace claims this Teams tenant',
@@ -83,8 +93,9 @@ export const teamsActivitiesResolverHandler = async (
 
   return {
     workspaceId,
-    targetLogicFunctionUniversalIdentifier:
-      TEAMS_ACTIVITIES_ENQUEUE_UNIVERSAL_IDENTIFIER,
+    targetLogicFunctionUniversalIdentifier: isFeedbackInvoke
+      ? TEAMS_ASSISTANT_FEEDBACK_UNIVERSAL_IDENTIFIER
+      : TEAMS_ACTIVITIES_ENQUEUE_UNIVERSAL_IDENTIFIER,
     payload: {
       activity,
       serviceUrl,
@@ -97,7 +108,7 @@ export default defineLogicFunction({
   universalIdentifier: TEAMS_ACTIVITIES_ROUTE_UNIVERSAL_IDENTIFIER,
   name: 'teams-activities-resolver',
   description:
-    'Receives Microsoft Teams bot activities, verifies the Bot Framework token, and routes message and install activities to the workspace that claimed their tenant. When no workspace claims the tenant, tells the conversation once an hour that Twenty is not connected.',
+    'Receives Microsoft Teams bot activities, verifies the Bot Framework token, and routes message, install and answer feedback activities to the workspace that claimed their tenant. When no workspace claims the tenant, tells the conversation once an hour that Twenty is not connected.',
   timeoutSeconds: 15,
   handler: teamsActivitiesResolverHandler,
   serverRouteTriggerSettings: {

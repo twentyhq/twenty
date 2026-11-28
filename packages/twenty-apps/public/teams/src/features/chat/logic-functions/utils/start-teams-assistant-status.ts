@@ -5,6 +5,7 @@ import {
   TEAMS_ASSISTANT_STATUS_STEPS,
 } from 'src/features/chat/logic-functions/constants/teams-assistant-status-steps';
 import { TEAMS_PERSONAL_CONVERSATION_TYPE } from 'src/features/chat/logic-functions/constants/teams-personal-conversation-type';
+import { type TeamsAssistantStatusMessage } from 'src/features/chat/logic-functions/types/teams-assistant-status-message.type';
 import { type TeamsAssistantStatusWriter } from 'src/features/chat/logic-functions/types/teams-assistant-status-writer.type';
 import { sendTeamsMessage } from 'src/features/chat/logic-functions/utils/send-teams-message';
 import { startTeamsAssistantPlaceholder } from 'src/features/chat/logic-functions/utils/start-teams-assistant-placeholder';
@@ -22,8 +23,14 @@ export const startTeamsAssistantStatus = async ({
   conversationId: string;
   conversationType: string;
 }): Promise<Pick<TeamsAssistantStatusWriter, 'finish'>> => {
-  const sendMessage = async (text: string) => {
-    await sendTeamsMessage({ serviceUrl, conversationId, text });
+  const sendMessage = async (message: TeamsAssistantStatusMessage) => {
+    const { id } = await sendTeamsMessage({
+      serviceUrl,
+      conversationId,
+      ...message,
+    });
+
+    return id;
   };
 
   if (conversationType !== TEAMS_PERSONAL_CONVERSATION_TYPE) {
@@ -78,17 +85,17 @@ export const startTeamsAssistantStatus = async ({
   };
 
   return {
-    finish: async (text) => {
+    finish: async (message) => {
       timers.forEach(clearTimeout);
       await waitForPendingUpdate();
 
-      await writer.finish(text).catch((error: unknown) => {
+      return writer.finish(message).catch((error: unknown) => {
         console.warn(
           `[teams] could not finish the stream in ${conversationId}`,
           error,
         );
 
-        return sendMessage(text);
+        return sendMessage(message);
       });
     },
   };

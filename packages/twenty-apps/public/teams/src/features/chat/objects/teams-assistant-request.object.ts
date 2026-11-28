@@ -8,9 +8,12 @@ import {
 
 import {
   TEAMS_ASSISTANT_REQUEST_ACTIVITY_ID_FIELD_UNIVERSAL_IDENTIFIER,
+  TEAMS_ASSISTANT_REQUEST_ANSWER_ACTIVITY_ID_FIELD_UNIVERSAL_IDENTIFIER,
   TEAMS_ASSISTANT_REQUEST_CONVERSATION_ID_FIELD_UNIVERSAL_IDENTIFIER,
   TEAMS_ASSISTANT_REQUEST_CONVERSATION_TYPE_FIELD_UNIVERSAL_IDENTIFIER,
   TEAMS_ASSISTANT_REQUEST_ERROR_FIELD_UNIVERSAL_IDENTIFIER,
+  TEAMS_ASSISTANT_REQUEST_FEEDBACK_RATING_FIELD_UNIVERSAL_IDENTIFIER,
+  TEAMS_ASSISTANT_REQUEST_FEEDBACK_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
   TEAMS_ASSISTANT_REQUEST_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   TEAMS_ASSISTANT_REQUEST_OBJECT_UNIVERSAL_IDENTIFIER,
   TEAMS_ASSISTANT_REQUEST_RESPONSE_FIELD_UNIVERSAL_IDENTIFIER,
@@ -23,6 +26,7 @@ import {
   TEAMS_ASSISTANT_REQUEST_WORKSPACE_MEMBER_FIELD_UNIVERSAL_IDENTIFIER,
   TEAMS_ASSISTANT_REQUESTS_ON_WORKSPACE_MEMBER_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/features/chat/constants/universal-identifiers';
+import { TEAMS_ASSISTANT_FEEDBACK_RATING } from 'src/features/chat/logic-functions/constants/teams-assistant-feedback-rating';
 import { TEAMS_ASSISTANT_REQUEST_STATUS } from 'src/features/chat/logic-functions/constants/teams-assistant-request-status';
 import { TEAMS_ASSISTANT_REQUEST_OBJECT_NAME_SINGULAR } from 'src/features/chat/constants/teams-assistant-request-object-name-singular';
 
@@ -199,6 +203,51 @@ export default defineObject({
       description: 'Failure reason when the assistant could not answer',
       icon: 'IconAlertTriangle',
       name: 'errorMessage',
+    },
+    {
+      universalIdentifier:
+        TEAMS_ASSISTANT_REQUEST_ANSWER_ACTIVITY_ID_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.TEXT,
+      label: 'Teams answer activity ID',
+      description:
+        'Bot Framework activity id of the assistant answer, used with the conversation id to match feedback to the request',
+      icon: 'IconHash',
+      name: 'teamsAnswerActivityId',
+    },
+    {
+      universalIdentifier:
+        TEAMS_ASSISTANT_REQUEST_FEEDBACK_RATING_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.SELECT,
+      label: 'Feedback',
+      description:
+        'Rating left with the feedback buttons under the assistant answer in Teams',
+      icon: 'IconThumbUp',
+      options: [
+        {
+          id: '865dcc88-3819-402c-9d1d-97d5ce147ca3',
+          value: TEAMS_ASSISTANT_FEEDBACK_RATING.POSITIVE,
+          label: 'Positive',
+          position: 0,
+          color: 'green',
+        },
+        {
+          id: '4781b417-0de1-4c63-9178-a1698b13c891',
+          value: TEAMS_ASSISTANT_FEEDBACK_RATING.NEGATIVE,
+          label: 'Negative',
+          position: 1,
+          color: 'red',
+        },
+      ],
+      name: 'feedbackRating',
+    },
+    {
+      universalIdentifier:
+        TEAMS_ASSISTANT_REQUEST_FEEDBACK_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.TEXT,
+      label: 'Feedback comment',
+      description: 'Comment left with the rating in Teams',
+      icon: 'IconMessage',
+      name: 'feedbackText',
     },
   ],
 });

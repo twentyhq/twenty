@@ -69,15 +69,18 @@ export const startTeamsAssistantStream = async ({
         retryAbortSignal: streamClosing.signal,
       });
     },
-    finish: (text) => {
+    finish: async ({ text, answerMarkers }) => {
       streamClosing.abort();
 
-      return sendStreamActivity({
+      await sendStreamActivity({
         activity: buildTeamsMessageActivity({
           text,
+          ...answerMarkers,
           entities: [{ type: 'streaminfo', streamId, streamType: 'final' }],
         }),
       });
+
+      return streamId;
     },
   };
 };

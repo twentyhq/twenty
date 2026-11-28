@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { TEAMS_ASSISTANT_ANSWER_MARKERS } from 'src/features/chat/logic-functions/constants/teams-assistant-answer-markers';
 import { TEAMS_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/features/chat/logic-functions/constants/teams-assistant-agent-budget-seconds';
 import {
   TEAMS_ASSISTANT_INITIAL_STATUS,
@@ -85,13 +86,21 @@ describe('startTeamsAssistantStatus', () => {
       TEAMS_ASSISTANT_STATUS_STEPS.slice(0, 2).map((step) => step.text),
     );
 
-    await status.finish('Acme has 3 open deals.');
+    finishMock.mockResolvedValue('stream-1');
+
+    await expect(
+      status.finish({
+        text: 'Acme has 3 open deals.',
+        answerMarkers: TEAMS_ASSISTANT_ANSWER_MARKERS,
+      }),
+    ).resolves.toBe('stream-1');
     await vi.runAllTimersAsync();
 
     expect(updateMock).toHaveBeenCalledTimes(2);
-    expect(finishMock).toHaveBeenCalledExactlyOnceWith(
-      'Acme has 3 open deals.',
-    );
+    expect(finishMock).toHaveBeenCalledExactlyOnceWith({
+      text: 'Acme has 3 open deals.',
+      answerMarkers: TEAMS_ASSISTANT_ANSWER_MARKERS,
+    });
     expect(sendActivityMock).not.toHaveBeenCalled();
   });
 
@@ -103,7 +112,7 @@ describe('startTeamsAssistantStatus', () => {
 
     const status = await startTeamsAssistantStatus(PERSONAL);
 
-    await status.finish('Acme has 3 open deals.');
+    await status.finish({ text: 'Acme has 3 open deals.' });
     await vi.runAllTimersAsync();
 
     expect(updateMock).not.toHaveBeenCalled();
@@ -121,9 +130,23 @@ describe('startTeamsAssistantStatus', () => {
 
     const status = await startTeamsAssistantStatus(PERSONAL);
 
-    await status.finish('Acme has 3 open deals.');
+    await expect(
+      status.finish({
+        text: 'Acme has 3 open deals.',
+        answerMarkers: TEAMS_ASSISTANT_ANSWER_MARKERS,
+      }),
+    ).resolves.toBe('activity-1');
 
-    expect(sentMessageTexts()).toEqual(['Acme has 3 open deals.']);
+    expect(
+      sendActivityMock.mock.calls.map(([{ activity }]) => activity),
+    ).toEqual([
+      {
+        type: 'message',
+        textFormat: 'extendedmarkdown',
+        text: 'Acme has 3 open deals.',
+        ...TEAMS_ASSISTANT_ANSWER_MARKERS,
+      },
+    ]);
 
     warnSpy.mockRestore();
   });
@@ -139,12 +162,12 @@ describe('startTeamsAssistantStatus', () => {
     await vi.advanceTimersByTimeAsync(
       TEAMS_ASSISTANT_STATUS_STEPS[1].afterSeconds * 1000,
     );
-    await status.finish('Acme has 3 open deals.');
+    await status.finish({ text: 'Acme has 3 open deals.' });
 
     expect(updateMock).toHaveBeenCalledTimes(2);
-    expect(finishMock).toHaveBeenCalledExactlyOnceWith(
-      'Acme has 3 open deals.',
-    );
+    expect(finishMock).toHaveBeenCalledExactlyOnceWith({
+      text: 'Acme has 3 open deals.',
+    });
     expect(warnSpy).toHaveBeenCalledTimes(1);
 
     warnSpy.mockRestore();
@@ -159,14 +182,14 @@ describe('startTeamsAssistantStatus', () => {
       TEAMS_ASSISTANT_STATUS_STEPS[0].afterSeconds * 1000,
     );
 
-    const finished = status.finish('Acme has 3 open deals.');
+    const finished = status.finish({ text: 'Acme has 3 open deals.' });
 
     await vi.advanceTimersByTimeAsync(5000);
     await finished;
 
-    expect(finishMock).toHaveBeenCalledExactlyOnceWith(
-      'Acme has 3 open deals.',
-    );
+    expect(finishMock).toHaveBeenCalledExactlyOnceWith({
+      text: 'Acme has 3 open deals.',
+    });
   });
 
   it('should keep the stream open for the whole agent budget and deliver a late answer in it', async () => {
@@ -181,11 +204,11 @@ describe('startTeamsAssistantStatus', () => {
     );
     expect(finishMock).not.toHaveBeenCalled();
 
-    await status.finish('Acme has 3 open deals.');
+    await status.finish({ text: 'Acme has 3 open deals.' });
 
-    expect(finishMock).toHaveBeenCalledExactlyOnceWith(
-      'Acme has 3 open deals.',
-    );
+    expect(finishMock).toHaveBeenCalledExactlyOnceWith({
+      text: 'Acme has 3 open deals.',
+    });
     expect(sendActivityMock).not.toHaveBeenCalled();
   });
 
@@ -199,12 +222,12 @@ describe('startTeamsAssistantStatus', () => {
     });
 
     await vi.runAllTimersAsync();
-    await status.finish('Acme has 3 open deals.');
+    await status.finish({ text: 'Acme has 3 open deals.' });
 
     expect(startStreamMock).not.toHaveBeenCalled();
     expect(startPlaceholderMock).toHaveBeenCalledExactlyOnceWith(CONVERSATION);
-    expect(placeholderFinishMock).toHaveBeenCalledExactlyOnceWith(
-      'Acme has 3 open deals.',
-    );
+    expect(placeholderFinishMock).toHaveBeenCalledExactlyOnceWith({
+      text: 'Acme has 3 open deals.',
+    });
   });
 });
