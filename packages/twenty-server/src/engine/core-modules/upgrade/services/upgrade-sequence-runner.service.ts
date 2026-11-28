@@ -91,9 +91,6 @@ export class UpgradeSequenceRunnerService {
     let totalSuccesses = 0;
     let totalFailures = 0;
     let cursor = startCursor;
-    let workspaceCursors = await this.fetchWorkspaceCursors(
-      allProvisionedWorkspaceIds,
-    );
 
     while (cursor < sequence.length) {
       const step = sequence[cursor];
@@ -162,7 +159,9 @@ export class UpgradeSequenceRunnerService {
           this.enforceWorkspacesCompletedPreviousWorkspaceSegment({
             sequence,
             previousWorkspaceStep: previousStep,
-            workspaceCursors,
+            workspaceCursors: await this.fetchWorkspaceCursors(
+              allProvisionedWorkspaceIds,
+            ),
           });
         }
 
@@ -185,7 +184,9 @@ export class UpgradeSequenceRunnerService {
 
       const report = await this.resumeWorkspaceCommandsFromCursors({
         workspaceCommandsSegment,
-        workspaceCursors,
+        workspaceCursors: await this.fetchWorkspaceCursors(
+          allProvisionedWorkspaceIds,
+        ),
         allProvisionedWorkspaceIds,
         options,
       });
@@ -236,10 +237,6 @@ export class UpgradeSequenceRunnerService {
 
       allProvisionedWorkspaceIds = allProvisionedWorkspaceIds.filter(
         (workspaceId) => remainingProvisionedWorkspaceIds.has(workspaceId),
-      );
-
-      workspaceCursors = await this.fetchWorkspaceCursors(
-        allProvisionedWorkspaceIds,
       );
     }
 
