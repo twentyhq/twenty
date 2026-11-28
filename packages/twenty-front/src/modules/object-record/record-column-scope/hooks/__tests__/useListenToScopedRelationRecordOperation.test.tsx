@@ -1,13 +1,18 @@
-import { ApolloClient, ApolloLink, gql, InMemoryCache } from '@apollo/client';
+import { ApolloClient, ApolloLink, gql } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client/react';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 
+import { triggerAttachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerAttachRelationOptimisticEffect';
+import { triggerDetachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDetachRelationOptimisticEffect';
+import { triggerUpdateRelationsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationsOptimisticEffect';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
 import { useListenToScopedRelationRecordOperation } from '@/object-record/record-column-scope/hooks/useListenToScopedRelationRecordOperation';
 import { type ScopedRelationAlias } from '@/object-record/record-column-scope/types/ScopedRelationAlias';
 import { resolveScopedRelationJunction } from '@/object-record/record-column-scope/utils/resolveScopedRelationJunction';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { InMemoryTestingCacheInstance } from '~/testing/cache/inMemoryTestingCacheInstance';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
@@ -16,9 +21,26 @@ const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 const taskObjectMetadataItem = getMockObjectMetadataItemOrThrow('task');
 
+const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
+
 const COMPANY_ID = '20202020-1111-4000-8000-000000000001';
 const PERSON_ID = '20202020-2222-4000-8000-000000000001';
+const NEW_PERSON_ID = '20202020-2222-4000-8000-000000000002';
 const TASK_TARGET_ID = '20202020-3333-4000-8000-000000000001';
+
+const buildPerson = ({
+  id,
+  city,
+}: {
+  id: string;
+  city: string;
+}): ObjectRecord => ({
+  __typename: 'Person',
+  id,
+  city,
+  companyId: COMPANY_ID,
+  company: { __typename: 'Company', id: COMPANY_ID },
+});
 
 const peopleAlias: ScopedRelationAlias = {
   recordFieldId: 'people-column',
@@ -97,8 +119,21 @@ const waitForDebounce = () =>
   });
 
 const buildApolloClient = () => {
+  const { cache } = new InMemoryTestingCacheInstance({
+    objectMetadataItems,
+    initialRecordsInCache: [
+      {
+        objectMetadataItem: personObjectMetadataItem,
+        records: [
+          buildPerson({ id: PERSON_ID, city: 'Paris' }),
+          buildPerson({ id: NEW_PERSON_ID, city: 'Paris' }),
+        ],
+      },
+    ],
+  });
+
   const apolloClient = new ApolloClient({
-    cache: new InMemoryCache(),
+    cache,
     link: ApolloLink.empty(),
   });
 
@@ -151,7 +186,7 @@ const renderListener = (scopedRelationAliases: ScopedRelationAlias[]) => {
   const onScopedRelationRecordOperation = jest.fn();
   const apolloClient = buildApolloClient();
 
-  renderHook(
+  const { unmount } = renderHook(
     () =>
       useListenToScopedRelationRecordOperation({
         objectNameSingular: 'company',
@@ -170,6 +205,8 @@ const renderListener = (scopedRelationAliases: ScopedRelationAlias[]) => {
   );
 
   return {
+    apolloClient,
+    unmount,
     onScopedRelationRecordOperation,
     readCachedScopedPeople: () =>
       apolloClient.cache.readQuery({
@@ -183,6 +220,12 @@ const renderListener = (scopedRelationAliases: ScopedRelationAlias[]) => {
       }),
     readCachedPeople: () =>
       apolloClient.cache.readQuery({ query: COMPANY_PEOPLE_QUERY }),
+    readCachedPeopleIds: () =>
+      apolloClient.cache
+        .readQuery<{
+          company: { people: { edges: { node: { id: string } }[] } };
+        }>({ query: COMPANY_PEOPLE_QUERY })
+        ?.company.people.edges.map(({ node }) => node.id),
   };
 };
 
@@ -290,4 +333,99 @@ describe('useListenToScopedRelationRecordOperation', () => {
     expect(readCachedScopedTaskTargets()).toBeNull();
     expect(readCachedScopedPeople()).not.toBeNull();
   });
+
+  it('drops the cached scoped values without reloading when the table unmounts', () => {
+    const {
+      unmount,
+      onScopedRelationRecordOperation,
+      readCachedScopedPeople,
+      readCachedPeople,
+    } = renderListener([peopleAlias]);
+
+    unmount();
+
+    expect(onScopedRelationRecordOperation).not.toHaveBeenCalled();
+    expect(readCachedScopedPeople()).toBeNull();
+    expect(readCachedPeople()).not.toBeNull();
+  });
+
+  const companyPeopleRelationArguments = {
+    targetObjectMetadataItem: companyObjectMetadataItem,
+    fieldNameOnTargetRecord: 'people',
+    targetRecordId: COMPANY_ID,
+    objectMetadataItems,
+    objectPermissionsByObjectMetadataId: {},
+    upsertRecordsInStore: jest.fn(),
+  };
+
+  it.each([
+    {
+      write: 'a person is attached to the company',
+      runOptimisticEffect: (apolloClient: ApolloClient) =>
+        triggerAttachRelationOptimisticEffect({
+          ...companyPeopleRelationArguments,
+          cache: apolloClient.cache,
+          sourceObjectNameSingular: 'person',
+          sourceRecord: buildPerson({ id: NEW_PERSON_ID, city: 'Paris' }),
+        }),
+      expectedPeopleIds: [PERSON_ID, NEW_PERSON_ID],
+    },
+    {
+      write: 'a person is detached from the company',
+      runOptimisticEffect: (apolloClient: ApolloClient) =>
+        triggerDetachRelationOptimisticEffect({
+          ...companyPeopleRelationArguments,
+          cache: apolloClient.cache,
+          sourceObjectNameSingular: 'person',
+          sourceRecordId: PERSON_ID,
+        }),
+      expectedPeopleIds: [],
+    },
+    {
+      write: 'an attached person moves out of the scope',
+      runOptimisticEffect: (apolloClient: ApolloClient) =>
+        triggerUpdateRelationsOptimisticEffect({
+          cache: apolloClient.cache,
+          sourceObjectMetadataItem: personObjectMetadataItem,
+          currentSourceRecord: buildPerson({ id: PERSON_ID, city: 'Paris' }),
+          updatedSourceRecord: buildPerson({ id: PERSON_ID, city: 'London' }),
+          objectMetadataItems,
+          objectPermissionsByObjectMetadataId: {},
+          upsertRecordsInStore: jest.fn(),
+        }),
+      expectedPeopleIds: [PERSON_ID],
+    },
+  ])(
+    'refreshes the scoped values once $write, while the optimistic effect only updates the plain relation',
+    ({ runOptimisticEffect, expectedPeopleIds }) => {
+      const {
+        apolloClient,
+        onScopedRelationRecordOperation,
+        readCachedScopedPeople,
+        readCachedPeopleIds,
+      } = renderListener([peopleAlias]);
+      const cachedScopedPeople = readCachedScopedPeople();
+
+      runOptimisticEffect(apolloClient);
+
+      expect(readCachedPeopleIds()).toEqual(expectedPeopleIds);
+      expect(readCachedScopedPeople()).toEqual(cachedScopedPeople);
+
+      dispatchObjectRecordOperationBrowserEvent({
+        objectMetadataItem: personObjectMetadataItem,
+        operation: {
+          type: 'update-one',
+          result: {
+            updateInput: { recordId: PERSON_ID, updatedFields: [] },
+          },
+        },
+      });
+
+      waitForDebounce();
+
+      expect(onScopedRelationRecordOperation).toHaveBeenCalledTimes(1);
+      expect(readCachedScopedPeople()).toBeNull();
+      expect(readCachedPeopleIds()).toEqual(expectedPeopleIds);
+    },
+  );
 });

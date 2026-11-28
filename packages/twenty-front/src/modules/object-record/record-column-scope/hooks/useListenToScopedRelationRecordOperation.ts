@@ -4,11 +4,11 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
 import { getScopedRelationFieldNamesReachingObject } from '@/object-record/record-column-scope/utils/getScopedRelationFieldNamesReachingObject';
 import { invalidateCachedScopedRelations } from '@/object-record/record-column-scope/utils/invalidateCachedScopedRelations';
-import { useContext } from 'react';
+import { useCallback, useContext, useEffect } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
-// Only the server applies a scope, so a write the client cannot place drops the cached scoped values.
+// Sole owner of cached scoped values, which optimistic effects leave untouched since only the server applies a scope.
 // A burst of writes scans the cache once, as a scan costs as much as the session has cached, and the reload
 // that follows refetches every scoped column of the table.
 export const useListenToScopedRelationRecordOperation = ({
@@ -22,8 +22,9 @@ export const useListenToScopedRelationRecordOperation = ({
 }) => {
   const scopedRelationAliases = useContext(ScopedRelationAliasesContext);
   const apolloCoreClient = useApolloCoreClient();
-  const invalidateAndReload = useDebouncedCallback(
-    () => {
+
+  const invalidateScopedRelations = useCallback(
+    () =>
       invalidateCachedScopedRelations({
         cache: apolloCoreClient.cache,
         objectNameSingular,
@@ -35,13 +36,28 @@ export const useListenToScopedRelationRecordOperation = ({
             ),
           ),
         ],
-      });
+      }),
+    [apolloCoreClient.cache, objectNameSingular, scopedRelationAliases],
+  );
+
+  const invalidateAndReload = useDebouncedCallback(
+    () => {
+      invalidateScopedRelations();
 
       onScopedRelationRecordOperation();
     },
     debounceTimeInMs,
     { leading: false },
   );
+
+  // Writes made once the table is gone are never heard, so the next table would read stale values from the cache
+  useEffect(() => {
+    if (!isNonEmptyArray(scopedRelationAliases)) {
+      return;
+    }
+
+    return invalidateScopedRelations;
+  }, [scopedRelationAliases, invalidateScopedRelations]);
 
   const handleRecordOperation = ({
     objectMetadataItem,
