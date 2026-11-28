@@ -39,7 +39,7 @@ const STATUS_PILL_COLORS: Record<
   { background: string; color: string }
 > = {
   blue: {
-    background: themeCssVariables.color.blue4,
+    background: themeCssVariables.accent.accent4,
     color: themeCssVariables.accent.accent11,
   },
   gray: {

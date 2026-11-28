@@ -51,7 +51,7 @@ export const SettingsPrivacySafeguards = () => {
               <IconCloud
                 size={theme.icon.size.md}
                 stroke={theme.icon.stroke.md}
-                color={theme.color.blue}
+                color={theme.accent.accent9}
               />
               <StyledSettingsBillingCardTitleLabel>{t`Twenty Cloud`}</StyledSettingsBillingCardTitleLabel>
             </StyledSettingsBillingCardTitle>

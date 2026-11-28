@@ -49,7 +49,7 @@ const StyledNodeContainer = styled.div<{
 
     border-color: ${({ runStatus, selected, isConnectable }) => {
       if (isConnectable) {
-        return themeCssVariables.color.blue;
+        return themeCssVariables.accent.accent9;
       }
       const colors = getWorkflowDiagramColors({ runStatus });
       return selected

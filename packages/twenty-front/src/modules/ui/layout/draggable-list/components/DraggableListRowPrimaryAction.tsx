@@ -34,7 +34,7 @@ const StyledPrimaryAction = styled.button`
     border-radius: calc(
       ${themeCssVariables.border.radius.md} - ${themeCssVariables.spacing[1]}
     );
-    outline: 2px solid ${themeCssVariables.color.blue};
+    outline: 2px solid ${themeCssVariables.accent.accent9};
     outline-offset: -2px;
   }
 

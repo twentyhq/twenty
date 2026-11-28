@@ -162,7 +162,7 @@ export const GettingStartedSidebarCard = () => {
                   backgroundColor={
                     themeCssVariables.background.transparent.medium
                   }
-                  barColor={themeCssVariables.color.blue}
+                  barColor={themeCssVariables.accent.accent9}
                   withBorderRadius
                 />
               </>

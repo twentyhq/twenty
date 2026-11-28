@@ -132,6 +132,7 @@ export const themeCssVariables = {
     accent10: 'var(--t-accent-accent10)',
     accent11: 'var(--t-accent-accent11)',
     accent12: 'var(--t-accent-accent12)',
+    transparent: 'var(--t-accent-transparent)',
   },
   background: {
     noisy: 'var(--t-background-noisy)',

@@ -33,7 +33,7 @@ const StyledInputContainer = styled.div<{
   width: 100%;
 
   &:focus-within {
-    box-shadow: inset 0 -1px 0 ${themeCssVariables.color.blue};
+    box-shadow: inset 0 -1px 0 ${themeCssVariables.accent.accent9};
   }
 `;
 

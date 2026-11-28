@@ -115,7 +115,7 @@ const StyledPermissionRow = styled.div`
 `;
 
 const StyledPermissionIcon = styled.div`
-  color: ${themeCssVariables.color.blue9};
+  color: ${themeCssVariables.accent.accent9};
   display: flex;
 `;
 
@@ -124,7 +124,7 @@ const StyledPermissionLabel = styled.span`
   cursor: default;
 
   &:focus-visible {
-    outline: 1px solid ${themeCssVariables.color.blue9};
+    outline: 1px solid ${themeCssVariables.accent.accent9};
   }
 `;
 

@@ -32,7 +32,7 @@ const StyledEditorContainer = styled.div<{
   }
 
   .drop-cursor {
-    background-color: ${themeCssVariables.color.blue};
+    background-color: ${themeCssVariables.accent.accent9};
     border-radius: ${themeCssVariables.border.radius.pill};
     pointer-events: none;
     position: absolute;
@@ -90,9 +90,9 @@ const StyledEditorContainer = styled.div<{
     }
 
     .variable-tag {
-      background-color: ${themeCssVariables.color.blue3};
+      background-color: ${themeCssVariables.accent.accent3};
       border-radius: ${themeCssVariables.border.radius.sm};
-      color: ${themeCssVariables.color.blue};
+      color: ${themeCssVariables.accent.accent9};
       padding: ${themeCssVariables.spacing[1]};
     }
 
@@ -380,7 +380,7 @@ const StyledEditorContainer = styled.div<{
       }
 
       .selectedCell::after {
-        background-color: ${themeCssVariables.color.blue3};
+        background-color: ${themeCssVariables.accent.accent3};
         content: '';
         inset: 0;
         mix-blend-mode: multiply;
@@ -389,7 +389,7 @@ const StyledEditorContainer = styled.div<{
       }
 
       .column-resize-handle {
-        background-color: ${themeCssVariables.color.blue};
+        background-color: ${themeCssVariables.accent.accent9};
         bottom: 0;
         pointer-events: none;
         position: absolute;
@@ -415,7 +415,7 @@ const StyledEditorContainer = styled.div<{
       }
 
       &.ProseMirror-selectednode {
-        background-color: ${themeCssVariables.color.blue3};
+        background-color: ${themeCssVariables.accent.accent3};
         outline: 1px dashed ${themeCssVariables.border.color.strong};
       }
     }
@@ -428,7 +428,7 @@ const StyledEditorContainer = styled.div<{
       margin-bottom: var(--editor-block-spacing);
 
       &.ProseMirror-selectednode {
-        background-color: ${themeCssVariables.color.blue3};
+        background-color: ${themeCssVariables.accent.accent3};
         outline: none;
       }
     }
@@ -451,7 +451,7 @@ const StyledEditorContainer = styled.div<{
       margin-bottom: var(--editor-block-spacing);
 
       &.ProseMirror-selectednode {
-        background-color: ${themeCssVariables.color.blue3};
+        background-color: ${themeCssVariables.accent.accent3};
         outline: none;
       }
     }
@@ -477,13 +477,13 @@ const StyledEditorContainer = styled.div<{
 
       &.ProseMirror-selectednode {
         box-shadow: 0 0 0 ${themeCssVariables.spacing[2]}
-          ${themeCssVariables.color.blue3};
+          ${themeCssVariables.accent.accent3};
         outline: none;
       }
     }
 
     .ProseMirror-selectednode {
-      outline: 2px solid ${themeCssVariables.color.blue};
+      outline: 2px solid ${themeCssVariables.accent.accent9};
     }
 
     :is(
@@ -500,12 +500,12 @@ const StyledEditorContainer = styled.div<{
       blockquote,
       .toggle-block
     ).ProseMirror-selectednode {
-      background-color: ${themeCssVariables.color.blue3};
+      background-color: ${themeCssVariables.accent.accent3};
       outline: none;
     }
 
     .block-column.ProseMirror-selectednode {
-      background-color: ${themeCssVariables.color.blue3};
+      background-color: ${themeCssVariables.accent.accent3};
       outline: 1px dashed ${themeCssVariables.border.color.strong};
     }
 
@@ -514,7 +514,7 @@ const StyledEditorContainer = styled.div<{
       position: relative;
 
       &::after {
-        background-color: ${themeCssVariables.color.blue3};
+        background-color: ${themeCssVariables.accent.accent3};
         content: '';
         inset: 0;
         mix-blend-mode: multiply;

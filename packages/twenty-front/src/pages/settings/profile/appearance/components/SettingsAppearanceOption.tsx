@@ -29,7 +29,7 @@ const StyledTile = styled.div`
   width: 100%;
 
   &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
+    outline: 2px solid ${themeCssVariables.accent.accent9};
     outline-offset: 1px;
   }
 
@@ -47,7 +47,7 @@ const StyledTile = styled.div`
 
 const StyledCheckmark = styled.div`
   align-items: center;
-  background-color: ${themeCssVariables.color.blue};
+  background-color: ${themeCssVariables.accent.accent9};
   border-radius: ${themeCssVariables.border.radius.rounded};
   bottom: ${themeCssVariables.spacing[2]};
   color: ${themeCssVariables.grayScale.gray1};

@@ -58,7 +58,7 @@ const StyledRecordRow = styled.tr`
 
 const StyledCell = styled.td<{ isChanged?: boolean }>`
   background: ${({ isChanged }) =>
-    isChanged ? themeCssVariables.background.transparent.blue : 'transparent'};
+    isChanged ? themeCssVariables.accent.transparent : 'transparent'};
   padding: 0;
 
   &:not(:last-child) {

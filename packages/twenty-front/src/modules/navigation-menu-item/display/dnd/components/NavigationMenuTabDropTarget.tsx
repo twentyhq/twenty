@@ -18,8 +18,8 @@ const StyledTabDropTarget = styled.span`
   transition: box-shadow 150ms ease-in-out;
 
   &[data-drag-over='true'] {
-    background-color: ${themeCssVariables.background.transparent.blue};
-    box-shadow: 0 0 0 1px ${themeCssVariables.color.blue};
+    background-color: ${themeCssVariables.accent.transparent};
+    box-shadow: 0 0 0 1px ${themeCssVariables.accent.accent9};
   }
 `;
 

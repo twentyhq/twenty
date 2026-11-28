@@ -39,7 +39,7 @@ const styles = {
       padding: 0;
     }
     &:focus-visible {
-      outline: 2px solid var(--t-color-blue);
+      outline: 2px solid var(--t-accent-accent9);
       outline-offset: 1px;
     }
     &:disabled {

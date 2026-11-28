@@ -21,7 +21,7 @@ export const JsonArrow = ({
 
   const iconColor =
     variant === 'blue'
-      ? themeCssVariables.color.blue
+      ? themeCssVariables.accent.accent9
       : variant === 'red'
         ? themeCssVariables.font.color.danger
         : themeCssVariables.font.color.secondary;

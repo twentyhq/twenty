@@ -28,7 +28,7 @@ export const JsonNodeLabel = ({
         size={theme.icon.size.md}
         color={
           highlighting === 'blue'
-            ? theme.color.blue
+            ? theme.accent.accent9
             : highlighting === 'red'
               ? theme.font.color.danger
               : theme.font.color.tertiary

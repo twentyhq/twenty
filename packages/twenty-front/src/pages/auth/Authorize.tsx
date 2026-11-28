@@ -124,7 +124,7 @@ const StyledScopeItem = styled.li`
 
 const StyledScopeIcon = styled.div`
   align-items: center;
-  color: ${themeCssVariables.color.blue};
+  color: ${themeCssVariables.accent.accent9};
   display: flex;
   flex-shrink: 0;
   justify-content: center;

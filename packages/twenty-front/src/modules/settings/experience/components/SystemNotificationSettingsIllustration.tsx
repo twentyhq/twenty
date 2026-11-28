@@ -58,11 +58,11 @@ const StyledRow = styled.div<{ isHighlighted: boolean }>`
   border: 1px solid
     ${({ isHighlighted }) =>
       isHighlighted
-        ? themeCssVariables.color.blue
+        ? themeCssVariables.accent.accent9
         : themeCssVariables.border.color.light};
   border-radius: ${themeCssVariables.border.radius.sm};
   box-shadow: ${({ isHighlighted }) =>
-    isHighlighted ? `0 0 0 3px ${themeCssVariables.color.blue3}` : 'none'};
+    isHighlighted ? `0 0 0 3px ${themeCssVariables.accent.accent3}` : 'none'};
   color: ${themeCssVariables.font.color.primary};
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};

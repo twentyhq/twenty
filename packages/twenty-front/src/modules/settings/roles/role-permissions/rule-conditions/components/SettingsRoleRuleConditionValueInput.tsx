@@ -85,7 +85,7 @@ const StyledReadOnlyInput = styled.div`
 `;
 
 const StyledMeText = styled.span`
-  color: ${themeCssVariables.color.blue};
+  color: ${themeCssVariables.accent.accent9};
   flex-shrink: 0;
 `;
 

@@ -13,7 +13,7 @@ const StyledReason = styled.span<{
   align-items: center;
   color: ${({ $isHighlighted, $isUnread }) => {
     if ($isHighlighted) {
-      return themeCssVariables.color.blue;
+      return themeCssVariables.accent.accent9;
     }
 
     if ($isUnread) {

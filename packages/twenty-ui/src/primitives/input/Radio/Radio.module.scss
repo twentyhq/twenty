@@ -39,7 +39,7 @@
 }
 
 .root[data-checked] .control {
-  background-color: var(--t-color-blue);
+  background-color: var(--t-accent-accent9);
   border: none;
   transform: scale(1.05);
 }
@@ -64,7 +64,7 @@
   }
 
   .root[data-checked]:not([data-disabled]):not([data-readonly]):hover .control {
-    background-color: var(--t-color-blue);
+    background-color: var(--t-accent-accent9);
     outline-color: var(--t-color-transparent-blue2);
   }
 }
@@ -104,7 +104,7 @@
 }
 
 .card[data-checked] {
-  border-color: var(--t-color-blue);
+  border-color: var(--t-accent-accent9);
 }
 
 .card > .control {

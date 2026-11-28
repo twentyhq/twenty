@@ -49,7 +49,7 @@ const StyledResizableHeaderContainer = styled.div<{ isResizing?: boolean }>`
 
 const StyledResizeHandle = styled.div<{ isResizing: boolean }>`
   background: ${({ isResizing }) =>
-    isResizing ? themeCssVariables.color.blue : 'transparent'};
+    isResizing ? themeCssVariables.accent.accent9 : 'transparent'};
   bottom: 0;
   cursor: col-resize;
   position: absolute;
@@ -58,7 +58,7 @@ const StyledResizeHandle = styled.div<{ isResizing: boolean }>`
   width: 4px;
 
   &:hover {
-    background: ${themeCssVariables.color.blue};
+    background: ${themeCssVariables.accent.accent9};
   }
 `;
 

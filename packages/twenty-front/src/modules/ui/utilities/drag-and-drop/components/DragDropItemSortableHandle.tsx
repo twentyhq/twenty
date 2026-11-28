@@ -15,7 +15,7 @@ const StyledSortableHandle = styled.div<{
   outline: none;
   width: ${({ $fill }) => ($fill ? '100%' : 'auto')};
   &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
+    outline: 2px solid ${themeCssVariables.accent.accent9};
     outline-offset: -2px;
   }
 `;

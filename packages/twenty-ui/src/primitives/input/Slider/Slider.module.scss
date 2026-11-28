@@ -17,7 +17,7 @@
 }
 
 .accent {
-  color: var(--t-color-blue9);
+  color: var(--t-accent-accent9);
 }
 
 .success {
@@ -80,7 +80,7 @@
   inline-size: var(--tw-slider-thumb-size);
 
   &:has(:focus-visible) {
-    outline: 2px solid var(--t-color-blue);
+    outline: 2px solid var(--t-accent-accent9);
     outline-offset: 1px;
   }
 }

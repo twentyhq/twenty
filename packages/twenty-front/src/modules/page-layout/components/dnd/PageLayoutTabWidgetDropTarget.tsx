@@ -16,7 +16,7 @@ const StyledDropTarget = styled.div<{ isActive: boolean }>`
   border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   outline: ${({ isActive }) =>
-    isActive ? `1px solid ${themeCssVariables.color.blue}` : 'none'};
+    isActive ? `1px solid ${themeCssVariables.accent.accent9}` : 'none'};
   outline-offset: -1px;
   z-index: ${({ isActive }) => (isActive ? 1 : 'auto')};
 `;

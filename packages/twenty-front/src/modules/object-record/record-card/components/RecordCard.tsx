@@ -27,14 +27,14 @@ const StyledBoardCard = styled.div<{
   &[data-active='true'] {
     --record-card-background-color: ${themeCssVariables.accent.quaternary};
 
-    border: 1px solid ${themeCssVariables.color.blue7};
+    border: 1px solid ${themeCssVariables.accent.accent7};
   }
 
   &:hover {
     border: 1px solid ${themeCssVariables.border.color.strong};
 
     &[data-active='true'] {
-      border: 1px solid ${themeCssVariables.color.blue7};
+      border: 1px solid ${themeCssVariables.accent.accent7};
     }
   }
 

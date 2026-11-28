@@ -31,7 +31,7 @@ const StyledHeroButton = styled.button`
   width: 100%;
 
   &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
+    outline: 2px solid ${themeCssVariables.accent.accent9};
     outline-offset: 2px;
   }
 `;
@@ -66,11 +66,11 @@ const StyledThumbnail = styled.button`
   }
 
   &[aria-pressed='true'] {
-    border-color: ${themeCssVariables.color.blue};
+    border-color: ${themeCssVariables.accent.accent9};
   }
 
   &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
+    outline: 2px solid ${themeCssVariables.accent.accent9};
     outline-offset: -2px;
   }
 `;

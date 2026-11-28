@@ -34,11 +34,11 @@ const StyledGridOverlay = styled.div<{
 
 const StyledGridCell = styled.div<{ isSelected?: boolean }>`
   background: ${({ isSelected }) =>
-    isSelected ? themeCssVariables.color.blue3 : 'transparent'};
+    isSelected ? themeCssVariables.accent.accent3 : 'transparent'};
   border: 1px solid
     ${({ isSelected }) =>
       isSelected
-        ? themeCssVariables.color.blue7
+        ? themeCssVariables.accent.accent7
         : themeCssVariables.border.color.light};
   border-radius: ${themeCssVariables.border.radius.md};
   cursor: pointer;

@@ -3,10 +3,10 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRingColor';
 
 describe('getUsageLimitRingColor', () => {
-  it('stays blue while the limit is comfortable', () => {
+  it('uses the accent color while the limit is comfortable', () => {
     expect(
       getUsageLimitRingColor({ consumedPercentage: 60, isExhausted: false }),
-    ).toBe(themeCssVariables.color.blue);
+    ).toBe(themeCssVariables.accent.accent9);
   });
 
   it('turns orange past 60%', () => {

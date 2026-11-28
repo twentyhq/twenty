@@ -50,7 +50,7 @@ const StyledMode = styled.button<{
   min-width: 0;
   outline: ${({ isSelectedInEditMode }) =>
     isSelectedInEditMode
-      ? `1px solid ${themeCssVariables.color.blue}`
+      ? `1px solid ${themeCssVariables.accent.accent9}`
       : 'none'};
   outline-offset: -1px;
   padding: ${({ isExpanded, isLabelHidden }) =>
@@ -78,7 +78,7 @@ const StyledMode = styled.button<{
   }
 
   &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
+    outline: 2px solid ${themeCssVariables.accent.accent9};
     outline-offset: 1px;
   }
 `;

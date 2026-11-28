@@ -33,7 +33,7 @@ const StyledIconPickerTrigger = styled.div`
   display: flex;
 
   &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
+    outline: 2px solid ${themeCssVariables.accent.accent9};
     outline-offset: 1px;
   }
 `;
@@ -47,7 +47,7 @@ const StyledButton = styled.button`
   text-align: left;
 
   &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
+    outline: 2px solid ${themeCssVariables.accent.accent9};
     outline-offset: 1px;
   }
 `;

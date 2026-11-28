@@ -126,11 +126,11 @@
 
 $colors: (
   'accent': (
-    base: var(--t-color-blue),
-    text: var(--t-color-blue),
+    base: var(--t-accent-accent9),
+    text: var(--t-accent-accent9),
     border: var(--t-accent-primary),
-    hover: var(--t-color-blue10),
-    active: var(--t-color-blue12),
+    hover: var(--t-accent-accent10),
+    active: var(--t-accent-accent12),
     soft: var(--t-accent-tertiary),
     soft-hover: var(--t-accent-secondary),
   ),

@@ -42,8 +42,8 @@ const StyledContainer = styled.span`
   position: relative;
 
   &[data-selected='true'] {
-    background: ${themeCssVariables.background.transparent.blue};
-    box-shadow: 0 0 0 1px ${themeCssVariables.color.blue};
+    background: ${themeCssVariables.accent.transparent};
+    box-shadow: 0 0 0 1px ${themeCssVariables.accent.accent9};
   }
 
   &[data-invalid='true'] {

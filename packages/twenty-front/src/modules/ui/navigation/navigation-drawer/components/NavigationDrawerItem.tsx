@@ -60,7 +60,7 @@ const StyledItem = styled.button<StyledItemProps>`
       : 'transparent'};
   border: ${({ isSelectedInEditMode }) =>
     isSelectedInEditMode
-      ? `1px solid ${themeCssVariables.color.blue}`
+      ? `1px solid ${themeCssVariables.accent.accent9}`
       : '1px solid transparent'};
   border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
@@ -119,7 +119,7 @@ const StyledItem = styled.button<StyledItemProps>`
   }
 
   &:has(.navigation-drawer-item-label:focus-visible) {
-    outline: 2px solid ${themeCssVariables.color.blue};
+    outline: 2px solid ${themeCssVariables.accent.accent9};
     outline-offset: -2px;
   }
 

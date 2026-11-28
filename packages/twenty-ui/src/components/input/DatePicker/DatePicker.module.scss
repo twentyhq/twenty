@@ -114,7 +114,7 @@
 .calendar :global(.react-datepicker__day--in-range),
 .calendar :global(.react-datepicker__day--range-start),
 .calendar :global(.react-datepicker__day--range-end) {
-  background-color: var(--t-color-blue);
+  background-color: var(--t-accent-accent9);
   color: var(--t-background-primary);
   &:hover {
     color: var(--t-background-primary);

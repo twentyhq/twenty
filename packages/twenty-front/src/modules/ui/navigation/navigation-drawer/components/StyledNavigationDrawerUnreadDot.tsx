@@ -4,7 +4,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 // Marks an icon as unread where no label can show it, so its parent must be
 // positioned
 export const StyledNavigationDrawerUnreadDot = styled.span`
-  background: ${themeCssVariables.color.blue};
+  background: ${themeCssVariables.accent.accent9};
   border-radius: 50%;
   corner-shape: round;
   height: 6px;

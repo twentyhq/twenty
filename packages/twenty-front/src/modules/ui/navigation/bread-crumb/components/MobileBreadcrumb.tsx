@@ -36,7 +36,7 @@ const StyledLinkContainer = styled.div`
     white-space: nowrap;
 
     &:focus-visible {
-      outline: 2px solid ${themeCssVariables.color.blue};
+      outline: 2px solid ${themeCssVariables.accent.accent9};
       outline-offset: -2px;
     }
   }

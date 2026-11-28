@@ -17,7 +17,7 @@ export const StyledChatComposerBox = styled.div`
   width: 100%;
 
   &:focus-within {
-    border-color: ${themeCssVariables.color.blue};
+    border-color: ${themeCssVariables.accent.accent9};
     box-shadow: 0px 0px 0px 3px ${themeCssVariables.color.transparent.blue2};
   }
 `;

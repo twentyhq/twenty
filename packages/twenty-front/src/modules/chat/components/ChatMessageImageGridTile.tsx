@@ -22,7 +22,7 @@ const StyledTileButton = styled.button`
   position: relative;
 
   &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
+    outline: 2px solid ${themeCssVariables.accent.accent9};
     outline-offset: -1px;
   }
 `;

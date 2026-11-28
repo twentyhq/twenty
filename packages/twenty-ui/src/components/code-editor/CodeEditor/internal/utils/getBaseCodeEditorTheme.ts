@@ -128,9 +128,7 @@ export const getBaseCodeEditorTheme = ({
       'editor.lineHighlightBackground': convertColorToHex(
         theme.background.tertiary,
       ),
-      'editor.selectionBackground': convertColorToHex(
-        theme.background.transparent.blue,
-      ),
+      'editor.selectionBackground': convertColorToHex(theme.accent.transparent),
       'editor.inactiveSelectionBackground': convertColorToHex(
         theme.background.transparent.light,
       ),

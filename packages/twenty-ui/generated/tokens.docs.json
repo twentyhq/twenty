@@ -126,6 +126,13 @@
     "isNumber": false
   },
   {
+    "path": "accent.transparent",
+    "cssVariable": "--t-accent-transparent",
+    "light": "#0047f112",
+    "dark": "#3566ff57",
+    "isNumber": false
+  },
+  {
     "path": "animation.duration.fast",
     "cssVariable": "--t-animation-duration-fast",
     "light": "0.15",

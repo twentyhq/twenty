@@ -14,18 +14,18 @@ const StyledChip = styled.div<{
     selected
       ? danger
         ? themeCssVariables.color.red
-        : themeCssVariables.color.blue
+        : themeCssVariables.accent.accent9
       : danger
         ? themeCssVariables.color.red3
-        : themeCssVariables.color.blue3};
+        : themeCssVariables.accent.accent3};
   border-color: ${({ danger, selected }) =>
     selected
       ? danger
         ? themeCssVariables.color.red
-        : themeCssVariables.color.blue
+        : themeCssVariables.accent.accent9
       : danger
         ? themeCssVariables.color.red5
-        : themeCssVariables.color.blue5};
+        : themeCssVariables.accent.accent5};
   border-radius: ${themeCssVariables.border.radius.smRound};
   border-style: solid;
   border-width: 1px;
@@ -35,7 +35,7 @@ const StyledChip = styled.div<{
       ? themeCssVariables.font.color.inverted
       : danger
         ? themeCssVariables.color.red
-        : themeCssVariables.color.blue};
+        : themeCssVariables.accent.accent9};
   column-gap: ${themeCssVariables.spacing[1]};
   corner-shape: round;
   cursor: ${({ deletable }) => (deletable ? 'pointer' : 'default')};

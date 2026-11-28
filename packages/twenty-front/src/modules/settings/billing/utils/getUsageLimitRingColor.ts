@@ -15,5 +15,5 @@ export const getUsageLimitRingColor = ({
     return themeCssVariables.color.orange;
   }
 
-  return themeCssVariables.color.blue;
+  return themeCssVariables.accent.accent9;
 };

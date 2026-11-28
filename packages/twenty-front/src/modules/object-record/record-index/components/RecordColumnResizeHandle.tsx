@@ -17,7 +17,7 @@ const StyledRecordColumnResizeHandle = styled.div<{
   z-index: 1;
 
   &:after {
-    background-color: ${themeCssVariables.color.blue};
+    background-color: ${themeCssVariables.accent.accent9};
     bottom: 0;
     content: '';
     display: ${({ isResizing }) => (isResizing ? 'block' : 'none')};
