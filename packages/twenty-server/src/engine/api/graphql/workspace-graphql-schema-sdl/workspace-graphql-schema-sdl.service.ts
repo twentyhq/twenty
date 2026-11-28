@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { printSchema } from 'graphql';
+import { buildSchema, type GraphQLSchema, printSchema } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CORE_WORKFLOW_APP_OPERATIONS_SDL_APPENDER } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/core-workflow-app-operations-sdl.constants';
@@ -32,8 +32,15 @@ export type WorkspaceGraphqlSchemaSDLResult = {
   flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
 };
 
+const MAX_CACHED_SCHEMAS = 50;
+
 @Injectable()
 export class WorkspaceGraphqlSchemaSDLService {
+  private readonly cachedSchemas = new Map<
+    string,
+    { metadataCacheHash: string; schema: Promise<GraphQLSchema | null> }
+  >();
+
   constructor(
     private readonly workspaceGraphQLSchemaGenerator: WorkspaceGraphQLSchemaGenerator,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
@@ -41,6 +48,52 @@ export class WorkspaceGraphqlSchemaSDLService {
     @Inject(CORE_WORKFLOW_APP_OPERATIONS_SDL_APPENDER)
     private readonly appendCoreWorkflowAppOperationsToSdl: CoreWorkflowAppOperationsSdlAppender,
   ) {}
+
+  async getOrComputeSchema({
+    workspace,
+    applicationId,
+  }: {
+    workspace: FlatWorkspace;
+    applicationId?: string;
+  }): Promise<GraphQLSchema | null> {
+    const { hashes } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMapsWithHashes(
+        {
+          workspaceId: workspace.id,
+          flatMapsKeys: [...SCHEMA_SDL_CACHE_DEPENDENCIES],
+        },
+      );
+    const metadataCacheHash = combineCacheHashes(
+      hashes,
+      SCHEMA_SDL_CACHE_DEPENDENCIES,
+    );
+    const cacheKey = `${workspace.id}:${applicationId ?? ''}`;
+    const cachedSchema = this.cachedSchemas.get(cacheKey);
+
+    if (cachedSchema?.metadataCacheHash === metadataCacheHash) {
+      return cachedSchema.schema;
+    }
+
+    // Caching the promise makes concurrent requests share one build
+    const schema = this.getOrComputeSchemaSDL(workspace, applicationId).then(
+      (schemaSDLResult) =>
+        isDefined(schemaSDLResult)
+          ? buildSchema(schemaSDLResult.sdl, { noLocation: true })
+          : null,
+    );
+
+    // Map keeps insertion order, so re-inserting makes the first key the least recently built
+    this.cachedSchemas.delete(cacheKey);
+    this.cachedSchemas.set(cacheKey, { metadataCacheHash, schema });
+
+    if (this.cachedSchemas.size > MAX_CACHED_SCHEMAS) {
+      this.cachedSchemas.delete(this.cachedSchemas.keys().next().value ?? '');
+    }
+
+    schema.catch(() => this.cachedSchemas.delete(cacheKey));
+
+    return schema;
+  }
 
   async getOrComputeSchemaSDL(
     workspace: FlatWorkspace,

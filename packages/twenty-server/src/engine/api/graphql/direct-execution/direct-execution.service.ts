@@ -8,7 +8,6 @@ import * as Sentry from '@sentry/node';
 import { type Request } from 'express';
 import {
   GraphQLError,
-  buildSchema,
   execute,
   type DocumentNode,
   type FieldNode,
@@ -17,6 +16,7 @@ import {
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { GraphqlDocumentValidationService } from 'src/engine/api/graphql/direct-execution/services/graphql-document-validation.service';
 import { type ResolverNameMapEntry } from 'src/engine/api/graphql/direct-execution/utils/build-resolver-name-map.util';
 import { buildWorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/direct-execution/utils/build-workspace-schema-builder-context.util';
 import { computeGraphQLDirectExecutionQueryCost } from 'src/engine/api/graphql/direct-execution/utils/compute-graphql-direct-execution-query-cost.util';
@@ -62,6 +62,7 @@ export class DirectExecutionService {
     private readonly workspaceFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceGraphqlSchemaSDLService: WorkspaceGraphqlSchemaSDLService,
+    private readonly graphqlDocumentValidationService: GraphqlDocumentValidationService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly i18nService: I18nService,
     private readonly metricsService: MetricsService,
@@ -133,11 +134,13 @@ export class DirectExecutionService {
     document: DocumentNode,
   ): Promise<DirectExecutionResult | null> {
     try {
-      const workspaceId = req.workspace?.id;
+      const workspace = req.workspace;
 
-      if (!isDefined(workspaceId)) {
+      if (!isDefined(workspace)) {
         return null;
       }
+
+      const workspaceId = workspace.id;
 
       const topLevelFields = graphQLExtractTopLevelFields(
         document,
@@ -145,6 +148,21 @@ export class DirectExecutionService {
       );
 
       this.checkRootResolverLimitsOrThrow(topLevelFields);
+
+      if (
+        Math.random() <
+        this.twentyConfigService.get('GRAPHQL_DOCUMENT_VALIDATION_SAMPLE_RATE')
+      ) {
+        void this.graphqlDocumentValidationService
+          .validateDocument({
+            workspace,
+            applicationId: req.application?.id ?? undefined,
+            document,
+          })
+          .catch((error) =>
+            this.exceptionHandlerService.captureExceptions([error]),
+          );
+      }
 
       const fragmentMap = graphQLBuildFragmentMap(document);
       const variables = applyGraphqlVariableDefaults(
@@ -244,17 +262,16 @@ export class DirectExecutionService {
         return null;
       }
 
-      const schemaSDLResult =
-        await this.workspaceGraphqlSchemaSDLService.getOrComputeSchemaSDL(
-          req.workspace,
-          req.application?.id ?? undefined,
-        );
+      const schema =
+        await this.workspaceGraphqlSchemaSDLService.getOrComputeSchema({
+          workspace: req.workspace,
+          applicationId: req.application?.id ?? undefined,
+        });
 
-      if (!isDefined(schemaSDLResult)) {
+      if (!isDefined(schema)) {
         return null;
       }
 
-      const schema = buildSchema(schemaSDLResult.sdl);
       const result = await execute({
         schema,
         document,

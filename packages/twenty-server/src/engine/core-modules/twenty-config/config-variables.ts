@@ -2056,6 +2056,15 @@ export class ConfigVariables {
   })
   COMMON_QUERY_COMPLEXITY_LIMIT = 2000;
 
+  @CastToPositiveNumber()
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Share of direct-execution GraphQL requests (0 to 1) whose document is validated against the workspace schema, in report-only mode',
+    type: ConfigVariableType.NUMBER,
+  })
+  GRAPHQL_DOCUMENT_VALIDATION_SAMPLE_RATE = 0;
+
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
     description:
