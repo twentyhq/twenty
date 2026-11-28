@@ -56,7 +56,7 @@ export class AccessGroupSyncService {
   }: Required<SyncAccessGroupsJobData>): Promise<void> {
     const syncStart = performance.now();
 
-    await this.workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
+    await this.workspaceCacheService.markWorkspaceLocalCacheStale(workspaceId);
 
     const workspaceCache = await this.workspaceCacheService.getOrRecompute(
       workspaceId,

@@ -10,10 +10,10 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 export class RecordAccessGroupMetadataMapsService {
   constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
 
-  async findAfterEvictingLocalCache(
+  async findAfterMarkingLocalCacheStale(
     workspaceId: string,
   ): Promise<RecordAccessGroupComputationMetadataMaps> {
-    await this.workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
+    await this.workspaceCacheService.markWorkspaceLocalCacheStale(workspaceId);
 
     return this.find(workspaceId);
   }

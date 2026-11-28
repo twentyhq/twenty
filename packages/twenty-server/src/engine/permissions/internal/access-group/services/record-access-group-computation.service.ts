@@ -218,7 +218,7 @@ export class RecordAccessGroupComputationService {
     ) => SQLCondition | undefined;
   }): Promise<void> {
     const metadataMaps =
-      await this.recordAccessGroupMetadataMapsService.findAfterEvictingLocalCache(
+      await this.recordAccessGroupMetadataMapsService.findAfterMarkingLocalCacheStale(
         workspaceId,
       );
 

@@ -114,6 +114,9 @@ export class WorkspaceMigrationRunnerService {
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         workspaceId,
       );
+      await this.workspaceCacheService.flush(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
     }
 
     this.logger.perfTimeEnd(
