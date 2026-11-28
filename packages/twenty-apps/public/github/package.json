@@ -1,6 +1,6 @@
 {
   "name": "@twentyhq/github",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Let your agents and workflows work with GitHub repositories, issues and pull requests.",
   "author": "Twenty",
   "license": "MIT",

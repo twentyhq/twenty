@@ -52,7 +52,7 @@ describe('App installation', () => {
         type: 'oauth',
         scope: 'USER',
         oauth: {
-          scopes: expect.arrayContaining(['repo']),
+          scopes: [],
           isClientCredentialsConfigured: false,
         },
       },

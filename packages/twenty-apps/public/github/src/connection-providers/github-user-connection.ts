@@ -12,14 +12,8 @@ export default defineConnectionProvider({
   oauth: {
     authorizationEndpoint: 'https://github.com/login/oauth/authorize',
     tokenEndpoint: 'https://github.com/login/oauth/access_token',
-    scopes: [
-      'repo',
-      'read:org',
-      'read:user',
-      'user:email',
-      'project',
-      'notifications',
-    ],
+    // A GitHub App ignores OAuth scopes: access comes from its permissions and where it is installed.
+    scopes: [],
     clientIdVariable: 'GITHUB_CLIENT_ID',
     clientSecretVariable: 'GITHUB_CLIENT_SECRET',
     tokenRequestContentType: 'form-urlencoded',
