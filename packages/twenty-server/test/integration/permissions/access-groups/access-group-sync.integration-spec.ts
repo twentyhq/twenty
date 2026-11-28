@@ -5,6 +5,7 @@ import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delet
 import { findAccessGroupPropagationProgress } from 'test/integration/metadata/suites/role/utils/find-access-group-propagation-progress.util';
 import { findRoleAccessGroupCompactIds } from 'test/integration/permissions/utils/find-role-access-group-compact-ids.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { restoreWorkspaceAccessGroups } from 'test/integration/permissions/utils/restore-workspace-access-groups.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import {
   RowLevelPermissionPredicateGroupLogicalOperator,
@@ -66,7 +67,10 @@ describe('access group sync (integration)', () => {
   });
 
   afterAll(async () => {
-    await global.testDataSource.query(`DELETE FROM ${ACCESS_GROUP_TABLE}`);
+    await restoreWorkspaceAccessGroups({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      recomputedObjectNamesSingular: ['person'],
+    });
   });
 
   it('should create a group per grant, keep their ids and remove stale ones', async () => {
@@ -278,10 +282,10 @@ describe('access group propagation progress (integration)', () => {
       `DELETE FROM ${PERSON_TABLE} WHERE "id" = $1`,
       [personId],
     );
-    await global.testDataSource.query(
-      `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL`,
-    );
-    await global.testDataSource.query(`DELETE FROM ${ACCESS_GROUP_TABLE}`);
+    await restoreWorkspaceAccessGroups({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      recomputedObjectNamesSingular: ['person'],
+    });
   });
 
   it('should plan the records of a rule change and report them until they are computed', async () => {

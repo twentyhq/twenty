@@ -8,6 +8,7 @@ import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delet
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { restoreWorkspaceAccessGroups } from 'test/integration/permissions/utils/restore-workspace-access-groups.util';
 import {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
@@ -21,7 +22,6 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 const SCHEMA = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"`;
-const ACCESS_GROUP_TABLE = `${SCHEMA}."accessGroup"`;
 const PERSON_TABLE = `${SCHEMA}."person"`;
 const PARIS_PERSON_ID = v4();
 const LONDON_PERSON_ID = v4();
@@ -154,10 +154,10 @@ describe('querying many records through access groups (integration)', () => {
       [TEST_PERSON_IDS],
     );
 
-    await global.testDataSource.query(
-      `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL`,
-    );
-    await global.testDataSource.query(`DELETE FROM ${ACCESS_GROUP_TABLE}`);
+    await restoreWorkspaceAccessGroups({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      recomputedObjectNamesSingular: ['person'],
+    });
   });
 
   it('should return the records the rule reaches', async () => {

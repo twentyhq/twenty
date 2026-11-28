@@ -35,6 +35,7 @@ import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/
 import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { findRoleAccessGroupCompactIds } from 'test/integration/permissions/utils/find-role-access-group-compact-ids.util';
+import { restoreWorkspaceAccessGroups } from 'test/integration/permissions/utils/restore-workspace-access-groups.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
@@ -386,7 +387,10 @@ describe('Record access through related record paths', () => {
       await deleteObject(projectObjectMetadataId);
       await deleteObject(taskObjectMetadataId);
     } finally {
-      await global.testDataSource.query(`DELETE FROM ${SCHEMA}."accessGroup"`);
+      await restoreWorkspaceAccessGroups({
+        workspaceId,
+        recomputedObjectNamesSingular: [],
+      });
     }
   });
 

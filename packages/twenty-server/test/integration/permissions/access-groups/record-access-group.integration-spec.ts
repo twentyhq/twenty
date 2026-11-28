@@ -7,6 +7,7 @@ import { createOneRole } from 'test/integration/metadata/suites/role/utils/creat
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findRoleAccessGroupCompactIds } from 'test/integration/permissions/utils/find-role-access-group-compact-ids.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { restoreWorkspaceAccessGroups } from 'test/integration/permissions/utils/restore-workspace-access-groups.util';
 import {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
@@ -22,7 +23,6 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 const SCHEMA = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"`;
-const ACCESS_GROUP_TABLE = `${SCHEMA}."accessGroup"`;
 const PERSON_TABLE = `${SCHEMA}."person"`;
 
 const RULE_GRANTS = {
@@ -112,10 +112,10 @@ describe('access group ids on records (integration)', () => {
       [people.map(({ id }) => id)],
     );
 
-    await global.testDataSource.query(
-      `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL`,
-    );
-    await global.testDataSource.query(`DELETE FROM ${ACCESS_GROUP_TABLE}`);
+    await restoreWorkspaceAccessGroups({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      recomputedObjectNamesSingular: ['person'],
+    });
   });
 
   it('should leave records of an object without rules untouched', async () => {
