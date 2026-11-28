@@ -27,8 +27,8 @@ export default defineConnectionProvider({
   name: 'linear',
   displayName: 'Linear',
   icon: 'IconBrandLinear',
-  // Optional: a logo bundled in your app's public/ folder, shown next to the
-  // provider in the app's General tab.
+  // Optional: a logo bundled in your app's public/ folder, shown on the
+  // "Connect with" row.
   logo: 'public/linear-logomark.svg',
   type: 'oauth',
   scope: 'WORKSPACE',
@@ -92,7 +92,7 @@ Punti chiave:
 * `name` è la stringa identificativa univoca usata in `listConnections({ providerName })` (kebab-case, deve corrispondere a `^[a-z][a-z0-9-]*$`).
 * `displayName` viene mostrato nella scheda Generale dell'app e nell'elenco degli strumenti AI.
 * `scope` stabilisce chi si connette: `'WORKSPACE'` (il valore predefinito) per le connessioni condivise con l'intero spazio di lavoro, `'USER'` per le connessioni che ciascun membro crea per sé. Consulta "Connessioni dello spazio di lavoro o personali" qui sotto.
-* `logo` è un percorso a una risorsa inclusa nella cartella `public/` della tua app, fornita tramite le risorse pubbliche dell'app. Quando omessa, la scheda Generale utilizza un segnaposto creato da `displayName`.
+* `logo` è un percorso a una risorsa inclusa nella cartella `public/` della tua app, fornita tramite le risorse pubbliche dell'app. Viene mostrato nella riga "Connetti con"; se omesso, la riga non mostra alcun logo.
 * `clientIdVariable` / `clientSecretVariable` sono **nomi**, non valori — devono corrispondere alle chiavi dichiarate in `defineApplication.serverVariables`. I `client_id` e `client_secret` effettivi vengono inseriti dall'amministratore del server tramite l'interfaccia di registrazione dell'app e non vengono mai aggiunti al tuo repository.
 * Usa `serverVariables` (non `applicationVariables`) — le credenziali OAuth sono a livello di server e c'è una sola app OAuth per ogni server Twenty.
 * Finché entrambe le `serverVariables` non sono compilate, la scheda Generale dell'app mostra un suggerimento "richiede l'amministratore del server" e il pulsante "Aggiungi connessione" è disattivato.
@@ -249,11 +249,12 @@ export const hostedCallbackHandler = async ({
 
 Il callback restituisce:
 
-| Campo               | Descrizione                                                                                                                                                            |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `externalAccountId` | L'ID del servizio per l'account. Un callback successivo per lo stesso ID e membro aggiorna quella connessione anziché aggiungerne una seconda.                         |
-| `handle`            | Etichetta facoltativa mostrata per la connessione. Per impostazione predefinita, viene usata l'email del membro.                                                       |
-| `accessToken`       | Token facoltativo per account, archiviato in forma crittografata e restituito da `getConnection`. Omettilo quando la tua app chiama il servizio con la propria chiave. |
+| Campo               | Descrizione                                                                                                                                                                                                 |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `externalAccountId` | L'ID del servizio per l'account. Un callback successivo per lo stesso ID e membro aggiorna quella connessione anziché aggiungerne una seconda.                                                              |
+| `handle`            | Etichetta facoltativa mostrata per la connessione. Per impostazione predefinita, viene usata l'email del membro.                                                                                            |
+| `name`              | Nome facoltativo assegnato alla connessione al momento della creazione, ad esempio il nome completo dell'utente connesso. Il valore predefinito è `\<displayName> #\<n>`. |
+| `accessToken`       | Token facoltativo per account, archiviato in forma crittografata e restituito da `getConnection`. Omettilo quando la tua app chiama il servizio con la propria chiave.                                      |
 
 Entrambe le funzioni vengono eseguite mentre il membro attende un reindirizzamento, quindi il loro timeout è limitato a 10 secondi. Un errore o un valore restituito non valido interrompe la connessione: non viene salvato nulla e la funzione logica on-connect non viene eseguita. La funzione logica on-connect viene eseguita quando una connessione viene creata, ricollegata o ripristinata, ma non nuovamente quando il servizio segnala un account già connesso. Lo stato scade dopo un'ora, quindi una notifica che arriva più tardi viene rifiutata. I servizi spesso ritentano le notifiche: una ripetizione per un account già connesso aggiorna quella connessione, quindi restituire di nuovo lo stesso account è sicuro.
 
@@ -306,11 +307,13 @@ type IdentifyAccountPayload = {
 type IdentifyAccountResult = {
   externalAccountId: string | null; // non-empty, at most 512 characters; null opts out
   handle?: string; // non-empty when present
+  name?: string; // non-empty when present
 };
 ```
 
 * `externalAccountId` deve essere stabile per tutta la durata dell'account upstream (un id del team, un id dell'organizzazione, un id dell'utente), mai un nome che l'utente può modificare. Twenty lo rimuove e lo memorizza nella connessione al primo collegamento.
 * `handle`, quando restituito, sostituisce l'handle che Twenty altrimenti deriverebbe (l'email OIDC di `id_token` o l'email dell'utente che si collega). Restituisci qualcosa che un utente riconosca, ad esempio il nome dello spazio di lavoro Slack.
+* `name`, quando viene restituito, assegna un nome alla connessione al momento della sua creazione, anziché `\<displayName> #\<n>`. Una riconnessione mantiene il nome esistente. `name`, qui e nel risultato del callback personalizzato, è disponibile a partire da Twenty 2.66.0: se la tua app lo restituisce, dichiara `"engines": { "twenty": ">=2.66.0" }` nel relativo `package.json`.
 * Restituisci `{ externalAccountId: null }` quando il provider non dispone di un id stabile da offrire. Twenty si comporta quindi come se non fosse stata dichiarata alcuna funzione di identificazione: non viene memorizzato alcun id, una riconnessione cancella qualsiasi id memorizzato in precedenza e le riconnessioni non vengono verificate. Un semplice `null` o un return mancante viene trattato come errore, quindi un gestore che dimentica di restituire un valore non può disabilitare silenziosamente il controllo.
 * Se la funzione genera un'eccezione, supera il timeout o restituisce qualsiasi altra cosa, la connessione **non** viene salvata e l'utente torna alla pagina delle impostazioni con un errore. Genera un'eccezione solo quando non puoi effettivamente identificare l'account.
 

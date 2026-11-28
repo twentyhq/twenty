@@ -27,8 +27,8 @@ export default defineConnectionProvider({
   name: 'linear',
   displayName: 'Linear',
   icon: 'IconBrandLinear',
-  // Optional: a logo bundled in your app's public/ folder, shown next to the
-  // provider in the app's General tab.
+  // Optional: a logo bundled in your app's public/ folder, shown on the
+  // "Connect with" row.
   logo: 'public/linear-logomark.svg',
   type: 'oauth',
   scope: 'WORKSPACE',
@@ -92,7 +92,7 @@ Puncte cheie:
 * `name` este șirul identificator unic folosit în `listConnections({ providerName })` (kebab-case, trebuie să corespundă `^[a-z][a-z0-9-]*$`).
 * `displayName` apare în fila General a aplicației și în lista de instrumente AI.
 * `scope` stabilește cine se conectează: `'WORKSPACE'` (implicit) pentru conexiuni partajate cu întregul spațiu de lucru, `'USER'` pentru conexiunile pe care fiecare membru le realizează pentru sine. Consultă mai jos „Conexiuni de spațiu de lucru sau personale”.
-* `logo` este o cale către un activ inclus în pachet în folderul `public/` al aplicației dvs., servit prin activele publice ale aplicației. Când este omis, fila General revine la un substituent generat din `displayName`.
+* `logo` este o cale către un activ inclus în pachet în folderul `public/` al aplicației dvs., servit prin activele publice ale aplicației. Este afișat pe rândul „Conectare cu”; când este omisă, rândul nu afișează nicio siglă.
 * `clientIdVariable` / `clientSecretVariable` sunt **nume**, nu valori — trebuie să se potrivească cheilor declarate în `defineApplication.serverVariables`. Valorile reale `client_id` și `client_secret` sunt introduse de administratorul serverului prin interfața de înregistrare a aplicației și nu sunt niciodată comise în repo-ul tău.
 * Folosește `serverVariables` (nu `applicationVariables`) — acreditările OAuth sunt la nivel de server și există o singură aplicație OAuth pentru fiecare server Twenty.
 * Până când ambele `serverVariables` sunt completate, fila General a aplicației afișează un indiciu „necesită administrator de server”, iar butonul „Adaugă conexiune” este dezactivat.
@@ -249,11 +249,12 @@ export const hostedCallbackHandler = async ({
 
 Callback-ul returnează:
 
-| Câmp                | Descriere                                                                                                                                        |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `externalAccountId` | ID-ul serviciului pentru cont. Un callback ulterior pentru același ID și același membru actualizează acea conexiune în loc să adauge una a doua. |
-| `handle`            | Etichetă opțională afișată pentru conexiune. Implicit, este adresa de e-mail a membrului.                                                        |
-| `accessToken`       | Token opțional per cont, stocat criptat și returnat de `getConnection`. Omiteți-l când aplicația dvs. apelează serviciul cu propria cheie.       |
+| Câmp                | Descriere                                                                                                                                                                                         |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `externalAccountId` | ID-ul serviciului pentru cont. Un callback ulterior pentru același ID și același membru actualizează acea conexiune în loc să adauge una a doua.                                                  |
+| `handle`            | Etichetă opțională afișată pentru conexiune. Implicit, este adresa de e-mail a membrului.                                                                                                         |
+| `name`              | Nume opțional atribuit conexiunii atunci când este creată, cum ar fi numele complet al utilizatorului conectat. Valoarea implicită este `\<displayName> #\<n>`. |
+| `accessToken`       | Token opțional per cont, stocat criptat și returnat de `getConnection`. Omiteți-l când aplicația dvs. apelează serviciul cu propria cheie.                                                        |
 
 Ambele funcții rulează în timp ce membrul așteaptă o redirecționare, astfel încât timpul lor de expirare este limitat la 10 secunde. Un eșec sau un rezultat returnat nevalid anulează conexiunea: nimic nu este salvat, iar funcția logică on-connect nu rulează. Funcția logică on-connect rulează când o conexiune este creată, reconectată sau restaurată, dar nu din nou când serviciul raportează un cont deja conectat. Starea expiră după o oră, astfel încât o notificare sosită mai târziu este respinsă. Serviciile reîncearcă frecvent notificările: o repetare pentru un cont deja conectat actualizează acea conexiune, astfel încât returnarea din nou a aceluiași cont este sigură.
 
@@ -306,11 +307,13 @@ type IdentifyAccountPayload = {
 type IdentifyAccountResult = {
   externalAccountId: string | null; // non-empty, at most 512 characters; null opts out
   handle?: string; // non-empty when present
+  name?: string; // non-empty when present
 };
 ```
 
 * `externalAccountId` trebuie să fie stabil pe durata de viață a contului din amonte (un id de echipă, un id de organizație, un id de utilizator), niciodată un nume pe care utilizatorul îl poate modifica. Twenty îl elimină de spațiile de la început și de la sfârșit și îl stochează în conexiune la prima conectare.
 * `handle`, atunci când este returnat, înlocuiește handle-ul pe care Twenty l-ar deduce altfel (e-mailul OIDC din `id_token` sau e-mailul utilizatorului care se conectează). Returnați ceva ce recunoaște un utilizator, cum ar fi numele spațiului de lucru Slack.
+* `name`, atunci când este returnat, denumește conexiunea atunci când este creată, în loc de `\<displayName> #\<n>`. O reconectare păstrează numele existent. `name`, aici și în rezultatul callbackului personalizat, este disponibil odată cu Twenty 2.66.0: dacă aplicația ta îl returnează, declară `"engines": { "twenty": ">=2.66.0" }` în `package.json`.
 * Returnați `{ externalAccountId: null }` atunci când furnizorul nu are un id stabil de oferit. Twenty se comportă apoi ca și cum nu ar fi fost declarată nicio funcție de identificare: nu este stocat niciun id, o reconectare șterge orice id stocat anterior, iar reconectările nu sunt verificate. Un simplu `null` sau lipsa unei valori returnate este tratată ca o eroare, astfel încât un handler care uită să returneze o valoare nu poate dezactiva verificarea în mod silențios.
 * Dacă funcția generează o excepție, expiră sau returnează orice altceva, conexiunea **nu** este salvată, iar utilizatorul revine pe pagina de setări cu o eroare. Generați o excepție doar atunci când chiar nu puteți identifica contul.
 

@@ -322,6 +322,52 @@ export const linkedinMarkThreadAsReadHandler = async ({
 
 Quando il proprietario dell'account del canale apre una delle sue conversazioni, Twenty chiama la mutation `markAppChannelThreadAsRead`, che esegue la tua funzione con `messagingProviderName`, `connectedAccountId`, `messageChannelId` e `threadExternalId` della conversazione. Il relativo valore restituito viene ignorato. I membri con cui l'account è condiviso non lo attivano mai e le chiamate per lo stesso membro e thread vengono ignorate per 30 secondi, quindi riaprire una conversazione non richiama il provider. La chiamata viene eseguita al meglio: il thread si apre indipendentemente da ciò che fa la funzione. Un provider senza `markThreadAsReadLogicFunctionUniversalIdentifier` non viene mai chiamato. Richiede `"engines": { "twenty": ">=2.59.0" }`.
 
+## Avvio delle conversazioni
+
+Un provider di messaggistica può anche dichiarare un `startConversationLogicFunctionUniversalIdentifier`. I membri ottengono quindi una voce "Nuovo messaggio" per il canale in un record Persona e il primo messaggio che scrivono lì avvia una nuova conversazione con quella persona:
+
+```ts src/messaging-providers/linkedin-messaging.ts
+export default defineMessagingProvider({
+  // ...
+  sendMessageLogicFunctionUniversalIdentifier: 'f7d4b5e6-9a8c-4d0e-1f2a-3b4c5d6e7f80',
+  startConversationLogicFunctionUniversalIdentifier: '0c1d2e3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f',
+});
+```
+
+La mutazione `startAppChannelConversation` accetta il canale, il `personId`, il testo e una `idempotencyKey`, ed esegue la funzione:
+
+```ts src/logic-functions/handlers/linkedin-start-conversation-handler.ts
+import {
+  type StartAppConversationPayload,
+  type StartAppConversationResult,
+} from 'twenty-sdk/logic-function';
+
+export const linkedinStartConversationHandler = async ({
+  connectedAccountId,
+  recipients: [recipient],
+  text,
+}: StartAppConversationPayload): Promise<StartAppConversationResult> => {
+  const profile = await resolveLinkedinProfile(recipient);
+  const started = await startLinkedinChat({
+    connectedAccountId,
+    profileId: profile.id,
+    text,
+  });
+
+  return {
+    externalId: started.messageId,
+    threadExternalId: started.chatId,
+    recipients: [{ personId: recipient.personId, handle: profile.url }],
+  };
+};
+```
+
+Ogni destinatario include il proprio `personId`, il proprio `displayName` e l'`handle` che la persona ha già su questo canale quando Twenty ne conosce uno da messaggi precedenti, oppure `null`. Risolvi autonomamente la persona sul provider quando è `null`, ad esempio da un campo del record Person.
+
+Restituisci l'`externalId` del messaggio inviato e il `threadExternalId` della nuova conversazione, utilizzando lo stesso ID del thread usato dall'ingestione affinché i messaggi successivi arrivino nello stesso thread. Restituisci l'`handle` di ciascun destinatario in `recipients`, a meno che il payload non lo contenesse già: Twenty registra il messaggio come messaggio in uscita dal canale a quell'handle, collegato alla Persona, e apre il nuovo thread. Le risposte passano quindi attraverso la tua funzione `sendMessageLogicFunctionUniversalIdentifier`, come di consueto.
+
+I tentativi, l'idempotenza e gli errori si comportano come per le [risposte](#sending-replies), in base alla persona anziché al thread. Un canale il cui provider non dispone di `startConversationLogicFunctionUniversalIdentifier`, oppure utilizza lo stile di conversazione `'email'`, rifiuta la mutazione e la voce "Nuovo messaggio" elenca solo i canali che possono avviare conversazioni. Richiede `"engines": { "twenty": ">=2.66.0" }`.
+
 ## Elenco e aggiornamento dei canali
 
 ```ts
@@ -521,7 +567,7 @@ L'eliminazione di un canale elimina i messaggi importati tramite esso e qualsias
 ## Cosa non fa un canale
 
 * **Non viene sottoposto a polling.** La pipeline di importazione di Twenty esegue il polling dei provider di caselle di posta tramite un cron. I canali dell'app funzionano solo tramite push: nulla recupera dati per tuo conto, quindi la tua app è responsabile dell'inserimento dei messaggi, tramite una route webhook o una funzione logica cron.
-* **Non avvia conversazioni.** Le risposte vengono inviate a un thread esistente tramite un [provider di messaggistica](#sending-replies); un primo messaggio a una nuova persona deve essere avviato dalla tua app.
+* **Non avvia conversazioni autonomamente.** Le risposte vengono inviate a un thread esistente tramite un [provider di messaggistica](#sending-replies); un primo messaggio a una nuova persona richiede un [`startConversationLogicFunctionUniversalIdentifier`](#starting-conversations) sul provider.
 * **Risolve i contatti solo tramite un campo dichiarato.** Senza di esso, Twenty non può stabilire a chi appartiene un URN LinkedIn, quindi i canali dell'app [collegano esplicitamente i partecipanti durante l'acquisizione](#resolve-the-person-yourself).
 * **Non crea contatti.** La creazione automatica di Twenty ricava persone e aziende dai domini email, il che è privo di significato per la maggior parte dei provider, quindi è disattivata per i canali delle app. Crea tu stesso la Persona, quindi passa il relativo `personId`.
 

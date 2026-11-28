@@ -1,0 +1,85 @@
+---
+title: Eventi (beta)
+description: Dichiara gli eventi della tua app ed emettili dalle funzioni logiche.
+---
+
+## Panoramica
+
+Un **evento** è qualcosa che la tua app dichiara una volta ed emette da una funzione logica ogni volta che si verifica.
+
+<Note>
+**Beta.** Gli eventi possono essere dichiarati ed emessi e Twenty verifica ogni occorrenza rispetto alla relativa definizione. Niente riceve ancora un'occorrenza: sono previste la distribuzione in tempo reale, l'archiviazione e l'attivazione di funzioni logiche, agenti o workflow dagli eventi.
+</Note>
+
+## Dichiarazione di un evento
+
+Un evento descrive le sue proprietà con lo stesso formato di schema dell'`inputSchema` di un trigger dello strumento: uno schema oggetto, con `type: 'record'` e `objectUniversalIdentifier` per un riferimento a un record.
+
+```ts src/events/message-added.event.ts
+import { defineEvent } from 'twenty-sdk/define';
+
+import { CONVERSATION_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/conversation.object';
+
+export const MESSAGE_ADDED_EVENT_UNIVERSAL_IDENTIFIER =
+  '3c1d2a4b-5e6f-4a7b-8c9d-0e1f2a3b4c5d';
+
+export default defineEvent({
+  universalIdentifier: MESSAGE_ADDED_EVENT_UNIVERSAL_IDENTIFIER,
+  name: 'messageAdded',
+  label: 'Message added',
+  schema: {
+    type: 'object',
+    properties: {
+      conversationId: {
+        type: 'record',
+        objectUniversalIdentifier: CONVERSATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      },
+      messageId: { type: 'string', format: 'uuid' },
+      text: { type: 'string' },
+    },
+    required: ['conversationId', 'messageId'],
+  },
+});
+```
+
+`name` e i nomi delle proprietà sono in camelCase. Il nome di un evento è univoco nella tua app. I nomi con punti sono riservati agli eventi emessi da Twenty stessa.
+
+Le proprietà sono piatte: gli oggetti e gli array annidati vengono rifiutati.
+
+| Schema della proprietà                          | Valore accettato                                                                |
+| ----------------------------------------------- | ------------------------------------------------------------------------------- |
+| `{ type: 'string' }`                            | string                                                                          |
+| `{ type: 'string', format: 'date-time' }`       | stringa ISO 8601                                                                |
+| `{ type: 'string', format: 'uuid' }`            | Stringa UUID                                                                    |
+| `{ type: 'number' }`                            | numero finito                                                                   |
+| `{ type: 'integer' }`                           | intero                                                                          |
+| `{ type: 'boolean' }`                           | booleano                                                                        |
+| `{ type: 'record', objectUniversalIdentifier }` | UUID di un record di quell'oggetto (qualsiasi oggetto, inclusi quelli standard) |
+| `{}` (nessun `type`)                            | qualsiasi valore JSON                                                           |
+
+Vengono controllati anche `enum`, `minimum` e `maximum`. `label` e `description` documentano una proprietà.
+
+## Emissione
+
+```ts src/logic-functions/handlers/post-message-handler.ts
+import { emitEvent } from 'twenty-sdk/logic-function';
+
+const { id, occurredAt } = await emitEvent({
+  event: 'messageAdded',
+  id: `message-added-${messageId}`,
+  properties: { conversationId, messageId, text },
+});
+```
+
+Assegna un nome all'evento con `event` o con `eventUniversalIdentifier: MESSAGE_ADDED_EVENT_UNIVERSAL_IDENTIFIER`, non entrambi. In entrambi i casi, possono essere emessi solo gli eventi dichiarati dall'app.
+
+`id` è facoltativo. Impostalo quando una funzione logica ritentata potrebbe emettere due volte la stessa occorrenza, in modo che entrambe le emissioni abbiano lo stesso id. Segue le stesse regole del `jobId` di un job in background: lettere, cifre, `_`, `.` e `-`, fino a 128 caratteri. Senza di esso, Twenty ne genera uno.
+
+Il server controlla le proprietà rispetto allo schema e rifiuta tutto ciò che non è dichiarato o ha un tipo errato. Restituisce l'`id` dell'occorrenza e l'ora in cui è stata registrata.
+
+## Limiti
+
+| Limite                  | Valore |
+| ----------------------- | ------ |
+| Proprietà per evento    | 50     |
+| Payload dell'occorrenza | 32 KB  |

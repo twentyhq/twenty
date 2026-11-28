@@ -1,0 +1,85 @@
+---
+title: Evenimente (beta)
+description: Declarați evenimentele proprii ale aplicației dvs. și emiteți-le din funcții logice.
+---
+
+## Prezentare generală
+
+Un **eveniment** este ceva ce aplicația dvs. declară o singură dată și emite dintr-o funcție logică de fiecare dată când are loc.
+
+<Note>
+**Beta.** Evenimentele pot fi declarate și emise, iar Twenty verifică fiecare apariție în raport cu definiția sa. Încă nimic nu primește o apariție: sunt planificate livrarea în timp real, stocarea și declanșarea funcțiilor logice, agenților sau fluxurilor de lucru din evenimente.
+</Note>
+
+## Declararea unui eveniment
+
+Un eveniment își descrie proprietățile folosind același format de schemă ca `inputSchema` al unui declanșator de instrument: o schemă de obiect, cu `type: 'record'` și `objectUniversalIdentifier` pentru o referință la o înregistrare.
+
+```ts src/events/message-added.event.ts
+import { defineEvent } from 'twenty-sdk/define';
+
+import { CONVERSATION_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/conversation.object';
+
+export const MESSAGE_ADDED_EVENT_UNIVERSAL_IDENTIFIER =
+  '3c1d2a4b-5e6f-4a7b-8c9d-0e1f2a3b4c5d';
+
+export default defineEvent({
+  universalIdentifier: MESSAGE_ADDED_EVENT_UNIVERSAL_IDENTIFIER,
+  name: 'messageAdded',
+  label: 'Message added',
+  schema: {
+    type: 'object',
+    properties: {
+      conversationId: {
+        type: 'record',
+        objectUniversalIdentifier: CONVERSATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      },
+      messageId: { type: 'string', format: 'uuid' },
+      text: { type: 'string' },
+    },
+    required: ['conversationId', 'messageId'],
+  },
+});
+```
+
+`name` și numele proprietăților sunt în camelCase. Numele unui eveniment este unic în cadrul aplicației dvs. Numele cu puncte sunt rezervate pentru evenimentele pe care le emite Twenty.
+
+Proprietățile sunt plate: obiectele imbricate și matricele sunt respinse.
+
+| Schemă de proprietate                           | Valoare acceptată                                                                |
+| ----------------------------------------------- | -------------------------------------------------------------------------------- |
+| `{ type: 'string' }`                            | șir                                                                              |
+| `{ type: 'string', format: 'date-time' }`       | șir în format ISO 8601                                                           |
+| `{ type: 'string', format: 'uuid' }`            | Șir UUID                                                                         |
+| `{ type: 'number' }`                            | număr finit                                                                      |
+| `{ type: 'integer' }`                           | număr întreg                                                                     |
+| `{ type: 'boolean' }`                           | boolean                                                                          |
+| `{ type: 'record', objectUniversalIdentifier }` | UUID-ul unei înregistrări a acelui obiect (orice obiect, inclusiv cele standard) |
+| `{}` (fără `type`)                              | orice valoare JSON                                                               |
+
+Sunt verificate și `enum`, `minimum` și `maximum`. `label` și `description` documentează o proprietate.
+
+## Emiterea
+
+```ts src/logic-functions/handlers/post-message-handler.ts
+import { emitEvent } from 'twenty-sdk/logic-function';
+
+const { id, occurredAt } = await emitEvent({
+  event: 'messageAdded',
+  id: `message-added-${messageId}`,
+  properties: { conversationId, messageId, text },
+});
+```
+
+Specificați evenimentul cu `event` sau cu `eventUniversalIdentifier: MESSAGE_ADDED_EVENT_UNIVERSAL_IDENTIFIER`, nu cu ambele. În ambele cazuri, pot fi emise numai evenimentele declarate de aplicația dvs.
+
+`id` este opțional. Setați-l atunci când o funcție logică reîncercată ar putea emite aceeași apariție de două ori, astfel încât ambele emiteri să aibă același id. Respectă aceleași reguli ca `jobId` al unei sarcini de fundal: litere, cifre, `_`, `.` și `-`, până la 128 de caractere. Fără acesta, Twenty generează unul.
+
+Serverul verifică proprietățile în raport cu schema și respinge orice element nedeclarat sau cu tip greșit. Returnează `id`-ul apariției și momentul în care a fost înregistrată.
+
+## Limite
+
+| Limită                               | Valoare |
+| ------------------------------------ | ------- |
+| Proprietăți pentru fiecare eveniment | 50      |
+| Încărcătura utilă a apariției        | 32 KB   |
