@@ -73,6 +73,61 @@ describe('parseTelegramUpdate', () => {
     },
   );
 
+  it('reads the largest size of a photo and its caption', () => {
+    expect(
+      parseTelegramUpdate({
+        message: {
+          message_id: 7,
+          chat: PRIVATE_CHAT,
+          from: USER,
+          caption: ' Who is this? ',
+          photo: [
+            { file_id: 'small', file_size: 1000 },
+            { file_id: 'large', file_size: 90_000 },
+          ],
+        },
+      }),
+    ).toEqual({
+      kind: 'MESSAGE',
+      chatId: 42,
+      user: USER,
+      messageId: 7,
+      text: 'Who is this?',
+      attachment: {
+        telegramFileId: 'large',
+        fileName: 'photo.jpg',
+        mimeType: 'image/jpeg',
+        sizeBytes: 90_000,
+      },
+    });
+  });
+
+  it('reads a document sent without a caption', () => {
+    expect(
+      parseTelegramUpdate({
+        message: {
+          message_id: 8,
+          chat: PRIVATE_CHAT,
+          from: USER,
+          document: {
+            file_id: 'doc-1',
+            file_name: 'invoice.pdf',
+            mime_type: 'application/pdf',
+            file_size: 20_000,
+          },
+        },
+      }),
+    ).toMatchObject({
+      text: '',
+      attachment: {
+        telegramFileId: 'doc-1',
+        fileName: 'invoice.pdf',
+        mimeType: 'application/pdf',
+        sizeBytes: 20_000,
+      },
+    });
+  });
+
   it('reads a user blocking the bot', () => {
     expect(
       parseTelegramUpdate({

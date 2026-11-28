@@ -40,7 +40,9 @@ A connection link works once and expires after 10 minutes.
 ## Heads up
 
 - **Direct messages only.** The bot ignores groups and channels.
-- **Text only.** Photos, files and voice messages are not read yet.
+- **Photos and PDFs.** The bot reads one photo or PDF per message, up to
+  10 MB, with or without a caption. Other files and voice messages are not
+  read.
 - **Recent context only.** The bot remembers the last 10 questions of a chat.
 - **Slow answers arrive late.** After about three and a half minutes the bot
   says it is still working, then sends the answer when the run ends, for up to

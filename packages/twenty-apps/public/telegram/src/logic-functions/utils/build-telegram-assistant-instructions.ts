@@ -44,15 +44,22 @@ export const buildTelegramAssistantInstructions = ({
   workspaceMemberId,
   timeoutSeconds,
   workspaceBaseUrl,
+  unreadFileName,
 }: {
   history: TelegramAssistantTurn[];
   workspaceMemberId: string;
   timeoutSeconds: number;
   workspaceBaseUrl: string | undefined;
+  unreadFileName: string | undefined;
 }): string =>
   [
     `The member is told to wait if this run takes more than ${timeoutSeconds} seconds. Keep tool calls focused and reply as soon as you have enough to be useful.`,
     buildRecordReferenceSection(workspaceBaseUrl),
     buildPermissionSection(workspaceMemberId),
     ...buildHistorySection(history),
+    ...(isNonEmptyString(unreadFileName)
+      ? [
+          `The member attached a file named "${unreadFileName}" that could not be read. Say so, and answer from the text of the request alone.`,
+        ]
+      : []),
   ].join('\n\n');

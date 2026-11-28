@@ -1,11 +1,14 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { claimTelegramAssistantRequest } from 'src/logic-functions/data/claim-telegram-assistant-request';
 import { findTelegramAssistantHistory } from 'src/logic-functions/data/find-telegram-assistant-history';
 import { TelegramAssistantDeadlineError } from 'src/logic-functions/types/telegram-assistant-deadline-error';
+import { type TelegramInboundAttachment } from 'src/logic-functions/types/telegram-inbound-attachment.type';
 import { deliverTelegramAssistantAnswer } from 'src/logic-functions/utils/deliver-telegram-assistant-answer';
 import { failTelegramAssistantRequest } from 'src/logic-functions/utils/fail-telegram-assistant-request';
 import { fetchWorkspaceBaseUrl } from 'src/logic-functions/utils/fetch-workspace-base-url';
+import { importTelegramAssistantAttachment } from 'src/logic-functions/utils/import-telegram-assistant-attachment';
 import { keepWaitingForTelegramAssistantAnswer } from 'src/logic-functions/utils/keep-waiting-for-telegram-assistant-answer';
 import { recordTelegramAssistantRequestOrThrow } from 'src/logic-functions/utils/record-telegram-assistant-request-or-throw';
 import { runTelegramAssistantAgentOrThrow } from 'src/logic-functions/utils/run-telegram-assistant-agent-or-throw';
@@ -19,6 +22,7 @@ export const answerTelegramAssistantRequest = async ({
   telegramUserId,
   workspaceMemberId,
   requestText,
+  attachment,
   agentDeadlineAtMs,
   deliveryDeadlineAtMs,
 }: {
@@ -29,6 +33,7 @@ export const answerTelegramAssistantRequest = async ({
   telegramUserId: string;
   workspaceMemberId: string;
   requestText: string;
+  attachment: TelegramInboundAttachment | undefined;
   agentDeadlineAtMs: number;
   deliveryDeadlineAtMs: number;
 }): Promise<'ANSWERED' | 'FAILED' | 'STILL_RUNNING' | 'SKIPPED'> => {
@@ -55,7 +60,7 @@ export const answerTelegramAssistantRequest = async ({
   const stopTyping = startTelegramTyping({ botToken, chatId });
 
   try {
-    const [history, workspaceBaseUrl] = await Promise.all([
+    const [history, workspaceBaseUrl, importedAttachment] = await Promise.all([
       findTelegramAssistantHistory({
         client,
         telegramChatId,
@@ -66,6 +71,9 @@ export const answerTelegramAssistantRequest = async ({
         return [];
       }),
       fetchWorkspaceBaseUrl(),
+      isDefined(attachment)
+        ? importTelegramAssistantAttachment({ botToken, attachment })
+        : undefined,
     ]);
 
     const responseText = await runTelegramAssistantAgentOrThrow({
@@ -74,6 +82,10 @@ export const answerTelegramAssistantRequest = async ({
       history,
       workspaceMemberId,
       workspaceBaseUrl,
+      attachment: importedAttachment,
+      unreadFileName: isDefined(importedAttachment)
+        ? undefined
+        : attachment?.fileName,
       deadlineAtMs: agentDeadlineAtMs,
     });
 

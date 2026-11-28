@@ -7,6 +7,7 @@ import { TELEGRAM_FEEDBACK_CALLBACK_PREFIX } from 'src/logic-functions/constants
 import { type TelegramInboundEvent } from 'src/logic-functions/types/telegram-inbound-event.type';
 import { type TelegramUpdate } from 'src/logic-functions/types/telegram-update.type';
 import { type TelegramUser } from 'src/logic-functions/types/telegram-user.type';
+import { getTelegramInboundAttachment } from 'src/logic-functions/utils/get-telegram-inbound-attachment';
 
 const PRIVATE_CHAT_TYPE = 'private';
 const BLOCKED_MEMBER_STATUS = 'kicked';
@@ -64,7 +65,7 @@ export const parseTelegramUpdate = (
   }
 
   const sender = { chatId: message.chat.id, user: message.from };
-  const text = message.text?.trim() ?? '';
+  const text = (message.text ?? message.caption)?.trim() ?? '';
   const token = START_WITH_TOKEN_PATTERN.exec(text)?.[1];
 
   if (isDefined(token)) {
@@ -80,5 +81,6 @@ export const parseTelegramUpdate = (
     ...sender,
     messageId: message.message_id,
     text,
+    attachment: getTelegramInboundAttachment(message),
   };
 };
