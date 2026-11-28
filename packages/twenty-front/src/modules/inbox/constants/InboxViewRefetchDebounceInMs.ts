@@ -1,0 +1,1 @@
+export const INBOX_VIEW_REFETCH_DEBOUNCE_IN_MS = 300;

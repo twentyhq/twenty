@@ -4,7 +4,10 @@ import { type IconComponent, IconX } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
+const StyledChip = styled.div<{
+  variant: SortOrFilterChipVariant;
+  isInteractive: boolean;
+}>`
   align-items: center;
   background-color: ${({ variant }) => {
     switch (variant) {
@@ -38,7 +41,7 @@ const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   }};
   column-gap: ${themeCssVariables.spacing[1]};
   corner-shape: round;
-  cursor: pointer;
+  cursor: ${({ isInteractive }) => (isInteractive ? 'pointer' : 'default')};
   display: flex;
   flex-direction: row;
   flex-shrink: 0;
@@ -110,7 +113,7 @@ type SortOrFilterChipProps = {
   labelSubField?: ReactNode;
   variant?: SortOrFilterChipVariant;
   Icon?: IconComponent;
-  onRemove: () => void;
+  onRemove?: () => void;
   onClick?: () => void;
   testId?: string;
   type: SortOrFilterChipType;
@@ -131,11 +134,15 @@ export const SortOrFilterChip = ({
 
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onRemove();
+    onRemove?.();
   };
 
   return (
-    <StyledChip onClick={onClick} variant={variant}>
+    <StyledChip
+      onClick={onClick}
+      variant={variant}
+      isInteractive={isDefined(onClick) || isDefined(onRemove)}
+    >
       {Icon && (
         <StyledIcon>
           <Icon size={theme.icon.size.sm} />
@@ -155,12 +162,14 @@ export const SortOrFilterChip = ({
           </>
         )}
       </StyledKeyLabelContainer>
-      <StyledDelete
-        onClick={handleDeleteClick}
-        data-testid={'remove-icon-' + testId}
-      >
-        <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
-      </StyledDelete>
+      {isDefined(onRemove) && (
+        <StyledDelete
+          onClick={handleDeleteClick}
+          data-testid={'remove-icon-' + testId}
+        >
+          <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
+        </StyledDelete>
+      )}
     </StyledChip>
   );
 };

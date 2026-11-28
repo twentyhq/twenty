@@ -19,6 +19,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 import {
   AppPath,
   OpenRecordIn,
+  type RecordGqlOperationOrderBy,
   StandardObjectNameSingular,
   SidePanelPages,
 } from 'twenty-shared/types';
@@ -38,7 +39,10 @@ import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObj
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { RouteContextStoreProvider } from '@/context-store/components/RouteContextStoreProvider';
+import { aiChatThreadObjectMetadataItemSelector } from '@/ai-chat/threads/states/selectors/aiChatThreadObjectMetadataItemSelector';
 import { AiChatThreadRecordView } from '@/inbox/components/AiChatThreadRecordView';
+import { InboxViewFallbackOrderEffect } from '@/inbox/components/InboxViewFallbackOrderEffect';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { INBOX_LAYOUT } from '@/inbox/constants/InboxLayout';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { ViewType } from '@/views/types/ViewType';
@@ -62,7 +66,7 @@ import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPage
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { FeatureFlagKey, ViewPresetFilter } from '~/generated-metadata/graphql';
 import { InboxPage } from '~/pages/inbox/InboxPage';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
@@ -80,6 +84,8 @@ const FIRST_THREAD_TITLE = 'Qualify the lead';
 const SECOND_THREAD_TITLE = 'Prepare the customer call';
 const THREAD_ACTIVITY_AT = '2026-10-21T09:00:00.000Z';
 const THREAD_ARCHIVED_AT = '2026-10-21T11:00:00.000Z';
+const THREAD_NEW_ACTIVITY_AT = '2026-10-21T12:00:00.000Z';
+const threadLastActivityAtById = new Map<string, string>();
 const NEW_CHAT_PATH = getAppPath(AppPath.AiChatInbox, {
   threadId: AI_CHAT_NEW_THREAD_PATH_SEGMENT,
 });
@@ -127,6 +133,7 @@ const INBOX_STORY_RECORD_ROUTE_OBJECTS: WorkspaceRouteObject[] = [
 const INBOX_STORY_VIEW: ViewWithRelations = {
   id: '20202020-0000-4000-8000-0000000000e1',
   name: 'Open',
+  presetFilter: ViewPresetFilter.INBOX_OPEN,
   type: ViewType.LIST,
   objectMetadataId: TEST_CHAT_OBJECT_METADATA_ID,
   icon: 'IconInbox',
@@ -139,6 +146,18 @@ const INBOX_STORY_VIEW: ViewWithRelations = {
   viewGroups: [],
   viewFilters: [],
   viewSorts: [],
+};
+
+const InboxStoryViewFallbackOrderEffect = () => {
+  const aiChatThreadObjectMetadataItem = useAtomStateValue(
+    aiChatThreadObjectMetadataItemSelector,
+  );
+
+  return isDefined(aiChatThreadObjectMetadataItem) ? (
+    <InboxViewFallbackOrderEffect
+      objectMetadataItem={aiChatThreadObjectMetadataItem}
+    />
+  ) : null;
 };
 
 const InboxThreadRecordRoute = () => {
@@ -206,6 +225,7 @@ const InboxRouteDecorator: Decorator = (Story, { parameters }) => (
                 value={INBOX_STORY_RECORD_ROUTE_OBJECTS}
               >
                 <RouteContextStoreProvider />
+                <InboxStoryViewFallbackOrderEffect />
               </WorkspaceRouteObjectsContext.Provider>
             )}
             <Routes>
@@ -273,6 +293,7 @@ const meta = {
     ToastDecorator,
   ],
   beforeEach: () => {
+    threadLastActivityAtById.clear();
     initializeNewAiChatStory({ isInboxEnabled: true });
     jotaiStore.set(inboxLayoutState.atom, INBOX_LAYOUT.RECORD_PAGE);
     jotaiStore.set(inboxSelectedThreadListSourceState.atom, {
@@ -340,7 +361,10 @@ const meta = {
             },
           }),
         ),
-        graphql.query('FindManyAgentChatThreads', () => {
+        graphql.query<
+          Record<string, unknown>,
+          { orderBy?: RecordGqlOperationOrderBy }
+        >('FindManyAgentChatThreads', ({ variables }) => {
           const objectMetadataItems = jotaiStore.get(
             objectMetadataItemsSelector.atom,
           );
@@ -350,12 +374,27 @@ const meta = {
 
           assertIsDefinedOrThrow(objectMetadataItem);
 
+          const threads = THREADS.map((thread) => ({
+            ...thread,
+            lastActivityAt:
+              threadLastActivityAtById.get(thread.id) ?? thread.lastActivityAt,
+          }));
+          const isOrderedByLastActivity = (variables.orderBy ?? []).some(
+            ({ lastActivityAt }) => lastActivityAt === 'DescNullsLast',
+          );
+
           return HttpResponse.json({
             data: {
               agentChatThreads: getRecordConnectionFromRecords({
                 objectMetadataItems,
                 objectMetadataItem,
-                records: THREADS,
+                records: isOrderedByLastActivity
+                  ? threads.sort((firstThread, secondThread) =>
+                      (secondThread.lastActivityAt ?? '').localeCompare(
+                        firstThread.lastActivityAt ?? '',
+                      ),
+                    )
+                  : threads,
               }),
             },
           });
@@ -722,6 +761,7 @@ export const ThreadRecordRouteWithInboxViews: Story = {
     );
 
     setTestViewsInMetadataStore(jotaiStore, [INBOX_STORY_VIEW]);
+    threadLastActivityAtById.set(SECOND_THREAD_ID, THREAD_NEW_ACTIVITY_AT);
     jotaiStore.set(
       currentWorkspaceMemberState.atom,
       (currentWorkspaceMember) =>
@@ -765,6 +805,17 @@ export const ThreadRecordRouteWithInboxViews: Story = {
     await expect(
       await listPane.findByText(SECOND_THREAD_TITLE, {}, routeChangeOptions),
     ).toBeVisible();
+    await expect(listPane.getByText(': Open')).toBeVisible();
+    await expect(
+      listPane.queryByTestId('remove-icon-view-preset-filter-INBOX_OPEN'),
+    ).not.toBeInTheDocument();
+    await expect(
+      listPane
+        .getAllByText((content) =>
+          [FIRST_THREAD_TITLE, SECOND_THREAD_TITLE].includes(content),
+        )
+        .map(({ textContent }) => textContent),
+    ).toEqual([SECOND_THREAD_TITLE, FIRST_THREAD_TITLE]);
 
     await user.click(await listPane.findByText(FIRST_THREAD_TITLE));
     await waitFor(
