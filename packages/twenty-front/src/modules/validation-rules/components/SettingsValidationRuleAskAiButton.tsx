@@ -6,14 +6,23 @@ import { IconSparkles } from 'twenty-ui/icon';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const SettingsValidationRuleAskAiButton = () => {
   const { t } = useLingui();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
   const workspaceSurface = useWorkspaceSurface();
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
 
-  if (!hasAiPermission || workspaceSurface.type === 'side-panel') {
+  if (
+    !hasAiPermission ||
+    workspaceSurface.type === 'side-panel' ||
+    isCustomizableSidebarEnabled
+  ) {
     return null;
   }
 

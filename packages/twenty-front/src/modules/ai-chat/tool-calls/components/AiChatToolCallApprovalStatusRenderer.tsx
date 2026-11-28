@@ -6,12 +6,31 @@ import {
   type ProposeToolCallToolStatus,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { IconMail, IconTool } from 'twenty-ui/icon';
+import { IconAlertTriangle, IconMail, IconTool } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme';
 
+import { ThinkingStepRowLayout } from '@/ai-chat/thinking-steps/components/ThinkingStepRowLayout';
 import { AiChatAskStatusRow } from '@/ai-chat/tool-calls/components/AiChatAskStatusRow';
+import { AiChatToolCallApprovalDecidedDetails } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalDecidedDetails';
 import { StyledAiChatAskStatusDetail } from '@/ai-chat/tool-calls/components/StyledAiChatAskStatusDetail';
 import { useIsAiChatToolCallAskedInComposer } from '@/ai-chat/tool-calls/hooks/useIsAiChatToolCallAskedInComposer';
 import { TextWithChatReferences } from '@/ai-chat/message-content/components/TextWithChatReferences';
+import { getChatReferencePlainText } from '@/ai-chat/message-content/utils/getChatReferencePlainText';
+import { getToolIcon } from '@/ai/utils/getToolIcon';
+
+const IS_FAILURE_BY_DECIDED_APPROVAL_STATUS = {
+  approved: false,
+  rejected: false,
+  failed: true,
+  conflict: true,
+} as const satisfies Partial<Record<ProposeToolCallToolStatus, boolean>>;
+
+type DecidedApprovalStatus = keyof typeof IS_FAILURE_BY_DECIDED_APPROVAL_STATUS;
+
+const isDecidedApprovalStatus = (
+  status: ProposeToolCallToolStatus,
+): status is DecidedApprovalStatus =>
+  status in IS_FAILURE_BY_DECIDED_APPROVAL_STATUS;
 
 export const AiChatToolCallApprovalStatusRenderer = ({
   toolPart,
@@ -25,62 +44,109 @@ export const AiChatToolCallApprovalStatusRenderer = ({
     toolPart.toolCallId,
   );
 
+  if (isAskedInComposer) {
+    return null;
+  }
+
   const output = toolPart.output as
     | { result?: ProposeToolCallToolResult; error?: string }
     | null
     | undefined;
   const result = output?.result;
-  const status: ProposeToolCallToolStatus = result?.status ?? 'pending';
-  const hasFailedToPropose =
-    toolPart.state === 'output-error' ||
-    (isDefined(output) && !isDefined(result));
-  const proposeErrorText =
-    toolPart.state === 'output-error' ? toolPart.errorText : output?.error;
 
-  const messageByStatus: Record<ProposeToolCallToolStatus, string> = {
-    pending: isDefined(result)
-      ? t`Waiting for your approval`
-      : t`Preparing an action to approve...`,
+  if (!isDefined(result)) {
+    const hasFailedToPropose =
+      toolPart.state === 'output-error' || isDefined(output);
+
+    if (!hasFailedToPropose) {
+      return (
+        <AiChatAskStatusRow
+          Icon={IconTool}
+          message={t`Preparing an action to approve...`}
+          isShimmering={isStreaming}
+        />
+      );
+    }
+
+    const proposeErrorText =
+      toolPart.state === 'output-error' ? toolPart.errorText : output?.error;
+
+    return (
+      <AiChatAskStatusRow
+        Icon={IconTool}
+        message={t`Could not be proposed`}
+        isShimmering={false}
+      >
+        {isNonEmptyString(proposeErrorText) && (
+          <StyledAiChatAskStatusDetail>
+            <TextWithChatReferences text={proposeErrorText} />
+          </StyledAiChatAskStatusDetail>
+        )}
+      </AiChatAskStatusRow>
+    );
+  }
+
+  const { status, proposal } = result;
+
+  if (isDecidedApprovalStatus(status)) {
+    const hasFailed = IS_FAILURE_BY_DECIDED_APPROVAL_STATUS[status];
+    const decidedDetailByStatus: Record<
+      DecidedApprovalStatus,
+      string | undefined
+    > = {
+      approved: undefined,
+      rejected: t`Rejected`,
+      failed: t`Failed`,
+      conflict: t`Not run: the record changed`,
+    };
+    const ToolIcon = getToolIcon(proposal.toolName);
+
+    return (
+      <ThinkingStepRowLayout
+        icon={
+          hasFailed ? (
+            <IconAlertTriangle
+              size={14}
+              color={themeCssVariables.font.color.danger}
+            />
+          ) : (
+            <ToolIcon size={14} />
+          )
+        }
+        label={getChatReferencePlainText(proposal.summary)}
+        detail={decidedDetailByStatus[status]}
+        isActive={false}
+        isError={hasFailed}
+        details={
+          <AiChatToolCallApprovalDecidedDetails
+            toolCallId={toolPart.toolCallId}
+            result={result}
+          />
+        }
+      />
+    );
+  }
+
+  const messageByStatus: Record<
+    Exclude<ProposeToolCallToolStatus, DecidedApprovalStatus>,
+    string
+  > = {
+    pending: t`Waiting for your approval`,
     running: t`Running...`,
-    approved: t`Approved`,
-    rejected: t`Rejected`,
-    failed: t`Approved but it failed`,
-    conflict: t`Not run: the record changed since it was proposed`,
     skipped: t`Cancelled`,
   };
-  const message = hasFailedToPropose
-    ? t`Could not be proposed`
-    : messageByStatus[status];
-
-  const summary = result?.proposal.summary;
-  const detailByStatus: Record<ProposeToolCallToolStatus, string | undefined> =
-    {
-      pending: summary,
-      running: summary,
-      approved: summary,
-      rejected: result?.feedback ?? summary,
-      failed: result?.error,
-      conflict: summary,
-      skipped: summary,
-    };
-  const detail = hasFailedToPropose ? proposeErrorText : detailByStatus[status];
-
-  if (isAskedInComposer) {
-    return null;
-  }
 
   return (
     <AiChatAskStatusRow
-      Icon={result?.proposal.template === 'email' ? IconMail : IconTool}
-      message={message}
+      Icon={proposal.template === 'email' ? IconMail : IconTool}
+      message={messageByStatus[status]}
       isShimmering={
-        ((isStreaming && status === 'pending') || status === 'running') &&
-        !hasFailedToPropose
+        (isStreaming && status === 'pending') || status === 'running'
       }
     >
-      {isNonEmptyString(detail) && (
+      {isNonEmptyString(proposal.summary) && (
         <StyledAiChatAskStatusDetail>
-          <TextWithChatReferences text={detail} />
+          <TextWithChatReferences text={proposal.summary} />
         </StyledAiChatAskStatusDetail>
       )}
     </AiChatAskStatusRow>

@@ -6,12 +6,22 @@ import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { ThinkingStepsDisplay } from '@/ai-chat/thinking-steps/components/ThinkingStepsDisplay';
+import { AiChatInstanceDecorator } from '~/testing/decorators/AiChatInstanceDecorator';
+import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
+import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
+import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const meta: Meta<typeof ThinkingStepsDisplay> = {
   title: 'Modules/AI/ThinkingStepsDisplay',
   component: ThinkingStepsDisplay,
-  decorators: [ToastDecorator, MemoryRouterDecorator, ComponentDecorator],
+  decorators: [
+    AiChatInstanceDecorator,
+    ToastDecorator,
+    MemoryRouterDecorator,
+    ComponentDecorator,
+  ],
   parameters: {
     container: { width: 500 },
     msw: {
@@ -23,6 +33,8 @@ const meta: Meta<typeof ThinkingStepsDisplay> = {
     },
   },
   args: {
+    messageId: 'thinking-steps-story-message',
+    renderItemIndex: 0,
     isLastMessageStreaming: false,
     parts: [
       { type: 'reasoning', state: 'done', text: 'Reviewed the request.' },
@@ -72,7 +84,7 @@ export const WhileWorking: Story = {
   },
 };
 
-export const ToolDisclosure: Story = {
+export const ToolDetails: Story = {
   args: {
     parts: [
       {
@@ -88,22 +100,118 @@ export const ToolDisclosure: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole('button', { name: '1 step' }));
-    const toggle = await canvas.findByRole('button', { name: /inspect_tool/ });
-    expect(toggle).toHaveAttribute('aria-expanded', 'false');
-    await userEvent.click(toggle);
-    const panelId = toggle.getAttribute('aria-controls');
-    assertIsDefinedOrThrow(panelId);
+    expect(
+      await canvas.findByRole('button', { name: 'Show details' }),
+    ).toBeInTheDocument();
+    expect(canvas.queryByRole('button', { name: /inspect_tool/ })).toBeNull();
+    expect(canvas.queryByText('Saved output')).toBeNull();
+  },
+};
+
+export const FailedTool: Story = {
+  args: {
+    parts: [
+      {
+        type: 'dynamic-tool',
+        toolName: 'inspect_tool',
+        toolCallId: 'failed-tool-call',
+        state: 'output-error',
+        input: 'Saved input',
+        errorText: 'Timed out after 10s',
+      },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: '1 step' }));
     await waitFor(() => {
-      expect(toggle).toHaveAttribute('aria-expanded', 'true');
-      expect(canvasElement.ownerDocument.getElementById(panelId)).toBeVisible();
+      expect(canvas.getByText('Timed out after 10s')).toBeVisible();
       expect(
-        canvas.getByRole('button', { name: 'Saved output' }),
-      ).toBeVisible();
+        canvas.getByRole('button', { name: 'Show details' }),
+      ).toBeInTheDocument();
     });
-    await userEvent.keyboard(' ');
+  },
+};
+
+const RECORD_TOOL_DECORATORS = [
+  IconsProviderDecorator,
+  WorkspaceDecorator,
+  ObjectMetadataItemsDecorator,
+];
+
+const COMPANY_RECORD_REFERENCES = [
+  {
+    objectNameSingular: 'company',
+    recordId: '20202020-a225-4b3d-a89c-7f6c30df998a',
+    displayName: 'Microsoft',
+  },
+  {
+    objectNameSingular: 'company',
+    recordId: '20202020-a8b0-422c-8fcf-5b7496f94975',
+    displayName: 'Meta',
+  },
+  {
+    objectNameSingular: 'company',
+    recordId: '20202020-aaf7-41d6-87a9-7add07bebfd8',
+    displayName: 'SLB',
+  },
+];
+
+export const ToolWithOneRecord: Story = {
+  decorators: RECORD_TOOL_DECORATORS,
+  parameters: { msw: graphqlMocks },
+  args: {
+    parts: [
+      {
+        type: 'dynamic-tool',
+        toolName: 'create_company',
+        toolCallId: 'create-company-call',
+        state: 'output-available',
+        input: { name: 'Microsoft' },
+        output: {
+          message: 'Record created successfully in company',
+          recordReferences: COMPANY_RECORD_REFERENCES.slice(0, 1),
+        },
+      },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      await canvas.findByRole('button', { name: '1 step' }),
+    );
     await waitFor(() => {
-      expect(toggle).toHaveAttribute('aria-expanded', 'false');
-      expect(canvas.queryByRole('button', { name: 'Saved output' })).toBeNull();
+      expect(canvas.getByText('Microsoft')).toBeVisible();
     });
+  },
+};
+
+export const ToolWithSeveralRecords: Story = {
+  decorators: RECORD_TOOL_DECORATORS,
+  parameters: { msw: graphqlMocks },
+  args: {
+    parts: [
+      {
+        type: 'dynamic-tool',
+        toolName: 'find_companies',
+        toolCallId: 'find-companies-call',
+        state: 'output-available',
+        input: {},
+        output: {
+          message: 'Found 3 company records',
+          recordReferences: COMPANY_RECORD_REFERENCES,
+        },
+      },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      await canvas.findByRole('button', { name: '1 step' }),
+    );
+    await waitFor(() => {
+      expect(canvas.getByText('3 records')).toBeVisible();
+    });
+    expect(canvas.queryByText('Microsoft')).toBeNull();
   },
 };

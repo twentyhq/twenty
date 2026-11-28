@@ -1,4 +1,6 @@
+import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
+import { destroyOneOperation } from 'test/integration/graphql/utils/destroy-one-operation.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
@@ -26,8 +28,16 @@ type StoredPerson = {
   deletedAt: string | null;
 };
 
+const createPersonWithJobTitle = async (jobTitle: string) => {
+  const { data } = await createOneOperation({
+    objectMetadataSingularName: 'person',
+    input: { jobTitle },
+  });
+
+  return data.createOneResponse.id;
+};
+
 describe('mutations on a record the role can see but its rules do not let it change', () => {
-  let originalPeople: StoredPerson[];
   let parisPersonId: string;
   let londonPersonId: string;
   let originalMemberRoleId: string;
@@ -36,7 +46,7 @@ describe('mutations on a record the role can see but its rules do not let it cha
   const findStoredPeople = async (): Promise<StoredPerson[]> =>
     global.testDataSource.query(
       `SELECT "id", "jobTitle", "avatarUrl", "deletedAt" FROM ${PERSON_TABLE} WHERE "id" = ANY($1) ORDER BY "id"`,
-      [originalPeople.map(({ id }) => id)],
+      [[parisPersonId, londonPersonId]],
     );
 
   const updatePersonAvatarUrlAsMember = (recordId: string) =>
@@ -60,15 +70,8 @@ describe('mutations on a record the role can see but its rules do not let it cha
       [objectMetadataId],
     );
 
-    originalPeople = await global.testDataSource.query(
-      `SELECT "id", "jobTitle", "avatarUrl", "deletedAt" FROM ${PERSON_TABLE} WHERE "deletedAt" IS NULL ORDER BY "id" LIMIT 2`,
-    );
-    [parisPersonId, londonPersonId] = originalPeople.map(({ id }) => id);
-
-    await global.testDataSource.query(
-      `UPDATE ${PERSON_TABLE} SET "jobTitle" = CASE "id" WHEN $1 THEN 'Paris office' ELSE 'London office' END WHERE "id" = ANY($2)`,
-      [parisPersonId, [parisPersonId, londonPersonId]],
-    );
+    parisPersonId = await createPersonWithJobTitle('Paris office');
+    londonPersonId = await createPersonWithJobTitle('London office');
 
     const { data } = await createOneRole({
       expectToFail: false,
@@ -135,11 +138,11 @@ describe('mutations on a record the role can see but its rules do not let it cha
     });
     await deleteOneRole({ expectToFail: false, input: { idToDelete: roleId } });
 
-    for (const { id, jobTitle, avatarUrl, deletedAt } of originalPeople) {
-      await global.testDataSource.query(
-        `UPDATE ${PERSON_TABLE} SET "jobTitle" = $1, "avatarUrl" = $2, "deletedAt" = $3 WHERE "id" = $4`,
-        [jobTitle, avatarUrl, deletedAt, id],
-      );
+    for (const recordId of [parisPersonId, londonPersonId]) {
+      await destroyOneOperation({
+        objectMetadataSingularName: 'person',
+        recordId,
+      });
     }
   });
 

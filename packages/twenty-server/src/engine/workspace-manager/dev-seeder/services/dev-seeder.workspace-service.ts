@@ -53,6 +53,7 @@ import { seedUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/se
 import { createWorkspace } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspace.util';
 import { DevSeederAgentChatChannelWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-agent-chat-channel.workspace-service';
 import { DevSeederAgentChatPendingInputWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-agent-chat-pending-input.workspace-service';
+import { DevSeederAgentChatToolCallWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-agent-chat-tool-call.workspace-service';
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
 import { DevSeederWorkflowPendingInputWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-workflow-pending-input.workspace-service';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
@@ -76,6 +77,7 @@ export class DevSeederWorkspaceService {
     private readonly devSeederDataService: DevSeederDataService,
     private readonly devSeederWorkflowPendingInputService: DevSeederWorkflowPendingInputWorkspaceService,
     private readonly devSeederAgentChatPendingInputService: DevSeederAgentChatPendingInputWorkspaceService,
+    private readonly devSeederAgentChatToolCallService: DevSeederAgentChatToolCallWorkspaceService,
     private readonly devSeederAgentChatChannelService: DevSeederAgentChatChannelWorkspaceService,
     private readonly agentChatChannelMetadataService: AgentChatChannelMetadataService,
     private readonly applicationService: ApplicationService,
@@ -230,6 +232,7 @@ export class DevSeederWorkspaceService {
 
     // Before the chat seed, whose owner grants then cover these threads too.
     await this.devSeederAgentChatPendingInputService.seed({ workspaceId });
+    await this.devSeederAgentChatToolCallService.seed({ workspaceId });
     await this.devSeederAgentChatChannelService.seed({ workspaceId });
 
     await this.seedAgentChat({

@@ -35,6 +35,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-seeder/core/services/dev-seeder-permissions.service';
 import { DevSeederAgentChatChannelWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-agent-chat-channel.workspace-service';
 import { DevSeederAgentChatPendingInputWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-agent-chat-pending-input.workspace-service';
+import { DevSeederAgentChatToolCallWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-agent-chat-tool-call.workspace-service';
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
 import { DevSeederWorkflowPendingInputWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-workflow-pending-input.workspace-service';
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
@@ -96,6 +97,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     TimelineActivitySeederService,
     DevSeederWorkflowPendingInputWorkspaceService,
     DevSeederAgentChatPendingInputWorkspaceService,
+    DevSeederAgentChatToolCallWorkspaceService,
     DevSeederAgentChatChannelWorkspaceService,
     provideWorkspaceScopedRepository(RoleEntity),
     provideWorkspaceScopedRepository(ObjectMetadataEntity),

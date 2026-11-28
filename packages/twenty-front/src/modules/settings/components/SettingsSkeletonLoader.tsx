@@ -1,3 +1,4 @@
+import { SettingsPageContentSkeleton } from '@/settings/components/SettingsPageContentSkeleton';
 import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
@@ -20,7 +21,7 @@ export const SettingsSkeletonLoader = () => {
       }
       showInformationBanner={false}
     >
-      {null}
+      <SettingsPageContentSkeleton />
     </PageCardLayout>
   );
 };

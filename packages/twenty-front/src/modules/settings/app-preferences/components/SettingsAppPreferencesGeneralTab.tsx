@@ -2,6 +2,7 @@ import { SettingsAppPreferencesConnectionsTab } from '@/settings/app-preferences
 import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
 import { useApplicationOverview } from '@/settings/applications/hooks/useApplicationOverview';
+import { type ReactNode } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 
@@ -10,6 +11,7 @@ type SettingsAppPreferencesGeneralTabProps = {
   displayName: string;
   connectionProviders: ApplicationWithPreferences['connectionProviders'];
   settingsMenuItems: ApplicationWithPreferences['settingsMenuItems'];
+  healthCheckBanner?: ReactNode;
 };
 
 export const SettingsAppPreferencesGeneralTab = ({
@@ -17,6 +19,7 @@ export const SettingsAppPreferencesGeneralTab = ({
   displayName,
   connectionProviders,
   settingsMenuItems,
+  healthCheckBanner,
 }: SettingsAppPreferencesGeneralTabProps) => {
   const { description, coverImageUrl } = useApplicationOverview({
     application,
@@ -32,6 +35,7 @@ export const SettingsAppPreferencesGeneralTab = ({
           coverImageUrl={coverImageUrl}
         />
       </Section.Root>
+      {healthCheckBanner}
       {isNonEmptyArray(connectionProviders) && (
         <SettingsAppPreferencesConnectionsTab
           applicationId={application.id}

@@ -51,6 +51,29 @@ const thread: TimelineThread = {
   },
 };
 
+const linkedInThread: TimelineThread = {
+  ...thread,
+  subject: 'Intro from Dreamforce',
+  lastMessageBody: 'Great meeting you at Dreamforce. Happy to connect.',
+  numberOfMessagesInThread: 4,
+  channel: {
+    type: MessageChannelType.APP,
+    provider: 'app',
+    applicationId: LINKEDIN_APPLICATION.id,
+    conversationStyle: 'chat',
+  },
+};
+
+const installLinkedInApplication = () => {
+  jotaiStore.set(currentWorkspaceState.atom, {
+    ...mockCurrentWorkspace,
+    installedApplications: [
+      ...mockCurrentWorkspace.installedApplications,
+      LINKEDIN_APPLICATION,
+    ],
+  });
+};
+
 const meta: Meta<typeof EmailThreadPreview> = {
   title: 'Modules/Activities/Emails/EmailThreadPreview',
   component: EmailThreadPreview,
@@ -122,29 +145,8 @@ export const DraftWithMetadataVisibility: Story = {
 };
 
 export const LinkedInConversation: Story = {
-  args: {
-    thread: {
-      ...thread,
-      subject: 'Intro from Dreamforce',
-      lastMessageBody: 'Great meeting you at Dreamforce. Happy to connect.',
-      numberOfMessagesInThread: 4,
-      channel: {
-        type: MessageChannelType.APP,
-        provider: 'app',
-        applicationId: LINKEDIN_APPLICATION.id,
-        conversationStyle: 'chat',
-      },
-    },
-  },
-  beforeEach: () => {
-    jotaiStore.set(currentWorkspaceState.atom, {
-      ...mockCurrentWorkspace,
-      installedApplications: [
-        ...mockCurrentWorkspace.installedApplications,
-        LINKEDIN_APPLICATION,
-      ],
-    });
-  },
+  args: { thread: linkedInThread },
+  beforeEach: installLinkedInApplication,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -152,9 +154,25 @@ export const LinkedInConversation: Story = {
       'Great meeting you at Dreamforce. Happy to connect.',
     );
     await expect(canvas.queryByText('4')).not.toBeInTheDocument();
+    await expect(canvas.getByText('Intro from Dreamforce')).toBeVisible();
+    await expect(canvas.getByRole('img', { name: 'LinkedIn' })).toBeVisible();
+  },
+};
+
+export const LinkedInConversationWithMetadataVisibility: Story = {
+  args: {
+    thread: {
+      ...linkedInThread,
+      visibility: MessageChannelVisibility.METADATA,
+    },
+  },
+  beforeEach: installLinkedInApplication,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByRole('img', { name: 'LinkedIn' });
     await expect(
       canvas.queryByText('Intro from Dreamforce'),
     ).not.toBeInTheDocument();
-    await expect(canvas.getByRole('img', { name: 'LinkedIn' })).toBeVisible();
   },
 };

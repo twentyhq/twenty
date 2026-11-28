@@ -10,20 +10,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton, LightIconButton } from 'twenty-ui/components/input';
 import { CountPager } from 'twenty-ui/components/navigation';
-import {
-  IconArrowUp,
-  type IconComponent,
-  IconInfoCircle,
-  IconSquareNumber1,
-  IconSquareNumber2,
-  IconSquareNumber3,
-  IconSquareNumber4,
-  IconSquareNumber5,
-  IconSquareNumber6,
-  IconSquareNumber7,
-  IconSquareNumber8,
-  IconSquareNumber9,
-} from 'twenty-ui/icon';
+import { IconArrowUp, IconInfoCircle } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -36,22 +23,8 @@ import { AiChatContextUsageButton } from '@/ai-chat/usage/components/AiChatConte
 import { AiChatQuestionOtherOption } from '@/ai-chat/tool-calls/components/AiChatQuestionOtherOption';
 import { useAnswerAiChatToolCall } from '@/ai-chat/tool-calls/hooks/useAnswerAiChatToolCall';
 import { type AiChatPendingQuestion } from '@/ai-chat/tool-calls/types/AiChatPendingQuestion';
+import { getQuestionOptionNumberIcon } from '@/ai-chat/tool-calls/utils/getQuestionOptionNumberIcon';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
-
-const NUMBER_ICONS: IconComponent[] = [
-  IconSquareNumber1,
-  IconSquareNumber2,
-  IconSquareNumber3,
-  IconSquareNumber4,
-  IconSquareNumber5,
-  IconSquareNumber6,
-  IconSquareNumber7,
-  IconSquareNumber8,
-  IconSquareNumber9,
-];
-
-const getOptionNumberIcon = (optionIndex: number) =>
-  NUMBER_ICONS[Math.min(optionIndex, NUMBER_ICONS.length - 1)];
 
 const StyledQuestionSection = styled.div`
   display: flex;
@@ -394,7 +367,7 @@ export const AiChatQuestionCard = ({
 
         <StyledOptionsList>
           {currentQuestion.options.map((option, optionIndex) => {
-            const NumberIcon = getOptionNumberIcon(optionIndex);
+            const NumberIcon = getQuestionOptionNumberIcon(optionIndex);
             const isSelected = (
               selectedByQuestion[currentIndex] ?? []
             ).includes(optionIndex);
@@ -455,7 +428,9 @@ export const AiChatQuestionCard = ({
             );
           })}
           <AiChatQuestionOtherOption
-            NumberIcon={getOptionNumberIcon(currentQuestion.options.length)}
+            NumberIcon={getQuestionOptionNumberIcon(
+              currentQuestion.options.length,
+            )}
             isHighlighted={otherSelectedByQuestion[currentIndex] ?? false}
             value={freeTextByQuestion[currentIndex] ?? ''}
             onChange={handleOtherTextChange}

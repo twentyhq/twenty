@@ -436,6 +436,7 @@ export enum AllMetadataName {
   applicationVariable = 'applicationVariable',
   commandMenuItem = 'commandMenuItem',
   connectionProvider = 'connectionProvider',
+  eventMetadata = 'eventMetadata',
   fieldMetadata = 'fieldMetadata',
   fieldMetadataOption = 'fieldMetadataOption',
   fieldPermission = 'fieldPermission',
@@ -2450,6 +2451,19 @@ export type EmailsConfiguration = {
   configurationType: WidgetConfigurationType;
 };
 
+export type EmitAppEventInput = {
+  event?: InputMaybe<Scalars['String']['input']>;
+  eventUniversalIdentifier?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  properties?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+export type EmitAppEventOutput = {
+  __typename?: 'EmitAppEventOutput';
+  id: Scalars['String']['output'];
+  occurredAt: Scalars['String']['output'];
+};
+
 export enum EngineComponentKey {
   ACTIVATE_WORKFLOW = 'ACTIVATE_WORKFLOW',
   ADD_NODE_WORKFLOW = 'ADD_NODE_WORKFLOW',
@@ -3567,6 +3581,7 @@ export type MessageCampaignSendBlockerDto = {
 
 export type MessageChannel = {
   __typename?: 'MessageChannel';
+  canStartConversation: Scalars['Boolean']['output'];
   connectedAccount?: Maybe<ConnectedAccountPublicDto>;
   connectedAccountId: Scalars['UUID']['output'];
   contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy;
@@ -3921,6 +3936,7 @@ export type Mutation = {
   duplicateMessageList: DuplicatedMessageList;
   editSSOIdentityProvider: EditSso;
   emailPasswordResetLink: EmailPasswordResetLink;
+  emitAppEvent: EmitAppEventOutput;
   endSubscriptionTrialPeriod: BillingEndTrialPeriod;
   /** @deprecated Use enqueueJobs instead. */
   enqueueJob: EnqueueJobResult;
@@ -4005,6 +4021,7 @@ export type Mutation = {
   signUpInWorkspace: SignUp;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   snoozeAgentChatThreadInChannel: Scalars['Boolean']['output'];
+  startAppChannelConversation: SendAppChannelMessageOutput;
   startChannelSync: ChannelSyncSuccess;
   startWorkspaceSetupChat: StartWorkspaceSetupChatResult;
   stopAgentChatStream: Scalars['Boolean']['output'];
@@ -4786,6 +4803,11 @@ export type MutationEmailPasswordResetLinkArgs = {
 };
 
 
+export type MutationEmitAppEventArgs = {
+  input: EmitAppEventInput;
+};
+
+
 export type MutationEnqueueJobArgs = {
   input: EnqueueJobInput;
 };
@@ -5191,6 +5213,11 @@ export type MutationSkipSyncEmailOnboardingStepArgs = {
 export type MutationSnoozeAgentChatThreadInChannelArgs = {
   snoozedUntil: Scalars['DateTime']['input'];
   threadId: Scalars['UUID']['input'];
+};
+
+
+export type MutationStartAppChannelConversationArgs = {
+  input: StartAppChannelConversationInput;
 };
 
 
@@ -7611,6 +7638,13 @@ export type StandaloneRichTextConfiguration = {
   __typename?: 'StandaloneRichTextConfiguration';
   body: RichTextBody;
   configurationType: WidgetConfigurationType;
+};
+
+export type StartAppChannelConversationInput = {
+  idempotencyKey: Scalars['UUID']['input'];
+  messageChannelId: Scalars['UUID']['input'];
+  personId: Scalars['UUID']['input'];
+  text: Scalars['String']['input'];
 };
 
 export type StartWorkspaceSetupChatResult = {

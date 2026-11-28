@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { WorkspaceFieldIdByObjectIdAndNameCacheService } from 'src/engine/metadata-modules/flat-field-metadata/services/workspace-field-id-by-object-id-and-name-cache.service';
 import { WorkspaceObjectIdByNameCacheService } from 'src/engine/metadata-modules/flat-object-metadata/services/workspace-object-id-by-name-cache.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { WorkspaceFlatEventMetadataMapCacheService } from 'src/engine/metadata-modules/flat-event-metadata/services/workspace-flat-event-metadata-map-cache.service';
 import { WorkspaceFlatFieldMetadataMapCacheService } from 'src/engine/metadata-modules/flat-field-metadata/services/workspace-flat-field-metadata-map-cache.service';
 import { WorkspaceOrmFlatFieldMetadataMapCacheService } from 'src/engine/metadata-modules/flat-field-metadata/services/workspace-orm-flat-field-metadata-map-cache.service';
 import { WorkspaceFlatFieldPermissionMapCacheService } from 'src/engine/metadata-modules/flat-field-permission/services/workspace-flat-field-permission-map-cache.service';
@@ -71,6 +72,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceFlatRelatedRecordPathMapCacheService,
     WorkspaceFlatValidationRuleMapCacheService,
     WorkspaceFlatMcpServerMapCacheService,
+    WorkspaceFlatEventMetadataMapCacheService,
   ],
   exports: [WorkspaceManyOrAllFlatEntityMapsCacheService],
 })
