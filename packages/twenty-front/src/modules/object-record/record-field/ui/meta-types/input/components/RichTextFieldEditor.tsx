@@ -33,7 +33,7 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { styled } from '@linaria/react';
 import { type Editor } from '@tiptap/core';
 import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { useDebouncedCallback } from 'use-debounce';
 import { useLingui } from '@lingui/react/macro';
@@ -97,6 +97,17 @@ export const RichTextFieldEditor = ({
     nameSingular: objectNameSingular,
   });
 
+  const { objectMetadataItem: attachmentObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: StandardObjectNameSingular.Attachment,
+    });
+
+  const canHaveAttachments = attachmentObjectMetadataItem.fields.some(
+    (field) =>
+      field.name === `target${capitalize(objectNameSingular)}` &&
+      field.isActive === true,
+  );
+
   const { records: attachments } = useFindManyRecords<Attachment>({
     objectNameSingular: StandardObjectNameSingular.Attachment,
     filter: {
@@ -104,6 +115,7 @@ export const RichTextFieldEditor = ({
         eq: recordId,
       },
     },
+    skip: !canHaveAttachments,
   });
 
   const { syncAttachments } = useAttachmentSync(attachments);
@@ -197,6 +209,10 @@ export const RichTextFieldEditor = ({
     // Only after capturing the pre-edit body: persisting rewrites the record, so the diff would miss removed attachments.
     updateDraft({ tiptap: stripRichTextFileUrlTokens(newSerializedDocument) });
 
+    if (!canHaveAttachments) {
+      return;
+    }
+
     await syncAttachments(
       newSerializedDocument,
       getRichTextFieldSerializedContent(oldFieldValue),
@@ -253,12 +269,12 @@ export const RichTextFieldEditor = ({
       onUpdate: handleEditorUpdate,
       onFocus: handleEditorFocus,
       onBlur: handleEditorBlur,
-      onImageUpload: handleUploadFile,
+      onImageUpload: canHaveAttachments ? handleUploadFile : undefined,
       onImageUploadError: handleUploadFileError,
-      onFileUpload: handleUploadFile,
+      onFileUpload: canHaveAttachments ? handleUploadFile : undefined,
       onFileUploadError: handleUploadFileError,
     },
-    [recordId, isRecordFieldReadOnly, draftResyncKey],
+    [recordId, isRecordFieldReadOnly, draftResyncKey, canHaveAttachments],
   );
 
   if (isDefined(editorRef)) {
