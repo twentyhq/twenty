@@ -19,12 +19,12 @@ export default defineApplication({
   issueReportUrl: 'https://github.com/twentyhq/twenty/issues',
   serverVariables: {
     GITHUB_CLIENT_ID: {
-      description: 'Client ID of the Twenty GitHub OAuth app.',
+      description: 'Client ID of the Twenty GitHub App.',
       isSecret: false,
       isRequired: true,
     },
     GITHUB_CLIENT_SECRET: {
-      description: 'Client secret of the Twenty GitHub OAuth app.',
+      description: 'Client secret of the Twenty GitHub App.',
       isSecret: true,
       isRequired: true,
     },
