@@ -27,12 +27,13 @@ import { INTEGRATOR_LEDGER } from './integrator-ledger-config';
 import { INTEGRATOR_LEVEL_MODELS } from './integrator-level-models';
 
 const READOUT_ENTRANCE_DELAY_MS = 900;
-// The home's money model, drawn with the level cards' recipe so the page
+// A plain coin (coin.glb), drawn with the level cards' recipe so the page
 // keeps one halftone: blue bands on white, lit per object. The pile holds
 // in one pose; its dashes swell under the pointer.
 const MONEY_MODEL_SETTINGS = {
   ...INTEGRATOR_LEVEL_MODELS[0].settings,
-  previewDistance: 11,
+  // 11 at a 460px frame, brought in with the frame's height (400px)
+  previewDistance: 9.6,
   // a harder light, so each coin's top and rim part from its neighbours
   lighting: {
     intensity: 2.4,
@@ -139,16 +140,19 @@ const Panel = styled.div`
     margin-top: ${spacing(6)};
   }
 
-  /* Wide: the intro on the left, the seats and the footnote at its foot;
-     the coins and what they come to on the right, from the heading down. */
+  /* Wide: two rows shared by both columns, every text on a left edge. The
+     intro faces the coins; the seats face what they come to, the label's
+     top on the figure's. The columns hold their content's width and sit
+     together in the middle. */
   @container (min-width: 880px) {
-    column-gap: ${spacing(16)};
+    column-gap: ${spacing(24)};
     display: grid;
+    justify-content: center;
     grid-template-areas:
-      'intro simulator'
-      'note simulator';
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    grid-template-rows: auto 1fr;
+      'intro model'
+      'note readout';
+    grid-template-columns: minmax(0, ${spacing(132)}) minmax(0, ${spacing(120)});
+    row-gap: ${spacing(8)};
 
     & > * + * {
       margin-top: 0;
@@ -158,7 +162,7 @@ const Panel = styled.div`
   @keyframes integratorLedgerPanelIn {
     from {
       opacity: 0;
-      transform: translateY(28px) scale(0.985);
+      transform: translateY(28px);
     }
 
     to {
@@ -222,40 +226,30 @@ const ReadoutValue = styled.output`
 `;
 
 const IntroArea = styled.div`
+  align-self: center;
   grid-area: intro;
 `;
 
-// The coins, and what they come to right under them, centred in the
-// section's height.
-const SimulatorColumn = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${spacing(4)};
-  justify-content: center;
-  grid-area: simulator;
-`;
-
+// As tall as the full pile, so the coins sit close to what they come to.
+// The camera comes closer in the same ratio (MONEY_MODEL_SETTINGS), so the
+// coins keep their size.
 const ModelFrame = styled.div`
-  height: 270px;
+  grid-area: model;
+  height: 235px;
   width: 100%;
 
   ${mediaUp('md')} {
-    height: 460px;
+    height: 400px;
   }
 `;
 
-// The seats, at the foot of the column level with the commission, and the
-// footnote that qualifies them.
+// The seats, level with what they come to, and the footnote that
+// qualifies them.
 const NoteArea = styled.div`
-  align-self: end;
   grid-area: note;
 
   & > * + * {
     margin-top: ${spacing(8)};
-  }
-
-  @container (min-width: 880px) {
-    margin-top: ${spacing(16)};
   }
 `;
 
@@ -313,18 +307,12 @@ const SliderBlock = styled.div`
 `;
 
 // The page's sub-block title (the level cards' heading: sans, xs, medium),
-// on a <label> so it targets the slider; the commission's label matches.
+// on a <label> so it targets the slider. The section's one label: the
+// commission's figure is named by the eyebrow and spelled out by its sum.
 const SliderHeader = styled.label`
   ${typeRampDeclarations('headingXs')}
   color: ${semanticColor.ink};
   display: block;
-  font-family: ${fontFamily('sans')};
-  font-weight: ${FONT_WEIGHT.medium};
-`;
-
-const ReadoutLabel = styled.p`
-  ${typeRampDeclarations('headingXs')}
-  color: ${semanticColor.ink};
   font-family: ${fontFamily('sans')};
   font-weight: ${FONT_WEIGHT.medium};
 `;
@@ -335,8 +323,10 @@ const ReadoutHint = styled.p`
   font-family: ${fontFamily('sans')};
 `;
 
-// Centred under the coins it counts.
+// Centred under the coins it counts: the pile and the figure share one
+// axis; its top stays level with the seats' label.
 const Readout = styled.div`
+  grid-area: readout;
   text-align: center;
 
   & > * + * {
@@ -388,7 +378,7 @@ const Slider = styled.input`
   }
 `;
 
-// The same voice as the sum under the figure.
+// The same voice as the sum under the figure: both qualify a number.
 const Footnote = styled.p`
   ${typeRampDeclarations('bodySm')}
   color: ${semanticColor.inkMuted};
@@ -439,32 +429,33 @@ export function IntegratorLedger({ footnote, intro }: IntegratorLedgerProps) {
     <Stack>
       <Panel>
         <IntroArea style={cssVariableStyle({ '--row': 0 })}>{intro}</IntroArea>
-        <SimulatorColumn style={cssVariableStyle({ '--row': 1 })}>
-          <ModelFrame>
-            <HalftoneModel
-              geometryOptions={PILE_COIN_SIZE}
-              modelUrl="/models/money.glb"
-              settings={MONEY_MODEL_SETTINGS}
-              stack={{
-                placements: PILE_PLACEMENTS,
-                tilt: 0.5,
-                visible: Math.round(pileFill(seats) * PILE_PLACEMENTS.length),
-              }}
-            />
-          </ModelFrame>
-          <Readout>
-            <ReadoutLabel>{i18n._(msg`Your commission`)}</ReadoutLabel>
-            <ReadoutValue aria-live="polite" htmlFor="integrator-ledger-seats">
-              {currency.format(shownCommission)}
-            </ReadoutValue>
-            <ReadoutHint>
-              {i18n._(
-                msg`${seats} seats × $${seatPricePerMonth} a month × ${Math.round(commissionRate * 100)}% × ${months} months`,
-              )}
-            </ReadoutHint>
-          </Readout>
-        </SimulatorColumn>
-        <NoteArea style={cssVariableStyle({ '--row': 2 })}>
+        <ModelFrame style={cssVariableStyle({ '--row': 1 })}>
+          <HalftoneModel
+            geometryOptions={PILE_COIN_SIZE}
+            modelUrl="/models/coin.glb"
+            settings={MONEY_MODEL_SETTINGS}
+            stack={{
+              placements: PILE_PLACEMENTS,
+              tilt: 0.5,
+              visible: Math.round(pileFill(seats) * PILE_PLACEMENTS.length),
+            }}
+          />
+        </ModelFrame>
+        <Readout style={cssVariableStyle({ '--row': 2 })}>
+          <ReadoutValue
+            aria-label={i18n._(msg`Your commission`)}
+            aria-live="polite"
+            htmlFor="integrator-ledger-seats"
+          >
+            {currency.format(shownCommission)}
+          </ReadoutValue>
+          <ReadoutHint>
+            {i18n._(
+              msg`${seats} seats × $${seatPricePerMonth} a month × ${Math.round(commissionRate * 100)}% × ${months} months`,
+            )}
+          </ReadoutHint>
+        </Readout>
+        <NoteArea style={cssVariableStyle({ '--row': 3 })}>
           <SliderBlock>
             <SliderHeader htmlFor="integrator-ledger-seats">
               {i18n._(msg`Seats you bring`)}

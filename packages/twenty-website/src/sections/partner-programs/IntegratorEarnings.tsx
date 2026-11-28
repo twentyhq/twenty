@@ -9,7 +9,7 @@ export function IntegratorEarnings() {
   const i18n = getServerI18n();
 
   return (
-    <SectionShell keepsTopRhythm rhythm="section" scheme="light">
+    <SectionShell keepsTopRhythm rhythm="spacious" scheme="light">
       <IntegratorLedger
         footnote={i18n._(msg`Commission on Organization and Enterprise plans.`)}
         intro={
