@@ -110,9 +110,12 @@ const MARK_MODEL_SETTINGS = {
   },
 } satisfies HalftoneModelProps['settings'];
 // At that distance the logo fills this share of its frame (measured on
-// the drawn logo): the mask the rings and apps pass behind takes the same
-// size, so what hides them is the logo as it is drawn.
+// the drawn logo).
 const MARK_MODEL_FILL = 0.7;
+// The mask the rings and apps pass behind takes this share of the logo:
+// the logo floats and drifts, the mask stays put, so it keeps to the
+// least the logo covers and never shows past its edges.
+const MARK_MASK_SHARE = 0.88;
 // An app's logo on screen, where it passes in front: 12% larger than the
 // 28 / 34px it had.
 const APP_PX = { base: 31, md: 38 } as const;
@@ -363,7 +366,8 @@ export function AppsMarkOrbit({ apps }: AppsMarkOrbitProps) {
           new THREE.MeshBasicMaterial({ colorWrite: false }),
         );
         maskMesh.renderOrder = -1;
-        maskMesh.scale.set(MARK_SCALE, -MARK_SCALE, MARK_SCALE);
+        const maskScale = MARK_SCALE * MARK_MASK_SHARE;
+        maskMesh.scale.set(maskScale, -maskScale, maskScale);
         mark.add(maskMesh);
       });
     // where the mark sits on screen, for its canvas
