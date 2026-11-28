@@ -1,7 +1,7 @@
 import {
   type JSONContent,
   reactMarkupFromJSON,
-  render,
+  renderEmail,
   toPlainText,
 } from 'twenty-emails';
 import {
@@ -17,7 +17,7 @@ export const compileOutboundEmailContent = async (
 ): Promise<CompiledOutboundEmailContent> => {
   const html = await sanitizeOutboundEmailHtml(
     getFullHtmlEmailIfWholeBody(document) ??
-      (await render(reactMarkupFromJSON(document as JSONContent))),
+      (await renderEmail(reactMarkupFromJSON(document as JSONContent))),
   );
 
   return {
