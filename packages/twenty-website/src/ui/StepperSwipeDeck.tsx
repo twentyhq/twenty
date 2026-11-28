@@ -43,9 +43,12 @@ const Slide = styled.div`
 `;
 
 export type StepperSwipeDeckProps = {
+  /** The step shown, counted from 0. The deck slides to it. */
   activeIndex: number;
   children: (stepIndex: number) => ReactNode;
+  /** Called with the next or previous index when a swipe passes the commit threshold. The parent owns `activeIndex`. */
   onActiveIndexChange: (nextIndex: number) => void;
+  /** How many slides the deck holds. Dragging past the first or last one meets resistance. */
   stepCount: number;
 };
 

@@ -521,6 +521,86 @@
                   "developers/contribute/commands",
                   "developers/contribute/style-guide"
                 ]
+              }
+            ]
+          },
+          {
+            "tab": "Design system",
+            "groups": [
+              {
+                "group": "Website",
+                "pages": [
+                  "website/overview",
+                  {
+                    "group": "Foundations",
+                    "pages": [
+                      "website/colors",
+                      "website/typography",
+                      "website/layout",
+                      "website/shape",
+                      "website/motion"
+                    ]
+                  },
+                  {
+                    "group": "Components",
+                    "pages": [
+                      "website/components",
+                      {
+                        "group": "Elements",
+                        "pages": [
+                          "website/components/body",
+                          "website/components/button",
+                          "website/components/category-card-select",
+                          "website/components/chip-multi-select",
+                          "website/components/external-link",
+                          "website/components/eyebrow",
+                          "website/components/field",
+                          "website/components/guide-crosshair",
+                          "website/components/heading",
+                          "website/components/icon-button",
+                          "website/components/marked-divider",
+                          "website/components/modal",
+                          "website/components/number-field",
+                          "website/components/section-shell",
+                          "website/components/select",
+                          "website/components/step-indicator",
+                          "website/components/stepper-progress-rail",
+                          "website/components/stepper-swipe-deck",
+                          "website/components/tag-input",
+                          "website/components/text-field",
+                          "website/components/textarea-field"
+                        ]
+                      },
+                      {
+                        "group": "Sections",
+                        "pages": [
+                          "website/components/engagement-band",
+                          "website/components/signoff"
+                        ]
+                      },
+                      {
+                        "group": "Layout",
+                        "pages": [
+                          "website/components/container",
+                          "website/components/heading-pair",
+                          "website/components/section-intro",
+                          "website/components/section-stack",
+                          "website/components/vertical-divider"
+                        ]
+                      },
+                      {
+                        "group": "Building blocks",
+                        "pages": [
+                          "website/components/button-shape",
+                          "website/components/connecting-frame",
+                          "website/components/corner-markers",
+                          "website/components/external-arrow",
+                          "website/components/notched-card-shape"
+                        ]
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 "group": "UI Library",
@@ -1637,7 +1717,12 @@
                   "ar/developers/contribute/commands",
                   "ar/developers/contribute/style-guide"
                 ]
-              },
+              }
+            ]
+          },
+          {
+            "tab": "Design system",
+            "groups": [
               {
                 "group": "مكتبة واجهة المستخدم",
                 "pages": [
@@ -3203,7 +3288,12 @@
                   "es/developers/contribute/commands",
                   "es/developers/contribute/style-guide"
                 ]
-              },
+              }
+            ]
+          },
+          {
+            "tab": "Design system",
+            "groups": [
               {
                 "group": "Biblioteca de IU",
                 "pages": [
@@ -3867,7 +3957,12 @@
                   "it/developers/contribute/commands",
                   "it/developers/contribute/style-guide"
                 ]
-              },
+              }
+            ]
+          },
+          {
+            "tab": "Design system",
+            "groups": [
               {
                 "group": "Libreria UI",
                 "pages": [
@@ -5887,7 +5982,12 @@
                   "ro/developers/contribute/commands",
                   "ro/developers/contribute/style-guide"
                 ]
-              },
+              }
+            ]
+          },
+          {
+            "tab": "Design system",
+            "groups": [
               {
                 "group": "Biblioteca UI",
                 "pages": [
@@ -6547,7 +6647,12 @@
                   "ru/developers/contribute/commands",
                   "ru/developers/contribute/style-guide"
                 ]
-              },
+              }
+            ]
+          },
+          {
+            "tab": "Design system",
+            "groups": [
               {
                 "group": "Библиотека интерфейса",
                 "pages": [

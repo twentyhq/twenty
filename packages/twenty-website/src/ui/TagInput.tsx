@@ -161,12 +161,19 @@ export function TagInput({
   suggestions,
   values,
 }: {
+  /** The text input's accessible name. */
   ariaLabel: string;
+  /** Called with the new list when a tag is added (Enter or comma) or removed (its button, or Backspace in an empty input). The parent owns `values`. */
   onValuesChange: (values: string[]) => void;
+  /** Shown in the input only while no tag is chosen. */
   placeholder?: string;
+  /** Builds each tag's remove-button label from the tag, so it can be translated. */
   removeLabel: (tag: string) => string;
+  /** Extra values the typing menu can match, beyond `suggestions`, without showing them up front. */
   searchPool?: readonly string[];
+  /** Values offered up front, minus those already chosen. The typing menu matches them too. */
   suggestions: readonly string[];
+  /** The tags chosen, in order. */
   values: readonly string[];
 }) {
   const [draft, setDraft] = useState('');

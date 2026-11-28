@@ -208,15 +208,25 @@ export function Select<TValue extends string>({
   searchPlaceholder,
   value,
 }: {
+  /** Names both the trigger and the listbox for screen readers. */
   ariaLabel: string;
+  /** Shown in the popup when no option matches. Defaults to a dash. */
   emptyLabel?: string;
+  /** Paints the trigger's red border. */
   invalid?: boolean;
+  /** Called with an option's value when it is picked. The parent owns `value`. */
   onValueChange: (value: TValue) => void;
+  /** The choices, in order: a `label` and a `value` each. */
   options: readonly SelectOption<TValue>[];
+  /** Shown in the trigger while nothing is picked. */
   placeholder: string;
+  /** The popup's scheme. It renders in a portal outside the section, so it cannot inherit the section's scheme and takes it here. */
   scheme?: Scheme;
+  /** Adds a filter row at the top of the popup, matching the option labels. */
   searchable?: boolean;
+  /** Shown in the filter row while it is empty. */
   searchPlaceholder?: string;
+  /** The picked value, or an empty string for none. */
   value: TValue | '';
 }) {
   const [open, setOpen] = useState(false);

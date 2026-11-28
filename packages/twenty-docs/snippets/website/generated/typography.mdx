@@ -1,0 +1,43 @@
+{/*
+ * Auto-generated file. DO NOT EDIT - changes will be overwritten.
+ * Generated from packages/twenty-website/src/tokens by design-system/scripts/docs/render.ts
+ */}
+
+Read from `origin/main` at [`63ba48a7cf`](https://github.com/twentyhq/twenty/commit/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0), 2026-11-26. Usage counts cover the website's own code: `src/` outside `src/tokens/`, without the 183 files that reproduce the app (they import `twenty-ui/theme`, use `--font-product` or live in `app-preview/`).
+
+## Families
+
+Loaded with `next/font/local` in `app/[locale]/layout.tsx`, self-hosted woff2. Components pick a family with `fontFamily(token)`.
+
+| Role | Family | Weights loaded | CSS variable | Uses | In `src/ui` | Source |
+| --- | --- | --- | --- | --- | --- | --- |
+| `sans` | Host Grotesk | 300 800 | `--font-sans` | 126 | `Body` `Eyebrow` `Heading` `Field` `NumberField` `TagInput` `Select` `CategoryCardSelect` `ChipMultiSelect` | [layout.tsx:17](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/app/[locale]/layout.tsx#L17) |
+| `serif` | Aleo | 300 | `--font-serif` | 12 | `Heading` | [layout.tsx:25](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/app/[locale]/layout.tsx#L25) |
+| `mono` | Azeret Mono | 100 900 | `--font-mono` | 54 | `Button` `StepperProgressRail` | [layout.tsx:33](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/app/[locale]/layout.tsx#L33) |
+| `retro` | VT323 | 400 | `--font-retro` | 15 |  | [layout.tsx:41](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/app/[locale]/layout.tsx#L41) |
+| `product` (not a token) | Inter | 400, 500, 600 | `--font-product` | 0 |  | [layout.tsx:50](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/app/[locale]/layout.tsx#L50) |
+
+## Weights
+
+| Token | Value | `FONT_WEIGHT` uses | `weight=` props | Source |
+| --- | --- | --- | --- | --- |
+| `light` | 300 | 17 | 51 | [font-weight.ts:4](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/font-weight.ts#L4) |
+| `regular` | 400 | 16 | 5 | [font-weight.ts:5](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/font-weight.ts#L5) |
+| `medium` | 500 | 88 | 14 | [font-weight.ts:6](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/font-weight.ts#L6) |
+
+## Type scale
+
+Sizes are multiples of `--font-base` (0.25rem). Fluid ramps interpolate with `clamp()` between 390px and the `md` breakpoint. Without a line height, running text uses 1.55.
+
+| Ramp | Mobile size / line | Desktop size / line | Fluid | Note | Source |
+| --- | --- | --- | --- | --- | --- |
+| `display` | 80px / 92px | 120px / 132px | Yes | Decorative display tier (the marquee's loud rows) — 2x headingLg, so it keeps the system's proportions and line-height. Mobile (base) is tuned independently of the desktop step. | [type-scale.ts:26](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/type-scale.ts#L26) |
+| `headingXl` | 60px / 66px | 80px / 86px | Yes |  | [type-scale.ts:30](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/type-scale.ts#L30) |
+| `headingLg` | 40px / 46px | 60px / 66px | Yes |  | [type-scale.ts:34](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/type-scale.ts#L34) |
+| `headingMd` | 40px / 46px | 48px / 56px | Yes |  | [type-scale.ts:38](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/type-scale.ts#L38) |
+| `headingSm` | 32px / 40px | 32px / 40px | No |  | [type-scale.ts:42](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/type-scale.ts#L42) |
+| `headingXs` | 18px / 24px | 22px / 28px | Yes |  | [type-scale.ts:46](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/type-scale.ts#L46) |
+| `eyebrow` | 18px / 24px | 18px / 24px | No | flat by design: the eyebrow never scales with viewport. | [type-scale.ts:51](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/type-scale.ts#L51) |
+| `bodyMd` | 16px / 1.55 | 18px / 1.55 | Yes |  | [type-scale.ts:55](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/type-scale.ts#L55) |
+| `bodySm` | 16px / 1.55 | 16px / 1.55 | No |  | [type-scale.ts:59](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/type-scale.ts#L59) |
+| `bodyXs` | 12px / 1.55 | 12px / 1.55 | No |  | [type-scale.ts:63](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/type-scale.ts#L63) |

@@ -1,0 +1,16 @@
+---
+title: All components
+description: The shared building blocks in src/ui.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import ComponentReference from '/snippets/website/generated/components.mdx';
+
+## Overview
+
+`src/ui/index.ts` is the public surface. Sections import from `@/ui` and compose these blocks. A new section should not need a new primitive.
+
+<ComponentReference />
+
+<PageBanner illustration="card-page-ui-library" />

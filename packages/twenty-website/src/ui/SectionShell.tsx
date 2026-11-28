@@ -103,14 +103,22 @@ const contentLayerClassName = css`
 `;
 
 export type SectionShellProps = {
+  /** Names the `section` landmark, when it has no visible heading to be named by. */
   ariaLabel?: string;
+  /** A decorative layer behind the content (halftone, crosshair), hidden from screen readers. Capped at the content width unless `fullBleedBackground` is set. */
   background?: ReactNode;
   children: ReactNode;
+  /** Lets the section above overflow into this one: that section becomes visible-overflow and is raised above it. */
   connectsUp?: boolean;
+  /** Removes the `Container` gutter, so the content runs edge to edge. */
   flushInline?: boolean;
+  /** Lets the `background` layer span the full width instead of the content width. */
   fullBleedBackground?: boolean;
+  /** Keeps the full top spacing when the section follows another of the same scheme. Without it, two same-scheme sections in a row close the gap between them. */
   keepsTopRhythm?: boolean;
+  /** The vertical spacing, from `RHYTHM`: `section` by default, `hero` and `spacious` for more room, `flush` for none. */
   rhythm?: 'section' | 'hero' | 'spacious' | 'flush';
+  /** The color scheme of the section: `light`, `muted` or `dark`. Every component inside follows it, with no prop of its own. */
   scheme?: Scheme;
 };
 

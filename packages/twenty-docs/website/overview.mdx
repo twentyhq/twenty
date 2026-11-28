@@ -1,0 +1,24 @@
+---
+title: Overview
+description: How twenty.com is styled, and where each value comes from.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import OverviewReference from '/snippets/website/generated/overview.mdx';
+
+## Two systems
+
+twenty.com and the Twenty app do not share a design system. The app uses [Twenty UI](/ui/getting-started). The website has its own tokens, typefaces and components, styled with Linaria (`styled`, `css`).
+
+Every value on these pages is read from the code at the commit shown below. None is written by hand.
+
+<OverviewReference />
+
+## Where values live
+
+- **Tokens** live in `src/tokens/`. Each file exports one family: `PALETTE`, `SCHEMES`, `TYPE_SCALE`, `RHYTHM`, `DURATION`, `EASING`.
+- **Helpers** turn a token into CSS: `color`, `semanticColor`, `spacing`, `radius`, `fontSize`, `fontFamily`, `mediaUp`.
+- **Components** in `src/ui/` combine them. Sections use components and helpers, never raw values.
+
+<PageBanner illustration="card-page-ui-library" />

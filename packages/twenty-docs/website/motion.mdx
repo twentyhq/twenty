@@ -1,0 +1,28 @@
+---
+title: Motion
+description: Durations, easing curves and reduced motion.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import MotionReference from '/snippets/website/generated/motion.mdx';
+
+## Overview
+
+Pair a duration with an easing curve. Every animated component also carries a `REDUCED_MOTION` block.
+
+```tsx
+import { DURATION, EASING, REDUCED_MOTION } from '@/tokens';
+
+const Panel = styled.div`
+  transition: transform ${DURATION.md} ${EASING.standard};
+
+  ${REDUCED_MOTION} {
+    transition: none;
+  }
+`;
+```
+
+<MotionReference />
+
+<PageBanner illustration="page-cover-palette" />

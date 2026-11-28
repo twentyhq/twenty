@@ -1,0 +1,56 @@
+{/*
+ * Auto-generated file. DO NOT EDIT - changes will be overwritten.
+ * Generated from packages/twenty-website/src/tokens by design-system/scripts/docs/render.ts
+ */}
+
+Read from `origin/main` at [`63ba48a7cf`](https://github.com/twentyhq/twenty/commit/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0), 2026-11-26. Usage counts cover the website's own code: `src/` outside `src/tokens/`, without the 183 files that reproduce the app (they import `twenty-ui/theme`, use `--font-product` or live in `app-preview/`).
+
+## Units
+
+| Unit | Value | Helper | Source |
+| --- | --- | --- | --- |
+| `root` | `16px` |  | [not set by the site: CSS initial value](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/not set by the site#L CSS initial value) |
+| `spacing` | `4px` | `spacing(n)` | [units.ts:2](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/units.ts#L2) |
+| `font` | `0.25rem` | `fontSize(n)` | [units.ts:3](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/units.ts#L3) |
+| `radius` | `2px` | `radius(n)` | [units.ts:4](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/units.ts#L4) |
+
+Most used `spacing(n)`: `4` ×140 · `2` ×123 · `6` ×113 · `3` ×82 · `8` ×50 · `5` ×50 · `10` ×43 · `1` ×35 · `1.5` ×31 · `12` ×17.
+
+## Section rhythm
+
+Vertical padding between sections, in spacing multipliers. Sections take one of these classes, never their own numbers.
+
+| Class | Mobile | Desktop | Note | Source |
+| --- | --- | --- | --- | --- |
+| `section` | 48px | 64px |  | [rhythm.ts:11](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/rhythm.ts#L11) |
+| `hero` | 30px | 48px | Symmetric by design: the hero breathes equally above and below. | [rhythm.ts:16](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/rhythm.ts#L16) |
+| `flush` | 0px | 0px | Scroll scenes own their height entirely (Helped's 280vh stage). | [rhythm.ts:21](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/rhythm.ts#L21) |
+| `spacious` | 120px | 120px | Full-bleed dark closers (FAQ) breathe wider than standard sections. | [rhythm.ts:26](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/rhythm.ts#L26) |
+
+## Page frame
+
+| Token | Value | Note | Source |
+| --- | --- | --- | --- |
+| `gutter` | 16px → 40px | Horizontal page gutter, in spacing multipliers. Owned by Container so sections never declare their own horizontal padding. | [gutter.ts:5](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/gutter.ts#L5) |
+| `maxContentWidth` | 1512px |  | [max-content-width.ts:1](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/max-content-width.ts#L1) |
+
+## Breakpoints
+
+Min-width only, through `mediaUp()`.
+
+| Token | Value | Uses | Note | Source |
+| --- | --- | --- | --- | --- |
+| `sm` | 768px | 14 | sm charter: tablets may CAP/CENTER media and DENSIFY card grids inside the stacked composition class — never engage desktop splits (md+) and never touch the type scale (ramps interpolate 390-&gt;md continuously). Prefer continuous max-width caps when a cap alone fixes the band. | [breakpoints.ts:8](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/breakpoints.ts#L8) |
+| `md` | 921px | 205 |  | [breakpoints.ts:9](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/breakpoints.ts#L9) |
+| `lg` | 1281px | 15 |  | [breakpoints.ts:10](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/breakpoints.ts#L10) |
+
+## Z-index
+
+| Token | Value | Uses | Note | Source |
+| --- | --- | --- | --- | --- |
+| `base` | 0 | 1 |  | [z-index.ts:10](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/z-index.ts#L10) |
+| `drawer` | 90 | 1 |  | [z-index.ts:11](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/z-index.ts#L11) |
+| `floatingNav` | 100 | 1 |  | [z-index.ts:12](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/z-index.ts#L12) |
+| `stickyHeader` | 200 | 1 |  | [z-index.ts:13](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/z-index.ts#L13) |
+| `modal` | 300 | 5 |  | [z-index.ts:14](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/z-index.ts#L14) |
+| `portal` | 400 | 3 | Body-portaled overlays that must clear everything (escaped traffic lights bouncing across the page). | [z-index.ts:17](https://github.com/twentyhq/twenty/blob/63ba48a7cf87f1790415ba8f27ff5fe8af0023d0/packages/twenty-website/src/tokens/z-index.ts#L17) |

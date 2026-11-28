@@ -168,13 +168,21 @@ export type ButtonSize = 'regular' | 'small';
 export type ButtonVariant = 'filled' | 'outlined';
 
 export type ButtonProps = {
+  /** Blocks activation and sets `aria-busy`: it marks a pending action. Applies to the button form only, not to links. */
   disabled?: boolean;
+  /** Renders a link instead of a button. An internal path keeps the visitor's language, an external address opens a new tab, and a `#hash`, `mailto:` or `tel:` link stays in place. */
   href?: string;
+  /** The visible text. Pass it as written: the component's CSS sets the uppercase. */
   label: string;
+  /** A mark from `@/icons`, placed before the label. */
   leadingIcon?: ReactNode;
+  /** The button's height, from `BUTTON_HEIGHT_PX`. */
   size?: ButtonSize;
+  /** The HTML type of the button form. Use `submit` inside a form. Ignored when `href` is set. */
   type?: 'button' | 'submit';
+  /** `filled` draws the solid notched shape, `outlined` only its stroke. Colors follow the scheme of the section the button sits in. */
   variant?: ButtonVariant;
+  /** Called on click, for the button and for every link form. */
   onClick?: (event: MouseEvent<HTMLElement>) => void;
 };
 

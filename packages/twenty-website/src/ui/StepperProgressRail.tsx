@@ -112,9 +112,13 @@ const StepLabel = styled.div`
 `;
 
 export type StepperProgressRailProps = {
+  /** The current step, counted from 0. Only its pill fills. */
   activeStepIndex: number;
+  /** Color of the pills that are not active, through `--rail-inactive`. Without it, the rail keeps its own color. */
   inactiveColor?: string;
+  /** How far the active step has gone, from 0 to 1: its pill fills to that share. Values outside are clamped. */
   localProgress: number;
+  /** How many pills the rail draws, one per step. */
   stepCount: number;
 };
 

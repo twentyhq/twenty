@@ -36,7 +36,9 @@
         {
           "key": "userGuideOverview",
           "label": "User Guide",
-          "pages": ["user-guide/introduction"]
+          "pages": [
+            "user-guide/introduction"
+          ]
         },
         {
           "key": "dataModel",
@@ -323,7 +325,9 @@
             {
               "key": "permissionsAccessHowTos",
               "label": "How-Tos",
-              "pages": ["user-guide/permissions-access/how-tos/permissions-faq"]
+              "pages": [
+                "user-guide/permissions-access/how-tos/permissions-faq"
+              ]
             }
           ]
         },
@@ -344,7 +348,9 @@
             {
               "key": "billingHowTos",
               "label": "How-Tos",
-              "pages": ["user-guide/billing/how-tos/billing-faq"]
+              "pages": [
+                "user-guide/billing/how-tos/billing-faq"
+              ]
             }
           ]
         },
@@ -368,7 +374,9 @@
             {
               "key": "settingsHowTos",
               "label": "How-Tos",
-              "pages": ["user-guide/settings/how-tos/settings-faq"]
+              "pages": [
+                "user-guide/settings/how-tos/settings-faq"
+              ]
             }
           ]
         },
@@ -380,7 +388,9 @@
             {
               "key": "legalHowTos",
               "label": "How-Tos",
-              "pages": ["user-guide/legal/how-tos/legal-faq"]
+              "pages": [
+                "user-guide/legal/how-tos/legal-faq"
+              ]
             }
           ]
         }
@@ -393,7 +403,9 @@
         {
           "key": "developersOverview",
           "label": "Developers",
-          "pages": ["developers/introduction"]
+          "pages": [
+            "developers/introduction"
+          ]
         },
         {
           "key": "apps",
@@ -522,6 +534,94 @@
             "developers/contribute/commands",
             "developers/contribute/style-guide"
           ]
+        }
+      ]
+    },
+    {
+      "key": "designSystem",
+      "label": "Design system",
+      "groups": [
+        {
+          "key": "websiteDesignSystem",
+          "label": "Website",
+          "pages": [
+            "website/overview",
+            {
+              "key": "websiteFoundations",
+              "label": "Foundations",
+              "pages": [
+                "website/colors",
+                "website/typography",
+                "website/layout",
+                "website/shape",
+                "website/motion"
+              ]
+            },
+            {
+              "key": "websiteComponents",
+              "label": "Components",
+              "pages": [
+                "website/components",
+                {
+                  "key": "websiteElements",
+                  "label": "Elements",
+                  "pages": [
+                    "website/components/body",
+                    "website/components/button",
+                    "website/components/category-card-select",
+                    "website/components/chip-multi-select",
+                    "website/components/external-link",
+                    "website/components/eyebrow",
+                    "website/components/field",
+                    "website/components/guide-crosshair",
+                    "website/components/heading",
+                    "website/components/icon-button",
+                    "website/components/marked-divider",
+                    "website/components/modal",
+                    "website/components/number-field",
+                    "website/components/section-shell",
+                    "website/components/select",
+                    "website/components/step-indicator",
+                    "website/components/stepper-progress-rail",
+                    "website/components/stepper-swipe-deck",
+                    "website/components/tag-input",
+                    "website/components/text-field",
+                    "website/components/textarea-field"
+                  ]
+                },
+                {
+                  "key": "websiteSections",
+                  "label": "Sections",
+                  "pages": [
+                    "website/components/engagement-band",
+                    "website/components/signoff"
+                  ]
+                },
+                {
+                  "key": "websiteLayout",
+                  "label": "Layout",
+                  "pages": [
+                    "website/components/container",
+                    "website/components/heading-pair",
+                    "website/components/section-intro",
+                    "website/components/section-stack",
+                    "website/components/vertical-divider"
+                  ]
+                },
+                {
+                  "key": "websiteBuildingBlocks",
+                  "label": "Building blocks",
+                  "pages": [
+                    "website/components/button-shape",
+                    "website/components/connecting-frame",
+                    "website/components/corner-markers",
+                    "website/components/external-arrow",
+                    "website/components/notched-card-shape"
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "key": "uiLibrary",
@@ -549,7 +649,9 @@
                 {
                   "key": "uiAccessibility",
                   "label": "Accessibility",
-                  "pages": ["ui/primitives/accessibility/visually-hidden"]
+                  "pages": [
+                    "ui/primitives/accessibility/visually-hidden"
+                  ]
                 },
                 {
                   "key": "uiDataDisplay",
@@ -704,12 +806,16 @@
                 {
                   "key": "uiComponentsSettings",
                   "label": "Settings",
-                  "pages": ["ui/components/settings/settings-row"]
+                  "pages": [
+                    "ui/components/settings/settings-row"
+                  ]
                 },
                 {
                   "key": "uiComponentsCodeEditor",
                   "label": "Code editor",
-                  "pages": ["ui/components/code-editor/code-editor"]
+                  "pages": [
+                    "ui/components/code-editor/code-editor"
+                  ]
                 }
               ]
             }

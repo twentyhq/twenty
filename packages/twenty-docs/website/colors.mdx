@@ -1,0 +1,27 @@
+---
+title: Colors
+description: The palette, its alpha scale, and the section schemes.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import ColorReference from '/snippets/website/generated/colors.mdx';
+
+## Overview
+
+Colors come in two layers. The **palette** holds raw values. **Schemes** map roles (`surface`, `ink`, `line`…) to palette or alpha tokens, for each section background. A section picks its scheme on `SectionShell`.
+
+Use a role through `semanticColor` for anything that sits on a section background. Use `color(token)` only for a color that stays the same on every scheme, such as the accent `blue`.
+
+```tsx
+import { color, semanticColor } from '@/tokens';
+
+const Caption = styled.p`
+  color: ${semanticColor.inkMuted};
+  border-color: ${semanticColor.line};
+`;
+```
+
+<ColorReference />
+
+<PageBanner illustration="page-cover-palette" />

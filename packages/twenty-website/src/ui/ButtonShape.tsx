@@ -71,7 +71,9 @@ const rightStrokePath = (height: number): string => {
 };
 
 export type ButtonShapeProps = {
+  /** The shape's height in pixels: the button passes its `BUTTON_HEIGHT_PX` step, and the notch is drawn to fit. */
   heightPx: number;
+  /** Draws only the stroke instead of the fill, for the `outlined` button variant. */
   outlined?: boolean;
 };
 

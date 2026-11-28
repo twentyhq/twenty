@@ -45,11 +45,16 @@ export type BodyElement = 'p' | 'span' | 'div';
 export type BodySize = 'md' | 'sm' | 'xs';
 
 export type BodyProps = {
+  /** The element it renders: a paragraph by default, `span` or `div` inside other text or blocks. */
   as?: BodyElement;
   children: ReactNode;
+  /** Extra class, merged after the component's own. */
   className?: string;
+  /** Switches the ink to the muted text color, for secondary text. */
   muted?: boolean;
+  /** The step on the body type ramp: `bodyMd`, `bodySm` or `bodyXs`. */
   size?: BodySize;
+  /** A `FONT_WEIGHT` token. */
   weight?: FontWeightToken;
 };
 

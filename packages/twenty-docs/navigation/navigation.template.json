@@ -204,6 +204,36 @@
         },
         "contribute": {
           "label": "Contribute"
+        }
+      }
+    },
+    "designSystem": {
+      "label": "Design system",
+      "groups": {
+        "websiteDesignSystem": {
+          "label": "Website",
+          "groups": {
+            "websiteFoundations": {
+              "label": "Foundations"
+            },
+            "websiteComponents": {
+              "label": "Components",
+              "groups": {
+                "websiteElements": {
+                  "label": "Elements"
+                },
+                "websiteSections": {
+                  "label": "Sections"
+                },
+                "websiteLayout": {
+                  "label": "Layout"
+                },
+                "websiteBuildingBlocks": {
+                  "label": "Building blocks"
+                }
+              }
+            }
+          }
         },
         "uiLibrary": {
           "label": "UI Library",

@@ -20,11 +20,17 @@ export function TextareaField({
   placeholder,
   value,
 }: {
+  /** The control's accessible name, needed even beside a visible label. */
   ariaLabel: string;
+  /** Sets `aria-invalid` and paints the shared red border. */
   invalid?: boolean;
+  /** The textarea's `name`, for the form it sits in. */
   name: string;
+  /** Called with the new text on every change. The field is controlled: pass it back as `value`. */
   onValueChange: (value: string) => void;
+  /** Shown while the field is empty. */
   placeholder?: string;
+  /** The current text. */
   value: string;
 }) {
   return (
