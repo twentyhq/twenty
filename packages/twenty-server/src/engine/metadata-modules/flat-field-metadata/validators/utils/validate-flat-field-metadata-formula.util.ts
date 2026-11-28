@@ -8,6 +8,7 @@ import {
   isDefined,
   isFormulaFieldMetadata,
   isFormulaFieldMetadataType,
+  listFieldMetadataFormulaFieldNodes,
   parseExpressionNode,
   printFieldMetadataFormula,
 } from 'twenty-shared/utils';
@@ -239,7 +240,8 @@ export const validateFlatFieldMetadataFormula = ({
       const compilation = compileFormulaExpression({
         expression: formulaExpression,
         fields,
-        evaluation: getFieldMetadataFormulaEvaluation({ formula }),
+        // Left unset when the setter could not compile the formula, so it follows from the expression
+        evaluation: formula?.evaluation,
       });
 
       return compilation.isValid
@@ -314,6 +316,41 @@ export const validateFlatFieldMetadataFormula = ({
           'A formula cannot read its own value, directly or through other formulas',
         userFriendlyMessage: msg`A formula cannot read its own value, directly or through other formulas`,
         value: expression,
+      },
+    ];
+  }
+
+  const isMadeLive =
+    getFieldMetadataFormulaEvaluation({ formula: existingFormula }) ===
+      'STORED' && getFieldMetadataFormulaEvaluation({ formula }) !== 'STORED';
+  const readingFormulaFieldNames = isMadeLive
+    ? Object.values({
+        ...universalFlatFieldMetadataMaps.byUniversalIdentifier,
+        ...pendingUniversalFlatFieldMetadataMaps?.byUniversalIdentifier,
+      })
+        .filter(isDefined)
+        .filter(
+          (readingField) =>
+            readingField.universalIdentifier !== universalIdentifier &&
+            listFieldMetadataFormulaFieldNodes({
+              formula: readingField.formula,
+            }).some(
+              ({ fieldUniversalIdentifier }) =>
+                fieldUniversalIdentifier === universalIdentifier,
+            ),
+        )
+        .map((readingField) => readingField.name)
+    : [];
+
+  if (readingFormulaFieldNames.length > 0) {
+    const readingFormulaFieldNamesText = readingFormulaFieldNames.join(', ');
+
+    return [
+      {
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: `Other formulas read this one, so it must stay stored: ${readingFormulaFieldNamesText}`,
+        userFriendlyMessage: msg`Other formulas read this one, so it must stay stored: ${readingFormulaFieldNamesText}`,
+        value: readingFormulaFieldNames,
       },
     ];
   }

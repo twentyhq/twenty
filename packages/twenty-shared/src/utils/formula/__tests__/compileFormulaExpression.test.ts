@@ -141,6 +141,30 @@ describe('compileFormulaExpression', () => {
     });
   });
 
+  it('should reject an aggregate in a live formula', () => {
+    expect(
+      compileFormulaExpression({
+        expression: 'count(tasks)',
+        fields: OPPORTUNITY_FIELDS,
+        evaluation: 'QUERY_TIME',
+      }),
+    ).toMatchObject({ isValid: false, errorCode: 'AGGREGATE_IN_LIVE_FORMULA' });
+  });
+
+  it('should reject now in a formula stored by choice', () => {
+    expect(
+      compileFormulaExpression({
+        expression: 'datePart(now, "DAY")',
+        fields: OPPORTUNITY_FIELDS,
+        evaluation: 'STORED',
+      }),
+    ).toMatchObject({
+      isValid: false,
+      errorCode: 'NOT_SUPPORTED_IN_STORED_FORMULA',
+      errorParams: { path: 'now' },
+    });
+  });
+
   it('should reject updatedAt in a stored formula', () => {
     expect(compile('max(tasks.updatedAt)')).toMatchObject({
       isValid: false,

@@ -7,8 +7,10 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { StoredFormulaFieldDirtyRecordService } from 'src/engine/core-modules/stored-formula-field/services/stored-formula-field-dirty-record.service';
 import { STORED_FORMULA_FIELD_RECORDS_PER_RUN } from 'src/engine/core-modules/stored-formula-field/constants/stored-formula-field-records-per-run.constant';
 import { STORED_FORMULA_FIELD_RECOMPUTE_BATCH_SIZE } from 'src/engine/core-modules/stored-formula-field/constants/stored-formula-field-recompute-batch-size.constant';
-import { type StoredFormulaColumnExpression } from 'src/engine/core-modules/stored-formula-field/types/stored-formula-column-expression.type';
-import { buildStoredFormulaColumnExpressions } from 'src/engine/core-modules/stored-formula-field/utils/build-stored-formula-column-expressions.util';
+import {
+  buildStoredFormulaColumnExpressions,
+  type StoredFormulaComputationPass,
+} from 'src/engine/core-modules/stored-formula-field/utils/build-stored-formula-column-expressions.util';
 import { buildStoredFormulaRecordUpdate } from 'src/engine/core-modules/stored-formula-field/utils/build-stored-formula-record-update.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -16,19 +18,23 @@ import { quoteColumn } from 'src/engine/twenty-orm/sql/utils/build-select-statem
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { COMPUTED_COLUMN_RECORD_ALIAS } from 'src/engine/twenty-orm/table-shape/constants/computed-column-record-alias.constant';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type WorkspaceComputedLookupShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 const RECORD_ID_COLUMN = quoteColumn(COMPUTED_COLUMN_RECORD_ALIAS, 'id');
 
-type RecomputeRecordsBatchParameters = {
+type RecomputeRecordsParameters = {
   flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular'>;
-  columnExpressions: StoredFormulaColumnExpression[];
-  lookupJoins: WorkspaceComputedLookupShape[];
+  passes: StoredFormulaComputationPass[];
   recordIds: string[];
   shouldSkipEventEmission: boolean;
 };
+
+type RecomputeRecordsBatchParameters = Omit<
+  RecomputeRecordsParameters,
+  'passes'
+> &
+  StoredFormulaComputationPass;
 
 @Injectable()
 export class StoredFormulaFieldComputationService {
@@ -214,8 +220,7 @@ export class StoredFormulaFieldComputationService {
   }):
     | {
         flatObjectMetadata: FlatObjectMetadata;
-        columnExpressions: StoredFormulaColumnExpression[];
-        lookupJoins: WorkspaceComputedLookupShape[];
+        passes: StoredFormulaComputationPass[];
       }
     | undefined {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
@@ -229,39 +234,40 @@ export class StoredFormulaFieldComputationService {
       return undefined;
     }
 
-    const { columnExpressions, lookupJoins } =
-      buildStoredFormulaColumnExpressions({
-        flatObjectMetadata,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        schemaName: getWorkspaceSchemaName(workspaceId),
-        formulaFieldMetadataIds,
-      });
+    const passes = buildStoredFormulaColumnExpressions({
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      schemaName: getWorkspaceSchemaName(workspaceId),
+      formulaFieldMetadataIds,
+    });
 
-    return isNonEmptyArray(columnExpressions)
-      ? { flatObjectMetadata, columnExpressions, lookupJoins }
-      : undefined;
+    return isNonEmptyArray(passes) ? { flatObjectMetadata, passes } : undefined;
   }
 
   private async recomputeRecordsInBatches({
     recordIds,
+    passes,
     ...batchParameters
-  }: RecomputeRecordsBatchParameters): Promise<string[]> {
-    const writtenRecordIds: string[] = [];
+  }: RecomputeRecordsParameters): Promise<string[]> {
+    const writtenRecordIds = new Set<string>();
 
-    for (const recordIdsBatch of chunk(
-      recordIds,
-      STORED_FORMULA_FIELD_RECOMPUTE_BATCH_SIZE,
-    )) {
-      writtenRecordIds.push(
-        ...(await this.recomputeRecordsBatch({
-          ...batchParameters,
-          recordIds: recordIdsBatch,
-        })),
-      );
+    for (const pass of passes) {
+      for (const recordIdsBatch of chunk(
+        recordIds,
+        STORED_FORMULA_FIELD_RECOMPUTE_BATCH_SIZE,
+      )) {
+        (
+          await this.recomputeRecordsBatch({
+            ...batchParameters,
+            ...pass,
+            recordIds: recordIdsBatch,
+          })
+        ).forEach((recordId) => writtenRecordIds.add(recordId));
+      }
     }
 
-    return writtenRecordIds;
+    return [...writtenRecordIds];
   }
 
   private async recomputeRecordsBatch({

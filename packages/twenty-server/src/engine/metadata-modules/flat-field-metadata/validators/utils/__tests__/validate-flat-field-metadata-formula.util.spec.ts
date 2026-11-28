@@ -282,4 +282,75 @@ describe('validateFlatFieldMetadataFormula', () => {
       }),
     ).toEqual([]);
   });
+
+  it('should refuse a live formula that aggregates related records', () => {
+    expect(
+      validate({
+        flatFieldMetadataToValidate: {
+          name: 'averagePrice',
+          universalIdentifier: 'supplier-average-price-uid',
+          objectMetadataUniversalIdentifier: 'supplier-object-uid',
+          formula: {
+            expression: 'avg(gadgets.price)',
+            evaluation: 'QUERY_TIME',
+          },
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          'Invalid formula: A formula that aggregates related records must be stored, as it is too costly to compute on every read',
+      },
+    ]);
+  });
+
+  it('should refuse making a stored formula live while another formula reads it', () => {
+    const gadgetCountFlatFieldMetadata =
+      FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK.byUniversalIdentifier[
+        'supplier-gadget-count-uid'
+      ];
+
+    if (!isDefined(gadgetCountFlatFieldMetadata)) {
+      throw new Error('Missing gadgetCount mock');
+    }
+
+    const validateMakingGadgetCountLive = (evaluation?: 'STORED') =>
+      validate({
+        flatFieldMetadataToValidate: {
+          name: 'gadgetCount',
+          universalIdentifier: 'supplier-gadget-count-uid',
+          objectMetadataUniversalIdentifier: 'supplier-object-uid',
+          formula: { expression: '5', evaluation },
+        },
+        existingFormula: gadgetCountFlatFieldMetadata.formula,
+        pendingUniversalFlatFieldMetadataMaps: {
+          byUniversalIdentifier: {
+            'supplier-doubled-count-uid': {
+              ...gadgetCountFlatFieldMetadata,
+              name: 'doubledCount',
+              universalIdentifier: 'supplier-doubled-count-uid',
+              formula: {
+                tree: {
+                  type: 'ARITHMETIC',
+                  operator: 'MULTIPLY',
+                  left: {
+                    type: 'FIELD',
+                    fieldUniversalIdentifier: 'supplier-gadget-count-uid',
+                  },
+                  right: { type: 'LITERAL', value: 2 },
+                },
+              },
+            },
+          },
+        },
+      });
+
+    expect(validateMakingGadgetCountLive()).toEqual([
+      {
+        message:
+          'Other formulas read this one, so it must stay stored: doubledCount',
+      },
+    ]);
+    expect(validateMakingGadgetCountLive('STORED')).toEqual([]);
+  });
 });

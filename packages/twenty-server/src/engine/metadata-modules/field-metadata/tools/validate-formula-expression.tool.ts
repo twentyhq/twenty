@@ -19,6 +19,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import {
   FORMULA_CURRENCY_CODE_EXPRESSION_DESCRIPTION,
+  FORMULA_EVALUATION_DESCRIPTION,
   FORMULA_EXPRESSION_DESCRIPTION,
 } from 'src/engine/metadata-modules/field-metadata/tools/constants/formula-description.constant';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -42,6 +43,10 @@ const validateFormulaExpressionInputSchema = z.object({
     .string()
     .optional()
     .describe(FORMULA_CURRENCY_CODE_EXPRESSION_DESCRIPTION),
+  evaluation: z
+    .enum(['QUERY_TIME', 'STORED'])
+    .optional()
+    .describe(FORMULA_EVALUATION_DESCRIPTION),
   fieldName: z
     .string()
     .optional()
@@ -75,7 +80,14 @@ export class ValidateFormulaExpressionTool extends BaseTool<
   }
 
   async execute({
-    input: { objectName, type, expression, currencyCodeExpression, fieldName },
+    input: {
+      objectName,
+      type,
+      expression,
+      currencyCodeExpression,
+      evaluation,
+      fieldName,
+    },
     context: { workspaceId },
   }: ToolExecuteArgs<
     typeof validateFormulaExpressionInputSchema
@@ -124,6 +136,7 @@ export class ValidateFormulaExpressionTool extends BaseTool<
           ...(isDefined(currencyCodeExpression)
             ? { currencyCodeExpression }
             : {}),
+          ...(isDefined(evaluation) ? { evaluation } : {}),
         },
         objectMetadataUniversalIdentifier:
           flatObjectMetadata.universalIdentifier,
@@ -153,17 +166,17 @@ export class ValidateFormulaExpressionTool extends BaseTool<
       );
     }
 
-    const evaluation = getFieldMetadataFormulaEvaluation(
+    const candidateEvaluation = getFieldMetadataFormulaEvaluation(
       candidateFlatFieldMetadata,
     );
 
     return {
       success: true,
       message:
-        evaluation === 'STORED'
+        candidateEvaluation === 'STORED'
           ? 'The formula is valid. It is stored: computed in the background, it reads null until its backfill reaches each record.'
           : 'The formula is valid. It is computed on every read.',
-      result: { evaluation },
+      result: { evaluation: candidateEvaluation },
     };
   }
 }
