@@ -14182,6 +14182,11 @@ msgstr ""
 msgid "Field"
 msgstr ""
 
+#. js-lingui-id: BpMv2v
+#: src/modules/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor.tsx
+msgid "Field \"{fieldName}\" not found"
+msgstr ""
+
 #. js-lingui-id: cdSPqd
 #. placeholder {0}: fieldMetadata.name
 #: src/modules/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields.ts
@@ -14431,6 +14436,7 @@ msgstr ""
 
 #. js-lingui-id: sER+bs
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
+#: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
 msgid "Files"
 msgstr ""
 
