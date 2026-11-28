@@ -158,9 +158,8 @@ const createItemObjectWithItemsField = async ({
 const createSummaryField = ({
   objectMetadataId,
   adminAccessToken,
-}: {
+}: Pick<PermissionTestWorkspace, 'adminAccessToken'> & {
   objectMetadataId: string;
-  adminAccessToken: string;
 }) =>
   createOneFieldMetadata({
     input: {
@@ -212,11 +211,10 @@ const denyFieldRead = ({
   objectMetadataId,
   fieldMetadataId,
   adminAccessToken,
-}: {
+}: Pick<PermissionTestWorkspace, 'adminAccessToken'> & {
   roleId: string;
   objectMetadataId: string;
   fieldMetadataId: string;
-  adminAccessToken: string;
 }) =>
   upsertFieldPermissions({
     input: {
